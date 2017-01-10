@@ -15,16 +15,8 @@ Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
 
 Yoti also allows you to enable user details verification from your mobile app by means of the Android (TBA) and iOS (TBA) SDKs. In that scenario, your Yoti-enabled mobile app is playing both the role of the browser and the Yoti app. By the way, your back-end doesn't need to handle these cases in a significantly different way. You might just decide to handle the `User-Agent` header in order to provide different responses for web and mobile clients.
 
-## Installing the SDK (Preview)
-To install this SDK during the preview stage you will first need to clone this repository to the following location:
-```
-$GOPATH\src\github.com\lampkicking\yoti-sdk-server-go
-```
-
-Where `$GOPATH` is the GOPATH variable. See more about this [here](https://github.com/golang/go/wiki/GOPATH).
-
-## Installing the SDK (Non-Preview)
-To import the Yoti SDK inside your project after the preview stage has finished, simply run the following command:
+## Installing the SDK
+To import the Yoti SDK inside your project, simply run the following command:
 
 ```
 go get "github.com\lampkicking\yoti-sdk-server-go"
