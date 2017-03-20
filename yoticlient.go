@@ -100,6 +100,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 				ID:              id,
 				OtherAttributes: make(map[string]YotiAttributeValue)}
 
+			if attributeList == nil {
+				return
+			}
+
 			for _, attribute := range attributeList.Attributes {
 				switch attribute.Name {
 				case "selfie":
@@ -170,6 +174,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *attrpubapi_v1.AttributeList, err error) {
 	var unwrappedKey []byte
 	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
+		return
+	}
+
+	if receipt.OtherPartyProfileContent == "" {
 		return
 	}
 

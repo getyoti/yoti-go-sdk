@@ -193,3 +193,42 @@ func TestYotiClientEngine_ParseProfile_Success(t *testing.T) {
 
 	return
 }
+
+func TestYotiClientEngine_ParseWithoutProfile_Success(t *testing.T) {
+	sdkId := "fake-sdk-id"
+	key, _ := ioutil.ReadFile("test-key.pem")
+
+	wrapped_receipt_key := "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
+	remember_me_id := "remember_me_id0123456789"
+
+	var otherPartyProfileContents = []string{
+		`"other_party_profile_content": null,`,
+		`"other_party_profile_content": "",`,
+		``}
+
+	for _, otherPartyProfileContent := range otherPartyProfileContents {
+
+		var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    true,
+				StatusCode: 200,
+				Content:    `{"receipt":{"wrapped_receipt_key": "` + wrapped_receipt_key + `",` + otherPartyProfileContent + `"remember_me_id":"` + remember_me_id + `", "sharing_outcome":"SUCCESS"}}`}
+			return
+		}
+
+		profile, err := getActivityDetails(requester, encryptedToken, sdkId, key)
+
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		if profile.ID != remember_me_id {
+			t.Errorf("expected id '%s' instead received '%s'", remember_me_id, profile.ID)
+			return
+		}
+
+	}
+
+	return
+}
