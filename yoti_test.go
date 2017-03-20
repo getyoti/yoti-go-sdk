@@ -3,9 +3,9 @@ package yoti
 import (
 	"io/ioutil"
 	"net/url"
+	"strings"
 	"testing"
 	"time"
-	"strings"
 )
 
 const token = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
@@ -15,7 +15,6 @@ func TestYotiClientEngine_KeyLoad_Failure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
-
 	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
 		result = &httpResponse{
 			Success:    false,
@@ -23,7 +22,7 @@ func TestYotiClientEngine_KeyLoad_Failure(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkId, key);
+	_, err := getActivityDetails(requester, encryptedToken, sdkId, key)
 
 	if err == nil {
 		t.Error("Expected failure")
@@ -47,7 +46,7 @@ func TestYotiClientEngine_HttpFailure_ReturnsFailure(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkId, key);
+	_, err := getActivityDetails(requester, encryptedToken, sdkId, key)
 	if err == nil {
 		t.Error("Expected failure")
 		return
@@ -70,7 +69,7 @@ func TestYotiClientEngine_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkId, key);
+	_, err := getActivityDetails(requester, encryptedToken, sdkId, key)
 	if err == nil {
 		t.Error("Expected failure")
 		return
@@ -94,7 +93,7 @@ func TestYotiClientEngine_SharingFailure_ReturnsFailure(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkId, key);
+	_, err := getActivityDetails(requester, encryptedToken, sdkId, key)
 	if err == nil {
 		t.Error("Expected failure")
 		return
@@ -129,7 +128,7 @@ func TestYotiClientEngine_TokenDecodedSuccessfully(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkId, key);
+	_, err := getActivityDetails(requester, encryptedToken, sdkId, key)
 	if err == nil {
 		t.Error("Expected failure")
 		return
@@ -177,7 +176,6 @@ func TestYotiClientEngine_ParseProfile_Success(t *testing.T) {
 		t.Errorf("expected user selfie '%s' instead received '%s'", "selfie0123456789", string(profile.Selfie.Data))
 		return
 	}
-
 
 	if profile.MobileNumber != "phone_number0123456789" {
 		t.Errorf("expected user mobile '%s' instead received '%s'", "phone_number0123456789", profile.MobileNumber)

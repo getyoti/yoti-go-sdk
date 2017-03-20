@@ -27,11 +27,12 @@ func doRequest(uri string, headers map[string]string) (result *httpResponse, err
 
 	var resp *http.Response
 	resp, err = client.Do(req)
-	defer resp.Body.Close()
 
 	if err != nil {
 		return
 	}
+
+	defer resp.Body.Close()
 
 	var body []byte
 	if body, err = ioutil.ReadAll(resp.Body); err != nil {
