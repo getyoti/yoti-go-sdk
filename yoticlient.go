@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/golang/protobuf/proto"
-	"github.com/lampkicking/yoti-sdk-server-go/attrpubapi_v1"
-	"github.com/lampkicking/yoti-sdk-server-go/compubapi_v1"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/getyoti/go/attrpubapi_v1"
+	"github.com/getyoti/go/compubapi_v1"
+	"github.com/golang/protobuf/proto"
 )
 
 const apiUrl = "https://api.yoti.com/api/v1"
@@ -23,7 +24,7 @@ type YotiClient struct {
 
 	// Key should be the security key given to you by yoti (see: security keys section of
 	// https://www.yoti.com/dashboard/) for more information about how to load your key from a file see:
-	// https://github.com/lampkicking/yoti-sdk-server-go/blob/master/README.md
+	// https://github.com/getyoti/go/blob/master/README.md
 	Key []byte
 }
 
@@ -95,10 +96,13 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 
 			id := parsedResponse.Receipt.RememberMeId
 
-
 			result = YotiUserProfile{
 				ID:              id,
 				OtherAttributes: make(map[string]YotiAttributeValue)}
+
+			if attributeList == nil {
+				return
+			}
 
 			for _, attribute := range attributeList.Attributes {
 				switch attribute.Name {
@@ -170,6 +174,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *attrpubapi_v1.AttributeList, err error) {
 	var unwrappedKey []byte
 	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
+		return
+	}
+
+	if receipt.OtherPartyProfileContent == "" {
 		return
 	}
 

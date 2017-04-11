@@ -59,11 +59,11 @@ func decipherAes(key, iv, cipherBytes []byte) ([]byte, error) {
 
 func pkcs7Unpad(ciphertext []byte, blocksize int) (result []byte, err error) {
 	if blocksize <= 0 {
-		err = errors.New(fmt.Sprintf("blocksize %d is not valid for padding removal", blocksize))
+		err = fmt.Errorf("blocksize %d is not valid for padding removal", blocksize)
 		return
 	}
 	if ciphertext == nil || len(ciphertext) == 0 {
-		err = errors.New(fmt.Sprintf("Cannot remove padding on empty byte array", blocksize))
+		err = errors.New("Cannot remove padding on empty byte array")
 		return
 	}
 	if len(ciphertext)%blocksize != 0 {
