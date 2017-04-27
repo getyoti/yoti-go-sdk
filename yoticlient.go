@@ -126,12 +126,14 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 					result.FamilyName = string(attribute.Value)
 				case "phone_number":
 					result.MobileNumber = string(attribute.Value)
+				case "email_address":
+					result.EmailAddress = string(attribute.Value)
 				case "date_of_birth":
 					parsedTime, err := time.Parse("2006-01-02", string(attribute.Value))
 					if err == nil {
 						result.DateOfBirth = &parsedTime
 					}
-				case "post_code":
+				case "postal_address":
 					result.Address = string(attribute.Value)
 				case "gender":
 					result.Gender = string(attribute.Value)

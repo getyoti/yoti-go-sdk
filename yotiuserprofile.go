@@ -20,6 +20,9 @@ type YotiUserProfile struct {
 	// MobileNumber represents the user's mobile phone number. This will be an empty string if not provided by Yoti
 	MobileNumber string
 
+	// EmailAddress represents the user's email address. This will be an empty string if not provided by Yoti
+	EmailAddress string
+
 	// DateOfBirth represents the user's date of birth. This will be nil if not provided by Yoti
 	DateOfBirth *time.Time
 
