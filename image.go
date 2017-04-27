@@ -10,6 +10,7 @@ const (
 type Image struct {
 	Type ImageType
 	Data []byte
+	URL  string
 }
 
 func (image Image) GetContentType() string {
