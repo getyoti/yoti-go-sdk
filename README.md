@@ -1,10 +1,7 @@
 Yoti Golang SDK
-=============
+===============
 
-Welcome to the Yoti Golang SDK. This repo contains the tools and step by step instructions you need to quickly integrate your golang back-end with Yoti, so that your users can share their identity details with your application in a secure and trusted way.
-
-Feel free to use the example above: [yoticlient.go](https://github.com/getyoti/go/blob/0af652c98a90a8a5b75e933828b95a77eb7c1052/yoticlient.go) to get started. You can also clone/download the example on your desktop to replicate our SDK at ease!
-
+Welcome to the Yoti Golang SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Golang back-end with Yoti so that your users can share their identity details with your application in a secure and trusted way.
 
 ## Table of Contents
 
@@ -12,44 +9,44 @@ Feel free to use the example above: [yoticlient.go](https://github.com/getyoti/g
 High level overview of integration
 
 2) [References](#references)-
-Guides before you start!
+Guides before you start
 
-3) [Requirements](#requirements)- 
+3) [Requirements](#requirements)-
 Everything you need to get started
 
-4) [Installing the SDK](#installing-the-sdk)- 
+4) [Installing the SDK](#installing-the-sdk)-
 How to install our SDK
 
 5) [SDK Project import](#sdk-project-import)-
-How to install SDK to your project
+How to install the SDK to your project
 
-6) [Usage](#usage)-
-Section on token
+6) [Profile Retrieval](#profile-retrieval)-
+How to retrieve a Yoti profile using the token
 
-7) [Profile Retrieval](#profile-retrieval)- 
-How to create a profile
+7) [Handling users](#handling-users)-
+How to manage users
 
-8) [Handling users](#handling-users)- 
-How to generate your users
+8) [API Coverage](#api-coverage)-
+Attributes defined
 
-9) [API Coverage](#api-coverage)- 
+9) [Running the tests](running-the-tests)-
 Attributes defined
 
 10) [Support](#support)-
-If in need please feel free to reach out
+Please feel free to reach out
 
 ## An Architectural view
 
-Before you start your integration here is a bit of background on how the integration works. To integrate your application with Yoti, your back-end must expose a GET endpoint that Yoti will use to forward tokens.
-The endpoint can be configured in Yoti Dashboard when you create/update your application. For more information on how to create an application please click our [developer page.](https://www.yoti.com/developers/documentation/#login-button-setup)
+Before you start your integration, here is a bit of background on how the integration works. To integrate your application with Yoti, your back-end must expose a GET endpoint that Yoti will use to forward tokens.
+The endpoint can be configured in the Yoti Dashboard when you create/update your application. For more information on how to create an application please check our [developer page](https://www.yoti.com/developers/documentation/#login-button-setup).
 
-The image below shows how your application back-end and Yoti integrate in the context of a Login flow.
-Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
+The image below shows how your application back-end and Yoti integrate into the context of a Login flow.
+Yoti SDK carries out for you steps 6, 7 and the profile decryption in step 8.
 
 ![alt text](login_flow.png "Login flow")
 
 
-Yoti also allows you to enable user details verification from your mobile app by means of the Android (TBA) and iOS (TBA) SDKs. In that scenario, your Yoti-enabled mobile app is playing both the role of the browser and the Yoti app. By the way, your back-end doesn't need to handle these cases in a significantly different way. You might just decide to handle the `User-Agent` header in order to provide different responses for web and mobile clients.
+Yoti also allows you to enable user details verification from your mobile app by means of the Android (TBA) and iOS (TBA) SDKs. In that scenario, your Yoti-enabled mobile app is playing both the role of the browser and the Yoti app. Your back-end doesn't need to handle these cases in a significantly different way. You might just decide to handle the `User-Agent` header in order to provide different responses for desktop and mobile clients.
 
 ## References
 
@@ -76,14 +73,14 @@ To import the Yoti SDK inside your project, simply run the following command fro
 go get "github.com/getyoti/go"
 ```
 
-## SDK Project import 
+## SDK Project import
 
-You can reference the project in your project by adding the following import:
+You can reference the project URL by adding the following import:
 ```golang
 import "github.com/getyoti/go"
 ```
 
-## Configuration 
+## Configuration
 
 The YotiClient is the SDK entry point. To initialise it you need include the following snippet inside your endpoint initialisation section:
 ```golang
@@ -98,16 +95,15 @@ client := yoti.YotiClient{
 	Key: key}
 ```
 Where:
-- `sdkID` is the sdk identifier generated by Yoti Dashboard in the Key tab when you create your app. Note this is not your Application Identifier which is needed by your clientside code.
+- `sdkID` is the SDK identifier generated by Yoti Dashboard in the Key tab when you create your app. Note this is not your Application Identifier which is needed by your client-side code.
 
-- `path/to/your-application-pem-file.pem` is the path to the pem file your browser generates for you, when you create your app on Yoti Dashboard on the same tab.
+- `path/to/your-application-pem-file.pem` is the path to the application pem file. It can be downloaded only once from the Keys tab in your Yoti Dashboard.
 
-Keeping your settings and access keys outside your repository is highly recommended. You can use gems like [dotenv][] to manage environment variables more easily.
+Please do not open the pem file as this might corrupt the key and you will need to create a new application.
 
-Please do not open the pem file as this will corrupt the key and you will need to create a new application.
+Keeping your settings and access keys outside your repository is highly recommended. You can use gems like [godotenv](https://github.com/joho/godotenv) to manage environment variables more easily.
 
-## Usage
-## Profile Retrieval 
+## Profile Retrieval
 
 When your application receives a token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the user profile by adding the following to your endpoint handler:
 
@@ -121,15 +117,15 @@ This is done as follows:
 ```golang
 profile, err := client.GetUserProfile(yotiToken)
 if err != nil {
-    // handle unhappy path
+  // handle unhappy path
 }
 ```
 
 ## Handling users
 
 When you retrieve the user profile, you receive a userId generated by Yoti exclusively for your application.
-This means that if the same individual logs into another app, Yoti will assign her/him a different id.
-You can use such id to verify whether the retrieved profile identifies a new or an existing user.
+This means that if the same individual logs into another app, Yoti will assign her/him a different ID.
+You can use such ID to verify whether the retrieved profile identifies a new or an existing user.
 Here is an example of how this works:
 
 ```golang
@@ -139,7 +135,7 @@ if err == nil {
 	if user != nil {
 		// handle login
 	} else {
-        // handle registration
+      // handle registration
     }
 } else {
     // handle unhappy path
@@ -150,9 +146,9 @@ No matter if the user is a new or an existing one, Yoti will always provide her/
 
 The `profile` object provides a set of attributes corresponding to user attributes. Whether the attributes are present or not depends on the settings you have applied to your app on Yoti Dashboard.
 
--Running the examples
+## Running the tests
 
-You can run the unit tests for this project by executing the following cmd inside the repository folder
+You can run the unit tests for this project by executing the following command inside the repository folder
 ```
 go test
 ```
@@ -168,20 +164,16 @@ go test
         * [X] Mobile Number `phone_number`
         * [X] Email address `email_address`
         * [X] Date of Birth `date_of_birth`
-        * [X] Address `post_code`
+        * [X] Address `postal_address`
         * [X] Gender `gender`
         * [X] Nationality `nationality`
 
 ## Support
 
-For any questions or support please email: sdksupport@yoti.com.
+For any questions or support please email [sdksupport@yoti.com](mailto:sdksupport@yoti.com).
 Please provide the following the get you up and working as quick as possible:
 
-Computer Type:
-
-OS Version:
-
-Version of Code being used:
-
-Screen shot of error:
-
+- Computer Type
+- OS Version
+- Version of Go being used
+- Screenshot
