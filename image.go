@@ -10,10 +10,9 @@ const (
 type Image struct {
 	Type ImageType
 	Data []byte
-	URL  string
 }
 
-func (image Image) GetContentType() string {
+func (image *Image) GetContentType() string {
 	switch image.Type {
 	case ImageType_Jpeg:
 		return "image/jpeg"
@@ -24,4 +23,8 @@ func (image Image) GetContentType() string {
 	default:
 		return ""
 	}
+}
+
+func (image *Image) URL() string {
+	return "data:application/octet-stream;" + image.GetContentType() + ";," + string(image.Data)
 }

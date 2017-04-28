@@ -33,7 +33,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		templateVars := map[string]interface{}{
 			"profile": profile,
-			"selfie":  template.URL(profile.Selfie.URL)}
+			"selfie":  template.URL(profile.Selfie.URL())}
 
 		t, _ := template.ParseFiles("profile.html")
 		t.Execute(w, templateVars)

@@ -2,7 +2,6 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -110,19 +109,16 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 				case "selfie":
 					data := make([]byte, len(attribute.Value))
 					copy(data, attribute.Value)
-					encodedData := base64.StdEncoding.EncodeToString(data)
 
 					switch attribute.ContentType {
 					case attrpubapi_v1.ContentType_JPEG:
 						result.Selfie = &Image{
 							Type: ImageType_Jpeg,
-							Data: data,
-							URL:  "data:image/jpeg;base64," + string(encodedData)}
+							Data: data}
 					case attrpubapi_v1.ContentType_PNG:
 						result.Selfie = &Image{
 							Type: ImageType_Png,
-							Data: data,
-							URL:  "data:image/png;base64," + string(encodedData)}
+							Data: data}
 					}
 				case "given_names":
 					result.GivenNames = string(attribute.Value)
