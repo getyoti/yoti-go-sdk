@@ -107,18 +107,16 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 			for _, attribute := range attributeList.Attributes {
 				switch attribute.Name {
 				case "selfie":
-					data := make([]byte, len(attribute.Value))
-					copy(data, attribute.Value)
 
 					switch attribute.ContentType {
 					case attrpubapi_v1.ContentType_JPEG:
 						result.Selfie = &Image{
 							Type: ImageType_Jpeg,
-							Data: data}
+							Data: attribute.Value}
 					case attrpubapi_v1.ContentType_PNG:
 						result.Selfie = &Image{
 							Type: ImageType_Png,
-							Data: data}
+							Data: attribute.Value}
 					}
 				case "given_names":
 					result.GivenNames = string(attribute.Value)
