@@ -1,5 +1,7 @@
 package yoti
 
+import "encoding/base64"
+
 type ImageType int
 
 const (
@@ -26,5 +28,6 @@ func (image *Image) GetContentType() string {
 }
 
 func (image *Image) URL() string {
-	return "data:application/octet-stream;" + image.GetContentType() + ";," + string(image.Data)
+	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
+	return "data:" + image.GetContentType() + ";base64;," + base64EncodedImage
 }
