@@ -11,25 +11,25 @@ High level overview of integration
 2) [References](#references)-
 Guides before you start
 
-3) [Requirements](#requirements)-
-Everything you need to get started
-
-4) [Installing the SDK](#installing-the-sdk)-
+3) [Installing the SDK](#installing-the-sdk)-
 How to install our SDK
 
-5) [SDK Project import](#sdk-project-import)-
+4) [SDK Project import](#sdk-project-import)-
 How to install the SDK to your project
 
-6) [Profile Retrieval](#profile-retrieval)-
+5) [Profile Retrieval](#profile-retrieval)-
 How to retrieve a Yoti profile using the token
 
-7) [Handling users](#handling-users)-
+6) [Handling users](#handling-users)-
 How to manage users
 
-8) [API Coverage](#api-coverage)-
+7) [API Coverage](#api-coverage)-
 Attributes defined
 
-9) [Running the tests](running-the-tests)-
+8) [Running the tests](running-the-tests)-
+Attributes defined
+
+9) [Running the example](running-the-example)-
 Attributes defined
 
 10) [Support](#support)-
@@ -41,7 +41,7 @@ Before you start your integration, here is a bit of background on how the integr
 The endpoint can be configured in the Yoti Dashboard when you create/update your application. For more information on how to create an application please check our [developer page](https://www.yoti.com/developers/documentation/#login-button-setup).
 
 The image below shows how your application back-end and Yoti integrate into the context of a Login flow.
-Yoti SDK carries out for you steps 6, 7 and the profile decryption in step 8.
+Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
 
 ![alt text](login_flow.png "Login flow")
 
@@ -152,6 +152,17 @@ You can run the unit tests for this project by executing the following command i
 ```
 go test
 ```
+
+## Running the example
+
+The example can be found in the [example folder](example).
+For them to work you will need a working callback URL that your browser can redirect to. The callback URL will be: `http://your-local-url:8080/profile`.
+
+The examples also uses the `YOTI_APPLICATION_ID` environment variable to display the Yoti Connect button. This value can be found in your Yoti account, on the *Keys* settings page.
+
+* rename the [.env.example](example/.env.example) file to `.env` and fill in the required configuration values
+* install the dependencies with `go get`
+* start the server `go run main.go`
 
 ## API Coverage
 

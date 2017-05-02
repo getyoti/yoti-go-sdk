@@ -1,5 +1,7 @@
 package yoti
 
+import "encoding/base64"
+
 type ImageType int
 
 const (
@@ -12,7 +14,7 @@ type Image struct {
 	Data []byte
 }
 
-func (image Image) GetContentType() string {
+func (image *Image) GetContentType() string {
 	switch image.Type {
 	case ImageType_Jpeg:
 		return "image/jpeg"
@@ -23,4 +25,9 @@ func (image Image) GetContentType() string {
 	default:
 		return ""
 	}
+}
+
+func (image *Image) URL() string {
+	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
+	return "data:" + image.GetContentType() + ";base64;," + base64EncodedImage
 }

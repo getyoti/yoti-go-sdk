@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Yoti Profile</title>
+  </head>
+  <body>
+    <h1><a href="/">Home</a></h1>
+    <table>
+      <tr>
+        <td>ID:</td>
+        <td>{{.profile.ID}}</td>
+      </tr>
+      <tr>
+        <td>Photo:</td>
+        <td><img src="{{.selfie}}" /></td>
+      </tr>
+      <tr>
+        <td>First Name:</td>
+        <td>{{.profile.GivenNames}}</td>
+      </tr>
+      <tr>
+        <td>Family Name:</td>
+        <td>{{.profile.FamilyName}}</td>
+      </tr>
+      <tr>
+        <td>Mobile Number:</td>
+        <td>{{.profile.MobileNumber}}</td>
+      </tr>
+      <tr>
+        <td>Email Address:</td>
+        <td>{{.profile.EmailAddress}}</td>
+      </tr>
+      <tr>
+        <td>Date of Birth:</td>
+        <td>{{.profile.DateOfBirth}}</td>
+      </tr>
+      <tr>
+        <td>Address:</td>
+        <td>{{.profile.Address}}</td>
+      </tr>
+      <tr>
+        <td>Gender:</td>
+        <td>{{.profile.Gender}}</td>
+      </tr>
+      <tr>
+        <td>Nationality:</td>
+        <td>{{.profile.Nationality}}</td>
+      </tr>
+
+    </table>
+  </body>
+</html>

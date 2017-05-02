@@ -107,18 +107,16 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 			for _, attribute := range attributeList.Attributes {
 				switch attribute.Name {
 				case "selfie":
-					data := make([]byte, len(attribute.Value))
-					copy(data, attribute.Value)
 
 					switch attribute.ContentType {
 					case attrpubapi_v1.ContentType_JPEG:
 						result.Selfie = &Image{
 							Type: ImageType_Jpeg,
-							Data: data}
+							Data: attribute.Value}
 					case attrpubapi_v1.ContentType_PNG:
 						result.Selfie = &Image{
 							Type: ImageType_Png,
-							Data: data}
+							Data: attribute.Value}
 					}
 				case "given_names":
 					result.GivenNames = string(attribute.Value)
@@ -126,12 +124,14 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 					result.FamilyName = string(attribute.Value)
 				case "phone_number":
 					result.MobileNumber = string(attribute.Value)
+				case "email_address":
+					result.EmailAddress = string(attribute.Value)
 				case "date_of_birth":
 					parsedTime, err := time.Parse("2006-01-02", string(attribute.Value))
 					if err == nil {
 						result.DateOfBirth = &parsedTime
 					}
-				case "post_code":
+				case "postal_address":
 					result.Address = string(attribute.Value)
 				case "gender":
 					result.Gender = string(attribute.Value)
