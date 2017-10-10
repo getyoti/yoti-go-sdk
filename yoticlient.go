@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/getyoti/go/attrpubapi_v1"
-	"github.com/getyoti/go/compubapi_v1"
+	"github.com/getyoti/yoti-go-sdk/attrpubapi_v1"
+	"github.com/getyoti/yoti-go-sdk/compubapi_v1"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -24,7 +24,7 @@ type YotiClient struct {
 
 	// Key should be the security key given to you by yoti (see: security keys section of
 	// https://www.yoti.com/dashboard/) for more information about how to load your key from a file see:
-	// https://github.com/getyoti/go/blob/master/README.md
+	// https://github.com/getyoti/yoti-go-sdk/blob/master/README.md
 	Key []byte
 }
 

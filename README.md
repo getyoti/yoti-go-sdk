@@ -70,14 +70,14 @@ TBC
 To import the Yoti SDK inside your project, simply run the following command from your terminal:
 
 ```Go
-go get "github.com/getyoti/go"
+go get "github.com/getyoti/yoti-go-sdk"
 ```
 
 ## SDK Project import
 
 You can reference the project URL by adding the following import:
 ```Go
-import "github.com/getyoti/go"
+import "github.com/getyoti/yoti-go-sdk"
 ```
 
 ## Configuration
