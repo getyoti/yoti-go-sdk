@@ -15,6 +15,7 @@ import (
 )
 
 const apiUrl = "https://api.yoti.com/api/v1"
+const sdkIdentifier = "Go"
 
 // YotiClient represents a client that can communicate with yoti and return information about Yoti users.
 type YotiClient struct {
@@ -73,6 +74,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 
 	headers["X-Yoti-Auth-Key"] = authKey
 	headers["X-Yoti-Auth-Digest"] = authDigest
+	headers["X-SDK"] = sdkIdentifier	
 
 	var response *httpResponse
 	if response, err = requester(apiUrl+endpoint, headers); err != nil {
