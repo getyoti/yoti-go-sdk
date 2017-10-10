@@ -1,7 +1,7 @@
-Yoti Golang SDK
+Yoti Go SDK
 ===============
 
-Welcome to the Yoti Golang SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Golang back-end with Yoti so that your users can share their identity details with your application in a secure and trusted way.
+Welcome to the Yoti Go SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Go back-end with Yoti so that your users can share their identity details with your application in a secure and trusted way.
 
 ## Table of Contents
 
@@ -69,21 +69,21 @@ TBC
 
 To import the Yoti SDK inside your project, simply run the following command from your terminal:
 
-```
+```Go
 go get "github.com/getyoti/go"
 ```
 
 ## SDK Project import
 
 You can reference the project URL by adding the following import:
-```golang
+```Go
 import "github.com/getyoti/go"
 ```
 
 ## Configuration
 
 The YotiClient is the SDK entry point. To initialise it you need include the following snippet inside your endpoint initialisation section:
-```golang
+```Go
 sdkID := "your-sdk-id";
 key, err := ioutil.ReadFile("path/to/your-application-pem-file.pem")
 if err != nil {
@@ -107,14 +107,14 @@ Keeping your settings and access keys outside your repository is highly recommen
 
 When your application receives a token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the user profile by adding the following to your endpoint handler:
 
-```golang
+```Go
 profile, err := client.GetUserProfile(yotiToken)
 ```
 
 Before you inspect the user profile, you might want to check whether the user validation was successful.
 This is done as follows:
 
-```golang
+```Go
 profile, err := client.GetUserProfile(yotiToken)
 if err != nil {
   // handle unhappy path
@@ -128,7 +128,7 @@ This means that if the same individual logs into another app, Yoti will assign h
 You can use such ID to verify whether the retrieved profile identifies a new or an existing user.
 Here is an example of how this works:
 
-```golang
+```Go
 profile, err := client.GetUserProfile(yotiToken)
 if err == nil {
 	user := YourUserSearchFunction(profile.ID)
@@ -149,7 +149,7 @@ The `profile` object provides a set of attributes corresponding to user attribut
 ## Running the tests
 
 You can run the unit tests for this project by executing the following command inside the repository folder
-```
+```Go
 go test
 ```
 
