@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/getyoti/go"
+	"github.com/getyoti/yoti-go-sdk"
 
 	_ "github.com/joho/godotenv/autoload"
 )
