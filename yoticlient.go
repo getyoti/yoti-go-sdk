@@ -74,7 +74,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 
 	headers["X-Yoti-Auth-Key"] = authKey
 	headers["X-Yoti-Auth-Digest"] = authDigest
-	headers["X-SDK"] = sdkIdentifier	
+	headers["X-Yoti-SDK"] = sdkIdentifier
 
 	var response *httpResponse
 	if response, err = requester(apiUrl+endpoint, headers); err != nil {
