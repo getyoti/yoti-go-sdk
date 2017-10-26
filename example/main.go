@@ -1,11 +1,15 @@
 package main
 
 import (
+	bytes "bytes"
 	"fmt"
 	"html/template"
+	"image"
+	"image/jpeg"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 
 	"github.com/getyoti/yoti-go-sdk"
 
@@ -32,8 +36,12 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil {
 		templateVars := map[string]interface{}{
-			"profile": profile,
-			"selfie":  template.URL(profile.Selfie.URL())}
+			"profile":         profile,
+			"selfiebase64URL": template.URL(profile.Selfie.URL())}
+
+		decodedImage := decodeImage(profile.Selfie.Data)
+		file := createImage()
+		saveImage(decodedImage, file)
 
 		t, _ := template.ParseFiles("profile.html")
 		t.Execute(w, templateVars)
@@ -43,7 +51,32 @@ func profile(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	rootdir, _ := os.Getwd()
 	http.HandleFunc("/", home)
 	http.HandleFunc("/profile", profile)
+	http.Handle("/images/", http.StripPrefix("/images",
+		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
 	http.ListenAndServe(":8080", nil)
+}
+
+func decodeImage(imageBytes []byte) (decodedImage image.Image) {
+	decodedImage, _, _ = image.Decode(bytes.NewReader(imageBytes))
+	return
+}
+
+func createImage() (file *os.File) {
+	file, err := os.Create("./images/YotiSelfie.jpeg")
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	return
+}
+
+func saveImage(img image.Image, file *os.File) {
+	var opt jpeg.Options
+	opt.Quality = 100
+
+	jpeg.Encode(file, img, &opt)
 }
