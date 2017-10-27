@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/jpeg"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -56,6 +57,7 @@ func main() {
 	http.HandleFunc("/profile", profile)
 	http.Handle("/images/", http.StripPrefix("/images",
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
+	log.Printf("About to listen and serve on 8080. Go to http://your-local-url:8080/")
 	http.ListenAndServe(":8080", nil)
 }
 

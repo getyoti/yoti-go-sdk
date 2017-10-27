@@ -168,7 +168,7 @@ The examples also uses the `YOTI_APPLICATION_ID` environment variable to display
 
 * Activity Details
     * [X] Profile
-        * [X] User ID `ID`				
+        * [X] User ID `ID`
         * [X] Selfie `Selfie`
         * [X] Selfie URL `Selfie.URL`
         * [X] Given Names `GivenNames`
