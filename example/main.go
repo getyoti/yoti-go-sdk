@@ -37,7 +37,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		templateVars := map[string]interface{}{
 			"profile":         profile,
-			"selfiebase64URL": template.URL(profile.Selfie.URL())}
+			"selfieBase64URL": template.URL(profile.Selfie.URL())}
 
 		decodedImage := decodeImage(profile.Selfie.Data)
 		file := createImage()
