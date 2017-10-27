@@ -167,17 +167,18 @@ The examples also uses the `YOTI_APPLICATION_ID` environment variable to display
 ## API Coverage
 
 * Activity Details
-    * [X] User ID `user_id`
     * [X] Profile
-        * [X] Photo `selfie`
-        * [X] Given Names `given_names`
-        * [X] Family Name `family_name`
-        * [X] Mobile Number `phone_number`
-        * [X] Email address `email_address`
-        * [X] Date of Birth `date_of_birth`
-        * [X] Address `postal_address`
-        * [X] Gender `gender`
-        * [X] Nationality `nationality`
+        * [X] User ID `ID`
+        * [X] Selfie `Selfie`
+        * [X] Selfie URL `Selfie.URL`
+        * [X] Given Names `GivenNames`
+        * [X] Family Name `FamilyName`
+        * [X] Mobile Number `MobileNumber`
+        * [X] Email Address `EmailAddress`
+        * [X] Date of Birth `DateOfBirth`
+        * [X] Postal Address `Address`
+        * [X] Gender `Gender`
+        * [X] Nationality `Nationality`
 
 ## Support
 
