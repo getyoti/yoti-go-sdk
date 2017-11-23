@@ -8,37 +8,34 @@ Welcome to the Yoti Go SDK. This repo contains the tools and step by step instru
 1) [An Architectural view](#an-architectural-view) -
 High level overview of integration
 
-2) [References](#references) -
-Guides before you start
-
-3) [Installing the SDK](#installing-the-sdk) -
+2) [Installing the SDK](#installing-the-sdk) -
 How to install our SDK
 
-4) [SDK Project import](#sdk-project-import) -
+3) [SDK Project import](#sdk-project-import) -
 How to install the SDK to your project
 
-5) [Configuration](#configuration) -
+4) [Configuration](#configuration) -
 How to initialise your configuration
 
-6) [Profile Retrieval](#profile-retrieval) -
+5) [Profile Retrieval](#profile-retrieval) -
 How to retrieve a Yoti profile using the token
 
-7) [Handling users](#handling-users) -
+6) [Handling users](#handling-users) -
 How to manage users
 
-8) [Running the tests](running-the-tests) -
+7) [Running the tests](#running-the-tests) -
 Attributes defined
 
-9) [Running the example](running-the-example) -
+8) [Running the example](#running-the-example) -
 Attributes defined
 
-10) [API Coverage](#api-coverage) -
+9) [API Coverage](#api-coverage) -
 Attributes defined
 
-11) [Support](#support) -
+10) [Support](#support) -
 Please feel free to reach out
 
-12) [References](#references)
+11) [References](#references)
 
 ## An Architectural View
 
