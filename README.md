@@ -8,32 +8,34 @@ Welcome to the Yoti Go SDK. This repo contains the tools and step by step instru
 1) [An Architectural view](#an-architectural-view) -
 High level overview of integration
 
-2) [References](#references)-
-Guides before you start
-
-3) [Installing the SDK](#installing-the-sdk)-
+2) [Installing the SDK](#installing-the-sdk) -
 How to install our SDK
 
-4) [SDK Project import](#sdk-project-import)-
+3) [SDK Project import](#sdk-project-import) -
 How to install the SDK to your project
 
-5) [Profile Retrieval](#profile-retrieval)-
+4) [Configuration](#configuration) -
+How to initialise your configuration
+
+5) [Profile Retrieval](#profile-retrieval) -
 How to retrieve a Yoti profile using the token
 
-6) [Handling users](#handling-users)-
+6) [Handling users](#handling-users) -
 How to manage users
 
-7) [API Coverage](#api-coverage)-
+7) [Running the tests](#running-the-tests) -
 Attributes defined
 
-8) [Running the tests](running-the-tests)-
+8) [Running the example](#running-the-example) -
 Attributes defined
 
-9) [Running the example](running-the-example)-
+9) [API Coverage](#api-coverage) -
 Attributes defined
 
-10) [Support](#support)-
+10) [Support](#support) -
 Please feel free to reach out
+
+11) [References](#references)
 
 ## An Architectural View
 
@@ -48,22 +50,6 @@ Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
 
 Yoti also allows you to enable user details verification from your mobile app by means of the Android (TBA) and iOS (TBA) SDKs. In that scenario, your Yoti-enabled mobile app is playing both the role of the browser and the Yoti app. Your back-end doesn't need to handle these cases in a significantly different way. You might just decide to handle the `User-Agent` header in order to provide different responses for desktop and mobile clients.
 
-## References
-
-* [AES-256 symmetric encryption][]
-* [RSA pkcs asymmetric encryption][]
-* [Protocol buffers][]
-* [Base64 data][]
-
-[AES-256 symmetric encryption]:   https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
-[RSA pkcs asymmetric encryption]: https://en.wikipedia.org/wiki/RSA_(cryptosystem)
-[Protocol buffers]:               https://en.wikipedia.org/wiki/Protocol_Buffers
-[Base64 data]:                    https://en.wikipedia.org/wiki/Base64
-
-
-## Requirements
-
-TBC
 
 ## Installing the SDK
 
@@ -189,3 +175,15 @@ Please provide the following the get you up and working as quick as possible:
 - OS Version
 - Version of Go being used
 - Screenshot
+
+## References
+
+* [AES-256 symmetric encryption][]
+* [RSA pkcs asymmetric encryption][]
+* [Protocol buffers][]
+* [Base64 data][]
+
+[AES-256 symmetric encryption]:   https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+[RSA pkcs asymmetric encryption]: https://en.wikipedia.org/wiki/RSA_(cryptosystem)
+[Protocol buffers]:               https://en.wikipedia.org/wiki/Protocol_Buffers
+[Base64 data]:                    https://en.wikipedia.org/wiki/Base64
