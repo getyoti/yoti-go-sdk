@@ -17,6 +17,9 @@ type YotiUserProfile struct {
 	// Family represents the user's family name. This will be an empty string if not provided by Yoti
 	FamilyName string
 
+	// Full name represents the user's full name. This will be an empty string if not provided by Yoti
+	FullName string
+
 	// MobileNumber represents the user's mobile phone number. This will be an empty string if not provided by Yoti
 	MobileNumber string
 
