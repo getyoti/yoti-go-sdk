@@ -124,6 +124,8 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 					result.GivenNames = string(attribute.Value)
 				case "family_name":
 					result.FamilyName = string(attribute.Value)
+				case "full_name":
+					result.FullName = string(attribute.Value)
 				case "phone_number":
 					result.MobileNumber = string(attribute.Value)
 				case "email_address":

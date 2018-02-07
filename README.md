@@ -162,9 +162,11 @@ The examples also uses the `YOTI_APPLICATION_ID` environment variable to display
     * [X] Selfie URL `Selfie.URL`
     * [X] Given Names `GivenNames`
     * [X] Family Name `FamilyName`
+    * [X] Full Name `FullName`
     * [X] Mobile Number `MobileNumber`
     * [X] Email Address `EmailAddress`
-    * [X] Date of Birth `DateOfBirth`
+    * [X] Age / Date of Birth `DateOfBirth`
+    * [X] Age / Verify Condition `age_[over|under]:[1-999]`
     * [X] Postal Address `Address`
     * [X] Gender `Gender`
     * [X] Nationality `Nationality`
