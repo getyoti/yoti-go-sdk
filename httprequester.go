@@ -1,6 +1,8 @@
 package yoti
 
 import (
+	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,13 +13,22 @@ type httpResponse struct {
 	Content    string
 }
 
-type httpRequester func(uri string, headers map[string]string) (result *httpResponse, err error)
+type httpRequester func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error)
 
-func doRequest(uri string, headers map[string]string) (result *httpResponse, err error) {
+func doRequest(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 	client := &http.Client{}
 
+	supportedHTTPMethods := map[string]bool{"GET": true, "POST": true, "PUT": true, "PATCH": true}
+
+	if !supportedHTTPMethods[httpRequestMethod] {
+		err = fmt.Errorf("HTTP Method: '%s' is unsupported", httpRequestMethod)
+	}
+
 	var req *http.Request
-	if req, err = http.NewRequest("GET", uri, nil); err != nil {
+	if req, err = http.NewRequest(
+		httpRequestMethod,
+		uri,
+		bytes.NewBuffer(contentBytes)); err != nil {
 		return
 	}
 
@@ -34,15 +45,15 @@ func doRequest(uri string, headers map[string]string) (result *httpResponse, err
 
 	defer resp.Body.Close()
 
-	var body []byte
-	if body, err = ioutil.ReadAll(resp.Body); err != nil {
+	var responseBody []byte
+	if responseBody, err = ioutil.ReadAll(resp.Body); err != nil {
 		return
 	}
 
 	result = &httpResponse{
 		Success:    resp.StatusCode < 300,
 		StatusCode: resp.StatusCode,
-		Content:    string(body)}
+		Content:    string(responseBody)}
 
 	return
 }

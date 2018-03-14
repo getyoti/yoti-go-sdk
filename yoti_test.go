@@ -15,7 +15,7 @@ func TestYotiClientEngine_KeyLoad_Failure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
-	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 		result = &httpResponse{
 			Success:    false,
 			StatusCode: 500}
@@ -39,7 +39,7 @@ func TestYotiClientEngine_HttpFailure_ReturnsFailure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 		result = &httpResponse{
 			Success:    false,
 			StatusCode: 500}
@@ -62,7 +62,7 @@ func TestYotiClientEngine_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 		result = &httpResponse{
 			Success:    false,
 			StatusCode: 404}
@@ -85,7 +85,7 @@ func TestYotiClientEngine_SharingFailure_ReturnsFailure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 		result = &httpResponse{
 			Success:    true,
 			StatusCode: 200,
@@ -111,7 +111,7 @@ func TestYotiClientEngine_TokenDecodedSuccessfully(t *testing.T) {
 
 	expectedAbsoluteUrl := "/api/v1/profile/" + token
 
-	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 		var theUrl *url.URL
 		var theError error
 		if theUrl, theError = url.Parse(uri); err != nil {
@@ -148,7 +148,7 @@ func TestYotiClientEngine_ParseProfile_Success(t *testing.T) {
 	other_party_profile_content := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	remember_me_id := "remember_me_id0123456789"
 
-	var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 
 		result = &httpResponse{
 			Success:    true,
@@ -208,7 +208,7 @@ func TestYotiClientEngine_ParseWithoutProfile_Success(t *testing.T) {
 
 	for _, otherPartyProfileContent := range otherPartyProfileContents {
 
-		var requester = func(uri string, headers map[string]string) (result *httpResponse, err error) {
+		var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 			result = &httpResponse{
 				Success:    true,
 				StatusCode: 200,
@@ -231,4 +231,45 @@ func TestYotiClientEngine_ParseWithoutProfile_Success(t *testing.T) {
 	}
 
 	return
+}
+
+func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
+	uri := "www.url.com"
+	headers := CreateHeaders()
+	httpRequestMethod := "UNSUPPORTEDMETHOD"
+	contentBytes := make([]byte, 0)
+
+	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)
+
+	if err == nil {
+		t.Error("Expected failure")
+		return
+	}
+
+	return
+}
+
+func TestYotiClient_SupportedHttpMethod(t *testing.T) {
+	uri := "www.url.com"
+	headers := CreateHeaders()
+	httpRequestMethod := "GET"
+	contentBytes := make([]byte, 0)
+
+	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
+func CreateHeaders() (result map[string]string) {
+
+	headers := make(map[string]string)
+
+	headers["Header1"] = "test"
+
+	return headers
 }

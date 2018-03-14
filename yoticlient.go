@@ -38,6 +38,8 @@ func (client *YotiClient) GetUserProfile(token string) (YotiUserProfile, error) 
 
 func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, keyBytes []byte) (result YotiUserProfile, err error) {
 	var key *rsa.PrivateKey
+	var httpMethod = "GET"
+
 	if key, err = loadRsaKey(keyBytes); err != nil {
 		err = fmt.Errorf("Invalid Key: %s", err.Error())
 		return
@@ -66,7 +68,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 	}
 
 	var authDigest string
-	if authDigest, err = getAuthDigest(endpoint, key); err != nil {
+	if authDigest, err = getAuthDigest(endpoint, key, httpMethod, nil); err != nil {
 		return
 	}
 
@@ -77,7 +79,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 	headers["X-Yoti-SDK"] = sdkIdentifier
 
 	var response *httpResponse
-	if response, err = requester(apiUrl+endpoint, headers); err != nil {
+	if response, err = requester(apiUrl+endpoint, headers, httpMethod, nil); err != nil {
 		return
 	}
 
@@ -212,13 +214,18 @@ func getAuthKey(key *rsa.PrivateKey) (string, error) {
 	return getDerEncodedPublicKey(key)
 }
 
-func getEndpoint(token, nonce, timestamp, sdkId string) string {
-	return fmt.Sprintf("/profile/%s?nonce=%s&timestamp=%s&appId=%s", token, nonce, timestamp, sdkId)
+func getEndpoint(token, nonce, timestamp, sdkID string) string {
+	return fmt.Sprintf("/profile/%s?nonce=%s&timestamp=%s&appId=%s", token, nonce, timestamp, sdkID)
 }
 
-func getAuthDigest(endpoint string, key *rsa.PrivateKey) (result string, err error) {
-	digestBytes := utfToBytes("GET&" + endpoint)
+func getAuthDigest(endpoint string, key *rsa.PrivateKey, httpMethod string, content []byte) (result string, err error) {
+	digest := httpMethod + "&" + endpoint
 
+	if content != nil {
+		digest += "&" + bytesToBase64(content)
+	}
+
+	digestBytes := utfToBytes(digest)
 	var signedDigestBytes []byte
 
 	if signedDigestBytes, err = signDigest(digestBytes, key); err != nil {
