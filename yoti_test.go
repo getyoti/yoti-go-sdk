@@ -265,6 +265,77 @@ func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 	return
 }
 
+func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
+	sdkID := "fake-sdk-id"
+	key, _ := ioutil.ReadFile("test-key.pem")
+
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+
+		result = &httpResponse{
+			Success:    true,
+			StatusCode: 200,
+			Content:    `{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`}
+		return
+	}
+
+	result, err := performAmlCheck(
+		CreateStandardAmlProfile(),
+		requester,
+		encryptedToken,
+		sdkID,
+		key)
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if !result.OnFraudList {
+		t.Errorf("'OnFraudList' value is expected to be true")
+		return
+	}
+	if !result.OnPEPList {
+		t.Errorf("'OnPEPList' value is expected to be true")
+		return
+	}
+	if !result.OnWatchList {
+		t.Errorf("'OnWatchList' value is expected to be true")
+		return
+	}
+	return
+}
+
+func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
+	sdkID := "fake-sdk-id"
+	key, _ := ioutil.ReadFile("test-key.pem")
+
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+
+		result = &httpResponse{
+			Success:    false,
+			StatusCode: 503,
+			Content:    `SERVICE UNAVAILABLE - Unable to reach the Integrity Service`}
+		return
+	}
+
+	_, err := performAmlCheck(
+		CreateStandardAmlProfile(),
+		requester,
+		encryptedToken,
+		sdkID,
+		key)
+
+	if err == nil {
+		t.Error("Expected failure")
+		return
+	} else if strings.HasPrefix(err.Error(), "AML Check was unsuccessful") == false {
+		t.Errorf("expected outcome type starting with '%s' instead received '%s'", "AML Check was unsuccessful", err.Error())
+		return
+	}
+
+	return
+}
+
 func CreateHeaders() (result map[string]string) {
 
 	headers := make(map[string]string)
@@ -272,4 +343,16 @@ func CreateHeaders() (result map[string]string) {
 	headers["Header1"] = "test"
 
 	return headers
+}
+
+func CreateStandardAmlProfile() (result AmlProfile) {
+	var amlAddress = AmlAddress{
+		Country: "GBR"}
+
+	var amlProfile = AmlProfile{
+		GivenNames: "Edward Richard George",
+		FamilyName: "Heath",
+		Address:    amlAddress}
+
+	return amlProfile
 }

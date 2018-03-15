@@ -59,24 +59,12 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkId string, k
 	timestamp := getTimestamp()
 
 	// create http endpoint
-	endpoint := getEndpoint(token, nonce, timestamp, sdkId)
+	endpoint := getProfileEndpoint(token, nonce, timestamp, sdkId)
 
-	// create request headers
-	var authKey string
-	if authKey, err = getAuthKey(key); err != nil {
+	var headers map[string]string
+	if headers, err = createHeaders(key, httpMethod, endpoint, nil); err != nil {
 		return
 	}
-
-	var authDigest string
-	if authDigest, err = getAuthDigest(endpoint, key, httpMethod, nil); err != nil {
-		return
-	}
-
-	headers := make(map[string]string)
-
-	headers["X-Yoti-Auth-Key"] = authKey
-	headers["X-Yoti-Auth-Digest"] = authDigest
-	headers["X-Yoti-SDK"] = sdkIdentifier
 
 	var response *httpResponse
 	if response, err = requester(apiUrl+endpoint, headers, httpMethod, nil); err != nil {
@@ -210,12 +198,64 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 	return attributeList, nil
 }
 
+// PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
+// Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
+func (client *YotiClient) PerformAmlCheck(amlProfile AmlProfile) (AmlResult, error) {
+	return performAmlCheck(amlProfile, doRequest, client.SdkID, client.Key)
+}
+
+func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID string, keyBytes []byte) (result AmlResult, err error) {
+	var key *rsa.PrivateKey
+	var httpMethod = "POST"
+
+	if key, err = loadRsaKey(keyBytes); err != nil {
+		err = fmt.Errorf("Invalid Key: %s", err.Error())
+		return
+	}
+
+	var nonce string
+	if nonce, err = generateNonce(); err != nil {
+		return
+	}
+
+	timestamp := getTimestamp()
+	endpoint := getAMLEndpoint(nonce, timestamp, sdkID)
+
+	var content []byte
+	if content, err = json.Marshal(amlProfile); err != nil {
+		return
+	}
+
+	var headers map[string]string
+	if headers, err = createHeaders(key, httpMethod, endpoint, content); err != nil {
+		return
+	}
+
+	var response *httpResponse
+	if response, err = requester(apiUrl+endpoint, headers, httpMethod, content); err != nil {
+		return
+	}
+
+	if response.Success {
+		err = json.Unmarshal([]byte(response.Content), &result)
+	} else {
+		err = fmt.Errorf(
+			"AML Check was unsuccessful, status code: '%d', content:'%s'", response.StatusCode, response.Content)
+	}
+
+	return
+}
+
 func getAuthKey(key *rsa.PrivateKey) (string, error) {
 	return getDerEncodedPublicKey(key)
 }
 
-func getEndpoint(token, nonce, timestamp, sdkID string) string {
+func getProfileEndpoint(token, nonce, timestamp, sdkID string) string {
 	return fmt.Sprintf("/profile/%s?nonce=%s&timestamp=%s&appId=%s", token, nonce, timestamp, sdkID)
+}
+
+func getAMLEndpoint(nonce, timestamp, sdkID string) string {
+	return fmt.Sprintf("/aml-check?appId=%s&timestamp=%s&nonce=%s", sdkID, timestamp, nonce)
 }
 
 func getAuthDigest(endpoint string, key *rsa.PrivateKey, httpMethod string, content []byte) (result string, err error) {
@@ -238,6 +278,26 @@ func getAuthDigest(endpoint string, key *rsa.PrivateKey, httpMethod string, cont
 
 func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix()*1000, 10)
+}
+
+func createHeaders(key *rsa.PrivateKey, httpMethod string, endpoint string, content []byte) (headers map[string]string, err error) {
+	var authKey string
+	if authKey, err = getAuthKey(key); err != nil {
+		return
+	}
+
+	var authDigest string
+	if authDigest, err = getAuthDigest(endpoint, key, httpMethod, content); err != nil {
+		return
+	}
+
+	headers = make(map[string]string)
+
+	headers["X-Yoti-Auth-Key"] = authKey
+	headers["X-Yoti-Auth-Digest"] = authDigest
+	headers["X-Yoti-SDK"] = sdkIdentifier
+
+	return headers, err
 }
 
 func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result string, err error) {
