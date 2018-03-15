@@ -11,7 +11,7 @@ import (
 const token = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
 const encryptedToken = "b6H19bUCJhwh6WqQX_sEHWX9RP-A_ANr1fkApwA4Dp2nJQFAjrF9e6YCXhNBpAIhfHnN0iXubyXxXZMNwNMSQ5VOxkqiytrvPykfKQWHC6ypSbfy0ex8ihndaAXG5FUF-qcU8QaFPMy6iF3x0cxnY0Ij0kZj0Ng2t6oiNafb7AhT-VGXxbFbtZu1QF744PpWMuH0LVyBsAa5N5GJw2AyBrnOh67fWMFDKTJRziP5qCW2k4h5vJfiYr_EOiWKCB1d_zINmUm94ZffGXxcDAkq-KxhN1ZuNhGlJ2fKcFh7KxV0BqlUWPsIEiwS0r9CJ2o1VLbEs2U_hCEXaqseEV7L29EnNIinEPVbL4WR7vkF6zQCbK_cehlk2Qwda-VIATqupRO5grKZN78R9lBitvgilDaoE7JB_VFcPoljGQ48kX0wje1mviX4oJHhuO8GdFITS5LTbojGVQWT7LUNgAUe0W0j-FLHYYck3v84OhWTqads5_jmnnLkp9bdJSRuJF0e8pNdePnn2lgF-GIcyW_0kyGVqeXZrIoxnObLpF-YeUteRBKTkSGFcy7a_V_DLiJMPmH8UXDLOyv8TVt3ppzqpyUrLN2JVMbL5wZ4oriL2INEQKvw_boDJjZDGeRlu5m1y7vGDNBRDo64-uQM9fRUULPw-YkABNwC0DeShswzT00="
 
-func TestYotiClientEngine_KeyLoad_Failure(t *testing.T) {
+func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
@@ -35,7 +35,7 @@ func TestYotiClientEngine_KeyLoad_Failure(t *testing.T) {
 	return
 }
 
-func TestYotiClientEngine_HttpFailure_ReturnsFailure(t *testing.T) {
+func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
@@ -58,7 +58,7 @@ func TestYotiClientEngine_HttpFailure_ReturnsFailure(t *testing.T) {
 	return
 }
 
-func TestYotiClientEngine_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
+func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
@@ -81,7 +81,7 @@ func TestYotiClientEngine_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	return
 }
 
-func TestYotiClientEngine_SharingFailure_ReturnsFailure(t *testing.T) {
+func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
@@ -105,7 +105,7 @@ func TestYotiClientEngine_SharingFailure_ReturnsFailure(t *testing.T) {
 	return
 }
 
-func TestYotiClientEngine_TokenDecodedSuccessfully(t *testing.T) {
+func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
@@ -140,7 +140,7 @@ func TestYotiClientEngine_TokenDecodedSuccessfully(t *testing.T) {
 	return
 }
 
-func TestYotiClientEngine_ParseProfile_Success(t *testing.T) {
+func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
@@ -194,7 +194,7 @@ func TestYotiClientEngine_ParseProfile_Success(t *testing.T) {
 	return
 }
 
-func TestYotiClientEngine_ParseWithoutProfile_Success(t *testing.T) {
+func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	sdkId := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
