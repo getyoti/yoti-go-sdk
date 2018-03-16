@@ -78,7 +78,7 @@ if err != nil {
     // handle key load error
 }
 
-client := yoti.YotiClient{
+client := yoti.Client{
     SdkID: sdkID,
     Key: key}
 ```

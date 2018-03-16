@@ -19,7 +19,7 @@ import (
 
 var sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 var key, _ = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
-var client = yoti.YotiClient{
+var client = yoti.Client{
 	SdkID: sdkID,
 	Key:   key}
 
