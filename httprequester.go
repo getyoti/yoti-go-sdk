@@ -22,6 +22,7 @@ func doRequest(uri string, headers map[string]string, httpRequestMethod string, 
 
 	if !supportedHTTPMethods[httpRequestMethod] {
 		err = fmt.Errorf("HTTP Method: '%s' is unsupported", httpRequestMethod)
+		return
 	}
 
 	var req *http.Request

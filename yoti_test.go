@@ -234,7 +234,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 }
 
 func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
-	uri := "www.url.com"
+	uri := "http://www.url.com"
 	headers := CreateHeaders()
 	httpRequestMethod := "UNSUPPORTEDMETHOD"
 	contentBytes := make([]byte, 0)
@@ -250,7 +250,7 @@ func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 }
 
 func TestYotiClient_SupportedHttpMethod(t *testing.T) {
-	uri := "www.url.com"
+	uri := "http://www.url.com"
 	headers := CreateHeaders()
 	httpRequestMethod := "GET"
 	contentBytes := make([]byte, 0)
@@ -281,7 +281,6 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	result, err := performAmlCheck(
 		CreateStandardAmlProfile(),
 		requester,
-		encryptedToken,
 		sdkID,
 		key)
 
@@ -321,7 +320,6 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	_, err := performAmlCheck(
 		CreateStandardAmlProfile(),
 		requester,
-		encryptedToken,
 		sdkID,
 		key)
 
