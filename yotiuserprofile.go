@@ -2,7 +2,8 @@ package yoti
 
 import "time"
 
-type YotiUserProfile struct {
+//UserProfile represents the details retrieved for a particular
+type UserProfile struct {
 	// ID is a unique identifier Yoti assigns to your user, but only for your app
 	// if the same user logs into your app again, you get the same id
 	// if she/he logs into another application, Yoti will assign a different id for that app
@@ -40,5 +41,5 @@ type YotiUserProfile struct {
 
 	// OtherAttributes is a map of any other information about the user provided by Yoti. The key will be the name
 	// of the piece of information, and the keys associated value will be the piece of information itself.
-	OtherAttributes map[string]YotiAttributeValue
+	OtherAttributes map[string]AttributeValue
 }

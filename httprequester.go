@@ -1,8 +1,22 @@
 package yoti
 
 import (
+	"bytes"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+)
+
+const (
+	//HTTPMethodPost Post HTTP method
+	HTTPMethodPost = "POST"
+	//HTTPMethodGet Get HTTP method
+	HTTPMethodGet = "GET"
+	//HTTPMethodPut Put HTTP method
+	HTTPMethodPut = "PUT"
+	//HTTPMethodPatch Patch HTTP method
+	HTTPMethodPatch = "PATCH"
 )
 
 type httpResponse struct {
@@ -11,13 +25,23 @@ type httpResponse struct {
 	Content    string
 }
 
-type httpRequester func(uri string, headers map[string]string) (result *httpResponse, err error)
+type httpRequester func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error)
 
-func doRequest(uri string, headers map[string]string) (result *httpResponse, err error) {
+func doRequest(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 	client := &http.Client{}
 
+	supportedHTTPMethods := map[string]bool{"GET": true, "POST": true, "PUT": true, "PATCH": true}
+
+	if !supportedHTTPMethods[httpRequestMethod] {
+		err = fmt.Errorf("HTTP Method: '%s' is unsupported", httpRequestMethod)
+		return
+	}
+
 	var req *http.Request
-	if req, err = http.NewRequest("GET", uri, nil); err != nil {
+	if req, err = http.NewRequest(
+		httpRequestMethod,
+		uri,
+		bytes.NewBuffer(contentBytes)); err != nil {
 		return
 	}
 
@@ -34,15 +58,15 @@ func doRequest(uri string, headers map[string]string) (result *httpResponse, err
 
 	defer resp.Body.Close()
 
-	var body []byte
-	if body, err = ioutil.ReadAll(resp.Body); err != nil {
-		return
+	var responseBody []byte
+	if responseBody, err = ioutil.ReadAll(resp.Body); err != nil {
+		log.Printf("Unable to read the HTTP response, error: %s", err)
 	}
 
 	result = &httpResponse{
 		Success:    resp.StatusCode < 300,
 		StatusCode: resp.StatusCode,
-		Content:    string(body)}
+		Content:    string(responseBody)}
 
 	return
 }

@@ -7,34 +7,37 @@ Welcome to the Yoti Go SDK. This repo contains the tools and step by step instru
 1) [An Architectural view](#an-architectural-view) -
 High level overview of integration
 
-2) [Installing the SDK](#installing-the-sdk) -
+1) [Installing the SDK](#installing-the-sdk) -
 How to install our SDK
 
-3) [SDK Project import](#sdk-project-import) -
+1) [SDK Project import](#sdk-project-import) -
 How to install the SDK to your project
 
-4) [Configuration](#configuration) -
+1) [Configuration](#configuration) -
 How to initialise your configuration
 
-5) [Profile Retrieval](#profile-retrieval) -
+1) [Profile Retrieval](#profile-retrieval) -
 How to retrieve a Yoti profile using the token
 
-6) [Handling users](#handling-users) -
+1) [Handling users](#handling-users) -
 How to manage users
 
-7) [Running the tests](#running-the-tests) -
+1) [AML Integration](#aml-integration) -
+How to integrate with Yoti's AML (Anti Money Laundering) service
+
+1) [Running the tests](#running-the-tests) -
 Attributes defined
 
-8) [Running the example](#running-the-example) -
+1) [Running the example](#running-the-example) -
 Attributes defined
 
-9) [API Coverage](#api-coverage) -
+1) [API Coverage](#api-coverage) -
 Attributes defined
 
-10) [Support](#support) -
+1) [Support](#support) -
 Please feel free to reach out
 
-11) [References](#references)
+1) [References](#references)
 
 ## An Architectural View
 
@@ -75,7 +78,7 @@ if err != nil {
     // handle key load error
 }
 
-client := yoti.YotiClient{
+client := yoti.Client{
     SdkID: sdkID,
     Key: key}
 ```
@@ -142,14 +145,77 @@ You can run the unit tests for this project by executing the following command i
 go test
 ```
 
-## Running the Example
+## AML Integration
 
-The example can be found in the [example folder](example).
+Yoti provides an AML (Anti Money Laundering) check service to allow a deeper KYC process to prevent fraud. This is a chargeable service, so please contact [sdksupport@yoti.com](mailto:sdksupport@yoti.com) for more information.
+
+Yoti will provide a boolean result on the following checks:
+
+* PEP list - Verify against Politically Exposed Persons list
+* Fraud list - Verify against  US Social Security Administration Fraud (SSN Fraud) list
+* Watch list - Verify against watch lists from the Office of Foreign Assets Control
+
+To use this functionality you must ensure your application is assigned to your Organisation in the Yoti Dashboard - please see here for further information.
+
+For the AML check you will need to provide the following:
+
+* Data provided by Yoti (please ensure you have selected the Given name(s) and Family name attributes from the Data tab in the Yoti Dashboard)
+  * Given name(s)
+  * Family name
+* Data that must be collected from the user:
+  * Country of residence (must be an ISO 3166 3-letter code)
+  * Social Security Number (US citizens only)
+  * Postcode/Zip code (US citizens only)
+
+### Consent
+
+Performing an AML check on a person *requires* their consent.
+**You must ensure you have user consent *before* using this service.**
+
+### Code Example
+
+Given a YotiClient initialised with your SDK ID and KeyPair (see [Client Initialisation](#client-initialisation)) performing an AML check is a straightforward case of providing basic profile data.
+
+```go
+givenNames := "Edward Richard George"
+familyName := "Heath"
+
+amlAddress := yoti.AmlAddress{
+    Country: "GBR"}
+
+amlProfile := yoti.AmlProfile{
+    GivenNames: givenNames,
+    FamilyName: familyName,
+    Address:    amlAddress}
+
+result, err := client.PerformAmlCheck(amlProfile)
+
+log.Printf(
+    "AML Result for %s %s:",
+    givenNames,
+    familyName)
+log.Printf(
+    "On PEP list: %s",
+    strconv.FormatBool(result.OnPEPList))
+log.Printf(
+    "On Fraud list: %s",
+    strconv.FormatBool(result.OnFraudList))
+log.Printf(
+    "On Watch list: %s",
+    strconv.FormatBool(result.OnWatchList))
+}
+```
+
+Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. As with the other example project, you'll need to rename `.env.example` to `.env` and fill in the variables within the file.
+
+## Running the Profile Example
+
+The profile retrieval example can be found in the [examples folder](examples).
 For them to work you will need a working callback URL that your browser can redirect to. The callback URL will be: `http://your-local-url:8080/profile`.
 
 The examples also uses the `YOTI_APPLICATION_ID` environment variable to display the Yoti Connect button. This value can be found in your Yoti account, on the *Keys* settings page.
 
-* rename the [.env.example](example/.env.example) file to `.env` and fill in the required configuration values
+* rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values
 * install the dependencies with `go get`
 * start the server `go run main.go`
 

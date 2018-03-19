@@ -17,11 +17,11 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-var sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
-var key, _ = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
-var client = yoti.YotiClient{
-	SdkID: sdkID,
-	Key:   key}
+var (
+	sdkID  string
+	key    []byte
+	client *yoti.Client
+)
 
 func home(w http.ResponseWriter, req *http.Request) {
 	templateVars := map[string]interface{}{
@@ -32,6 +32,18 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 
 func profile(w http.ResponseWriter, r *http.Request) {
+	var sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
+	var key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+
+	if err != nil {
+		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
+		return
+	}
+
+	var client = yoti.Client{
+		SdkID: sdkID,
+		Key:   key}
+
 	yotiToken := r.URL.Query().Get("token")
 	profile, err := client.GetUserProfile(yotiToken)
 
