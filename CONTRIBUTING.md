@@ -10,9 +10,9 @@ The command `go get "github.com/getyoti/yoti-go-sdk"` downloads the Yoti package
 
 ## VS Code
 
-For developing in VS code, use the following `launch.json` file (placed inside a `.vscode` folder) to easily run the examples from VS Code:
+For developing in VS Code, use the following `launch.json` file (placed inside a `.vscode` folder) to easily run the examples from VS Code:
 
-```json
+```javascript
 {
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.

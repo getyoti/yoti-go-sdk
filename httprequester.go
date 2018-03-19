@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -59,7 +60,7 @@ func doRequest(uri string, headers map[string]string, httpRequestMethod string, 
 
 	var responseBody []byte
 	if responseBody, err = ioutil.ReadAll(resp.Body); err != nil {
-		return
+		log.Printf("Unable to read the HTTP response, error: %s", err)
 	}
 
 	result = &httpResponse{

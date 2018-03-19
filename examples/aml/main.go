@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -41,14 +40,12 @@ func main() {
 
 	if err != nil {
 		log.Printf(
-			fmt.Sprintf(
-				"Unable to retrieve AML result. Error: %s", err))
+			"Unable to retrieve AML result. Error: %s", err)
 	} else {
 		log.Printf(
-			fmt.Sprintf(
-				"AML Result for %s %s:",
-				givenNames,
-				familyName))
+			"AML Result for %s %s:",
+			givenNames,
+			familyName)
 		log.Printf(
 			"On PEP list: %s",
 			strconv.FormatBool(result.OnPEPList))

@@ -210,8 +210,7 @@ log.Printf(
 }
 ```
 
-Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. As with the other example project, you'll need to rename `.env.example` to `.env` and fill in the variables within the file. 
-
+Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. As with the other example project, you'll need to rename `.env.example` to `.env` and fill in the variables within the file.
 
 ## Running the Profile Example
 
