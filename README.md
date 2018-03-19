@@ -210,17 +210,17 @@ log.Printf(
 }
 ```
 
-Additionally an [example AML application](/amlexample/main.go) is provided in the examples folder. As with the other example project, you'll need to rename `.env.example` to `env` and fill in the variables within the file. 
+Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. As with the other example project, you'll need to rename `.env.example` to `.env` and fill in the variables within the file. 
 
 
-## Running the Example
+## Running the Profile Example
 
-The example can be found in the [example folder](example).
+The profile retrieval example can be found in the [examples folder](examples).
 For them to work you will need a working callback URL that your browser can redirect to. The callback URL will be: `http://your-local-url:8080/profile`.
 
 The examples also uses the `YOTI_APPLICATION_ID` environment variable to display the Yoti Connect button. This value can be found in your Yoti account, on the *Keys* settings page.
 
-* rename the [.env.example](example/.env.example) file to `.env` and fill in the required configuration values
+* rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values
 * install the dependencies with `go get`
 * start the server `go run main.go`
 
