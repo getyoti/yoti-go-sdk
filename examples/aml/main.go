@@ -13,12 +13,19 @@ import (
 )
 
 var sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
-var key, _ = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+var key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+
 var client = yoti.Client{
 	SdkID: sdkID,
 	Key:   key}
 
 func main() {
+	if err != nil {
+		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
+
+		return
+	}
+
 	givenNames := "Edward Richard George"
 	familyName := "Heath"
 
@@ -43,16 +50,13 @@ func main() {
 				givenNames,
 				familyName))
 		log.Printf(
-			fmt.Sprintf(
-				"On PEP list: %s",
-				strconv.FormatBool(result.OnPEPList)))
+			"On PEP list: %s",
+			strconv.FormatBool(result.OnPEPList))
 		log.Printf(
-			fmt.Sprintf(
-				"On Fraud list: %s",
-				strconv.FormatBool(result.OnFraudList)))
+			"On Fraud list: %s",
+			strconv.FormatBool(result.OnFraudList))
 		log.Printf(
-			fmt.Sprintf(
-				"On Watch list: %s",
-				strconv.FormatBool(result.OnWatchList)))
+			"On Watch list: %s",
+			strconv.FormatBool(result.OnWatchList))
 	}
 }

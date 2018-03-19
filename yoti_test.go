@@ -251,7 +251,7 @@ func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 	uri := "http://www.url.com"
 	headers := CreateHeaders()
-	httpRequestMethod := "GET"
+	httpRequestMethod := HTTPMethodGet
 	contentBytes := make([]byte, 0)
 
 	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)

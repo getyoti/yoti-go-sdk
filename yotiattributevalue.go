@@ -1,10 +1,11 @@
 package yoti
 
-type attributeType int
+//AttributeType format of the attribute
+type AttributeType int
 
 const (
 	//AttributeTypeDate date format
-	AttributeTypeDate attributeType = 1 + iota
+	AttributeTypeDate AttributeType = 1 + iota
 	//AttributeTypeText text format
 	AttributeTypeText
 	//AttributeTypeJpeg JPEG format
@@ -24,7 +25,7 @@ type AttributeValue struct {
 	// 	yoti.AttributeTypeText
 	// 	yoti.AttributeTypeJpeg
 	// 	yoti.AttributeTypePng
-	Type  attributeType
+	Type  AttributeType
 	Value []byte
 }
 

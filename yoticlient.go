@@ -15,6 +15,11 @@ import (
 
 const apiURL = "https://api.yoti.com/api/v1"
 const sdkIdentifier = "Go"
+const (
+	authKeyHeader       = "X-Yoti-Auth-Key"
+	authDigestHeader    = "X-Yoti-Auth-Digest"
+	sdkIdentifierHeader = "X-Yoti-SDK"
+)
 
 // Client represents a client that can communicate with yoti and return information about Yoti users.
 type Client struct {
@@ -37,7 +42,7 @@ func (client *Client) GetUserProfile(token string) (UserProfile, error) {
 
 func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, keyBytes []byte) (result UserProfile, err error) {
 	var key *rsa.PrivateKey
-	var httpMethod = "GET"
+	var httpMethod = HTTPMethodGet
 
 	if key, err = loadRsaKey(keyBytes); err != nil {
 		err = fmt.Errorf("Invalid Key: %s", err.Error())
@@ -205,7 +210,7 @@ func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (AmlResult, error) 
 
 func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID string, keyBytes []byte) (result AmlResult, err error) {
 	var key *rsa.PrivateKey
-	var httpMethod = "POST"
+	var httpMethod = HTTPMethodPost
 
 	if key, err = loadRsaKey(keyBytes); err != nil {
 		err = fmt.Errorf("Invalid Key: %s", err.Error())
@@ -292,9 +297,9 @@ func createHeaders(key *rsa.PrivateKey, httpMethod string, endpoint string, cont
 
 	headers = make(map[string]string)
 
-	headers["X-Yoti-Auth-Key"] = authKey
-	headers["X-Yoti-Auth-Digest"] = authDigest
-	headers["X-Yoti-SDK"] = sdkIdentifier
+	headers[authKeyHeader] = authKey
+	headers[authDigestHeader] = authDigest
+	headers[sdkIdentifierHeader] = sdkIdentifier
 
 	return headers, err
 }

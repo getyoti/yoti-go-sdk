@@ -2,18 +2,19 @@ package yoti
 
 import "encoding/base64"
 
-type imageType int
+//ImageType Image format
+type ImageType int
 
 const (
 	//ImageTypeJpeg JPEG format
-	ImageTypeJpeg imageType = 1 + iota
+	ImageTypeJpeg ImageType = 1 + iota
 	//ImageTypePng PNG format
 	ImageTypePng
 )
 
 //Image format of the image and the image data
 type Image struct {
-	Type imageType
+	Type ImageType
 	Data []byte
 }
 
