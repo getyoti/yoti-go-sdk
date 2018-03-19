@@ -191,22 +191,18 @@ amlProfile := yoti.AmlProfile{
 result, err := client.PerformAmlCheck(amlProfile)
 
 log.Printf(
-    fmt.Sprintf(
-        "AML Result for %s %s:",
-        givenNames,
-        familyName))
+    "AML Result for %s %s:",
+    givenNames,
+    familyName)
 log.Printf(
-    fmt.Sprintf(
-        "On PEP list: %s",
-        strconv.FormatBool(result.OnPEPList)))
+    "On PEP list: %s",
+    strconv.FormatBool(result.OnPEPList))
 log.Printf(
-    fmt.Sprintf(
-        "On Fraud list: %s",
-        strconv.FormatBool(result.OnFraudList)))
+    "On Fraud list: %s",
+    strconv.FormatBool(result.OnFraudList))
 log.Printf(
-    fmt.Sprintf(
-        "On Watch list: %s",
-        strconv.FormatBool(result.OnWatchList)))
+    "On Watch list: %s",
+    strconv.FormatBool(result.OnWatchList))
 }
 ```
 
