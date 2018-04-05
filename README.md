@@ -232,7 +232,7 @@ The examples also uses the `YOTI_APPLICATION_ID` environment variable to display
     * [X] Mobile Number `MobileNumber`
     * [X] Email Address `EmailAddress`
     * [X] Age / Date of Birth `DateOfBirth`
-    * [X] Age / Verify Condition `age_[over|under]:[1-999]`
+    * [X] Age / Is Age Verified `IsAgeVerified`
     * [X] Postal Address `Address`
     * [X] Gender `Gender`
     * [X] Nationality `Nationality`

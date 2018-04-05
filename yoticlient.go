@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/attrpubapi_v1"
@@ -20,6 +21,8 @@ const (
 	authDigestHeader    = "X-Yoti-Auth-Digest"
 	sdkIdentifierHeader = "X-Yoti-SDK"
 )
+const attributeAgeOver = "age_over:"
+const attributeAgeUnder = "age_under:"
 
 // Client represents a client that can communicate with yoti and return information about Yoti users.
 type Client struct {
@@ -136,6 +139,12 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				case "nationality":
 					result.Nationality = string(attribute.Value)
 				default:
+					if strings.HasPrefix(attribute.Name, attributeAgeOver) ||
+						strings.HasPrefix(attribute.Name, attributeAgeUnder) {
+
+						result.IsAgeVerified, err = parseIsAgeVerifiedValue(attribute.Value)
+					}
+
 					switch attribute.ContentType {
 					case attrpubapi_v1.ContentType_DATE:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
@@ -165,6 +174,21 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 			err = ErrFailure
 		}
 	}
+
+	return
+}
+
+func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
+	stringValue := string(byteValue)
+
+	var parseResult bool
+	parseResult, err = strconv.ParseBool(stringValue)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result = &parseResult
 
 	return
 }

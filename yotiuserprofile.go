@@ -30,6 +30,9 @@ type UserProfile struct {
 	// DateOfBirth represents the user's date of birth. This will be nil if not provided by Yoti
 	DateOfBirth *time.Time
 
+	// IsAgeVerified represents the result of the age verification check on the user. The bool will be true if they passed, false if they failed, and nil if there was no check
+	IsAgeVerified *bool
+
 	// Address represents the user's address. This will be an empty string if not provided by Yoti
 	Address string
 
