@@ -352,9 +352,9 @@ func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
-	trueValue := []byte("false")
+	falseValue := []byte("false")
 
-	isAgeVerified, err := parseIsAgeVerifiedValue(trueValue)
+	isAgeVerified, err := parseIsAgeVerifiedValue(falseValue)
 
 	if err != nil {
 		t.Errorf("Unexpected error: '%s'", err.Error())
