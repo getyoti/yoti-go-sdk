@@ -333,6 +333,53 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	return
 }
 
+func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
+	trueValue := []byte("true")
+
+	isAgeVerified, err := parseIsAgeVerifiedValue(trueValue)
+
+	if err != nil {
+		t.Errorf("Unexpected error: '%s'", err.Error())
+		return
+	}
+
+	if *isAgeVerified != true {
+		t.Error("Expected true")
+		return
+	}
+
+	return
+}
+
+func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
+	falseValue := []byte("false")
+
+	isAgeVerified, err := parseIsAgeVerifiedValue(falseValue)
+
+	if err != nil {
+		t.Errorf("Unexpected error: '%s'", err.Error())
+		return
+	}
+
+	if *isAgeVerified != false {
+		t.Error("Expected false")
+		return
+	}
+
+	return
+}
+func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T) {
+	invalidValue := []byte("invalidBool")
+
+	_, err := parseIsAgeVerifiedValue(invalidValue)
+
+	if err == nil {
+		t.Error("Expected error")
+		return
+	}
+
+	return
+}
 func CreateHeaders() (result map[string]string) {
 
 	headers := make(map[string]string)

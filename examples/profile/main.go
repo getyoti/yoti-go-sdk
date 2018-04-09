@@ -52,9 +52,6 @@ func profile(w http.ResponseWriter, r *http.Request) {
 			"profile":         profile,
 			"selfieBase64URL": template.URL(profile.Selfie.URL())}
 
-		// This key uses the  format: age_[over|under]:[1-999] and is dynamically
-		// generated based on the dashboard attribute Age / Verify Condition
-		templateVars["AgeVerified"] = string(profile.OtherAttributes["age_over:18"].Value)
 		decodedImage := decodeImage(profile.Selfie.Data)
 		file := createImage()
 		saveImage(decodedImage, file)

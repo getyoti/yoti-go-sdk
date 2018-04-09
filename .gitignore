@@ -1,2 +1,5 @@
 examples/profile/images/YotiSelfie.jpeg
 .vscode
+
+# Test binary, build with `go test -c`
+*.test
