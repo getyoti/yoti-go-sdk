@@ -11,6 +11,7 @@
         <td>ID:</td>
         <td>{{.profile.ID}}</td>
       </tr>
+      {{if .selfieBase64URL}}
       <tr>
         <td>Selfie as base64 URI:</td>
         <td><img src="{{.selfieBase64URL}}" /></td>
@@ -19,47 +20,67 @@
         <td>Selfie from saved Image</td>
         <td><img src="/images/YotiSelfie.jpeg" /></td>
       </tr>
+      {{end}}
+      {{if .profile.GivenNames}}
       <tr>
         <td>First Name:</td>
         <td>{{.profile.GivenNames}}</td>
       </tr>
+      {{end}}
+      {{if .profile.FamilyName}}
       <tr>
         <td>Family Name:</td>
         <td>{{.profile.FamilyName}}</td>
       </tr>
+      {{end}}
+      {{if .profile.FullName}}
       <tr>
         <td>Full Name:</td>
         <td>{{.profile.FullName}}</td>
       </tr>
+      {{end}}
+      {{if .profile.MobileNumber}}
       <tr>
         <td>Mobile Number:</td>
         <td>{{.profile.MobileNumber}}</td>
       </tr>
+      {{end}}
+      {{if .profile.EmailAddress}}
       <tr>
         <td>Email Address:</td>
         <td>{{.profile.EmailAddress}}</td>
       </tr>
+      {{end}}
+      {{if .profile.DateOfBirth}}
       <tr>
         <td>Date of Birth:</td>
         <td>{{.profile.DateOfBirth}}</td>
       </tr>
+      {{end}}
+      {{if .profile.IsAgeVerified}}
       <tr>
         <td>Is Age Verified:</td>
         <td>{{.profile.IsAgeVerified}}</td>
       </tr>
+      {{end}}
+      {{if .profile.Address}}
       <tr>
         <td>Address:</td>
         <td>{{.profile.Address}}</td>
       </tr>
+      {{end}}
+      {{if .profile.Gender}}
       <tr>
         <td>Gender:</td>
         <td>{{.profile.Gender}}</td>
       </tr>
+      {{end}}
+      {{if .profile.Nationality}}
       <tr>
         <td>Nationality:</td>
         <td>{{.profile.Nationality}}</td>
       </tr>
-
+      {{end}}
     </table>
   </body>
 </html>
