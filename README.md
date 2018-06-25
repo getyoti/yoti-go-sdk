@@ -17,7 +17,7 @@ How to install the SDK to your project
 How to initialise your configuration
 
 1) [Profile Retrieval](#profile-retrieval) -
-How to retrieve a Yoti profile using the token
+How to retrieve a Yoti profile using the one time use token
 
 1) [Handling users](#handling-users) -
 How to manage users
@@ -95,17 +95,17 @@ Keeping your settings and access keys outside your repository is highly recommen
 
 ## Profile Retrieval
 
-When your application receives a token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the user profile by adding the following to your endpoint handler:
+When your application receives a one time use token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the user profile by adding the following to your endpoint handler:
 
 ```Go
-profile, err := client.GetUserProfile(yotiToken)
+profile, err := client.GetUserProfile(yotiOneTimeUseToken)
 ```
 
 Before you inspect the user profile, you might want to check whether the user validation was successful.
 This is done as follows:
 
 ```Go
-profile, err := client.GetUserProfile(yotiToken)
+profile, err := client.GetUserProfile(yotiOneTimeUseToken)
 if err != nil {
   // handle unhappy path
 }
@@ -119,7 +119,7 @@ You can use this ID to verify whether (for your application) the retrieved profi
 Here is an example of how this works:
 
 ```Go
-profile, err := client.GetUserProfile(yotiToken)
+profile, err := client.GetUserProfile(yotiOneTimeUseToken)
 if err == nil {
     user := YourUserSearchFunction(profile.ID)
     if user != nil {
