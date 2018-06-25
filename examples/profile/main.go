@@ -44,8 +44,8 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		SdkID: sdkID,
 		Key:   key}
 
-	yotiToken := r.URL.Query().Get("token")
-	profile, err := client.GetUserProfile(yotiToken)
+	yotiOneTimeUseToken := r.URL.Query().Get("token")
+	profile, err := client.GetUserProfile(yotiOneTimeUseToken)
 
 	if err == nil {
 		templateVars := map[string]interface{}{
