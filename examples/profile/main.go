@@ -64,9 +64,12 @@ func profile(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	rootdir, _ := os.Getwd()
 	http.HandleFunc("/", home)
 	http.HandleFunc("/profile", profile)
+	rootdir, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Error: Couldn't get current working directory")
+	}
 	http.Handle("/images/", http.StripPrefix("/images",
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
 	log.Printf("About to listen and serve on 8080. Go to 127.0.0.1:8080/")
