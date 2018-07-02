@@ -3,3 +3,7 @@ examples/profile/images/YotiSelfie.jpeg
 
 # Test binary, build with `go test -c`
 *.test
+
+# Example project generated self-signed certificate
+examples/profile/yotiSelfSignedCert.pem
+examples/profile/yotiSelfSignedKey.pem

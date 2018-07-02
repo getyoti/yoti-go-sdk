@@ -64,16 +64,27 @@ func profile(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Check if the cert files are available.
+	err := certificatePresenceCheck("yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem")
+	// If they are not available, generate new ones.
+	if err != nil {
+		err = generateSelfSignedCertificate("yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem", "127.0.0.1:8080")
+		if err != nil {
+			log.Fatal("Error: Couldn't create https certs.")
+		}
+	}
+
 	http.HandleFunc("/", home)
 	http.HandleFunc("/profile", profile)
+
 	rootdir, err := os.Getwd()
 	if err != nil {
 		log.Fatal("Error: Couldn't get current working directory")
 	}
 	http.Handle("/images/", http.StripPrefix("/images",
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
-	log.Printf("About to listen and serve on 8080. Go to 127.0.0.1:8080/")
-	http.ListenAndServe(":8080", nil)
+	log.Printf("About to listen and serve on 8080. Go to https://localhost:8080/")
+	http.ListenAndServeTLS(":8080", "yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem", nil)
 }
 
 func decodeImage(imageBytes []byte) (decodedImage image.Image) {
