@@ -23,6 +23,9 @@ enum ContentType {
 
 	// PNG indicates a standard .png image.
 	PNG = 4;
+
+	// JSON means the value is encoded using JSON.
+	JSON = 5;
 }
 
 
