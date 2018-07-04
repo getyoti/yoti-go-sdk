@@ -219,7 +219,7 @@ The profile retrieval example can be found in the [examples folder](examples).
 * install the dependencies with `go get`
 * start the server `go run main.go`
 
-Visiting `http://localhost:8080/` should show a Yoti Connect button
+Visiting `https://localhost:8080/` should show a Yoti Connect button
 
 ## API Coverage
 
