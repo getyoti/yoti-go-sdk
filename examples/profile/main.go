@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/getyoti/yoti-go-sdk"
 
@@ -83,8 +84,26 @@ func main() {
 	}
 	http.Handle("/images/", http.StripPrefix("/images",
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
+
+	log.Printf("About to configure HTTPS redirection")
+	configureHTTPSRedirection()
+
 	log.Printf("About to listen and serve on 8080. Go to https://localhost:8080/")
 	http.ListenAndServeTLS(":8080", "yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem", nil)
+}
+
+func configureHTTPSRedirection() {
+	go func() {
+		err := http.ListenAndServe(":80", http.HandlerFunc(httpHandler))
+		if err != nil {
+			panic("Error configuring HTTP redirection: " + err.Error())
+		}
+	}()
+}
+
+func httpHandler(w http.ResponseWriter, req *http.Request) {
+	hostParts := strings.Split(req.Host, ":")
+	http.Redirect(w, req, "https://"+hostParts[0]+req.RequestURI, http.StatusMovedPermanently)
 }
 
 func decodeImage(imageBytes []byte) (decodedImage image.Image) {
