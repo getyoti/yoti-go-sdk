@@ -36,6 +36,9 @@ type UserProfile struct {
 	// Address represents the user's address. This will be an empty string if not provided by Yoti
 	Address string
 
+	// StructuredPostalAddress represents the user's address in a JSON format. This will be empty if not provided by Yoti
+	StructuredPostalAddress interface{}
+
 	// Gender represents the user's gender. This will be an empty string if not provided by Yoti
 	Gender string
 

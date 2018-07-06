@@ -134,6 +134,12 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					}
 				case "postal_address":
 					result.Address = string(attribute.Value)
+				case "structured_postal_address":
+					var unmarshalledStructuredPostalAddress interface{}
+					err := json.Unmarshal(attribute.Value, &unmarshalledStructuredPostalAddress)
+					if err == nil {
+						result.StructuredPostalAddress = unmarshalledStructuredPostalAddress
+					}
 				case "gender":
 					result.Gender = string(attribute.Value)
 				case "nationality":

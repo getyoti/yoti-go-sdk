@@ -81,6 +81,15 @@
         <td>{{.profile.Nationality}}</td>
       </tr>
       {{end}}
+      {{if .profile.StructuredPostalAddress}}
+        <td>Structured Postal Address:</td>
+        {{range $key, $value := .profile.StructuredPostalAddress}} 
+        <tr>  
+          <td>{{$key}}</td>
+          <td>{{$value}}</td>
+        </tr>         
+        {{end}}
+      {{end}}
     </table>
   </body>
 </html>
