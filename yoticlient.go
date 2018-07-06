@@ -156,11 +156,15 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 							Value: attribute.Value}
 					case attrpubapi_v1.ContentType_JPEG:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
-							Type:  AttributeTypeJpeg,
+							Type:  AttributeTypeJPEG,
 							Value: attribute.Value}
 					case attrpubapi_v1.ContentType_PNG:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
-							Type:  AttributeTypePng,
+							Type:  AttributeTypePNG,
+							Value: attribute.Value}
+					case attrpubapi_v1.ContentType_JSON:
+						result.OtherAttributes[attribute.Name] = AttributeValue{
+							Type:  AttributeTypeJSON,
 							Value: attribute.Value}
 					}
 				}
