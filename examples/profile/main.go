@@ -60,10 +60,15 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		file := createImage()
 		saveImage(decodedImage, file)
 
-		t, _ := template.ParseFiles("profile.html")
+		t, err := template.ParseFiles("profile.html")
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 		t.Execute(w, templateVars)
 	} else {
-		fmt.Printf("%+v\n", err)
+		fmt.Println(err)
 	}
 }
 
