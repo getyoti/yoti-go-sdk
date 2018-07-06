@@ -8,10 +8,12 @@ const (
 	AttributeTypeDate AttributeType = 1 + iota
 	//AttributeTypeText text format
 	AttributeTypeText
-	//AttributeTypeJpeg JPEG format
-	AttributeTypeJpeg
-	//AttributeTypePng PNG fornmat
-	AttributeTypePng
+	//AttributeTypeJPEG JPEG format
+	AttributeTypeJPEG
+	//AttributeTypePNG PNG fornmat
+	AttributeTypePNG
+	//AttributeTypeJSON JSON fornmat
+	AttributeTypeJSON
 )
 
 // AttributeValue represents a small piece of information about a Yoti user such as a photo of the user or the
@@ -23,8 +25,9 @@ type AttributeValue struct {
 	// 'AttributeType'. These include:
 	// 	yoti.AttributeTypeDate
 	// 	yoti.AttributeTypeText
-	// 	yoti.AttributeTypeJpeg
-	// 	yoti.AttributeTypePng
+	// 	yoti.AttributeTypeJPEG
+	// 	yoti.AttributeTypePNG
+	// 	yoti.AttributeTypeJSON
 	Type  AttributeType
 	Value []byte
 }
@@ -39,11 +42,14 @@ func (val AttributeValue) GetContentType() (result string) {
 	case AttributeTypeText:
 		result = "text/plain; charset=UTF-8"
 
-	case AttributeTypeJpeg:
+	case AttributeTypeJPEG:
 		result = "image/jpeg"
 
-	case AttributeTypePng:
+	case AttributeTypePNG:
 		result = "image/png"
+
+	case AttributeTypeJSON:
+		result = "application/json; charset=UTF-8"
 	}
 	return
 }
