@@ -380,6 +380,61 @@ func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T
 
 	return
 }
+func TestYotiClient_ParseStructuredPostalAddressValue_InvalidValueThrowsError(t *testing.T) {
+	invalidValue := []byte("invalidBool")
+
+	_, err := parseIsAgeVerifiedValue(invalidValue)
+
+	if err == nil {
+		t.Error("Expected error")
+		return
+	}
+
+	return
+}
+
+func TestYotiClient_ParseStructuredPostalAddressValue_ValidValue(t *testing.T) {
+	const countryIso = "IND"
+	const nestedValue = "NestedValue"
+
+	var structuredAddress = []byte(`[
+	{
+		"address_format": 2,
+		"building": "House No.86-A",		
+		"state": "Punjab",
+		"postal_code": "141012",
+		"country_iso": "` + countryIso + `",
+		"country": "India",
+		"formatted_address": "House No.86-A\nRajgura Nagar\nLudhina\nPunjab\n141012\nIndia",
+		"1":
+		{
+			"1-1":
+			{
+			  "1-1-1": "` + nestedValue + `"
+			}
+		}
+	}
+	]`)
+
+	parsedStructuredAddress, err := parseStructuredPostalAddressValue(structuredAddress)
+
+	if err != nil {
+		t.Errorf("Unexpected error: '%s'", err.Error())
+		return
+	}
+
+	parsedStructuredAddressInterfaceArray := parsedStructuredAddress.([]interface{})
+
+	parsedStructuredAddressMap := parsedStructuredAddressInterfaceArray[0].(map[string]interface{})
+	actualCountryIso := parsedStructuredAddressMap["country_iso"]
+
+	if countryIso != actualCountryIso {
+		t.Errorf("expected country_iso: '%s', actual value was: '%s'", countryIso, actualCountryIso)
+		return
+	}
+
+	return
+}
 func CreateHeaders() (result map[string]string) {
 
 	headers := make(map[string]string)
