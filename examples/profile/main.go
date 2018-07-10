@@ -57,11 +57,11 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		saveImage(decodedImage, file)
 
 		t, err := template.ParseFiles("profile.html")
-
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+
 		t.Execute(w, templateVars)
 	} else {
 		fmt.Println(err)

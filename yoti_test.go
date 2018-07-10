@@ -26,13 +26,9 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	} else if strings.HasPrefix(err.Error(), "Invalid Key") == false {
-		t.Errorf("expected outcome type starting with '%s' instead received '%s'", "Invalid Key", err.Error())
-		return
+		t.Errorf("expected outcome type starting with %q instead received %q", "Invalid Key", err.Error())
 	}
-
-	return
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
@@ -49,13 +45,9 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	} else if err != ErrFailure {
-		t.Errorf("expected outcome type '%s' instead received '%s'", ErrFailure.Error(), err.Error())
-		return
+		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), err.Error())
 	}
-
-	return
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
@@ -72,13 +64,9 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	} else if err != ErrProfileNotFound {
-		t.Errorf("expected outcome type '%s' instead received '%s'", ErrProfileNotFound.Error(), err.Error())
-		return
+		t.Errorf("expected outcome type %q instead received %q", ErrProfileNotFound.Error(), err.Error())
 	}
-
-	return
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
@@ -96,13 +84,9 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	} else if err != ErrSharingFailure {
-		t.Errorf("expected outcome type '%s' instead received '%s'", ErrSharingFailure.Error(), err.Error())
-		return
+		t.Errorf("expected outcome type %q instead received %q", ErrSharingFailure.Error(), err.Error())
 	}
-
-	return
 }
 
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
@@ -131,13 +115,9 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	} else if err != ErrFailure {
-		t.Errorf("expected outcome type '%s' instead received '%s'", ErrFailure.Error(), err.Error())
-		return
+		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), err.Error())
 	}
-
-	return
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
@@ -160,37 +140,28 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
-		return
 	}
 
 	if profile.ID != rememberMeID {
-		t.Errorf("expected id '%s' instead received '%s'", rememberMeID, profile.ID)
-		return
+		t.Errorf("expected id %q instead received %q", rememberMeID, profile.ID)
 	}
 
 	if profile.Selfie == nil {
 		t.Error(`expected user selfie but it was not present in the returned profile`)
-		return
 	} else if string(profile.Selfie.Data) != "selfie0123456789" {
-		t.Errorf("expected user selfie '%s' instead received '%s'", "selfie0123456789", string(profile.Selfie.Data))
-		return
+		t.Errorf("expected user selfie %q instead received %q", "selfie0123456789", string(profile.Selfie.Data))
 	}
 
 	if profile.MobileNumber != "phone_number0123456789" {
-		t.Errorf("expected user mobile '%s' instead received '%s'", "phone_number0123456789", profile.MobileNumber)
-		return
+		t.Errorf("expected user mobile %q instead received %q", "phone_number0123456789", profile.MobileNumber)
 	}
 
 	dob := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 	if profile.DateOfBirth == nil {
 		t.Error(`expected date of birth but it was not present in the returned profile`)
-		return
 	} else if profile.DateOfBirth.Equal(dob) == false {
-		t.Errorf("expected date of birth '%s' instead received '%s'", profile.DateOfBirth.Format(time.UnixDate), dob.Format(time.UnixDate))
-		return
+		t.Errorf("expected date of birth %q instead received %q", profile.DateOfBirth.Format(time.UnixDate), dob.Format(time.UnixDate))
 	}
-
-	return
 }
 
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
@@ -219,17 +190,12 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 
 		if err != nil {
 			t.Error(err)
-			return
 		}
 
 		if profile.ID != rememberMeID {
-			t.Errorf("expected id '%s' instead received '%s'", rememberMeID, profile.ID)
-			return
+			t.Errorf("expected id %q instead received %q", rememberMeID, profile.ID)
 		}
-
 	}
-
-	return
 }
 
 func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
@@ -242,10 +208,7 @@ func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	}
-
-	return
 }
 
 func TestYotiClient_SupportedHttpMethod(t *testing.T) {
@@ -258,10 +221,7 @@ func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
-		return
 	}
-
-	return
 }
 
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
@@ -285,22 +245,17 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
-		return
 	}
 
 	if !result.OnFraudList {
 		t.Errorf("'OnFraudList' value is expected to be true")
-		return
 	}
 	if !result.OnPEPList {
 		t.Errorf("'OnPEPList' value is expected to be true")
-		return
 	}
 	if !result.OnWatchList {
 		t.Errorf("'OnWatchList' value is expected to be true")
-		return
 	}
-	return
 }
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
@@ -324,13 +279,9 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 
 	if err == nil {
 		t.Error("Expected failure")
-		return
 	} else if strings.HasPrefix(err.Error(), "AML Check was unsuccessful") == false {
-		t.Errorf("expected outcome type starting with '%s' instead received '%s'", "AML Check was unsuccessful", err.Error())
-		return
+		t.Errorf("expected outcome type starting with %q instead received %q", "AML Check was unsuccessful", err.Error())
 	}
-
-	return
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
@@ -339,16 +290,12 @@ func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
 	isAgeVerified, err := parseIsAgeVerifiedValue(trueValue)
 
 	if err != nil {
-		t.Errorf("Unexpected error: '%s'", err.Error())
-		return
+		t.Errorf("Failed to parse IsAgeVerified value, error was %q", err.Error())
 	}
 
 	if *isAgeVerified != true {
 		t.Error("Expected true")
-		return
 	}
-
-	return
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
@@ -357,16 +304,12 @@ func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
 	isAgeVerified, err := parseIsAgeVerifiedValue(falseValue)
 
 	if err != nil {
-		t.Errorf("Unexpected error: '%s'", err.Error())
-		return
+		t.Errorf("Failed to parse IsAgeVerified value, error was %q", err.Error())
 	}
 
 	if *isAgeVerified != false {
 		t.Error("Expected false")
-		return
 	}
-
-	return
 }
 func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T) {
 	invalidValue := []byte("invalidBool")
@@ -375,25 +318,19 @@ func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T
 
 	if err == nil {
 		t.Error("Expected error")
-		return
 	}
-
-	return
 }
-func TestYotiClient_ParseStructuredPostalAddressValue_InvalidValueThrowsError(t *testing.T) {
-	invalidValue := []byte("invalidBool")
+func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
+	invalidStructuredAddress := []byte("invalidBool")
 
-	_, err := parseIsAgeVerifiedValue(invalidValue)
+	_, err := unmarshallJSON(invalidStructuredAddress)
 
 	if err == nil {
 		t.Error("Expected error")
-		return
 	}
-
-	return
 }
 
-func TestYotiClient_ParseStructuredPostalAddressValue_ValidValue(t *testing.T) {
+func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 	const countryIso = "IND"
 	const nestedValue = "NestedValue"
 
@@ -416,11 +353,10 @@ func TestYotiClient_ParseStructuredPostalAddressValue_ValidValue(t *testing.T) {
 	}
 	]`)
 
-	parsedStructuredAddress, err := parseStructuredPostalAddressValue(structuredAddress)
+	parsedStructuredAddress, err := unmarshallJSON(structuredAddress)
 
 	if err != nil {
-		t.Errorf("Unexpected error: '%s'", err.Error())
-		return
+		t.Errorf("Failed to parse structured address, error was %q", err.Error())
 	}
 
 	parsedStructuredAddressInterfaceArray := parsedStructuredAddress.([]interface{})
@@ -429,11 +365,8 @@ func TestYotiClient_ParseStructuredPostalAddressValue_ValidValue(t *testing.T) {
 	actualCountryIso := parsedStructuredAddressMap["country_iso"]
 
 	if countryIso != actualCountryIso {
-		t.Errorf("expected country_iso: '%s', actual value was: '%s'", countryIso, actualCountryIso)
-		return
+		t.Errorf("expected country_iso: %q, actual value was: %q", countryIso, actualCountryIso)
 	}
-
-	return
 }
 func CreateHeaders() (result map[string]string) {
 

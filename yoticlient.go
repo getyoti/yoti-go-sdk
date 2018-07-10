@@ -135,7 +135,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				case "postal_address":
 					result.Address = string(attribute.Value)
 				case "structured_postal_address":
-					result.StructuredPostalAddress, err = parseStructuredPostalAddressValue(attribute.Value)
+					result.StructuredPostalAddress, err = unmarshallJSON(attribute.Value)
 				case "gender":
 					result.Gender = string(attribute.Value)
 				case "nationality":
@@ -199,15 +199,15 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 	return
 }
 
-func parseStructuredPostalAddressValue(byteValue []byte) (result interface{}, err error) {
-	var unmarshalledStructuredPostalAddress interface{}
-	err = json.Unmarshal(byteValue, &unmarshalledStructuredPostalAddress)
+func unmarshallJSON(byteValue []byte) (result interface{}, err error) {
+	var unmarshalledJSON interface{}
+	err = json.Unmarshal(byteValue, &unmarshalledJSON)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return unmarshalledStructuredPostalAddress, err
+	return unmarshalledJSON, err
 }
 
 func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *attrpubapi_v1.AttributeList, err error) {

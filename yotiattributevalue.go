@@ -1,5 +1,7 @@
 package yoti
 
+import "log"
+
 //AttributeType format of the attribute
 type AttributeType int
 
@@ -50,6 +52,9 @@ func (val AttributeValue) GetContentType() (result string) {
 
 	case AttributeTypeJSON:
 		result = "application/json; charset=UTF-8"
+
+	default:
+		log.Printf("Unable to find a matching MIME type for value type %q", val.Type)
 	}
 	return
 }
