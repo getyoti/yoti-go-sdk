@@ -19,9 +19,12 @@ import (
 )
 
 var (
-	sdkID  string
-	key    []byte
-	client *yoti.Client
+	sdkID              string
+	key                []byte
+	client             *yoti.Client
+	selfSignedCertName = "yotiSelfSignedCert.pem"
+	selfSignedKeyName  = "yotiSelfSignedKey.pem"
+	portNumber         = "8080"
 )
 
 func home(w http.ResponseWriter, req *http.Request) {
@@ -66,10 +69,10 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// Check if the cert files are available.
-	err := certificatePresenceCheck("yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem")
+	certificatePresent := certificatePresenceCheck(selfSignedCertName, selfSignedKeyName)
 	// If they are not available, generate new ones.
-	if err != nil {
-		err = generateSelfSignedCertificate("yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem", "127.0.0.1:8080")
+	if certificatePresent == false {
+		err := generateSelfSignedCertificate(selfSignedCertName, selfSignedKeyName, "127.0.0.1:"+portNumber)
 		if err != nil {
 			log.Fatal("Error: Couldn't create https certs.")
 		}
@@ -86,24 +89,29 @@ func main() {
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
 
 	log.Printf("About to configure HTTPS redirection")
-	configureHTTPSRedirection()
+	go configureHTTPSRedirection()
 
-	log.Printf("About to listen and serve on 8080. Go to https://localhost:8080/")
-	http.ListenAndServeTLS(":8080", "yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem", nil)
+	log.Printf("About to listen and serve on %[1]s. Go to https://localhost:%[1]s/", portNumber)
+	http.ListenAndServeTLS(":"+portNumber, selfSignedCertName, selfSignedKeyName, nil)
 }
 
 func configureHTTPSRedirection() {
-	go func() {
-		err := http.ListenAndServe(":80", http.HandlerFunc(httpHandler))
-		if err != nil {
-			panic("Error configuring HTTP redirection: " + err.Error())
-		}
-	}()
+	err := http.ListenAndServe(":80", http.HandlerFunc(redirectHandler))
+	if err != nil {
+		panic("Error configuring HTTP redirection: " + err.Error())
+	}
 }
 
-func httpHandler(w http.ResponseWriter, req *http.Request) {
+func redirectHandler(w http.ResponseWriter, req *http.Request) {
 	hostParts := strings.Split(req.Host, ":")
-	http.Redirect(w, req, "https://"+hostParts[0]+req.RequestURI, http.StatusMovedPermanently)
+	http.Redirect(
+		w,
+		req,
+		fmt.Sprintf(
+			"https://%s%s",
+			hostParts[0],
+			req.RequestURI),
+		http.StatusMovedPermanently)
 }
 
 func decodeImage(imageBytes []byte) (decodedImage image.Image) {

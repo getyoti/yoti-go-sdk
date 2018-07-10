@@ -50,34 +50,27 @@ func pemBlockForKey(priv interface{}) *pem.Block {
 	}
 }
 
-func certificatePresenceCheck(certPath string, keyPath string) error {
+func certificatePresenceCheck(certPath string, keyPath string) (present bool) {
 	if _, err := os.Stat(certPath); os.IsNotExist(err) {
-		return err
-	} else if _, err := os.Stat(keyPath); os.IsNotExist(err) {
-		return err
+		return false
 	}
-	return nil
+	if _, err := os.Stat(keyPath); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
-func generateSelfSignedCertificate(certPath string, keyPath string, host string) error {
-	var priv interface{}
-	var err error
-
-	priv, err = rsa.GenerateKey(rand.Reader, rsaBits)
+func generateSelfSignedCertificate(certPath, keyPath, host string) error {
+	priv, err := rsa.GenerateKey(rand.Reader, rsaBits)
 	if err != nil {
 		log.Printf("failed to generate private key: %s", err)
 		return err
 	}
 
-	var notBefore time.Time
-	if len(validFrom) == 0 {
-		notBefore = time.Now()
-	} else {
-		notBefore, err = time.Parse("Jan 2 15:04:05 2006", validFrom)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to parse creation date: %s\n", err)
-			return err
-		}
+	notBefore, err := parseNotBefore(validFrom)
+	if err != nil {
+		log.Printf("failed to parse 'Not Before' value of cert using validFrom %q, error was: %s", validFrom, err)
+		return err
 	}
 
 	notAfter := notBefore.Add(validFor)
@@ -122,22 +115,60 @@ func generateSelfSignedCertificate(certPath string, keyPath string, host string)
 		return err
 	}
 
+	err = createPemFile(certPath, derBytes)
+	if err != nil {
+		log.Printf("failed to create pem file at %q: %s", certPath, err)
+		return err
+	}
+	log.Printf("written %s\n", certPath)
+
+	err = createKeyFile(keyPath, priv)
+	if err != nil {
+		log.Printf("failed to create key file at %q: %s", keyPath, err)
+		return err
+	}
+	log.Printf("written %s\n", keyPath)
+
+	return nil
+}
+
+func createPemFile(certPath string, derBytes []byte) error {
+
 	certOut, err := os.Create(certPath)
+	defer certOut.Close()
+
 	if err != nil {
 		log.Printf("failed to open "+certPath+" for writing: %s", err)
 		return err
 	}
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
-	certOut.Close()
-	log.Print("written yotiSelfSignedCert.pem\n")
 
+	return nil
+}
+
+func createKeyFile(keyPath string, privateKey interface{}) error {
 	keyOut, err := os.OpenFile(keyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	defer keyOut.Close()
+
 	if err != nil {
 		log.Print("failed to open "+keyPath+" for writing:", err)
 		return err
 	}
-	pem.Encode(keyOut, pemBlockForKey(priv))
-	keyOut.Close()
-	log.Print("written yotiSelfSignedKey.pem\n")
+	pem.Encode(keyOut, pemBlockForKey(privateKey))
+
 	return nil
+}
+
+func parseNotBefore(validFrom string) (notBefore time.Time, err error) {
+	if len(validFrom) == 0 {
+		notBefore = time.Now()
+	} else {
+		notBefore, err = time.Parse("Jan 2 15:04:05 2006", validFrom)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to parse creation date: %s\n", err)
+			return time.Time{}, err
+		}
+	}
+
+	return notBefore, nil
 }
