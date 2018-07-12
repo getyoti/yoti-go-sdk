@@ -133,14 +133,14 @@ func generateSelfSignedCertificate(certPath, keyPath, host string) error {
 }
 
 func createPemFile(certPath string, derBytes []byte) error {
-
 	certOut, err := os.Create(certPath)
-	defer certOut.Close()
 
 	if err != nil {
 		log.Printf("failed to open "+certPath+" for writing: %s", err)
 		return err
 	}
+
+	defer certOut.Close()
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 
 	return nil
@@ -148,12 +148,13 @@ func createPemFile(certPath string, derBytes []byte) error {
 
 func createKeyFile(keyPath string, privateKey interface{}) error {
 	keyOut, err := os.OpenFile(keyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	defer keyOut.Close()
 
 	if err != nil {
 		log.Print("failed to open "+keyPath+" for writing:", err)
 		return err
 	}
+
+	defer keyOut.Close()
 	pem.Encode(keyOut, pemBlockForKey(privateKey))
 
 	return nil
