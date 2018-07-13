@@ -82,13 +82,19 @@
       </tr>
       {{end}}
       {{if .profile.StructuredPostalAddress}}
+      <tr>
         <td>Structured Postal Address:</td>
-        {{range $key, $value := .profile.StructuredPostalAddress}} 
-        <tr>  
-          <td>{{$key}}</td>
-          <td>{{$value}}</td>
-        </tr>         
-        {{end}}
+        <td>
+          <table> 
+          {{range $key, $value := .profile.StructuredPostalAddress}} 
+            <tr>  
+              <td>{{$key}}</td>
+              <td>{{$value}}</td>
+            </tr>  
+          {{end}}
+          </table>   
+        </td>     
+      </tr>
       {{end}}
     </table>
   </body>
