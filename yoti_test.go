@@ -26,7 +26,7 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 
 	if err == nil {
 		t.Error("Expected failure")
-	} else if strings.HasPrefix(err.Error(), "Invalid Key") == false {
+	} else if !strings.HasPrefix(err.Error(), "Invalid Key") {
 		t.Errorf("expected outcome type starting with %q instead received %q", "Invalid Key", err.Error())
 	}
 }
@@ -159,7 +159,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	dob := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 	if profile.DateOfBirth == nil {
 		t.Error(`expected date of birth but it was not present in the returned profile`)
-	} else if profile.DateOfBirth.Equal(dob) == false {
+	} else if !profile.DateOfBirth.Equal(dob) {
 		t.Errorf("expected date of birth %q instead received %q", profile.DateOfBirth.Format(time.UnixDate), dob.Format(time.UnixDate))
 	}
 }
@@ -279,7 +279,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 
 	if err == nil {
 		t.Error("Expected failure")
-	} else if strings.HasPrefix(err.Error(), "AML Check was unsuccessful") == false {
+	} else if !strings.HasPrefix(err.Error(), "AML Check was unsuccessful") {
 		t.Errorf("expected outcome type starting with %q instead received %q", "AML Check was unsuccessful", err.Error())
 	}
 }
@@ -368,6 +368,106 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 		t.Errorf("expected country_iso: %q, actual value was: %q", countryIso, actualCountryIso)
 	}
 }
+
+func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
+	var formattedAddressText = `House No.86-A\nRajgura Nagar\nLudhina\nPunjab\n141012\nIndia`
+
+	var structuredAddressBytes = []byte(`[
+	{		
+		"address_format": 2,
+		"building": "House No.86-A",
+		"formatted_address": "` + formattedAddressText + `"
+	}
+	]`)
+	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
+
+	if err != nil {
+		t.Errorf("Failed to parse structured address, error was %q", err.Error())
+	}
+
+	var result = UserProfile{
+		ID:                      "remember_me_id0123456789",
+		OtherAttributes:         make(map[string]AttributeValue),
+		StructuredPostalAddress: structuredAddress,
+		Address:                 ""}
+
+	address, err := getFormattedAddressIfAddressIsMissing(result)
+
+	if err != nil {
+		t.Errorf("Failed to add formatted address to address, error was %q", err.Error())
+	}
+
+	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
+
+	if address != escapedFormattedAddressText {
+		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", address, formattedAddressText)
+	}
+}
+
+func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T) {
+	var addressText = `PostalAddress`
+
+	var structuredAddressBytes = []byte(`[
+	{		
+		"address_format": 2,
+		"building": "House No.86-A",
+		"formatted_address": "FormattedAddress"
+	}
+	]`)
+	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
+
+	if err != nil {
+		t.Errorf("Failed to parse structured address, error was %q", err.Error())
+	}
+
+	var result = UserProfile{
+		ID:                      "remember_me_id0123456789",
+		OtherAttributes:         make(map[string]AttributeValue),
+		StructuredPostalAddress: structuredAddress,
+		Address:                 addressText}
+
+	newFormattedAddress, err := getFormattedAddressIfAddressIsMissing(result)
+
+	if err != nil {
+		t.Errorf("Failure when getting formatted address, error was %q", err.Error())
+	}
+
+	if newFormattedAddress != "" {
+		t.Errorf("Address should be unchanged when it is present, but it is : %q", newFormattedAddress)
+	}
+}
+
+func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
+	var structuredAddressBytes = []byte(`[
+	{		
+		"address_format": 2,
+		"building": "House No.86-A"
+	}
+	]`)
+
+	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
+
+	if err != nil {
+		t.Errorf("Failed to parse structured address, error was %q", err.Error())
+	}
+
+	var result = UserProfile{
+		ID:                      "remember_me_id0123456789",
+		OtherAttributes:         make(map[string]AttributeValue),
+		StructuredPostalAddress: structuredAddress,
+		Address:                 ""}
+
+	address, err := getFormattedAddressIfAddressIsMissing(result)
+
+	if err != nil {
+		t.Errorf("Failed to add formatted address to address, error was %q", err.Error())
+	}
+
+	if address != "" {
+		t.Errorf("Formatted address missing, but address was still changed to: %q", address)
+	}
+}
+
 func CreateHeaders() (result map[string]string) {
 
 	headers := make(map[string]string)
