@@ -3,6 +3,7 @@ package yoti
 import (
 	"crypto/rsa"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -171,6 +172,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					}
 				}
 			}
+			formattedAddress, err := getFormattedAddressIfAddressIsMissing(result)
+			if formattedAddress != "" && err == nil {
+				result.Address = formattedAddress
+			}
 		}
 	} else {
 		switch response.StatusCode {
@@ -182,6 +187,28 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 	}
 
 	return
+}
+
+func getFormattedAddressIfAddressIsMissing(result UserProfile) (address string, err error) {
+	if result.Address == "" && result.StructuredPostalAddress != nil {
+		var formattedAddress string
+		formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(result.StructuredPostalAddress)
+		if err == nil {
+			return formattedAddress, nil
+		}
+	}
+
+	return "", err
+}
+
+func retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress interface{}) (address string, err error) {
+	parsedStructuredAddressInterfaceArray := structuredPostalAddress.([]interface{})
+	parsedStructuredAddressMap := parsedStructuredAddressInterfaceArray[0].(map[string]interface{})
+	if formattedAddress, ok := parsedStructuredAddressMap["formatted_address"]; ok {
+		return formattedAddress.(string), nil
+	}
+	err = errors.New("Formatted address not present in `structured_postal_address`")
+	return "", err
 }
 
 func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
