@@ -3,8 +3,8 @@ package yoti
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -182,10 +182,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				}
 			}
 			formattedAddress, err := getFormattedAddressIfAddressIsMissing(result)
-			if err == nil {
-				result.Address = formattedAddress
-			} else {
+			if err != nil {
 				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
+			} else if formattedAddress != "" {
+				result.Address = formattedAddress
 			}
 		}
 	} else {
