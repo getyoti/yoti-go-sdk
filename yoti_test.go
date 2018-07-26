@@ -379,8 +379,8 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		"formatted_address": "` + formattedAddressText + `"
 	}
 	]`)
-	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
 
+	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
 	if err != nil {
 		t.Errorf("Failed to parse structured address, error was %q", err.Error())
 	}
@@ -392,7 +392,6 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		Address:                 ""}
 
 	address, err := getFormattedAddressIfAddressIsMissing(result)
-
 	if err != nil {
 		t.Errorf("Failed to add formatted address to address, error was %q", err.Error())
 	}
