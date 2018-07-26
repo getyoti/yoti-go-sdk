@@ -132,6 +132,8 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					parsedTime, err := time.Parse("2006-01-02", string(attribute.Value))
 					if err == nil {
 						result.DateOfBirth = &parsedTime
+					} else {
+						log.Printf("Unable to parse `date_of_birth` value: %q. Error: %q", attribute.Value, err)
 					}
 				case "postal_address":
 					result.Address = string(attribute.Value)
@@ -145,7 +147,14 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					if strings.HasPrefix(attribute.Name, attributeAgeOver) ||
 						strings.HasPrefix(attribute.Name, attributeAgeUnder) {
 
-						result.IsAgeVerified, err = parseIsAgeVerifiedValue(attribute.Value)
+						var isAgeVerified *bool
+						isAgeVerified, err = parseIsAgeVerifiedValue(attribute.Value)
+
+						if err == nil {
+							result.IsAgeVerified = isAgeVerified
+						} else {
+							log.Printf("Unable to parse `IsAgeVerified` value: %q. Error: %q", attribute.Value, err)
+						}
 					}
 
 					switch attribute.ContentType {
@@ -173,8 +182,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				}
 			}
 			formattedAddress, err := getFormattedAddressIfAddressIsMissing(result)
-			if formattedAddress != "" && err == nil {
+			if err == nil {
 				result.Address = formattedAddress
+			} else {
+				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
 			}
 		}
 	} else {
@@ -207,8 +218,7 @@ func retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress
 	if formattedAddress, ok := parsedStructuredAddressMap["formatted_address"]; ok {
 		return formattedAddress.(string), nil
 	}
-	err = errors.New("Formatted address not present in `structured_postal_address`")
-	return "", err
+	return
 }
 
 func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
