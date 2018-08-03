@@ -206,18 +206,23 @@ log.Printf(
 }
 ```
 
-Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. As with the other example project, you'll need to rename `.env.example` to `.env` and fill in the variables within the file.
+Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. 
+* Rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
+* Change directory to the aml example folder: `cd examples/aml`
+* Install the dependencies with `go get`
+* Start the example with `go run main.go`
 
 ## Running the Profile Example
 
 The profile retrieval example can be found in the [examples folder](examples).
 
+* Change directory to the profile example folder: `cd examples/profile`
 * On the [Yoti Dashboard](https://www.yoti.com/dashboard/applications):
   * Set the application domain of your app to `localhost:8080`
   * Set the scenario callback URL to `/profile`
-* rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
-* install the dependencies with `go get`
-* start the server `go run main.go certificatehelper.go`
+* Rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
+* Install the dependencies with `go get`
+* Start the server with `go run main.go certificatehelper.go`
 
 Visiting `https://localhost:8080/` should show a Yoti Connect button
 

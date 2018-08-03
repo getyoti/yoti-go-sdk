@@ -129,7 +129,8 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				case "email_address":
 					result.EmailAddress = string(attribute.Value)
 				case "date_of_birth":
-					parsedTime, err := time.Parse("2006-01-02", string(attribute.Value))
+					var parsedTime time.Time
+					parsedTime, err = time.Parse("2006-01-02", string(attribute.Value))
 					if err == nil {
 						result.DateOfBirth = &parsedTime
 					} else {
@@ -181,7 +182,8 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					}
 				}
 			}
-			formattedAddress, err := getFormattedAddressIfAddressIsMissing(result)
+			var formattedAddress string
+			formattedAddress, err = getFormattedAddressIfAddressIsMissing(result)
 			if err != nil {
 				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
 			} else if formattedAddress != "" {
@@ -319,11 +321,12 @@ func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID strin
 	}
 
 	if response.Success {
-		err = json.Unmarshal([]byte(response.Content), &result)
-	} else {
-		err = fmt.Errorf(
-			"AML Check was unsuccessful, status code: '%d', content:'%s'", response.StatusCode, response.Content)
+		result, err = GetAmlResultFromResponse([]byte(response.Content))
+		return
 	}
+
+	err = fmt.Errorf(
+		"AML Check was unsuccessful, status code: '%d', content:'%s'", response.StatusCode, response.Content)
 
 	return
 }
