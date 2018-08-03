@@ -76,7 +76,7 @@ func main() {
 	// Check if the cert files are available.
 	certificatePresent := certificatePresenceCheck(selfSignedCertName, selfSignedKeyName)
 	// If they are not available, generate new ones.
-	if certificatePresent == false {
+	if !certificatePresent {
 		err := generateSelfSignedCertificate(selfSignedCertName, selfSignedKeyName, "127.0.0.1:"+portNumber)
 		if err != nil {
 			log.Fatal("Error: Couldn't create https certs.")
