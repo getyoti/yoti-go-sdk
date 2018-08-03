@@ -293,7 +293,7 @@ func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
 		t.Errorf("Failed to parse IsAgeVerified value, error was %q", err.Error())
 	}
 
-	if *isAgeVerified != true {
+	if !*isAgeVerified {
 		t.Error("Expected true")
 	}
 }
@@ -307,7 +307,7 @@ func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
 		t.Errorf("Failed to parse IsAgeVerified value, error was %q", err.Error())
 	}
 
-	if *isAgeVerified != false {
+	if *isAgeVerified {
 		t.Error("Expected false")
 	}
 }

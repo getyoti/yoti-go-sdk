@@ -2,6 +2,7 @@ package yoti
 
 import (
 	"encoding/json"
+	"log"
 )
 
 //AmlAddress Address for Anti Money Laundering (AML) purposes
@@ -26,9 +27,15 @@ type AmlResult struct {
 }
 
 //GetAmlResultFromResponse Parses AML result from response
-func GetAmlResultFromResponse(amlResponse []byte) AmlResult {
+func GetAmlResultFromResponse(amlResponse []byte) (AmlResult, error) {
 	var amlResult AmlResult
-	json.Unmarshal(amlResponse, &amlResult)
+	err := json.Unmarshal(amlResponse, &amlResult)
 
-	return amlResult
+	if err != nil {
+		log.Printf(
+			"Unable to get AML result from response. Error: %s", err)
+		return amlResult, err
+	}
+
+	return amlResult, err
 }
