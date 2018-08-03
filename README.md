@@ -217,7 +217,7 @@ The profile retrieval example can be found in the [examples folder](examples).
   * Set the scenario callback URL to `/profile`
 * rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
 * install the dependencies with `go get`
-* start the server `go run main.go`
+* start the server `go run main.go certificatehelper.go`
 
 Visiting `https://localhost:8080/` should show a Yoti Connect button
 
