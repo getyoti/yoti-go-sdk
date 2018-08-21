@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/attrpubapi_v1"
-	"github.com/getyoti/yoti-go-sdk/compubapi_v1"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotocom_v3"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -89,7 +89,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 		if parsedResponse.Receipt.SharingOutcome != "SUCCESS" {
 			err = ErrSharingFailure
 		} else {
-			var attributeList *attrpubapi_v1.AttributeList
+			var attributeList *yotiprotoattr_v3.AttributeList
 			if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
 				return
 			}
@@ -109,11 +109,11 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				case "selfie":
 
 					switch attribute.ContentType {
-					case attrpubapi_v1.ContentType_JPEG:
+					case yotiprotoattr_v3.ContentType_JPEG:
 						result.Selfie = &Image{
 							Type: ImageTypeJpeg,
 							Data: attribute.Value}
-					case attrpubapi_v1.ContentType_PNG:
+					case yotiprotoattr_v3.ContentType_PNG:
 						result.Selfie = &Image{
 							Type: ImageTypePng,
 							Data: attribute.Value}
@@ -159,23 +159,23 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					}
 
 					switch attribute.ContentType {
-					case attrpubapi_v1.ContentType_DATE:
+					case yotiprotoattr_v3.ContentType_DATE:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
 							Type:  AttributeTypeDate,
 							Value: attribute.Value}
-					case attrpubapi_v1.ContentType_STRING:
+					case yotiprotoattr_v3.ContentType_STRING:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
 							Type:  AttributeTypeText,
 							Value: attribute.Value}
-					case attrpubapi_v1.ContentType_JPEG:
+					case yotiprotoattr_v3.ContentType_JPEG:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
 							Type:  AttributeTypeJPEG,
 							Value: attribute.Value}
-					case attrpubapi_v1.ContentType_PNG:
+					case yotiprotoattr_v3.ContentType_PNG:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
 							Type:  AttributeTypePNG,
 							Value: attribute.Value}
-					case attrpubapi_v1.ContentType_JSON:
+					case yotiprotoattr_v3.ContentType_JSON:
 						result.OtherAttributes[attribute.Name] = AttributeValue{
 							Type:  AttributeTypeJSON,
 							Value: attribute.Value}
@@ -249,7 +249,7 @@ func unmarshallJSON(byteValue []byte) (result interface{}, err error) {
 	return unmarshalledJSON, err
 }
 
-func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *attrpubapi_v1.AttributeList, err error) {
+func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr_v3.AttributeList, err error) {
 	var unwrappedKey []byte
 	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
 		return
@@ -264,7 +264,7 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 		return
 	}
 
-	encryptedData := &compubapi_v1.EncryptedData{}
+	encryptedData := &yotiprotocom_v3.EncryptedData{}
 	if err = proto.Unmarshal(otherPartyProfileContentBytes, encryptedData); err != nil {
 		return nil, err
 	}
@@ -274,7 +274,7 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 		return nil, err
 	}
 
-	attributeList := &attrpubapi_v1.AttributeList{}
+	attributeList := &yotiprotoattr_v3.AttributeList{}
 	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
 		return nil, err
 	}
