@@ -98,17 +98,36 @@ Keeping your settings and access keys outside your repository is highly recommen
 When your application receives a one time use token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the user profile by adding the following to your endpoint handler:
 
 ```Go
-profile, err := client.GetUserProfile(yotiOneTimeUseToken)
-```
-
-Before you inspect the user profile, you might want to check whether the user validation was successful.
-This is done as follows:
-
-```Go
-profile, err := client.GetUserProfile(yotiOneTimeUseToken)
+activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
 if err != nil {
   // handle unhappy path
 }
+```
+
+You can then get the following values from the activityDetails struct:
+
+```Go
+rememberMeID := activityDetails.RememberMeID
+base64Selfie := activityDetails.Base64Selfie
+
+userProfile := activityDetails.UserProfile
+
+selfie := userProfile.Selfie().Image()
+givenNames := userProfile.GivenNames().String()
+familyName := userProfile.FamilyName().String()
+fullName := userProfile.FullName().String()
+mobileNumber := userProfile.MobileNumber().String()
+emailAddress := userProfile.EmailAddress().String()
+dateOfBirth := userProfile.DateOfBirth().Time()
+address := userProfile.Address().String()
+gender := userProfile.Gender().String()
+nationality := userProfile.Nationality().String()
+```
+
+If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method:
+
+```Go
+ageVerificationAttribute := userProfile.GetAttribute("age_over:18").(yoti.AttributeString).String()
 ```
 
 ## Handling Users
@@ -119,9 +138,9 @@ You can use this ID to verify whether (for your application) the retrieved profi
 Here is an example of how this works:
 
 ```Go
-profile, err := client.GetUserProfile(yotiOneTimeUseToken)
+activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
 if err == nil {
-    user := YourUserSearchFunction(profile.ID)
+    user := YourUserSearchFunction(activityDetails.RememberMeID)
     if user != nil {
         // handle login
     } else {
@@ -132,7 +151,7 @@ if err == nil {
 }
 ```
 
-Where `yourUserSearchFunction` is a piece of logic in your app that is supposed to find a user, given a userID.
+Where `yourUserSearchFunction` is a piece of logic in your app that is supposed to find a user, given a RememberMeID.
 No matter if the user is a new or an existing one, Yoti will always provide her/his profile, so you don't necessarily need to store it.
 
 The `profile` object provides a set of attributes corresponding to user attributes. Whether the attributes are present or not depends on the settings you have applied to your app on Yoti Dashboard.
@@ -228,18 +247,18 @@ Visiting `https://localhost:8080/` should show a Yoti Connect button
 
 ## API Coverage
 
-* Activity Details
-  * [X] Profile
-    * [X] User ID `ID`
+* [X] Activity Details
+  * [X] Remember Me ID `RememberMeID`
+  * [X] Base64 Selfie `Base64Selfie`
+  * [X] User Profile `UserProfile`
     * [X] Selfie `Selfie`
-    * [X] Selfie URL `Selfie.URL`
+    * [X] Selfie URL `Selfie().Image`
     * [X] Given Names `GivenNames`
     * [X] Family Name `FamilyName`
     * [X] Full Name `FullName`
     * [X] Mobile Number `MobileNumber`
     * [X] Email Address `EmailAddress`
-    * [X] Age / Date of Birth `DateOfBirth`
-    * [X] Age / Is Age Verified `IsAgeVerified`
+    * [X] Date of Birth `DateOfBirth`
     * [X] Postal Address `Address`
     * [X] Gender `Gender`
     * [X] Nationality `Nationality`
