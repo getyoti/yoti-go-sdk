@@ -2,6 +2,10 @@ package yoti
 
 import (
 	"encoding/base64"
+	"log"
+	"strconv"
+
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
 
 func bytesToUtf8(bytes []byte) string {
@@ -32,4 +36,42 @@ func base64ToBytes(base64Str string) ([]byte, error) {
  */
 func urlSafeBase64ToBytes(urlSafeBase64 string) ([]byte, error) {
 	return base64.URLEncoding.DecodeString(urlSafeBase64)
+}
+
+func bytesToBool(bytes []byte) (result bool, err error) {
+	result, err = strconv.ParseBool(string(bytes))
+	if err != nil {
+		log.Printf(
+			"Unable to parse bytes to bool. Error: %s", err)
+		return false, err
+	}
+
+	return result, nil
+}
+
+func convertAttribute(protoAttribute *yotiprotoattr_v3.Attribute) (result Attribute) {
+	processedAnchors := parseAnchors(protoAttribute.Anchors)
+
+	switch protoAttribute.ContentType {
+	case yotiprotoattr_v3.ContentType_STRING:
+		return newAttributeString(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeString)
+
+	case yotiprotoattr_v3.ContentType_DATE:
+		return newAttributeTime(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeTime)
+
+	case yotiprotoattr_v3.ContentType_JPEG:
+		return newAttributeImage(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeJPEG)
+
+	case yotiprotoattr_v3.ContentType_PNG:
+		return newAttributeImage(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypePNG)
+
+	case yotiprotoattr_v3.ContentType_JSON:
+		return newAttributeJSON(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeJSON)
+
+	case yotiprotoattr_v3.ContentType_UNDEFINED:
+		return newAttributeGeneric(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeInterface)
+
+	default:
+		return newAttributeGeneric(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeInterface)
+	}
 }
