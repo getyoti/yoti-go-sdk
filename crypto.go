@@ -99,6 +99,10 @@ func signDigest(digest []byte, key *rsa.PrivateKey) ([]byte, error) {
 	return signedDigest, nil
 }
 
+func getAuthKey(key *rsa.PrivateKey) (string, error) {
+	return getDerEncodedPublicKey(key)
+}
+
 func getDerEncodedPublicKey(key *rsa.PrivateKey) (result string, err error) {
 	var derEncodedBytes []byte
 	if derEncodedBytes, err = x509.MarshalPKIXPublicKey(key.Public()); err != nil {
@@ -119,4 +123,29 @@ func generateNonce() (string, error) {
 	uuid := fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 
 	return uuid, nil
+}
+
+func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result string, err error) {
+	// token was encoded as a urlsafe base64 so it can be transfered in a url
+	var cipherBytes []byte
+	if cipherBytes, err = urlSafeBase64ToBytes(encryptedConnectToken); err != nil {
+		return
+	}
+
+	var decipheredBytes []byte
+	if decipheredBytes, err = decryptRsa(cipherBytes, key); err != nil {
+		return
+	}
+
+	result = bytesToUtf8(decipheredBytes)
+	return
+}
+
+func unwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error) {
+	var cipherBytes []byte
+	if cipherBytes, err = base64ToBytes(wrappedKey); err != nil {
+		return
+	}
+	result, err = decryptRsa(cipherBytes, key)
+	return
 }
