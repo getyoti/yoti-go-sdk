@@ -13,16 +13,15 @@ func newAttributeString(byteValue []byte, anchors []Anchor, name string, attrTyp
 		return
 	}
 
-	as := attribute{
-		anchors: anchors,
-		name:    name,
-	}
-
-	as.Type = attrType
-	as.Value = byteValue
-
 	return AttributeString{
-		attribute: as,
+		attribute: attribute{
+			anchors: anchors,
+			name:    name,
+			AttrValue: AttrValue{
+				Type:  attrType,
+				Value: byteValue,
+			},
+		},
 	}
 }
 

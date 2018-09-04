@@ -16,16 +16,15 @@ func newAttributeTime(byteValue []byte, anchors []Anchor, name string, attrType 
 		return
 	}
 
-	at := attribute{
-		anchors: anchors,
-		name:    name,
-	}
-
-	at.Type = attrType
-	at.Value = byteValue
-
 	return AttributeTime{
-		attribute: at,
+		attribute: attribute{
+			anchors: anchors,
+			name:    name,
+			AttrValue: AttrValue{
+				Type:  attrType,
+				Value: byteValue,
+			},
+		},
 	}
 }
 
