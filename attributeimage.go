@@ -10,22 +10,27 @@ type AttributeImage struct {
 	attribute
 }
 
+//Image format of the image and the image data
+type Image struct {
+	Type AttrType
+	Data []byte
+}
+
 func newAttributeImage(byteValue []byte, anchors []Anchor, name string, attrType AttrType) (result AttributeImage) {
 	if attrType != AttrTypeJPEG && attrType != AttrTypePNG {
 		log.Printf("Cannot create image attribute with non-image type: %q", attrType.String())
 		return
 	}
 
-	ai := attribute{
-		anchors: anchors,
-		name:    name,
-	}
-
-	ai.Type = attrType
-	ai.Value = byteValue
-
 	return AttributeImage{
-		attribute: ai,
+		attribute: attribute{
+			anchors: anchors,
+			name:    name,
+			AttrValue: AttrValue{
+				Type:  attrType,
+				Value: byteValue,
+			},
+		},
 	}
 }
 
@@ -64,19 +69,8 @@ func (ai AttributeImage) Base64Selfie() (result string) {
 
 // Image returns the value of an attribute in the form of a Yoti Image object
 func (ai AttributeImage) Image() *Image {
-	var image *Image
-	switch ai.Type {
-	case AttrTypeJPEG:
-		image = &Image{
-			Type: ImageTypeJpeg,
-			Data: ai.Value}
-	case AttrTypePNG:
-		image = &Image{
-			Type: ImageTypePng,
-			Data: ai.Value}
-	default:
-		log.Printf("Unable to parse Image value of type: %q", ai.Type.String())
+	return &Image{
+		Type: ai.Type,
+		Data: ai.Value,
 	}
-
-	return image
 }

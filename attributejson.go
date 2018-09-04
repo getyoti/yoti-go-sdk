@@ -15,16 +15,15 @@ func newAttributeJSON(byteValue []byte, anchors []Anchor, name string, attrType 
 		return
 	}
 
-	aj := attribute{
-		anchors: anchors,
-		name:    name,
-	}
-
-	aj.Type = attrType
-	aj.Value = byteValue
-
 	return AttributeJSON{
-		attribute: aj,
+		attribute: attribute{
+			anchors: anchors,
+			name:    name,
+			AttrValue: AttrValue{
+				Type:  attrType,
+				Value: byteValue,
+			},
+		},
 	}
 }
 

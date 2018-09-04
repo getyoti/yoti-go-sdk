@@ -6,16 +6,15 @@ type AttributeGeneric struct {
 }
 
 func newAttributeGeneric(byteValue []byte, anchors []Anchor, name string, attrType AttrType) (result AttributeGeneric) {
-	ag := attribute{
-		anchors: anchors,
-		name:    name,
-	}
-
-	ag.Type = attrType
-	ag.Value = byteValue
-
 	return AttributeGeneric{
-		attribute: ag,
+		attribute: attribute{
+			anchors: anchors,
+			name:    name,
+			AttrValue: AttrValue{
+				Type:  attrType,
+				Value: byteValue,
+			},
+		},
 	}
 }
 

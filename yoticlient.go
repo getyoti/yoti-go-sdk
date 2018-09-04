@@ -180,11 +180,11 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 			switch attribute.ContentType {
 			case yotiprotoattr_v3.ContentType_JPEG:
 				result.Selfie = &Image{
-					Type: ImageTypeJpeg,
+					Type: AttrTypeJPEG,
 					Data: attribute.Value}
 			case yotiprotoattr_v3.ContentType_PNG:
 				result.Selfie = &Image{
-					Type: ImageTypePng,
+					Type: AttrTypePNG,
 					Data: attribute.Value}
 			}
 		case "given_names":

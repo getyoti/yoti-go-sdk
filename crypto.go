@@ -129,23 +129,21 @@ func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result str
 	// token was encoded as a urlsafe base64 so it can be transfered in a url
 	var cipherBytes []byte
 	if cipherBytes, err = urlSafeBase64ToBytes(encryptedConnectToken); err != nil {
-		return
+		return "", err
 	}
 
 	var decipheredBytes []byte
 	if decipheredBytes, err = decryptRsa(cipherBytes, key); err != nil {
-		return
+		return "", err
 	}
 
-	result = bytesToUtf8(decipheredBytes)
-	return
+	return bytesToUtf8(decipheredBytes), nil
 }
 
 func unwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error) {
 	var cipherBytes []byte
 	if cipherBytes, err = base64ToBytes(wrappedKey); err != nil {
-		return
+		return nil, err
 	}
-	result, err = decryptRsa(cipherBytes, key)
-	return
+	return decryptRsa(cipherBytes, key)
 }
