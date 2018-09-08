@@ -2,7 +2,7 @@ package yoti
 
 import "log"
 
-//AttributeType format of the attribute
+// Deprecated: AttributeType format of the attribute
 type AttributeType int
 
 const (
@@ -18,7 +18,7 @@ const (
 	AttributeTypeJSON
 )
 
-// AttributeValue represents a small piece of information about a Yoti user such as a photo of the user or the
+// Deprecated: Will be removed in v3.0.0, values here will be available on Attribute objects. AttributeValue represents a small piece of information about a Yoti user such as a photo of the user or the
 // user's date of birth.
 type AttributeValue struct {
 	// Type represents the format of the piece of user data, whether it is a date, a piece of text or a picture
@@ -34,7 +34,7 @@ type AttributeValue struct {
 	Value []byte
 }
 
-// GetContentType returns the MIME type of this piece of Yoti user information. For more information see:
+// Deprecated: Will be removed in v3.0.0, use GetMIMEType() instead. GetContentType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
 func (val AttributeValue) GetContentType() (result string) {
 	switch val.Type {
