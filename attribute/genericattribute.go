@@ -1,4 +1,8 @@
-package yoti
+package attribute
+
+import (
+	"github.com/getyoti/yoti-go-sdk/anchor"
+)
 
 //GenericAttribute is a Yoti attribute which returns a generic value
 type GenericAttribute struct {
@@ -6,10 +10,11 @@ type GenericAttribute struct {
 	Value   string
 	Data    []byte
 	Type    AttrType
-	Anchors []*Anchor
+	Anchors []*anchor.Anchor
 }
 
-func newGenericAttribute(a *Attribute) *GenericAttribute {
+//NewGenericAttribute creates a new generic attribute
+func NewGenericAttribute(a *Attribute) *GenericAttribute {
 	return &GenericAttribute{
 		Name:    a.Name,
 		Value:   string(a.Value),

@@ -1,6 +1,10 @@
-package yoti
+package attribute
 
-import "log"
+import (
+	"log"
+
+	"github.com/getyoti/yoti-go-sdk/anchor"
+)
 
 // Attribute represents a small piece of information about a Yoti user such as a photo of the user or the
 // user's date of birth.
@@ -8,7 +12,7 @@ type Attribute struct {
 	Name    string
 	Value   []byte
 	Type    AttrType
-	Anchors []*Anchor
+	Anchors []*anchor.Anchor
 }
 
 //AttrType format of the attribute
@@ -48,7 +52,7 @@ type AttrValue struct {
 	Value []byte
 }
 
-// GetContentType returns the MIME type of this piece of Yoti user information. For more information see:
+// GetMIMEType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
 func GetMIMEType(attributeType AttrType) (result string) {
 	switch attributeType {

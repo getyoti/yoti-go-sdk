@@ -1,6 +1,10 @@
 package yoti
 
-import "time"
+import (
+	"time"
+
+	"github.com/getyoti/yoti-go-sdk/attribute"
+)
 
 //Deprecated: Will be removed in v3.0.0. Use `Profile` instead. UserProfile represents the details retrieved for a particular
 type UserProfile struct {
@@ -10,7 +14,7 @@ type UserProfile struct {
 	ID string
 
 	// Selfie is a photograph of the user. This will be nil if not provided by Yoti
-	Selfie *Image
+	Selfie *attribute.Image
 
 	// GivenNames represents the user's given names. This will be an empty string if not provided by Yoti
 	GivenNames string
@@ -47,5 +51,5 @@ type UserProfile struct {
 
 	// OtherAttributes is a map of any other information about the user provided by Yoti. The key will be the name
 	// of the piece of information, and the keys associated value will be the piece of information itself.
-	OtherAttributes map[string]AttributeValue
+	OtherAttributes map[string]attribute.AttributeValue
 }
