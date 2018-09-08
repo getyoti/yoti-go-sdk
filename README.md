@@ -95,40 +95,40 @@ Keeping your settings and access keys outside your repository is highly recommen
 
 ## Profile Retrieval
 
-When your application receives a one time use token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the user profile by adding the following to your endpoint handler:
+When your application receives a one time use token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the activity details by adding the following to your endpoint handler:
 
 ```Go
-activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
-if err != nil {
+activityDetails, errStrings := client.GetActivityDetails(yotiOneTimeUseToken)
+if len(errStrings) == 0 {
   // handle unhappy path
 }
 ```
 
-You can then get the following values from the activityDetails struct:
+You can then get the user profile from the activityDetails struct:
 
 ```Go
 rememberMeID := activityDetails.RememberMeID
-base64Selfie := activityDetails.Base64Selfie
-
 userProfile := activityDetails.UserProfile
 
-selfie := userProfile.Selfie().Image()
-givenNames := userProfile.GivenNames().String()
-familyName := userProfile.FamilyName().String()
-fullName := userProfile.FullName().String()
-mobileNumber := userProfile.MobileNumber().String()
-emailAddress := userProfile.EmailAddress().String()
-dateOfBirth := userProfile.DateOfBirth().Time()
-address := userProfile.Address().String()
-gender := userProfile.Gender().String()
-nationality := userProfile.Nationality().String()
+selfie := userProfile.Selfie().Value
+givenNames := userProfile.GivenNames().Value
+familyName := userProfile.FamilyName().Value
+fullName := userProfile.FullName().Value
+mobileNumber := userProfile.MobileNumber().Value
+emailAddress := userProfile.EmailAddress().Value
+dateOfBirth := userProfile.DateOfBirth().Value
+address := userProfile.Address().Value
+gender := userProfile.Gender().Value
+nationality := userProfile.Nationality().Value
 ```
 
 If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method:
 
 ```Go
-ageVerificationAttribute := userProfile.GetAttribute("age_over:18").(yoti.AttributeString).String()
+userProfile.GetAttribute("age_over:18").Value
 ```
+
+GetAttribute returns a string by default, which can be cast to the desired type
 
 ## Handling Users
 

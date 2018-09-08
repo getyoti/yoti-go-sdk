@@ -1,55 +1,30 @@
 package yoti
 
 import (
-	"log"
+	"fmt"
 )
 
-//AttributeJSON is a Yoti attribute which returns a string as its value
-type AttributeJSON struct {
-	attribute
+//JSONAttribute is a Yoti attribute which returns an interface as its value
+type JSONAttribute struct {
+	Name string
+	// Value returns the value of a JSON attribute in the form of an interface
+	Value   interface{}
+	Type    AttrType
+	Anchors []*Anchor
+	Err     error
 }
 
-func newAttributeJSON(byteValue []byte, anchors []Anchor, name string, attrType AttrType) (result AttributeJSON) {
-	if attrType != AttrTypeJSON {
-		log.Printf("Cannot create JSON attribute with non-JSON type: %q", attrType.String())
-		return
-	}
-
-	return AttributeJSON{
-		attribute: attribute{
-			anchors: anchors,
-			name:    name,
-			AttrValue: AttrValue{
-				Type:  attrType,
-				Value: byteValue,
-			},
-		},
-	}
-}
-
-// Anchors are the metadata associated with an attribute. They describe how an attribute has been provided
-// to Yoti (SOURCE Anchor) and how it has been verified (VERIFIER Anchor)
-func (aj AttributeJSON) Anchors() []Anchor {
-	return aj.anchors
-}
-
-// AttrValue represents the value associated with a Yoti Attribute: the attribute type and the byte value
-func (aj AttributeJSON) AttrValue() AttrValue {
-	return aj.attribute.AttrValue
-}
-
-// Name is the name of the attribute
-func (aj AttributeJSON) Name() string {
-	return aj.attribute.name
-}
-
-// Interface returns the value of an attribute in the form of an interface
-func (aj AttributeJSON) Interface() interface{} {
-	json, err := unmarshallJSON(aj.Value)
-
+func newJSONAttribute(a *Attribute) *JSONAttribute {
+	interfaceValue, err := unmarshallJSON(a.Value)
 	if err != nil {
-		log.Printf("Unable to parse JSON value: %q. Error: %q", aj.Value, err)
+		err = fmt.Errorf("Unable to parse JSON value: %q. Error: %q", a.Value, err)
 	}
 
-	return json
+	return &JSONAttribute{
+		Name:    a.Name,
+		Value:   interfaceValue,
+		Type:    AttrTypeJSON,
+		Anchors: a.Anchors,
+		Err:     err,
+	}
 }

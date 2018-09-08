@@ -49,29 +49,36 @@ func bytesToBool(bytes []byte) (result bool, err error) {
 	return result, nil
 }
 
-func convertAttribute(protoAttribute *yotiprotoattr_v3.Attribute) (result Attribute) {
+func convertAttribute(protoAttribute *yotiprotoattr_v3.Attribute) *Attribute {
 	processedAnchors := parseAnchors(protoAttribute.Anchors)
+
+	var attrType AttrType
 
 	switch protoAttribute.ContentType {
 	case yotiprotoattr_v3.ContentType_STRING:
-		return newAttributeString(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeString)
+		attrType = AttrTypeString
 
 	case yotiprotoattr_v3.ContentType_DATE:
-		return newAttributeTime(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeTime)
+		attrType = AttrTypeTime
 
 	case yotiprotoattr_v3.ContentType_JPEG:
-		return newAttributeImage(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeJPEG)
+		attrType = AttrTypeJPEG
 
 	case yotiprotoattr_v3.ContentType_PNG:
-		return newAttributeImage(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypePNG)
+		attrType = AttrTypePNG
 
 	case yotiprotoattr_v3.ContentType_JSON:
-		return newAttributeJSON(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeJSON)
+		attrType = AttrTypeJSON
 
 	case yotiprotoattr_v3.ContentType_UNDEFINED:
-		return newAttributeGeneric(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeInterface)
-
 	default:
-		return newAttributeGeneric(protoAttribute.Value, processedAnchors, protoAttribute.Name, AttrTypeInterface)
+		attrType = AttrTypeInterface
+	}
+
+	return &Attribute{
+		Name:    protoAttribute.Name,
+		Value:   protoAttribute.Value,
+		Type:    attrType,
+		Anchors: processedAnchors,
 	}
 }
