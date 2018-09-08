@@ -1,4 +1,4 @@
-package yoti
+package attribute
 
 import (
 	"encoding/base64"
