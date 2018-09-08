@@ -1,40 +1,20 @@
 package yoti
 
-//AttributeGeneric is a Yoti attribute which returns a generic value, which must be explicitly cast
-type AttributeGeneric struct {
-	attribute
+//GenericAttribute is a Yoti attribute which returns a generic value
+type GenericAttribute struct {
+	Name    string
+	Value   string
+	Data    []byte
+	Type    AttrType
+	Anchors []*Anchor
 }
 
-func newAttributeGeneric(byteValue []byte, anchors []Anchor, name string, attrType AttrType) (result AttributeGeneric) {
-	return AttributeGeneric{
-		attribute: attribute{
-			anchors: anchors,
-			name:    name,
-			AttrValue: AttrValue{
-				Type:  attrType,
-				Value: byteValue,
-			},
-		},
+func newGenericAttribute(a *Attribute) *GenericAttribute {
+	return &GenericAttribute{
+		Name:    a.Name,
+		Value:   string(a.Value),
+		Data:    a.Value,
+		Type:    AttrTypeInterface,
+		Anchors: a.Anchors,
 	}
-}
-
-// Anchors are the metadata associated with an attribute. They describe how an attribute has been provided
-// to Yoti (SOURCE Anchor) and how it has been verified (VERIFIER Anchor)
-func (ab AttributeGeneric) Anchors() []Anchor {
-	return ab.anchors
-}
-
-// AttrValue represents the value associated with a Yoti Attribute: the attribute type and the byte value
-func (ab AttributeGeneric) AttrValue() AttrValue {
-	return ab.attribute.AttrValue
-}
-
-// Name is the name of the attribute
-func (ab AttributeGeneric) Name() string {
-	return ab.attribute.name
-}
-
-// Value is the string value of the attribute
-func (ab AttributeGeneric) Value() string {
-	return string(ab.attribute.Value)
 }

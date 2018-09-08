@@ -2,7 +2,7 @@ package yoti
 
 import "time"
 
-//UserProfile represents the details retrieved for a particular
+//Deprecated: Will be removed in v3.0.0. Use `Profile` instead. UserProfile represents the details retrieved for a particular
 type UserProfile struct {
 	// ID is a unique identifier Yoti assigns to your user, but only for your app
 	// if the same user logs into your app again, you get the same id

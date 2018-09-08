@@ -1,18 +1,14 @@
 package yoti
 
+import "log"
+
 // Attribute represents a small piece of information about a Yoti user such as a photo of the user or the
 // user's date of birth.
-type Attribute interface {
-	AttrValue() AttrValue
-	// Name is the name of the Yoti attribute
-	Name() string
-	Anchors() []Anchor
-}
-
-type attribute struct {
-	AttrValue
-	name    string
-	anchors []Anchor
+type Attribute struct {
+	Name    string
+	Value   []byte
+	Type    AttrType
+	Anchors []*Anchor
 }
 
 //AttrType format of the attribute
@@ -50,4 +46,29 @@ type AttrValue struct {
 	//  yoti.AttrTypeInterface
 	Type  AttrType
 	Value []byte
+}
+
+// GetContentType returns the MIME type of this piece of Yoti user information. For more information see:
+// https://en.wikipedia.org/wiki/Media_type
+func GetMIMEType(attributeType AttrType) (result string) {
+	switch attributeType {
+	case AttrTypeTime:
+		result = "text/plain; charset=UTF-8"
+
+	case AttrTypeString:
+		result = "text/plain; charset=UTF-8"
+
+	case AttrTypeJPEG:
+		result = "image/jpeg"
+
+	case AttrTypePNG:
+		result = "image/png"
+
+	case AttrTypeJSON:
+		result = "application/json; charset=UTF-8"
+
+	default:
+		log.Printf("Unable to find a matching MIME type for value type %q", attributeType.String())
+	}
+	return
 }
