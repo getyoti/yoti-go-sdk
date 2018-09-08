@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/getyoti/yoti-go-sdk/anchor"
+	"github.com/getyoti/yoti-go-sdk/attribute"
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
 
@@ -49,33 +51,33 @@ func bytesToBool(bytes []byte) (result bool, err error) {
 	return result, nil
 }
 
-func convertAttribute(protoAttribute *yotiprotoattr_v3.Attribute) *Attribute {
-	processedAnchors := parseAnchors(protoAttribute.Anchors)
+func convertAttribute(protoAttribute *yotiprotoattr_v3.Attribute) *attribute.Attribute {
+	processedAnchors := anchor.ParseAnchors(protoAttribute.Anchors)
 
-	var attrType AttrType
+	var attrType attribute.AttrType
 
 	switch protoAttribute.ContentType {
 	case yotiprotoattr_v3.ContentType_STRING:
-		attrType = AttrTypeString
+		attrType = attribute.AttrTypeString
 
 	case yotiprotoattr_v3.ContentType_DATE:
-		attrType = AttrTypeTime
+		attrType = attribute.AttrTypeTime
 
 	case yotiprotoattr_v3.ContentType_JPEG:
-		attrType = AttrTypeJPEG
+		attrType = attribute.AttrTypeJPEG
 
 	case yotiprotoattr_v3.ContentType_PNG:
-		attrType = AttrTypePNG
+		attrType = attribute.AttrTypePNG
 
 	case yotiprotoattr_v3.ContentType_JSON:
-		attrType = AttrTypeJSON
+		attrType = attribute.AttrTypeJSON
 
 	case yotiprotoattr_v3.ContentType_UNDEFINED:
 	default:
-		attrType = AttrTypeInterface
+		attrType = attribute.AttrTypeInterface
 	}
 
-	return &Attribute{
+	return &attribute.Attribute{
 		Name:    protoAttribute.Name,
 		Value:   protoAttribute.Value,
 		Type:    attrType,

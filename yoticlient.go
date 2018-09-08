@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/getyoti/yoti-go-sdk/anchor"
+	"github.com/getyoti/yoti-go-sdk/attribute"
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 	"github.com/getyoti/yoti-go-sdk/yotiprotocom_v3"
 	"github.com/golang/protobuf/proto"
@@ -143,16 +145,16 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
 			} else if formattedAddress != "" {
 				structuredPostalAddress := profile.StructuredPostalAddress()
-				var structuredPostalAddressAnchors []*Anchor
+				var structuredPostalAddressAnchors []*anchor.Anchor
 
 				if structuredPostalAddress.Err == nil && structuredPostalAddress.Anchors != nil {
 					structuredPostalAddressAnchors = structuredPostalAddress.Anchors
 				}
 
-				addressAttribute := &Attribute{
+				addressAttribute := &attribute.Attribute{
 					Name:    attrConstAddress,
 					Value:   []byte(formattedAddress),
-					Type:    AttrTypeString,
+					Type:    attribute.AttrTypeString,
 					Anchors: structuredPostalAddressAnchors,
 				}
 
@@ -179,91 +181,91 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.AttributeList) (result UserProfile) {
 	result = UserProfile{
 		ID:              id,
-		OtherAttributes: make(map[string]AttributeValue)}
+		OtherAttributes: make(map[string]attribute.AttributeValue)}
 
 	if attributeList == nil {
 		return
 	}
 
-	for _, attribute := range attributeList.Attributes {
-		switch attribute.Name {
+	for _, a := range attributeList.Attributes {
+		switch a.Name {
 		case "selfie":
 
-			switch attribute.ContentType {
+			switch a.ContentType {
 			case yotiprotoattr_v3.ContentType_JPEG:
-				result.Selfie = &Image{
-					Type: ImageTypeJpeg,
-					Data: attribute.Value}
+				result.Selfie = &attribute.Image{
+					Type: attribute.ImageTypeJpeg,
+					Data: a.Value}
 			case yotiprotoattr_v3.ContentType_PNG:
-				result.Selfie = &Image{
-					Type: ImageTypePng,
-					Data: attribute.Value}
+				result.Selfie = &attribute.Image{
+					Type: attribute.ImageTypePng,
+					Data: a.Value}
 			}
 		case "given_names":
-			result.GivenNames = string(attribute.Value)
+			result.GivenNames = string(a.Value)
 		case "family_name":
-			result.FamilyName = string(attribute.Value)
+			result.FamilyName = string(a.Value)
 		case "full_name":
-			result.FullName = string(attribute.Value)
+			result.FullName = string(a.Value)
 		case "phone_number":
-			result.MobileNumber = string(attribute.Value)
+			result.MobileNumber = string(a.Value)
 		case "email_address":
-			result.EmailAddress = string(attribute.Value)
+			result.EmailAddress = string(a.Value)
 		case "date_of_birth":
-			parsedTime, err := time.Parse("2006-01-02", string(attribute.Value))
+			parsedTime, err := time.Parse("2006-01-02", string(a.Value))
 			if err == nil {
 				result.DateOfBirth = &parsedTime
 			} else {
-				log.Printf("Unable to parse `date_of_birth` value: %q. Error: %q", attribute.Value, err)
+				log.Printf("Unable to parse `date_of_birth` value: %q. Error: %q", a.Value, err)
 			}
 		case "postal_address":
-			result.Address = string(attribute.Value)
+			result.Address = string(a.Value)
 		case "structured_postal_address":
-			structuredPostalAddress, err := unmarshallJSON(attribute.Value)
+			structuredPostalAddress, err := attribute.UnmarshallJSON(a.Value)
 
 			if err == nil {
 				result.StructuredPostalAddress = structuredPostalAddress
 			} else {
-				log.Printf("Unable to parse `structured_postal_address` value: %q. Error: %q", attribute.Value, err)
+				log.Printf("Unable to parse `structured_postal_address` value: %q. Error: %q", a.Value, err)
 			}
 		case "gender":
-			result.Gender = string(attribute.Value)
+			result.Gender = string(a.Value)
 		case "nationality":
-			result.Nationality = string(attribute.Value)
+			result.Nationality = string(a.Value)
 		default:
-			if strings.HasPrefix(attribute.Name, attributeAgeOver) ||
-				strings.HasPrefix(attribute.Name, attributeAgeUnder) {
+			if strings.HasPrefix(a.Name, attributeAgeOver) ||
+				strings.HasPrefix(a.Name, attributeAgeUnder) {
 
-				isAgeVerified, err := parseIsAgeVerifiedValue(attribute.Value)
+				isAgeVerified, err := parseIsAgeVerifiedValue(a.Value)
 
 				if err == nil {
 					result.IsAgeVerified = isAgeVerified
 				} else {
-					log.Printf("Unable to parse `IsAgeVerified` value: %q. Error: %q", attribute.Value, err)
+					log.Printf("Unable to parse `IsAgeVerified` value: %q. Error: %q", a.Value, err)
 				}
 			}
 
-			switch attribute.ContentType {
+			switch a.ContentType {
 			case yotiprotoattr_v3.ContentType_DATE:
-				result.OtherAttributes[attribute.Name] = AttributeValue{
-					Type:  AttributeTypeDate,
-					Value: attribute.Value}
+				result.OtherAttributes[a.Name] = attribute.AttributeValue{
+					Type:  attribute.AttributeTypeDate,
+					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_STRING:
-				result.OtherAttributes[attribute.Name] = AttributeValue{
-					Type:  AttributeTypeText,
-					Value: attribute.Value}
+				result.OtherAttributes[a.Name] = attribute.AttributeValue{
+					Type:  attribute.AttributeTypeText,
+					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_JPEG:
-				result.OtherAttributes[attribute.Name] = AttributeValue{
-					Type:  AttributeTypeJPEG,
-					Value: attribute.Value}
+				result.OtherAttributes[a.Name] = attribute.AttributeValue{
+					Type:  attribute.AttributeTypeJPEG,
+					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_PNG:
-				result.OtherAttributes[attribute.Name] = AttributeValue{
-					Type:  AttributeTypePNG,
-					Value: attribute.Value}
+				result.OtherAttributes[a.Name] = attribute.AttributeValue{
+					Type:  attribute.AttributeTypePNG,
+					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_JSON:
-				result.OtherAttributes[attribute.Name] = AttributeValue{
-					Type:  AttributeTypeJSON,
-					Value: attribute.Value}
+				result.OtherAttributes[a.Name] = attribute.AttributeValue{
+					Type:  attribute.AttributeTypeJSON,
+					Value: a.Value}
 			}
 		}
 	}
@@ -277,7 +279,7 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 	return
 }
 
-func createAttributeSlice(id string, protoAttributeList *yotiprotoattr_v3.AttributeList) (result []*Attribute) {
+func createAttributeSlice(id string, protoAttributeList *yotiprotoattr_v3.AttributeList) (result []*attribute.Attribute) {
 	if protoAttributeList != nil {
 		for _, attribute := range protoAttributeList.Attributes {
 			convertedAttribute := convertAttribute(attribute)
@@ -306,7 +308,7 @@ func ensureAddressProfile(profile Profile) (address string, err error) {
 	if profile.Address() == nil {
 		structuredPostalAddress := profile.StructuredPostalAddress()
 
-		if (structuredPostalAddress.Err != nil && !reflect.DeepEqual(structuredPostalAddress, JSONAttribute{})) {
+		if (structuredPostalAddress.Err != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
 			var formattedAddress string
 			formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value)
 			if err == nil {
@@ -340,17 +342,6 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 	result = &parseResult
 
 	return
-}
-
-func unmarshallJSON(byteValue []byte) (result interface{}, err error) {
-	var unmarshalledJSON interface{}
-	err = json.Unmarshal(byteValue, &unmarshalledJSON)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return unmarshalledJSON, err
 }
 
 func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr_v3.AttributeList, err error) {
