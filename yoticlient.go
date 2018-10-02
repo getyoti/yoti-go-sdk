@@ -175,13 +175,17 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 		}
 	}
 
+	if err != nil {
+		errStrings = append(errStrings, err.Error())
+	}
+
 	return userProfile, activityDetails, errStrings
 }
 
 func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.AttributeList) (result UserProfile) {
 	result = UserProfile{
 		ID:              id,
-		OtherAttributes: make(map[string]attribute.AttributeValue)}
+		OtherAttributes: make(map[string]AttributeValue)}
 
 	if attributeList == nil {
 		return
@@ -193,12 +197,12 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 
 			switch a.ContentType {
 			case yotiprotoattr_v3.ContentType_JPEG:
-				result.Selfie = &attribute.Image{
-					Type: attribute.ImageTypeJpeg,
+				result.Selfie = &Image{
+					Type: ImageTypeJpeg,
 					Data: a.Value}
 			case yotiprotoattr_v3.ContentType_PNG:
-				result.Selfie = &attribute.Image{
-					Type: attribute.ImageTypePng,
+				result.Selfie = &Image{
+					Type: ImageTypePng,
 					Data: a.Value}
 			}
 		case "given_names":
@@ -247,24 +251,24 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 
 			switch a.ContentType {
 			case yotiprotoattr_v3.ContentType_DATE:
-				result.OtherAttributes[a.Name] = attribute.AttributeValue{
-					Type:  attribute.AttributeTypeDate,
+				result.OtherAttributes[a.Name] = AttributeValue{
+					Type:  AttributeTypeDate,
 					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_STRING:
-				result.OtherAttributes[a.Name] = attribute.AttributeValue{
-					Type:  attribute.AttributeTypeText,
+				result.OtherAttributes[a.Name] = AttributeValue{
+					Type:  AttributeTypeText,
 					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_JPEG:
-				result.OtherAttributes[a.Name] = attribute.AttributeValue{
-					Type:  attribute.AttributeTypeJPEG,
+				result.OtherAttributes[a.Name] = AttributeValue{
+					Type:  AttributeTypeJPEG,
 					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_PNG:
-				result.OtherAttributes[a.Name] = attribute.AttributeValue{
-					Type:  attribute.AttributeTypePNG,
+				result.OtherAttributes[a.Name] = AttributeValue{
+					Type:  AttributeTypePNG,
 					Value: a.Value}
 			case yotiprotoattr_v3.ContentType_JSON:
-				result.OtherAttributes[a.Name] = attribute.AttributeValue{
-					Type:  attribute.AttributeTypeJSON,
+				result.OtherAttributes[a.Name] = AttributeValue{
+					Type:  AttributeTypeJSON,
 					Value: a.Value}
 			}
 		}
@@ -308,7 +312,7 @@ func ensureAddressProfile(profile Profile) (address string, err error) {
 	if profile.Address() == nil {
 		structuredPostalAddress := profile.StructuredPostalAddress()
 
-		if (structuredPostalAddress.Err != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
+		if (structuredPostalAddress != nil && structuredPostalAddress.Err == nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
 			var formattedAddress string
 			formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value)
 			if err == nil {
