@@ -1,6 +1,7 @@
 package attribute
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/getyoti/yoti-go-sdk/anchor"
@@ -54,7 +55,7 @@ type AttrValue struct {
 
 // GetMIMEType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
-func GetMIMEType(attributeType AttrType) (result string) {
+func GetMIMEType(attributeType fmt.Stringer) (result string) {
 	switch attributeType {
 	case AttrTypeTime:
 		result = "text/plain; charset=UTF-8"

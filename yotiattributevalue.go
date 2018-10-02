@@ -1,13 +1,13 @@
-package attribute
+package yoti
 
 import "log"
 
-// Deprecated: AttributeType format of the attribute
-type AttributeType int
+// Deprecated: Type format of the attribute
+type Type int
 
 const (
 	//AttributeTypeDate date format
-	AttributeTypeDate AttributeType = 1 + iota
+	AttributeTypeDate Type = 1 + iota
 	//AttributeTypeText text format
 	AttributeTypeText
 	//AttributeTypeJPEG JPEG format
@@ -30,7 +30,7 @@ type AttributeValue struct {
 	// 	yoti.AttributeTypeJPEG
 	// 	yoti.AttributeTypePNG
 	// 	yoti.AttributeTypeJSON
-	Type  AttributeType
+	Type  Type
 	Value []byte
 }
 
