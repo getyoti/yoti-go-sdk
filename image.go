@@ -1,4 +1,4 @@
-package attribute
+package yoti
 
 import (
 	"encoding/base64"
@@ -41,12 +41,4 @@ func (image *Image) GetContentType() string {
 func (image *Image) URL() string {
 	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
 	return "data:" + image.GetContentType() + ";base64;," + base64EncodedImage
-}
-
-// Base64URL is the Image encoded as a base64 URL
-func (image *Image) Base64URL(attrType AttrType) (string, error) {
-	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
-	contentType := GetMIMEType(attrType)
-
-	return "data:" + contentType + ";base64;," + base64EncodedImage, nil
 }

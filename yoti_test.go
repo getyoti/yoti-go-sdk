@@ -1,11 +1,21 @@
 package yoti
 
 import (
+	"encoding/base64"
 	"io/ioutil"
+	"log"
+	"math/big"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/getyoti/yoti-go-sdk/anchor"
+	"github.com/getyoti/yoti-go-sdk/attribute"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/golang/protobuf/proto"
+	"github.com/google/go-cmp/cmp"
 )
 
 const token = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
@@ -22,12 +32,12 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-	if err == nil {
+	if len(errorStrings) == 0 {
 		t.Error("Expected failure")
-	} else if !strings.HasPrefix(err.Error(), "Invalid Key") {
-		t.Errorf("expected outcome type starting with %q instead received %q", "Invalid Key", err.Error())
+	} else if !strings.HasPrefix(errorStrings[0], "Invalid Key") {
+		t.Errorf("expected outcome type starting with %q instead received %q", "Invalid Key", errorStrings[0])
 	}
 }
 
@@ -42,11 +52,11 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if err == nil {
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	if len(errorStrings) == 0 {
 		t.Error("Expected failure")
-	} else if err != ErrFailure {
-		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), err.Error())
+	} else if !strings.HasPrefix(errorStrings[0], ErrFailure.Error()) {
+		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), errorStrings[0])
 	}
 }
 
@@ -61,11 +71,11 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if err == nil {
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	if len(errorStrings) == 0 {
 		t.Error("Expected failure")
-	} else if err != ErrProfileNotFound {
-		t.Errorf("expected outcome type %q instead received %q", ErrProfileNotFound.Error(), err.Error())
+	} else if !strings.HasPrefix(errorStrings[0], ErrProfileNotFound.Error()) {
+		t.Errorf("expected outcome type %q instead received %q", ErrProfileNotFound.Error(), errorStrings[0])
 	}
 }
 
@@ -81,11 +91,11 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if err == nil {
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	if len(errorStrings) == 0 {
 		t.Error("Expected failure")
-	} else if err != ErrSharingFailure {
-		t.Errorf("expected outcome type %q instead received %q", ErrSharingFailure.Error(), err.Error())
+	} else if !strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()) {
+		t.Errorf("expected outcome type %q instead received %q", ErrSharingFailure.Error(), errorStrings[0])
 	}
 }
 
@@ -112,11 +122,11 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 		return
 	}
 
-	_, err := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if err == nil {
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	if len(errorStrings) == 0 {
 		t.Error("Expected failure")
-	} else if err != ErrFailure {
-		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), err.Error())
+	} else if !strings.HasPrefix(errorStrings[0], ErrFailure.Error()) {
+		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), errorStrings[0])
 	}
 }
 
@@ -136,31 +146,57 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 		return
 	}
 
-	profile, err := getActivityDetails(requester, encryptedToken, sdkID, key)
+	userProfile, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-	if err != nil {
-		t.Error(err)
+	if errorStrings != nil {
+		t.Error(errorStrings)
 	}
 
-	if profile.ID != rememberMeID {
-		t.Errorf("expected id %q instead received %q", rememberMeID, profile.ID)
+	if userProfile.ID != rememberMeID {
+		t.Errorf("expected id %q instead received %q", rememberMeID, userProfile.ID)
 	}
 
-	if profile.Selfie == nil {
-		t.Error(`expected user selfie but it was not present in the returned profile`)
-	} else if string(profile.Selfie.Data) != "selfie0123456789" {
-		t.Errorf("expected user selfie %q instead received %q", "selfie0123456789", string(profile.Selfie.Data))
+	if userProfile.Selfie == nil {
+		t.Error(`expected selfie attribute, but it was not present in the returned userProfile`)
+	} else if string(userProfile.Selfie.Data) != "selfie0123456789" {
+		t.Errorf("expected selfie attribute %q, instead received %q", "selfie0123456789", string(userProfile.Selfie.Data))
 	}
 
-	if profile.MobileNumber != "phone_number0123456789" {
-		t.Errorf("expected user mobile %q instead received %q", "phone_number0123456789", profile.MobileNumber)
+	if userProfile.MobileNumber != "phone_number0123456789" {
+		t.Errorf("expected mobileNumber value %q, instead received %q", "phone_number0123456789", userProfile.MobileNumber)
 	}
 
-	dob := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
-	if profile.DateOfBirth == nil {
-		t.Error(`expected date of birth but it was not present in the returned profile`)
-	} else if !profile.DateOfBirth.Equal(dob) {
-		t.Errorf("expected date of birth %q instead received %q", profile.DateOfBirth.Format(time.UnixDate), dob.Format(time.UnixDate))
+	dobUserProfile := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
+	if userProfile.DateOfBirth == nil {
+		t.Error(`expected date of birth but it was not present in the returned userProfile`)
+	} else if !userProfile.DateOfBirth.Equal(dobUserProfile) {
+		t.Errorf("expected date of birth %q, instead received %q", userProfile.DateOfBirth.Format(time.UnixDate), dobUserProfile.Format(time.UnixDate))
+	}
+
+	profile := activityDetails.UserProfile
+
+	if activityDetails.RememberMeID != rememberMeID {
+		t.Errorf("expected id %q, instead received %q", rememberMeID, activityDetails.RememberMeID)
+	}
+
+	expectedSelfieValue := "selfie0123456789"
+	if profile.Selfie() == nil {
+		t.Error(`expected selfie attribute, but it was not present in the returned profile`)
+	} else if !cmp.Equal(profile.Selfie().Value, []byte(expectedSelfieValue)) {
+		t.Errorf("expected selfie %q, instead received %q", expectedSelfieValue, string(profile.Selfie().Value))
+	}
+
+	if !cmp.Equal(profile.MobileNumber().Value, "phone_number0123456789") {
+		t.Errorf("expected mobileNumber %q, instead received %q", "phone_number0123456789", profile.MobileNumber().Value)
+	}
+
+	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
+	actualDoB := profile.DateOfBirth()
+
+	if actualDoB == nil {
+		t.Error(`expected date of birth, but it was not present in the returned profile`)
+	} else if !actualDoB.Value.Equal(expectedDoB) {
+		t.Errorf("expected date of birth: %q, instead received: %q", expectedDoB.Format(time.UnixDate), actualDoB.Value.Format(time.UnixDate))
 	}
 }
 
@@ -186,14 +222,18 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			return
 		}
 
-		profile, err := getActivityDetails(requester, encryptedToken, sdkID, key)
+		userProfile, activityDetails, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 
 		if err != nil {
 			t.Error(err)
 		}
 
-		if profile.ID != rememberMeID {
-			t.Errorf("expected id %q instead received %q", rememberMeID, profile.ID)
+		if userProfile.ID != rememberMeID {
+			t.Errorf("expected id %q instead received %q", rememberMeID, userProfile.ID)
+		}
+
+		if activityDetails.RememberMeID != rememberMeID {
+			t.Errorf("expected id %q instead received %q", rememberMeID, activityDetails.RememberMeID)
 		}
 	}
 }
@@ -238,7 +278,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	}
 
 	result, err := performAmlCheck(
-		CreateStandardAmlProfile(),
+		createStandardAmlProfile(),
 		requester,
 		sdkID,
 		key)
@@ -272,7 +312,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	}
 
 	_, err := performAmlCheck(
-		CreateStandardAmlProfile(),
+		createStandardAmlProfile(),
 		requester,
 		sdkID,
 		key)
@@ -323,7 +363,7 @@ func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T
 func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
 	invalidStructuredAddress := []byte("invalidBool")
 
-	_, err := unmarshallJSON(invalidStructuredAddress)
+	_, err := attribute.UnmarshallJSON(invalidStructuredAddress)
 
 	if err == nil {
 		t.Error("Expected error")
@@ -353,7 +393,7 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 	}
 	]`)
 
-	parsedStructuredAddress, err := unmarshallJSON(structuredAddress)
+	parsedStructuredAddress, err := attribute.UnmarshallJSON(structuredAddress)
 
 	if err != nil {
 		t.Errorf("Failed to parse structured address, error was %q", err.Error())
@@ -373,33 +413,59 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	var formattedAddressText = `House No.86-A\nRajgura Nagar\nLudhina\nPunjab\n141012\nIndia`
 
 	var structuredAddressBytes = []byte(`[
-	{		
+	{
 		"address_format": 2,
 		"building": "House No.86-A",
 		"formatted_address": "` + formattedAddressText + `"
 	}
 	]`)
 
-	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
+	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 	if err != nil {
 		t.Errorf("Failed to parse structured address, error was %q", err.Error())
 	}
 
-	var result = UserProfile{
+	var userProfile = UserProfile{
 		ID:                      "remember_me_id0123456789",
 		OtherAttributes:         make(map[string]AttributeValue),
 		StructuredPostalAddress: structuredAddress,
 		Address:                 ""}
 
-	address, err := getFormattedAddressIfAddressIsMissing(result)
-	if err != nil {
-		t.Errorf("Failed to add formatted address to address, error was %q", err.Error())
+	var jsonAttribute = &attribute.Attribute{
+		Name:    attrConstStructuredPostalAddress,
+		Value:   structuredAddressBytes,
+		Type:    attribute.AttrTypeJSON,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	profile := createProfileWithSingleAttribute(jsonAttribute)
+
+	profileAddress, profileErr := ensureAddressProfile(profile)
+	if profileErr != nil {
+		t.Errorf("Failed to add formatted address to address on Profile, error was %q", err.Error())
+	}
+
+	userProfileAddress, userProfileErr := ensureAddressUserProfile(userProfile)
+	if userProfileErr != nil {
+		t.Errorf("Failed to add formatted address to address on UserProfile, error was %q", err.Error())
 	}
 
 	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
 
-	if address != escapedFormattedAddressText {
-		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", address, formattedAddressText)
+	if profileAddress != escapedFormattedAddressText {
+		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", profileAddress, formattedAddressText)
+	}
+
+	if userProfileAddress != escapedFormattedAddressText {
+		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", userProfileAddress, formattedAddressText)
+	}
+
+	if !cmp.Equal(profile.StructuredPostalAddress().Anchors, []*anchor.Anchor{}) {
+		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, profile.StructuredPostalAddress().Anchors)
+	}
+
+	if !cmp.Equal(profile.StructuredPostalAddress().Type, attribute.AttrTypeJSON) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeJSON, profile.StructuredPostalAddress().Type)
 	}
 }
 
@@ -407,13 +473,13 @@ func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T)
 	var addressText = `PostalAddress`
 
 	var structuredAddressBytes = []byte(`[
-	{		
+	{
 		"address_format": 2,
 		"building": "House No.86-A",
 		"formatted_address": "FormattedAddress"
 	}
 	]`)
-	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
+	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 
 	if err != nil {
 		t.Errorf("Failed to parse structured address, error was %q", err.Error())
@@ -425,7 +491,7 @@ func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T)
 		StructuredPostalAddress: structuredAddress,
 		Address:                 addressText}
 
-	newFormattedAddress, err := getFormattedAddressIfAddressIsMissing(result)
+	newFormattedAddress, err := ensureAddressUserProfile(result)
 
 	if err != nil {
 		t.Errorf("Failure when getting formatted address, error was %q", err.Error())
@@ -438,13 +504,13 @@ func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T)
 
 func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 	var structuredAddressBytes = []byte(`[
-	{		
+	{
 		"address_format": 2,
 		"building": "House No.86-A"
 	}
 	]`)
 
-	structuredAddress, err := unmarshallJSON(structuredAddressBytes)
+	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 
 	if err != nil {
 		t.Errorf("Failed to parse structured address, error was %q", err.Error())
@@ -456,7 +522,7 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 		StructuredPostalAddress: structuredAddress,
 		Address:                 ""}
 
-	address, err := getFormattedAddressIfAddressIsMissing(result)
+	address, err := ensureAddressUserProfile(result)
 
 	if err != nil {
 		t.Errorf("Failed to add formatted address to address, error was %q", err.Error())
@@ -465,6 +531,435 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 	if address != "" {
 		t.Errorf("Formatted address missing, but address was still changed to: %q", address)
 	}
+}
+
+func TestProfile_GetAttribute_RetrievesAttribute(t *testing.T) {
+	attributeName := "test_attribute_name"
+	attributeValueString := "value"
+	attributeValue := []byte(attributeValueString)
+
+	var attr = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   attributeValue,
+		Type:    attribute.AttrTypeString,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	if att.Name != attributeName {
+		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
+	}
+
+	if !cmp.Equal(att.Value, attributeValueString) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	}
+}
+
+func TestProfile_StringAttribute(t *testing.T) {
+	attributeName := attrConstNationality
+	attributeValueString := "value"
+	attributeValueBytes := []byte(attributeValueString)
+
+	var as = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   attributeValueBytes,
+		Type:    attribute.AttrTypeString,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(as)
+
+	if result.Nationality().Value != attributeValueString {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueString, result.Nationality().Value)
+	}
+
+	if !cmp.Equal(result.Nationality().Anchors, []*anchor.Anchor{}) {
+		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, result.Nationality().Anchors)
+	}
+
+	if !cmp.Equal(result.Nationality().Type, attribute.AttrTypeString) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeString, result.Nationality().Type)
+	}
+}
+
+func TestProfile_GenericAttribute(t *testing.T) {
+	attributeName := "genericAttr"
+	attributeValueString := "value"
+	attributeValueBytes := []byte(attributeValueString)
+
+	var ag = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   attributeValueBytes,
+		Type:    attribute.AttrTypeInterface,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(ag)
+
+	genericAttr := result.GetAttribute(attributeName)
+
+	if !cmp.Equal(genericAttr.Value, attributeValueString) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueBytes, genericAttr.Value)
+	}
+
+	if !cmp.Equal(genericAttr.Anchors, []*anchor.Anchor{}) {
+		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, genericAttr.Anchors)
+	}
+
+	if !cmp.Equal(genericAttr.Name, attributeName) {
+		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, genericAttr.Name)
+	}
+
+	if !cmp.Equal(genericAttr.Type, attribute.AttrTypeInterface) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeInterface, genericAttr.Type)
+	}
+}
+
+func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
+	attributeName := attrConstSelfie
+	attributeValue := []byte("value")
+
+	var attributeImage = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   attributeValue,
+		Type:    attribute.AttrTypePNG,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	if selfie.Name != attributeName {
+		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, selfie.Name)
+	}
+
+	if !reflect.DeepEqual(selfie.Value, attributeValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value)
+	}
+
+	if !cmp.Equal(selfie.Type, attribute.AttrTypePNG) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypePNG, selfie.Type)
+	}
+
+	if !cmp.Equal(selfie.Anchors, []*anchor.Anchor{}) {
+		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, selfie.Anchors)
+	}
+}
+
+func TestAttributeImage_Image_Png(t *testing.T) {
+	attributeName := attrConstSelfie
+	byteValue := []byte("value")
+
+	var attributeImage = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   byteValue,
+		Type:    attribute.AttrTypePNG,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	if !cmp.Equal(selfie.Value, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct Image. Expected %v, actual: %v", byteValue, selfie.Value)
+	}
+}
+
+func TestAttributeImage_Image_Jpeg(t *testing.T) {
+	attributeName := attrConstSelfie
+	byteValue := []byte("value")
+
+	var attributeImage = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   byteValue,
+		Type:    attribute.AttrTypeJPEG,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	if !cmp.Equal(selfie.Value, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value)
+	}
+}
+
+func TestAttributeImage_Image_Default(t *testing.T) {
+	attributeName := attrConstSelfie
+	byteValue := []byte("value")
+
+	var attributeImage = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   byteValue,
+		Type:    attribute.AttrTypePNG,
+		Anchors: []*anchor.Anchor{},
+	}
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	if !cmp.Equal(selfie.Value, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value)
+	}
+}
+func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
+	attributeName := attrConstSelfie
+	imageBytes := []byte("value")
+
+	var attributeImage = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   imageBytes,
+		Type:    attribute.AttrTypePNG,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+
+	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
+
+	expectedBase64Selfie := "data:image/png;base64;," + base64ImageExpectedValue
+
+	base64Selfie, err := result.Selfie().Base64URL()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if base64Selfie != expectedBase64Selfie {
+		t.Errorf("Base64Selfie does not have the correct value. Expected %q, actual: %q", expectedBase64Selfie, base64Selfie)
+	}
+}
+
+func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
+	attributeName := attrConstSelfie
+	imageBytes := []byte("value")
+
+	var attributeImage = &attribute.Attribute{
+		Name:    attributeName,
+		Value:   imageBytes,
+		Type:    attribute.AttrTypeJPEG,
+		Anchors: []*anchor.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+
+	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
+
+	expectedBase64Selfie := "data:image/jpeg;base64;," + base64ImageExpectedValue
+
+	base64Selfie, err := result.Selfie().Base64URL()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if base64Selfie != expectedBase64Selfie {
+		t.Errorf("Base64Selfie does not have the correct value. Expected %q, actual: %q", expectedBase64Selfie, base64Selfie)
+	}
+}
+
+func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
+	result := Profile{
+		AttributeSlice: []*attribute.Attribute{},
+	}
+
+	attribute := result.GetAttribute("attributeName")
+
+	if attribute != nil {
+		t.Error("Attribute should not be retrieved if it is not present")
+	}
+}
+
+func TestAnchorParser_Passport(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
+	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchorpassport.txt")
+
+	var structuredAddressBytes = []byte(`[
+		{
+			"address_format": 2,
+			"building": "House No.86-A"
+		}
+		]`)
+
+	a := &attribute.Attribute{
+		Name:    attrConstStructuredPostalAddress,
+		Value:   structuredAddressBytes,
+		Type:    attribute.AttrTypeJSON,
+		Anchors: anchorSlice,
+	}
+
+	result := createProfileWithSingleAttribute(a)
+
+	actualStructuredPostalAddress := result.StructuredPostalAddress()
+
+	if actualStructuredPostalAddress.Err != nil {
+		t.Error(actualStructuredPostalAddress.Err)
+	}
+
+	actualAnchor := actualStructuredPostalAddress.Anchors[0]
+
+	if actualAnchor.Type != anchor.AnchorTypeSource {
+		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, actualAnchor.Type)
+	}
+
+	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 0, time.UTC)
+	actualDate := actualAnchor.SignedTimestamp().Timestamp.UTC()
+	if actualDate != expectedDate {
+		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
+	}
+
+	expectedSubType := "OCR"
+	if actualAnchor.SubType() != expectedSubType {
+		t.Errorf("Parsed anchor SubType is incorrect. Expected: %q, actual: %q", expectedSubType, actualAnchor.SubType())
+	}
+
+	expectedValue := "PASSPORT"
+	if actualAnchor.Value()[0] != expectedValue {
+		t.Errorf("Parsed anchor Value is incorrect. Expected: %q, actual: %q", expectedValue, actualAnchor.Value()[0])
+	}
+
+	actualSerialNo := actualAnchor.OriginServerCerts()[0].SerialNumber
+	AssertServerCertSerialNo(t, "277870515583559162487099305254898397834", actualSerialNo)
+}
+
+func TestAnchorParser_DrivingLicense(t *testing.T) {
+	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchordrivinglicense.txt")
+
+	attribute := &attribute.Attribute{
+		Name:    attrConstGender,
+		Value:   []byte("value"),
+		Type:    attribute.AttrTypeString,
+		Anchors: anchorSlice,
+	}
+
+	result := createProfileWithSingleAttribute(attribute)
+
+	resultAnchor := result.Gender().Anchors[0]
+
+	if resultAnchor.Type != anchor.AnchorTypeSource {
+		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, resultAnchor.Type)
+	}
+
+	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 0, time.UTC)
+	actualDate := resultAnchor.SignedTimestamp().Timestamp.UTC()
+	if actualDate != expectedDate {
+		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
+	}
+
+	expectedSubType := ""
+	if resultAnchor.SubType() != expectedSubType {
+		t.Errorf("Parsed anchor SubType is incorrect. Expected: %q, actual: %q", expectedSubType, resultAnchor.SubType())
+	}
+
+	expectedValue := "DRIVING_LICENCE"
+	if resultAnchor.Value()[0] != expectedValue {
+		t.Errorf("Parsed anchor Value is incorrect. Expected: %q, actual: %q", expectedValue, resultAnchor.Value()[0])
+	}
+
+	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
+	AssertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
+}
+func TestAnchorParser_YotiAdmin(t *testing.T) {
+	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
+
+	attr := &attribute.Attribute{
+		Name:    attrConstDateOfBirth,
+		Value:   []byte("1999-01-01"),
+		Type:    attribute.AttrTypeTime,
+		Anchors: anchorSlice,
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+
+	DoB := result.DateOfBirth()
+
+	if DoB.Err != nil {
+		t.Error(DoB.Err)
+	}
+
+	resultAnchor := DoB.Anchors[0]
+
+	if resultAnchor.Type != anchor.AnchorTypeVerifier {
+		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeVerifier, resultAnchor.Type)
+	}
+
+	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 0, time.UTC)
+	actualDate := resultAnchor.SignedTimestamp().Timestamp.UTC()
+	if actualDate != expectedDate {
+		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
+	}
+
+	expectedSubType := ""
+	if resultAnchor.SubType() != expectedSubType {
+		t.Errorf("Parsed anchor SubType is incorrect. Expected: %q, actual: %q", expectedSubType, resultAnchor.SubType())
+	}
+
+	expectedValue := "YOTI_ADMIN"
+	if resultAnchor.Value()[0] != expectedValue {
+		t.Errorf("Parsed anchor Value is incorrect. Expected: %q, actual: %q", expectedValue, resultAnchor.Value()[0])
+	}
+
+	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
+	AssertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
+}
+
+func createProfileWithSingleAttribute(attr *attribute.Attribute) Profile {
+	var attributeSlice []*attribute.Attribute
+	attributeSlice = append(attributeSlice, attr)
+
+	return Profile{
+		AttributeSlice: attributeSlice,
+	}
+}
+
+func AssertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSerialNo *big.Int) {
+	expectedSerialNoBigInt := new(big.Int)
+	expectedSerialNoBigInt, ok := expectedSerialNoBigInt.SetString(expectedSerialNo, 10)
+	if !ok {
+		t.Error("Unexpected error when setting string as big int")
+	}
+
+	if expectedSerialNoBigInt.Cmp(actualSerialNo) != 0 { //0 == equivalent
+		t.Errorf("Parsed anchor OriginServerCerts is incorrect. Expected: %q, actual: %q", expectedSerialNo, actualSerialNo)
+	}
+}
+
+func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*anchor.Anchor {
+	anchorBytes, err := DecodeTestFile(t, filename)
+
+	if err != nil {
+		t.Errorf("error decoding test file: %q", err)
+	}
+
+	protoAnchor := &yotiprotoattr_v3.Anchor{}
+	if err := proto.Unmarshal(anchorBytes, protoAnchor); err != nil {
+		t.Errorf("Error converting test anchor bytes into a Protobuf anchor. Error: %q", err)
+	}
+
+	protoAnchors := append([]*yotiprotoattr_v3.Anchor{}, protoAnchor)
+
+	return anchor.ParseAnchors(protoAnchors)
+}
+
+func DecodeTestFile(t *testing.T, filename string) (result []byte, err error) {
+	base64Bytes := readTestFile(t, filename)
+	base64String := string(base64Bytes)
+	anchorBytes, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		return nil, err
+	}
+	return anchorBytes, nil
+}
+
+func readTestFile(t *testing.T, filename string) (result []byte) {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Error(err)
+	}
+
+	return b
 }
 
 func CreateHeaders() (result map[string]string) {
@@ -476,7 +971,7 @@ func CreateHeaders() (result map[string]string) {
 	return headers
 }
 
-func CreateStandardAmlProfile() (result AmlProfile) {
+func createStandardAmlProfile() (result AmlProfile) {
 	var amlAddress = AmlAddress{
 		Country: "GBR"}
 
