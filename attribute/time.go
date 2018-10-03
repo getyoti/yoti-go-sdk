@@ -21,6 +21,7 @@ func NewTime(a *Attribute) *Time {
 	parsedTime, err := time.Parse("2006-01-02", string(a.Value))
 	if err != nil {
 		log.Printf("Unable to parse time value of: %q. Error: %q", a.Value, err)
+		parsedTime = time.Time{}
 	}
 
 	return &Time{
