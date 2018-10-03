@@ -6,17 +6,17 @@ import (
 	"github.com/getyoti/yoti-go-sdk/anchor"
 )
 
-//ImageAttribute is a Yoti attribute which returns an image as its value
-type ImageAttribute struct {
+//Image is a Yoti attribute which returns an image as its value
+type Image struct {
 	Name    string
 	Value   []byte
 	Type    AttrType
 	Anchors []*anchor.Anchor
 }
 
-//NewImageAttribute creates a new Image attribute
-func NewImageAttribute(a *Attribute) *ImageAttribute {
-	return &ImageAttribute{
+//NewImage creates a new Image attribute
+func NewImage(a *Attribute) *Image {
+	return &Image{
 		Name:    a.Name,
 		Value:   a.Value,
 		Type:    a.Type,
@@ -25,7 +25,7 @@ func NewImageAttribute(a *Attribute) *ImageAttribute {
 }
 
 // Base64URL is the Image encoded as a base64 URL
-func (imageAttribute *ImageAttribute) Base64URL() (string, error) {
+func (imageAttribute *Image) Base64URL() (string, error) {
 	base64EncodedImage := base64.StdEncoding.EncodeToString(imageAttribute.Value)
 	contentType := GetMIMEType(imageAttribute.Type)
 
