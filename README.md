@@ -99,7 +99,7 @@ When your application receives a one time use token via the exposed endpoint (it
 
 ```Go
 activityDetails, errStrings := client.GetActivityDetails(yotiOneTimeUseToken)
-if len(errStrings) == 0 {
+if len(errStrings) != 0 {
   // handle unhappy path
 }
 ```
@@ -116,10 +116,15 @@ familyName := userProfile.FamilyName().Value
 fullName := userProfile.FullName().Value
 mobileNumber := userProfile.MobileNumber().Value
 emailAddress := userProfile.EmailAddress().Value
-dateOfBirth := userProfile.DateOfBirth().Value
 address := userProfile.Address().Value
 gender := userProfile.Gender().Value
 nationality := userProfile.Nationality().Value
+dob, err := userProfile.DateOfBirth()
+if err != nil {
+    //handle error
+} else {
+    dateofBirth = dob
+}
 ```
 
 If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method:
@@ -251,7 +256,7 @@ Visiting `https://localhost:8080/` should show a Yoti Connect button
   * [X] Remember Me ID `RememberMeID`
   * [X] User Profile `UserProfile`
     * [X] Selfie `Selfie()`
-    * [X] Selfie Base64 URL `Selfie().Value.Base64URL()`
+    * [X] Selfie Base64 URL `Selfie().Base64URL()`
     * [X] Given Names `GivenNames()`
     * [X] Family Name `FamilyName()`
     * [X] Full Name `FullName()`

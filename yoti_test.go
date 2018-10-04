@@ -191,7 +191,11 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	}
 
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
-	actualDoB := profile.DateOfBirth()
+
+	actualDoB, err := profile.DateOfBirth()
+	if err != nil {
+		t.Error(err)
+	}
 
 	if actualDoB == nil {
 		t.Error(`expected date of birth, but it was not present in the returned profile`)
@@ -460,12 +464,19 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", userProfileAddress, formattedAddressText)
 	}
 
-	if !cmp.Equal(profile.StructuredPostalAddress().Anchors, []*anchor.Anchor{}) {
-		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, profile.StructuredPostalAddress().Anchors)
+	var structuredPostalAddress *attribute.JSON
+
+	structuredPostalAddress, err = profile.StructuredPostalAddress()
+	if err != nil {
+		t.Error(err)
 	}
 
-	if !cmp.Equal(profile.StructuredPostalAddress().Type, attribute.AttrTypeJSON) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeJSON, profile.StructuredPostalAddress().Type)
+	if !cmp.Equal(structuredPostalAddress.Anchors, []*anchor.Anchor{}) {
+		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, structuredPostalAddress.Anchors)
+	}
+
+	if !cmp.Equal(structuredPostalAddress.Type, attribute.AttrTypeJSON) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeJSON, structuredPostalAddress.Type)
 	}
 }
 
@@ -792,10 +803,12 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(a)
 
-	actualStructuredPostalAddress := result.StructuredPostalAddress()
+	var actualStructuredPostalAddress *attribute.JSON
 
-	if actualStructuredPostalAddress.Err != nil {
-		t.Error(actualStructuredPostalAddress.Err)
+	actualStructuredPostalAddress, err := result.StructuredPostalAddress()
+
+	if err != nil {
+		t.Error(err)
 	}
 
 	actualAnchor := actualStructuredPostalAddress.Anchors[0]
@@ -873,10 +886,10 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(attr)
 
-	DoB := result.DateOfBirth()
+	DoB, err := result.DateOfBirth()
 
-	if DoB.Err != nil {
-		t.Error(DoB.Err)
+	if err != nil {
+		t.Error(err)
 	}
 
 	resultAnchor := DoB.Anchors[0]

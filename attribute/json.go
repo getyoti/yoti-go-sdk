@@ -14,14 +14,14 @@ type JSON struct {
 	Value   interface{}
 	Type    AttrType
 	Anchors []*anchor.Anchor
-	Err     error
 }
 
 //NewJSON creates a new JSON attribute
-func NewJSON(a *Attribute) *JSON {
+func NewJSON(a *Attribute) (*JSON, error) {
 	interfaceValue, err := UnmarshallJSON(a.Value)
 	if err != nil {
 		err = fmt.Errorf("Unable to parse JSON value: %q. Error: %q", a.Value, err)
+		return nil, err
 	}
 
 	return &JSON{
@@ -29,8 +29,7 @@ func NewJSON(a *Attribute) *JSON {
 		Value:   interfaceValue,
 		Type:    AttrTypeJSON,
 		Anchors: a.Anchors,
-		Err:     err,
-	}
+	}, nil
 }
 
 // UnmarshallJSON unmarshalls JSON into an interface
