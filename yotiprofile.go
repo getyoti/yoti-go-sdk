@@ -86,13 +86,13 @@ func (p Profile) EmailAddress() *attribute.String {
 }
 
 // DateOfBirth represents the user's date of birth. Will be nil if not provided by Yoti. Has an err value which will be filled if there is an error parsing the date.
-func (p Profile) DateOfBirth() *attribute.Time {
+func (p Profile) DateOfBirth() (*attribute.Time, error) {
 	for _, a := range p.AttributeSlice {
 		if a.Name == attrConstDateOfBirth {
 			return attribute.NewTime(a)
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 // Address represents the user's address. Will be nil if not provided by Yoti
@@ -106,13 +106,13 @@ func (p Profile) Address() *attribute.String {
 }
 
 // StructuredPostalAddress represents the user's address in a JSON format. Will be nil if not provided by Yoti
-func (p Profile) StructuredPostalAddress() *attribute.JSON {
+func (p Profile) StructuredPostalAddress() (*attribute.JSON, error) {
 	for _, a := range p.AttributeSlice {
 		if a.Name == attrConstStructuredPostalAddress {
 			return attribute.NewJSON(a)
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 // Gender represents the user's gender. Will be nil if not provided by Yoti

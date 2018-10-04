@@ -144,10 +144,15 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 			if err != nil {
 				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
 			} else if formattedAddress != "" {
-				structuredPostalAddress := profile.StructuredPostalAddress()
+				var structuredPostalAddress *attribute.JSON
+				if structuredPostalAddress, err = profile.StructuredPostalAddress(); err != nil {
+					errStrings = append(errStrings, err.Error())
+					return
+				}
+
 				var structuredPostalAddressAnchors []*anchor.Anchor
 
-				if structuredPostalAddress.Err == nil && structuredPostalAddress.Anchors != nil {
+				if structuredPostalAddress.Anchors != nil {
 					structuredPostalAddressAnchors = structuredPostalAddress.Anchors
 				}
 
@@ -310,13 +315,14 @@ func ensureAddressUserProfile(result UserProfile) (address string, err error) {
 
 func ensureAddressProfile(profile Profile) (address string, err error) {
 	if profile.Address() == nil {
-		structuredPostalAddress := profile.StructuredPostalAddress()
-
-		if (structuredPostalAddress != nil && structuredPostalAddress.Err == nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSON{})) {
-			var formattedAddress string
-			formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value)
-			if err == nil {
-				return formattedAddress, nil
+		var structuredPostalAddress *attribute.JSON
+		if structuredPostalAddress, err = profile.StructuredPostalAddress(); err == nil {
+			if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSON{})) {
+				var formattedAddress string
+				formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value)
+				if err == nil {
+					return formattedAddress, nil
+				}
 			}
 		}
 	}
