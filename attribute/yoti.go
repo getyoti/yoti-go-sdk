@@ -36,23 +36,6 @@ const (
 	AttrTypeInterface
 )
 
-// AttrValue represents the value associated with a Yoti Attribute.
-type AttrValue struct {
-	// Type represents the format of the piece of user data, whether it is a date, a piece of text or a picture
-	//
-	// Note the potential values for this variable are stored in constants with names beginning with
-	// 'AttrType'. These include:
-	//  yoti.AttrTypeTime
-	//  yoti.AttrTypeString
-	//  yoti.AttrTypeJPEG
-	//  yoti.AttrTypePNG
-	//  yoti.AttrTypeJSON
-	//  yoti.AttrTypeBool
-	//  yoti.AttrTypeInterface
-	Type  AttrType
-	Value []byte
-}
-
 // GetMIMEType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
 func GetMIMEType(attributeType fmt.Stringer) (result string) {
