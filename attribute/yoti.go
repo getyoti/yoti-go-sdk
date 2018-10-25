@@ -1,7 +1,6 @@
 package attribute
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/getyoti/yoti-go-sdk/anchor"
@@ -36,27 +35,21 @@ const (
 	AttrTypeInterface
 )
 
+var mimeTypeMap = map[AttrType]string{
+	AttrTypeTime:   "text/plain; charset=UTF-8",
+	AttrTypeString: "text/plain; charset=UTF-8",
+	AttrTypeJPEG:   "image/jpeg",
+	AttrTypePNG:    "image/png",
+	AttrTypeJSON:   "application/json; charset=UTF-8",
+}
+
 // GetMIMEType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
-func GetMIMEType(attributeType fmt.Stringer) (result string) {
-	switch attributeType {
-	case AttrTypeTime:
-		result = "text/plain; charset=UTF-8"
-
-	case AttrTypeString:
-		result = "text/plain; charset=UTF-8"
-
-	case AttrTypeJPEG:
-		result = "image/jpeg"
-
-	case AttrTypePNG:
-		result = "image/png"
-
-	case AttrTypeJSON:
-		result = "application/json; charset=UTF-8"
-
-	default:
-		log.Printf("Unable to find a matching MIME type for value type %q", attributeType.String())
+func GetMIMEType(attributeType AttrType) (result string) {
+	if val, ok := mimeTypeMap[attributeType]; ok {
+		return val
 	}
+
+	log.Printf("Unable to find a matching MIME type for value type %q", attributeType.String())
 	return
 }
