@@ -3,16 +3,12 @@ package attribute
 import (
 	"log"
 	"time"
-
-	"github.com/getyoti/yoti-go-sdk/anchor"
 )
 
 //Time is a Yoti attribute which returns a time as its value
 type Time struct {
-	Name    string
-	Value   *time.Time
-	Type    AttrType
-	Anchors []*anchor.Anchor
+	Attribute
+	Value *time.Time
 }
 
 //NewTime creates a new Time attribute
@@ -25,9 +21,11 @@ func NewTime(a *Attribute) (*Time, error) {
 	}
 
 	return &Time{
-		Name:    a.Name,
-		Value:   &parsedTime,
-		Type:    AttrTypeTime,
-		Anchors: a.Anchors,
+		Attribute: Attribute{
+			Name:    a.Name,
+			Type:    AttrTypeTime,
+			Anchors: a.Anchors,
+		},
+		Value: &parsedTime,
 	}, nil
 }
