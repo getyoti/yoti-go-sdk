@@ -3,17 +3,13 @@ package attribute
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/getyoti/yoti-go-sdk/anchor"
 )
 
 //JSON is a Yoti attribute which returns an interface as its value
 type JSON struct {
-	Name string
+	Attribute
 	// Value returns the value of a JSON attribute in the form of an interface
-	Value   interface{}
-	Type    AttrType
-	Anchors []*anchor.Anchor
+	Value interface{}
 }
 
 //NewJSON creates a new JSON attribute
@@ -25,10 +21,12 @@ func NewJSON(a *Attribute) (*JSON, error) {
 	}
 
 	return &JSON{
-		Name:    a.Name,
-		Value:   interfaceValue,
-		Type:    AttrTypeJSON,
-		Anchors: a.Anchors,
+		Attribute: Attribute{
+			Name:    a.Name,
+			Type:    AttrTypeJSON,
+			Anchors: a.Anchors,
+		},
+		Value: interfaceValue,
 	}, nil
 }
 
