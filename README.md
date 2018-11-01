@@ -53,7 +53,7 @@ Yoti also allows you to enable user details verification from your mobile app by
 
 ## Installing the SDK
 
-To import the Yoti SDK inside your project, simply run the following command from your terminal:
+To download and install the Yoti SDK and its dependencies, simply run the following command from your terminal:
 
 ```Go
 go get "github.com/getyoti/yoti-go-sdk"
