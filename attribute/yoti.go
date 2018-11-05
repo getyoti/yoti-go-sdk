@@ -3,49 +3,20 @@ package attribute
 import (
 	"log"
 
-	"github.com/getyoti/yoti-go-sdk/anchor"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
 
-// Attribute represents a small piece of information about a Yoti user such as a photo of the user or the
-// user's date of birth.
-type Attribute struct {
-	Name    string
-	Value   []byte
-	Type    AttrType
-	Anchors []*anchor.Anchor
-}
-
-//AttrType format of the attribute
-type AttrType uint
-
-const (
-	//AttrTypeTime date format
-	AttrTypeTime AttrType = iota + 1
-	//AttrTypeString text format
-	AttrTypeString
-	//AttrTypeJPEG JPEG format
-	AttrTypeJPEG
-	//AttrTypePNG PNG fornmat
-	AttrTypePNG
-	//AttrTypeJSON JSON fornmat
-	AttrTypeJSON
-	//AttrTypeBool Boolean format
-	AttrTypeBool
-	//AttrTypeInterface generic interface format
-	AttrTypeInterface
-)
-
-var mimeTypeMap = map[AttrType]string{
-	AttrTypeTime:   "text/plain; charset=UTF-8",
-	AttrTypeString: "text/plain; charset=UTF-8",
-	AttrTypeJPEG:   "image/jpeg",
-	AttrTypePNG:    "image/png",
-	AttrTypeJSON:   "application/json; charset=UTF-8",
+var mimeTypeMap = map[yotiprotoattr_v3.ContentType]string{
+	yotiprotoattr_v3.ContentType_DATE:   "text/plain; charset=UTF-8",
+	yotiprotoattr_v3.ContentType_STRING: "text/plain; charset=UTF-8",
+	yotiprotoattr_v3.ContentType_JPEG:   "image/jpeg",
+	yotiprotoattr_v3.ContentType_PNG:    "image/png",
+	yotiprotoattr_v3.ContentType_JSON:   "application/json; charset=UTF-8",
 }
 
 // GetMIMEType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
-func GetMIMEType(attributeType AttrType) (result string) {
+func GetMIMEType(attributeType yotiprotoattr_v3.ContentType) (result string) {
 	if val, ok := mimeTypeMap[attributeType]; ok {
 		return val
 	}

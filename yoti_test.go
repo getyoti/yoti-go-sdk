@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"net/url"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -435,11 +436,11 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		StructuredPostalAddress: structuredAddress,
 		Address:                 ""}
 
-	var jsonAttribute = &attribute.Attribute{
-		Name:    attrConstStructuredPostalAddress,
-		Value:   structuredAddressBytes,
-		Type:    attribute.AttrTypeJSON,
-		Anchors: []*anchor.Anchor{},
+	var jsonAttribute = &yotiprotoattr_v3.Attribute{
+		Name:        attrConstStructuredPostalAddress,
+		Value:       structuredAddressBytes,
+		ContentType: yotiprotoattr_v3.ContentType_JSON,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	profile := createProfileWithSingleAttribute(jsonAttribute)
@@ -471,12 +472,8 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !cmp.Equal(structuredPostalAddress.Anchors, []*anchor.Anchor{}) {
-		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, structuredPostalAddress.Anchors)
-	}
-
-	if !cmp.Equal(structuredPostalAddress.Type, attribute.AttrTypeJSON) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeJSON, structuredPostalAddress.Type)
+	if !cmp.Equal(structuredPostalAddress.ContentType, yotiprotoattr_v3.ContentType_JSON) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", yotiprotoattr_v3.ContentType_JSON, structuredPostalAddress.ContentType)
 	}
 }
 
@@ -544,16 +541,16 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 	}
 }
 
-func TestProfile_GetAttribute_RetrievesAttribute(t *testing.T) {
+func TestProfile_GetAttribute_String(t *testing.T) {
 	attributeName := "test_attribute_name"
 	attributeValueString := "value"
 	attributeValue := []byte(attributeValueString)
 
-	var attr = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   attributeValue,
-		Type:    attribute.AttrTypeString,
-		Anchors: []*anchor.Anchor{},
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr_v3.ContentType_STRING,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(attr)
@@ -563,8 +560,159 @@ func TestProfile_GetAttribute_RetrievesAttribute(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
 	}
 
-	if !cmp.Equal(att.Value, attributeValueString) {
+	if !cmp.Equal(att.Value.(string), attributeValueString) {
 		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	}
+}
+
+func TestProfile_GetAttribute_Time(t *testing.T) {
+	attributeName := "test_attribute_name"
+
+	dateStringValue := "1985-01-01"
+	expectedDate := time.Date(1985, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	attributeValueTime := []byte(dateStringValue)
+
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValueTime,
+		ContentType: yotiprotoattr_v3.ContentType_DATE,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	if !cmp.Equal(expectedDate, att.Value.(*time.Time).UTC()) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", expectedDate, att.Value.(*time.Time))
+	}
+}
+
+func TestProfile_GetAttribute_Jpeg(t *testing.T) {
+	attributeName := "test_attribute_name"
+	attributeValue := []byte("value")
+
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr_v3.ContentType_JPEG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	if !cmp.Equal(att.Value.([]byte), attributeValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	}
+}
+
+func TestProfile_GetAttribute_Png(t *testing.T) {
+	attributeName := "test_attribute_name"
+	attributeValue := []byte("value")
+
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr_v3.ContentType_PNG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	if !cmp.Equal(att.Value.([]byte), attributeValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	}
+}
+
+func TestProfile_GetAttribute_Bool(t *testing.T) {
+	attributeName := "test_attribute_name"
+	var boolValue = true
+	attributeValue := []byte(strconv.FormatBool(boolValue))
+
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr_v3.ContentType_STRING,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	boolValue, err := strconv.ParseBool(att.Value.(string))
+	if err != nil {
+		t.Errorf("Unable to parse string to bool. Error: %s", err)
+	}
+
+	if !cmp.Equal(boolValue, attributeValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	}
+}
+
+func TestProfile_GetAttribute_JSON(t *testing.T) {
+	attributeName := "test_attribute_name"
+	addressFormat := "2"
+
+	var structuredAddressBytes = []byte(`[
+		{
+			"address_format": "` + addressFormat + `",
+			"building": "House No.86-A"
+		}
+		]`)
+
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       structuredAddressBytes,
+		ContentType: yotiprotoattr_v3.ContentType_JSON,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	retrievedAttributeInterfaceArray := att.Value.([]interface{})
+	parsedMap := retrievedAttributeInterfaceArray[0].(map[string]interface{})
+	actualAddressFormat := parsedMap["address_format"]
+
+	if !cmp.Equal(actualAddressFormat, addressFormat) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", addressFormat, actualAddressFormat)
+	}
+}
+
+func TestProfile_GetAttribute_Undefined(t *testing.T) {
+	attributeName := "test_attribute_name"
+	attributeValueString := "value"
+	attributeValue := []byte(attributeValueString)
+
+	var attr = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr_v3.ContentType_STRING,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	if att.Name != attributeName {
+		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
+	}
+
+	if !cmp.Equal(att.Value.(string), attributeValueString) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	}
+}
+func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
+	result := Profile{
+		AttributeSlice: []*yotiprotoattr_v3.Attribute{},
+	}
+
+	attribute := result.GetAttribute("attributeName")
+
+	if attribute != nil {
+		t.Error("Attribute should not be retrieved if it is not present")
 	}
 }
 
@@ -573,11 +721,11 @@ func TestProfile_StringAttribute(t *testing.T) {
 	attributeValueString := "value"
 	attributeValueBytes := []byte(attributeValueString)
 
-	var as = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   attributeValueBytes,
-		Type:    attribute.AttrTypeString,
-		Anchors: []*anchor.Anchor{},
+	var as = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValueBytes,
+		ContentType: yotiprotoattr_v3.ContentType_STRING,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(as)
@@ -586,45 +734,8 @@ func TestProfile_StringAttribute(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueString, result.Nationality().Value)
 	}
 
-	if !cmp.Equal(result.Nationality().Anchors, []*anchor.Anchor{}) {
-		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, result.Nationality().Anchors)
-	}
-
-	if !cmp.Equal(result.Nationality().Type, attribute.AttrTypeString) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeString, result.Nationality().Type)
-	}
-}
-
-func TestProfile_GenericAttribute(t *testing.T) {
-	attributeName := "genericAttr"
-	attributeValueString := "value"
-	attributeValueBytes := []byte(attributeValueString)
-
-	var ag = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   attributeValueBytes,
-		Type:    attribute.AttrTypeInterface,
-		Anchors: []*anchor.Anchor{},
-	}
-
-	result := createProfileWithSingleAttribute(ag)
-
-	genericAttr := result.GetAttribute(attributeName)
-
-	if !cmp.Equal(genericAttr.Value, attributeValueString) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueBytes, genericAttr.Value)
-	}
-
-	if !cmp.Equal(genericAttr.Anchors, []*anchor.Anchor{}) {
-		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, genericAttr.Anchors)
-	}
-
-	if !cmp.Equal(genericAttr.Name, attributeName) {
-		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, genericAttr.Name)
-	}
-
-	if !cmp.Equal(genericAttr.Type, attribute.AttrTypeInterface) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypeInterface, genericAttr.Type)
+	if !cmp.Equal(result.Nationality().ContentType, yotiprotoattr_v3.ContentType_STRING) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", yotiprotoattr_v3.ContentType_STRING, result.Nationality().ContentType)
 	}
 }
 
@@ -632,11 +743,11 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 	attributeName := attrConstSelfie
 	attributeValue := []byte("value")
 
-	var attributeImage = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   attributeValue,
-		Type:    attribute.AttrTypePNG,
-		Anchors: []*anchor.Anchor{},
+	var attributeImage = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr_v3.ContentType_PNG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(attributeImage)
@@ -650,12 +761,8 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value)
 	}
 
-	if !cmp.Equal(selfie.Type, attribute.AttrTypePNG) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", attribute.AttrTypePNG, selfie.Type)
-	}
-
-	if !cmp.Equal(selfie.Anchors, []*anchor.Anchor{}) {
-		t.Errorf("Retrieved attribute does not have the correct anchors. Expected %v, actual: %v", []anchor.Anchor{}, selfie.Anchors)
+	if !cmp.Equal(selfie.ContentType, yotiprotoattr_v3.ContentType_PNG) {
+		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", yotiprotoattr_v3.ContentType_PNG, selfie.ContentType)
 	}
 }
 
@@ -663,11 +770,11 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 	attributeName := attrConstSelfie
 	byteValue := []byte("value")
 
-	var attributeImage = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   byteValue,
-		Type:    attribute.AttrTypePNG,
-		Anchors: []*anchor.Anchor{},
+	var attributeImage = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       byteValue,
+		ContentType: yotiprotoattr_v3.ContentType_PNG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(attributeImage)
@@ -682,11 +789,11 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 	attributeName := attrConstSelfie
 	byteValue := []byte("value")
 
-	var attributeImage = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   byteValue,
-		Type:    attribute.AttrTypeJPEG,
-		Anchors: []*anchor.Anchor{},
+	var attributeImage = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       byteValue,
+		ContentType: yotiprotoattr_v3.ContentType_JPEG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(attributeImage)
@@ -701,11 +808,11 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	attributeName := attrConstSelfie
 	byteValue := []byte("value")
 
-	var attributeImage = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   byteValue,
-		Type:    attribute.AttrTypePNG,
-		Anchors: []*anchor.Anchor{},
+	var attributeImage = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       byteValue,
+		ContentType: yotiprotoattr_v3.ContentType_PNG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
@@ -718,11 +825,11 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 	attributeName := attrConstSelfie
 	imageBytes := []byte("value")
 
-	var attributeImage = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   imageBytes,
-		Type:    attribute.AttrTypePNG,
-		Anchors: []*anchor.Anchor{},
+	var attributeImage = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       imageBytes,
+		ContentType: yotiprotoattr_v3.ContentType_PNG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(attributeImage)
@@ -746,11 +853,11 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 	attributeName := attrConstSelfie
 	imageBytes := []byte("value")
 
-	var attributeImage = &attribute.Attribute{
-		Name:    attributeName,
-		Value:   imageBytes,
-		Type:    attribute.AttrTypeJPEG,
-		Anchors: []*anchor.Anchor{},
+	var attributeImage = &yotiprotoattr_v3.Attribute{
+		Name:        attributeName,
+		Value:       imageBytes,
+		ContentType: yotiprotoattr_v3.ContentType_JPEG,
+		Anchors:     []*yotiprotoattr_v3.Anchor{},
 	}
 
 	result := createProfileWithSingleAttribute(attributeImage)
@@ -770,18 +877,6 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 	}
 }
 
-func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
-	result := Profile{
-		AttributeSlice: []*attribute.Attribute{},
-	}
-
-	attribute := result.GetAttribute("attributeName")
-
-	if attribute != nil {
-		t.Error("Attribute should not be retrieved if it is not present")
-	}
-}
-
 func TestAnchorParser_Passport(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
@@ -794,11 +889,11 @@ func TestAnchorParser_Passport(t *testing.T) {
 		}
 		]`)
 
-	a := &attribute.Attribute{
-		Name:    attrConstStructuredPostalAddress,
-		Value:   structuredAddressBytes,
-		Type:    attribute.AttrTypeJSON,
-		Anchors: anchorSlice,
+	a := &yotiprotoattr_v3.Attribute{
+		Name:        attrConstStructuredPostalAddress,
+		Value:       structuredAddressBytes,
+		ContentType: yotiprotoattr_v3.ContentType_JSON,
+		Anchors:     anchorSlice,
 	}
 
 	result := createProfileWithSingleAttribute(a)
@@ -840,11 +935,11 @@ func TestAnchorParser_Passport(t *testing.T) {
 func TestAnchorParser_DrivingLicense(t *testing.T) {
 	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchordrivinglicense.txt")
 
-	attribute := &attribute.Attribute{
-		Name:    attrConstGender,
-		Value:   []byte("value"),
-		Type:    attribute.AttrTypeString,
-		Anchors: anchorSlice,
+	attribute := &yotiprotoattr_v3.Attribute{
+		Name:        attrConstGender,
+		Value:       []byte("value"),
+		ContentType: yotiprotoattr_v3.ContentType_STRING,
+		Anchors:     anchorSlice,
 	}
 
 	result := createProfileWithSingleAttribute(attribute)
@@ -877,11 +972,11 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 func TestAnchorParser_YotiAdmin(t *testing.T) {
 	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
 
-	attr := &attribute.Attribute{
-		Name:    attrConstDateOfBirth,
-		Value:   []byte("1999-01-01"),
-		Type:    attribute.AttrTypeTime,
-		Anchors: anchorSlice,
+	attr := &yotiprotoattr_v3.Attribute{
+		Name:        attrConstDateOfBirth,
+		Value:       []byte("1999-01-01"),
+		ContentType: yotiprotoattr_v3.ContentType_DATE,
+		Anchors:     anchorSlice,
 	}
 
 	result := createProfileWithSingleAttribute(attr)
@@ -918,8 +1013,8 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 	AssertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
 }
 
-func createProfileWithSingleAttribute(attr *attribute.Attribute) Profile {
-	var attributeSlice []*attribute.Attribute
+func createProfileWithSingleAttribute(attr *yotiprotoattr_v3.Attribute) Profile {
+	var attributeSlice []*yotiprotoattr_v3.Attribute
 	attributeSlice = append(attributeSlice, attr)
 
 	return Profile{
@@ -939,7 +1034,7 @@ func AssertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 	}
 }
 
-func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*anchor.Anchor {
+func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr_v3.Anchor {
 	anchorBytes, err := DecodeTestFile(t, filename)
 
 	if err != nil {
@@ -953,7 +1048,7 @@ func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*anchor.Anch
 
 	protoAnchors := append([]*yotiprotoattr_v3.Anchor{}, protoAnchor)
 
-	return anchor.ParseAnchors(protoAnchors)
+	return protoAnchors
 }
 
 func DecodeTestFile(t *testing.T, filename string) (result []byte, err error) {
