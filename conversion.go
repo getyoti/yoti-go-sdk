@@ -4,10 +4,6 @@ import (
 	"encoding/base64"
 	"log"
 	"strconv"
-
-	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/attribute"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
 
 func bytesToUtf8(bytes []byte) string {
@@ -42,38 +38,4 @@ func bytesToBool(bytes []byte) (result bool, err error) {
 	}
 
 	return result, nil
-}
-
-func convertAttribute(protoAttribute *yotiprotoattr_v3.Attribute) *attribute.Attribute {
-	processedAnchors := anchor.ParseAnchors(protoAttribute.Anchors)
-
-	var attrType attribute.AttrType
-
-	switch protoAttribute.ContentType {
-	case yotiprotoattr_v3.ContentType_STRING:
-		attrType = attribute.AttrTypeString
-
-	case yotiprotoattr_v3.ContentType_DATE:
-		attrType = attribute.AttrTypeTime
-
-	case yotiprotoattr_v3.ContentType_JPEG:
-		attrType = attribute.AttrTypeJPEG
-
-	case yotiprotoattr_v3.ContentType_PNG:
-		attrType = attribute.AttrTypePNG
-
-	case yotiprotoattr_v3.ContentType_JSON:
-		attrType = attribute.AttrTypeJSON
-
-	case yotiprotoattr_v3.ContentType_UNDEFINED:
-	default:
-		attrType = attribute.AttrTypeInterface
-	}
-
-	return &attribute.Attribute{
-		Name:    protoAttribute.Name,
-		Value:   protoAttribute.Value,
-		Type:    attrType,
-		Anchors: processedAnchors,
-	}
 }

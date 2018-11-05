@@ -3,17 +3,20 @@ package attribute
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/anchor"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
 
 //JSON is a Yoti attribute which returns an interface as its value
 type JSON struct {
-	Attribute
-	// Value returns the value of a JSON attribute in the form of an interface
-	Value interface{}
+	*yotiprotoattr_v3.Attribute // Value returns the value of a JSON attribute in the form of an interface
+	Value                       interface{}
+	Anchors                     []*anchor.Anchor
 }
 
 //NewJSON creates a new JSON attribute
-func NewJSON(a *Attribute) (*JSON, error) {
+func NewJSON(a *yotiprotoattr_v3.Attribute) (*JSON, error) {
 	interfaceValue, err := UnmarshallJSON(a.Value)
 	if err != nil {
 		err = fmt.Errorf("Unable to parse JSON value: %q. Error: %q", a.Value, err)
@@ -21,12 +24,12 @@ func NewJSON(a *Attribute) (*JSON, error) {
 	}
 
 	return &JSON{
-		Attribute: Attribute{
-			Name:    a.Name,
-			Type:    AttrTypeJSON,
-			Anchors: a.Anchors,
+		Attribute: &yotiprotoattr_v3.Attribute{
+			Name:        a.Name,
+			ContentType: a.ContentType,
 		},
-		Value: interfaceValue,
+		Value:   interfaceValue,
+		Anchors: anchor.ParseAnchors(a.Anchors),
 	}, nil
 }
 

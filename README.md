@@ -127,13 +127,13 @@ if err != nil {
 }
 ```
 
-If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method:
+If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method, which requires the result to be cast to the original type:
 
 ```Go
-userProfile.GetAttribute("age_over:18").Value
+userProfile.GetAttribute("age_over:18").Value.(string)
 ```
 
-GetAttribute returns a string by default, which can be cast to the desired type
+GetAttribute returns an interface, the value can be acquired through a type assertion.
 
 ## Handling Users
 
