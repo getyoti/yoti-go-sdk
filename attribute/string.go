@@ -1,19 +1,25 @@
 package attribute
 
+import (
+	"github.com/getyoti/yoti-go-sdk/anchor"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+)
+
 //String is a Yoti attribute which returns a string as its value
 type String struct {
-	Attribute
-	Value string
+	*yotiprotoattr_v3.Attribute
+	Value   string
+	Anchors []*anchor.Anchor
 }
 
 //NewString creates a new String attribute
-func NewString(a *Attribute) *String {
+func NewString(a *yotiprotoattr_v3.Attribute) *String {
 	return &String{
-		Attribute: Attribute{
-			Name:    a.Name,
-			Type:    AttrTypeString,
-			Anchors: a.Anchors,
+		Attribute: &yotiprotoattr_v3.Attribute{
+			Name:        a.Name,
+			ContentType: a.ContentType,
 		},
-		Value: string(a.Value),
+		Value:   string(a.Value),
+		Anchors: anchor.ParseAnchors(a.Anchors),
 	}
 }

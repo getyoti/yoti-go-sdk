@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 )
 
-//Deprecated: Will be removed in v3.0.0 - use AttrType instead. ImageType Image format
+//Deprecated: Will be removed in v3.0.0 - use attribute.ContentType instead. ImageType Image format
 type ImageType int
 
 const (

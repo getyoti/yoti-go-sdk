@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/anchor"
 	"github.com/getyoti/yoti-go-sdk/attribute"
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 	"github.com/getyoti/yoti-go-sdk/yotiprotocom_v3"
@@ -144,23 +143,18 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 			if err != nil {
 				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
 			} else if formattedAddress != "" {
-				var structuredPostalAddress *attribute.JSON
-				if structuredPostalAddress, err = profile.StructuredPostalAddress(); err != nil {
+				if _, err = profile.StructuredPostalAddress(); err != nil {
 					errStrings = append(errStrings, err.Error())
 					return
 				}
 
-				var structuredPostalAddressAnchors []*anchor.Anchor
+				protoStructuredPostalAddress := getProtobufAttribute(profile, attrConstStructuredPostalAddress)
 
-				if structuredPostalAddress.Anchors != nil {
-					structuredPostalAddressAnchors = structuredPostalAddress.Anchors
-				}
-
-				addressAttribute := &attribute.Attribute{
-					Name:    attrConstAddress,
-					Value:   []byte(formattedAddress),
-					Type:    attribute.AttrTypeString,
-					Anchors: structuredPostalAddressAnchors,
+				addressAttribute := &yotiprotoattr_v3.Attribute{
+					Name:        attrConstAddress,
+					Value:       []byte(formattedAddress),
+					ContentType: yotiprotoattr_v3.ContentType_STRING,
+					Anchors:     protoStructuredPostalAddress.Anchors,
 				}
 
 				profile.AttributeSlice = append(profile.AttributeSlice, addressAttribute)
@@ -185,6 +179,16 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 	}
 
 	return userProfile, activityDetails, errStrings
+}
+
+func getProtobufAttribute(profile Profile, key string) *yotiprotoattr_v3.Attribute {
+	for _, v := range profile.AttributeSlice {
+		if v.Name == attrConstStructuredPostalAddress {
+			return v
+		}
+	}
+
+	return nil
 }
 
 func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.AttributeList) (result UserProfile) {
@@ -288,14 +292,9 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 	return
 }
 
-func createAttributeSlice(id string, protoAttributeList *yotiprotoattr_v3.AttributeList) (result []*attribute.Attribute) {
+func createAttributeSlice(id string, protoAttributeList *yotiprotoattr_v3.AttributeList) (result []*yotiprotoattr_v3.Attribute) {
 	if protoAttributeList != nil {
-		for _, attribute := range protoAttributeList.Attributes {
-			convertedAttribute := convertAttribute(attribute)
-			if convertedAttribute != nil {
-				result = append(result, convertedAttribute)
-			}
-		}
+		result = append(result, protoAttributeList.Attributes...)
 	}
 
 	return result
