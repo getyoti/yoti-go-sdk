@@ -23,7 +23,7 @@ type Image struct {
 	Data []byte
 }
 
-// Deprecated: Will be removed in v3.0.0, please use attribute.GetMIMEType instead. GetContentType returns the MIME type of this piece of Yoti user information. For more information see:
+// Deprecated: Will be removed in v3.0.0, please use image.GetMIMEType instead. GetContentType returns the MIME type of this piece of Yoti user information. For more information see:
 // https://en.wikipedia.org/wiki/Media_type
 func (image *Image) GetContentType() string {
 	switch image.Type {
@@ -38,7 +38,7 @@ func (image *Image) GetContentType() string {
 	}
 }
 
-//Deprecated: Will be removed in v3.0.0, please use ImageAttribute.Base64URL() instead. URL Image encoded in a base64 URL
+//Deprecated: Will be removed in v3.0.0, please use image.Base64URL() instead. URL Image encoded in a base64 URL
 func (image *Image) URL() string {
 	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
 	return "data:" + image.GetContentType() + ";base64;," + base64EncodedImage
