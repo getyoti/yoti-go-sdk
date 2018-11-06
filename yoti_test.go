@@ -183,8 +183,8 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	expectedSelfieValue := "selfie0123456789"
 	if profile.Selfie() == nil {
 		t.Error(`expected selfie attribute, but it was not present in the returned profile`)
-	} else if !cmp.Equal(profile.Selfie().Value, []byte(expectedSelfieValue)) {
-		t.Errorf("expected selfie %q, instead received %q", expectedSelfieValue, string(profile.Selfie().Value))
+	} else if !cmp.Equal(profile.Selfie().Value.Data, []byte(expectedSelfieValue)) {
+		t.Errorf("expected selfie %q, instead received %q", expectedSelfieValue, string(profile.Selfie().Value.Data))
 	}
 
 	if !cmp.Equal(profile.MobileNumber().Value, "phone_number0123456789") {
@@ -628,8 +628,8 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {
 	attributeName := "test_attribute_name"
-	var boolValue = true
-	attributeValue := []byte(strconv.FormatBool(boolValue))
+	var initialBoolValue = true
+	attributeValue := []byte(strconv.FormatBool(initialBoolValue))
 
 	var attr = &yotiprotoattr_v3.Attribute{
 		Name:        attributeName,
@@ -646,8 +646,8 @@ func TestProfile_GetAttribute_Bool(t *testing.T) {
 		t.Errorf("Unable to parse string to bool. Error: %s", err)
 	}
 
-	if !cmp.Equal(boolValue, attributeValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	if !cmp.Equal(initialBoolValue, boolValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %v, actual: %v", initialBoolValue, boolValue)
 	}
 }
 
@@ -757,8 +757,8 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, selfie.Name)
 	}
 
-	if !reflect.DeepEqual(selfie.Value, attributeValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value)
+	if !reflect.DeepEqual(attributeValue, selfie.Value.Data) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value.Data)
 	}
 
 	if !cmp.Equal(selfie.ContentType, yotiprotoattr_v3.ContentType_PNG) {
@@ -780,8 +780,8 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct Image. Expected %v, actual: %v", byteValue, selfie.Value)
+	if !cmp.Equal(selfie.Value.Data, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct Image. Expected %v, actual: %v", byteValue, selfie.Value.Data)
 	}
 }
 
@@ -799,8 +799,8 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value)
+	if !cmp.Equal(selfie.Value.Data, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value.Data)
 	}
 }
 
@@ -817,8 +817,8 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value)
+	if !cmp.Equal(selfie.Value.Data, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value.Data)
 	}
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
