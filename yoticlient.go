@@ -314,9 +314,9 @@ func ensureAddressUserProfile(result UserProfile) (address string, err error) {
 
 func ensureAddressProfile(profile Profile) (address string, err error) {
 	if profile.Address() == nil {
-		var structuredPostalAddress *attribute.JSON
+		var structuredPostalAddress *attribute.JSONAttribute
 		if structuredPostalAddress, err = profile.StructuredPostalAddress(); err == nil {
-			if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSON{})) {
+			if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
 				var formattedAddress string
 				formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value)
 				if err == nil {

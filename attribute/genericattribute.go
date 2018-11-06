@@ -8,15 +8,15 @@ import (
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
 
-//Generic is a Yoti attribute which returns a generic value
-type Generic struct {
+//GenericAttribute is a Yoti attribute which returns a generic value
+type GenericAttribute struct {
 	*yotiprotoattr_v3.Attribute
 	Value   interface{}
 	Anchors []*anchor.Anchor
 }
 
 //NewGeneric creates a new generic attribute
-func NewGeneric(a *yotiprotoattr_v3.Attribute) *Generic {
+func NewGeneric(a *yotiprotoattr_v3.Attribute) *GenericAttribute {
 	var value interface{}
 
 	switch a.ContentType {
@@ -49,7 +49,7 @@ func NewGeneric(a *yotiprotoattr_v3.Attribute) *Generic {
 		value = a.Value
 	}
 
-	return &Generic{
+	return &GenericAttribute{
 		Attribute: &yotiprotoattr_v3.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
