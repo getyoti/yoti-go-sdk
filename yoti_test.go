@@ -465,7 +465,7 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", userProfileAddress, formattedAddressText)
 	}
 
-	var structuredPostalAddress *attribute.JSON
+	var structuredPostalAddress *attribute.JSONAttribute
 
 	structuredPostalAddress, err = profile.StructuredPostalAddress()
 	if err != nil {
@@ -898,7 +898,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(a)
 
-	var actualStructuredPostalAddress *attribute.JSON
+	var actualStructuredPostalAddress *attribute.JSONAttribute
 
 	actualStructuredPostalAddress, err := result.StructuredPostalAddress()
 
