@@ -18,15 +18,16 @@ var (
 )
 
 func main() {
-	var sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
-	var key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	var err error
+	key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	if err != nil {
 		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
 		return
 	}
 
-	var client = yoti.Client{
+	client = &yoti.Client{
 		SdkID: sdkID,
 		Key:   key}
 

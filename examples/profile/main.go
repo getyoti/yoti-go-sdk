@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"image"
 	"image/jpeg"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,40 +37,58 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 
 func profile(w http.ResponseWriter, r *http.Request) {
-	var sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
-	var key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	var err error
+	key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	if err != nil {
-		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
-		return
+		log.Fatalf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
 	}
 
-	var client = yoti.Client{
+	client = &yoti.Client{
 		SdkID: sdkID,
 		Key:   key}
 
 	yotiOneTimeUseToken := r.URL.Query().Get("token")
-	profile, err := client.GetUserProfile(yotiOneTimeUseToken)
 
-	if err == nil {
-		templateVars := map[string]interface{}{
-			"profile":         profile,
-			"selfieBase64URL": template.URL(profile.Selfie.URL())}
-
-		decodedImage := decodeImage(profile.Selfie.Data)
-		file := createImage()
-		saveImage(decodedImage, file)
-
-		t, err := template.ParseFiles("profile.html")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		t.Execute(w, templateVars)
-	} else {
-		fmt.Println(err)
+	activityDetails, errStrings := client.GetActivityDetails(yotiOneTimeUseToken)
+	if len(errStrings) != 0 {
+		log.Fatalf("Errors: %v", errStrings)
 	}
+
+	userProfile := activityDetails.UserProfile
+
+	var base64URL string
+	base64URL, err = userProfile.Selfie().Base64URL()
+
+	if err != nil {
+		log.Fatalf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: %q", err)
+	}
+
+	dob, err := userProfile.DateOfBirth()
+	if err != nil {
+		log.Fatalf("Error parsing Date of Birth attribute. Error %q", err)
+	}
+
+	templateVars := map[string]interface{}{
+		"profile":         userProfile,
+		"selfieBase64URL": template.URL(base64URL),
+		"rememberMeID":    activityDetails.RememberMeID,
+		"dateOfBirth":     dob,
+	}
+
+	decodedImage := decodeImage(userProfile.Selfie().Value)
+	file := createImage()
+	saveImage(decodedImage, file)
+
+	var t *template.Template
+	t, err = template.ParseFiles("profile.html")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	t.Execute(w, templateVars)
 }
 
 func main() {
@@ -131,7 +150,7 @@ func createImage() (file *os.File) {
 	return
 }
 
-func saveImage(img image.Image, file *os.File) {
+func saveImage(img image.Image, file io.Writer) {
 	var opt jpeg.Options
 	opt.Quality = 100
 

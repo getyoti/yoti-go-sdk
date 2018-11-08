@@ -35,7 +35,7 @@ For developing in VS Code, use the following `launch.json` file (placed inside a
         "host": "127.0.0.1",
         "program": "${workspaceFolder}/examples/profile/main.go",
         "env": {},
-        "args": [],
+        "args": ["certificatehelper.go"],
         "showLog": true
     }
     ]
