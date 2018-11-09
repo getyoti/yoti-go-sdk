@@ -57,8 +57,8 @@ func (a Anchor) OriginServerCerts() []*x509.Certificate {
 // message associated with the timestamp is the marshaled form of
 // AttributeSigning (i.e. the same message that is signed in the
 // Signature field). This method returns the SignedTimestamp
-// object, the actual timestamp as a DateTime can be called with
-// .Timestamp() on this object
+// object, the actual timestamp as a *time.Time can be called with
+// .Timestamp on the result of this function
 func (a Anchor) SignedTimestamp() SignedTimestamp {
 	return a.signedTimestamp
 }
@@ -75,4 +75,23 @@ func (a Anchor) SubType() string {
 // PASSPORT, DRIVING_LICENSE. For a VERIFIER anchor expect valuues like YOTI_ADMIN
 func (a Anchor) Value() []string {
 	return a.value
+}
+
+// GetSources returns the anchors which identify how and when an attribute value was acquired.
+func GetSources(anchors []*Anchor) (sources []*Anchor) {
+	return filterAnchors(anchors, AnchorTypeSource)
+}
+
+// GetVerifiers returns the anchors which identify how and when an attribute value was verified by another provider.
+func GetVerifiers(anchors []*Anchor) (sources []*Anchor) {
+	return filterAnchors(anchors, AnchorTypeVerifier)
+}
+
+func filterAnchors(anchors []*Anchor, anchorType Type) (result []*Anchor) {
+	for _, v := range anchors {
+		if v.Type == anchorType {
+			result = append(result, v)
+		}
+	}
+	return result
 }
