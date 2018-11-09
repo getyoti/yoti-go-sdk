@@ -11,8 +11,10 @@ import (
 //GenericAttribute is a Yoti attribute which returns a generic value
 type GenericAttribute struct {
 	*yotiprotoattr_v3.Attribute
-	Value   interface{}
-	Anchors []*anchor.Anchor
+	Value     interface{}
+	Anchors   []*anchor.Anchor
+	Sources   []*anchor.Anchor
+	Verifiers []*anchor.Anchor
 }
 
 //NewGeneric creates a new generic attribute
@@ -49,12 +51,16 @@ func NewGeneric(a *yotiprotoattr_v3.Attribute) *GenericAttribute {
 		value = a.Value
 	}
 
+	parsedAnchors := anchor.ParseAnchors(a.Anchors)
+
 	return &GenericAttribute{
 		Attribute: &yotiprotoattr_v3.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		Value:   value,
-		Anchors: anchor.ParseAnchors(a.Anchors),
+		Value:     value,
+		Anchors:   parsedAnchors,
+		Sources:   anchor.GetSources(parsedAnchors),
+		Verifiers: anchor.GetVerifiers(parsedAnchors),
 	}
 }

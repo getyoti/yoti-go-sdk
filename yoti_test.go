@@ -908,6 +908,10 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	actualAnchor := actualStructuredPostalAddress.Anchors[0]
 
+	if actualAnchor != actualStructuredPostalAddress.Sources[0] {
+		t.Error("Anchors and Sources should be the same when there is only one Source")
+	}
+
 	if actualAnchor.Type != anchor.AnchorTypeSource {
 		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, actualAnchor.Type)
 	}
@@ -944,7 +948,12 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(attribute)
 
-	resultAnchor := result.Gender().Anchors[0]
+	genderAttribute := result.Gender()
+	resultAnchor := genderAttribute.Anchors[0]
+
+	if resultAnchor != genderAttribute.Sources[0] {
+		t.Error("Anchors and Sources should be the same when there is only one Source")
+	}
 
 	if resultAnchor.Type != anchor.AnchorTypeSource {
 		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, resultAnchor.Type)
@@ -989,6 +998,10 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	resultAnchor := DoB.Anchors[0]
 
+	if resultAnchor != DoB.Verifiers[0] {
+		t.Error("Anchors and Verifiers should be the same when there is only one Verifier")
+	}
+
 	if resultAnchor.Type != anchor.AnchorTypeVerifier {
 		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeVerifier, resultAnchor.Type)
 	}
@@ -1011,6 +1024,38 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	AssertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
+}
+
+func TestAnchors_Unknown(t *testing.T) {
+	unknownAnchor := &anchor.Anchor{
+		Type: anchor.AnchorTypeUnknown,
+	}
+
+	anchorSlice := append([]*anchor.Anchor{}, unknownAnchor)
+
+	sources := anchor.GetSources(anchorSlice)
+	if len(sources) > 0 {
+		t.Error("Unknown anchor should not be returned by GetSources")
+	}
+
+	verifiers := anchor.GetVerifiers(anchorSlice)
+	if len(verifiers) > 0 {
+		t.Error("Unknown anchor should not be returned by GetVerifiers")
+	}
+}
+
+func TestAnchors_None(t *testing.T) {
+	anchorSlice := []*anchor.Anchor{}
+
+	sources := anchor.GetSources(anchorSlice)
+	if len(sources) > 0 {
+		t.Error("GetSources should not return anything with empty anchors")
+	}
+
+	verifiers := anchor.GetVerifiers(anchorSlice)
+	if len(verifiers) > 0 {
+		t.Error("GetVerifiers should not return anything with empty anchors")
+	}
 }
 
 func createProfileWithSingleAttribute(attr *yotiprotoattr_v3.Attribute) Profile {
