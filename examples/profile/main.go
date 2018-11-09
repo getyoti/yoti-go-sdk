@@ -59,7 +59,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	userProfile := activityDetails.UserProfile
 
 	var base64URL string
-	base64URL, err = userProfile.Selfie().Base64URL()
+	base64URL, err = userProfile.Selfie().Value.Base64URL()
 
 	if err != nil {
 		log.Fatalf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: %q", err)
@@ -77,7 +77,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		"dateOfBirth":     dob,
 	}
 
-	decodedImage := decodeImage(userProfile.Selfie().Value)
+	decodedImage := decodeImage(userProfile.Selfie().Value.Data)
 	file := createImage()
 	saveImage(decodedImage, file)
 

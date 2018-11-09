@@ -8,8 +8,10 @@ import (
 //ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	*yotiprotoattr_v3.Attribute
-	Value   *Image
-	Anchors []*anchor.Anchor
+	Value     *Image
+	Anchors   []*anchor.Anchor
+	Sources   []*anchor.Anchor
+	Verifiers []*anchor.Anchor
 }
 
 //NewImage creates a new Image attribute
@@ -27,6 +29,8 @@ func NewImage(a *yotiprotoattr_v3.Attribute) *ImageAttribute {
 		imageType = ImageTypeOther
 	}
 
+	parsedAnchors := anchor.ParseAnchors(a.Anchors)
+
 	return &ImageAttribute{
 		Attribute: &yotiprotoattr_v3.Attribute{
 			Name:        a.Name,
@@ -36,6 +40,8 @@ func NewImage(a *yotiprotoattr_v3.Attribute) *ImageAttribute {
 			Data: a.Value,
 			Type: imageType,
 		},
-		Anchors: anchor.ParseAnchors(a.Anchors),
+		Anchors:   parsedAnchors,
+		Sources:   anchor.GetSources(parsedAnchors),
+		Verifiers: anchor.GetVerifiers(parsedAnchors),
 	}
 }
