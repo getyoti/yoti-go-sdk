@@ -19,18 +19,22 @@ const (
 	attrConstNationality             = "nationality"
 )
 
-//Profile represents the details retrieved for a particular
+// Profile represents the details retrieved for a particular user. Consists of
+// Yoti attributes: a small piece of information about a Yoti user such as a
+// photo of the user or the user's date of birth.
 type Profile struct {
-	// AttributeSlice represents a map of the Yoti attributes, each attribute is a small piece of information about a Yoti user such as a photo of the user or the
-	// user's date of birth.
-	AttributeSlice []*yotiprotoattr_v3.Attribute
+	attributeSlice []*yotiprotoattr_v3.Attribute
 }
 
 // Selfie is a photograph of the user. Will be nil if not provided by Yoti
 func (p Profile) Selfie() *attribute.ImageAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstSelfie {
-			return attribute.NewImage(a)
+			attribute, err := attribute.NewImage(a)
+
+			if err == nil {
+				return attribute
+			}
 		}
 	}
 	return nil
@@ -38,7 +42,7 @@ func (p Profile) Selfie() *attribute.ImageAttribute {
 
 // GivenNames represents the user's given names. Will be nil if not provided by Yoti
 func (p Profile) GivenNames() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstGivenNames {
 			return attribute.NewString(a)
 		}
@@ -48,7 +52,7 @@ func (p Profile) GivenNames() *attribute.StringAttribute {
 
 // FamilyName represents the user's family name. Will be nil if not provided by Yoti
 func (p Profile) FamilyName() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstFamilyName {
 			return attribute.NewString(a)
 		}
@@ -58,7 +62,7 @@ func (p Profile) FamilyName() *attribute.StringAttribute {
 
 //FullName represents the user's full name. Will be nil if not provided by Yoti
 func (p Profile) FullName() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstFullName {
 			return attribute.NewString(a)
 		}
@@ -68,7 +72,7 @@ func (p Profile) FullName() *attribute.StringAttribute {
 
 // MobileNumber represents the user's mobile phone number. Will be nil if not provided by Yoti
 func (p Profile) MobileNumber() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstMobileNumber {
 			return attribute.NewString(a)
 		}
@@ -78,7 +82,7 @@ func (p Profile) MobileNumber() *attribute.StringAttribute {
 
 // EmailAddress represents the user's email address. Will be nil if not provided by Yoti
 func (p Profile) EmailAddress() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstEmailAddress {
 			return attribute.NewString(a)
 		}
@@ -88,7 +92,7 @@ func (p Profile) EmailAddress() *attribute.StringAttribute {
 
 // DateOfBirth represents the user's date of birth. Will be nil if not provided by Yoti. Has an err value which will be filled if there is an error parsing the date.
 func (p Profile) DateOfBirth() (*attribute.TimeAttribute, error) {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstDateOfBirth {
 			return attribute.NewTime(a)
 		}
@@ -98,7 +102,7 @@ func (p Profile) DateOfBirth() (*attribute.TimeAttribute, error) {
 
 // Address represents the user's address. Will be nil if not provided by Yoti
 func (p Profile) Address() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstAddress {
 			return attribute.NewString(a)
 		}
@@ -108,7 +112,7 @@ func (p Profile) Address() *attribute.StringAttribute {
 
 // StructuredPostalAddress represents the user's address in a JSON format. Will be nil if not provided by Yoti
 func (p Profile) StructuredPostalAddress() (*attribute.JSONAttribute, error) {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstStructuredPostalAddress {
 			return attribute.NewJSON(a)
 		}
@@ -118,7 +122,7 @@ func (p Profile) StructuredPostalAddress() (*attribute.JSONAttribute, error) {
 
 // Gender represents the user's gender. Will be nil if not provided by Yoti
 func (p Profile) Gender() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstGender {
 			return attribute.NewString(a)
 		}
@@ -128,7 +132,7 @@ func (p Profile) Gender() *attribute.StringAttribute {
 
 // Nationality represents the user's nationality. Will be nil if not provided by Yoti
 func (p Profile) Nationality() *attribute.StringAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attrConstNationality {
 			return attribute.NewString(a)
 		}
@@ -138,7 +142,7 @@ func (p Profile) Nationality() *attribute.StringAttribute {
 
 // GetAttribute retrieve an attribute by name on the Yoti profile. Will return nil if attribute is not present.
 func (p Profile) GetAttribute(attributeName string) *attribute.GenericAttribute {
-	for _, a := range p.AttributeSlice {
+	for _, a := range p.attributeSlice {
 		if a.Name == attributeName {
 			return attribute.NewGeneric(a)
 		}
