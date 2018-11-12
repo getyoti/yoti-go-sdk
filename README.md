@@ -104,6 +104,8 @@ if len(errStrings) != 0 {
 }
 ```
 
+### Profile
+
 You can then get the user profile from the activityDetails struct:
 
 ```Go
@@ -135,19 +137,35 @@ userProfile.GetAttribute("age_over:18").Value.(string)
 
 GetAttribute returns an interface, the value can be acquired through a type assertion.
 
+### Anchors, Sources and Verifiers
 
-You can retrieve the anchors, sources and verifiers for each attribute as follows:
+An `Anchor` represents how a given Attribute has been _sourced_ or _verified_.  These values are created and signed whenever a Profile Attribute is created, or verified with an external party.
+
+For example, an attribute value that was _sourced_ from a Passport might have the following values:
+
+`Anchor` property | Example value
+-----|------
+type | SOURCE
+value | PASSPORT
+subType | OCR
+signedTimestamp | 2017-10-31, 19:45:59.123789
+
+Similarly, an attribute _verified_ against the data held by an external party will have an `Anchor` of type _VERIFIER_, naming the party that verified it.
+
+From each attribute can retrieve the `Anchors`, and subsets `Sources` and `Verifiers` (all as `[]*anchor.Anchor`) as follows:
+
 ```Go
 givenNamesAnchors := userProfile.GivenNames().Anchors
 givenNamesSources := userProfile.GivenNames().Sources
 givenNamesVerifiers := userProfile.GivenNames().Verifiers
 ```
+
 You can also retrieve further properties from these respective anchors in the following way:
+
 ```Go
 givenNamesFirstAnchor := userProfile.GivenNames().Anchors[0]
 
 anchorType := givenNamesFirstAnchor.Type
-originServerCerts := givenNamesFirstAnchor.OriginServerCerts()
 signedTimestamp := givenNamesFirstAnchor.SignedTimestamp().Timestamp
 subType := givenNamesFirstAnchor.SubType()
 value := givenNamesFirstAnchor.Value()

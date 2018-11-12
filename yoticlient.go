@@ -135,7 +135,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 			attributeSlice := createAttributeSlice(id, attributeList)
 
 			profile := Profile{
-				AttributeSlice: attributeSlice,
+				attributeSlice: attributeSlice,
 			}
 
 			var formattedAddress string
@@ -157,7 +157,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 					Anchors:     protoStructuredPostalAddress.Anchors,
 				}
 
-				profile.AttributeSlice = append(profile.AttributeSlice, addressAttribute)
+				profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
 			}
 
 			activityDetails = ActivityDetails{
@@ -182,7 +182,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 }
 
 func getProtobufAttribute(profile Profile, key string) *yotiprotoattr_v3.Attribute {
-	for _, v := range profile.AttributeSlice {
+	for _, v := range profile.attributeSlice {
 		if v.Name == attrConstStructuredPostalAddress {
 			return v
 		}

@@ -706,7 +706,7 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 	result := Profile{
-		AttributeSlice: []*yotiprotoattr_v3.Attribute{},
+		attributeSlice: []*yotiprotoattr_v3.Attribute{},
 	}
 
 	attribute := result.GetAttribute("attributeName")
@@ -1063,7 +1063,7 @@ func createProfileWithSingleAttribute(attr *yotiprotoattr_v3.Attribute) Profile 
 	attributeSlice = append(attributeSlice, attr)
 
 	return Profile{
-		AttributeSlice: attributeSlice,
+		attributeSlice: attributeSlice,
 	}
 }
 

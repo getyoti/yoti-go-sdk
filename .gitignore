@@ -7,3 +7,6 @@ examples/profile/images/YotiSelfie.jpeg
 # Example project generated self-signed certificate
 examples/profile/yotiSelfSignedCert.pem
 examples/profile/yotiSelfSignedKey.pem
+
+# Debug files
+debug
