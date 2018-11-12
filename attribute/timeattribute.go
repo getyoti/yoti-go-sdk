@@ -12,9 +12,9 @@ import (
 type TimeAttribute struct {
 	*yotiprotoattr_v3.Attribute
 	Value     *time.Time
-	Anchors   []*anchor.Anchor
-	Sources   []*anchor.Anchor
-	Verifiers []*anchor.Anchor
+	anchors   []*anchor.Anchor
+	sources   []*anchor.Anchor
+	verifiers []*anchor.Anchor
 }
 
 //NewTime creates a new Time attribute
@@ -34,8 +34,25 @@ func NewTime(a *yotiprotoattr_v3.Attribute) (*TimeAttribute, error) {
 			ContentType: a.ContentType,
 		},
 		Value:     &parsedTime,
-		Anchors:   parsedAnchors,
-		Sources:   anchor.GetSources(parsedAnchors),
-		Verifiers: anchor.GetVerifiers(parsedAnchors),
+		anchors:   parsedAnchors,
+		sources:   anchor.GetSources(parsedAnchors),
+		verifiers: anchor.GetVerifiers(parsedAnchors),
 	}, nil
+}
+
+// Anchors are the metadata associated with an attribute. They describe
+// how an attribute has been provided to Yoti (SOURCE Anchor) and how
+// it has been verified (VERIFIER Anchor).
+func (a *TimeAttribute) Anchors() []*anchor.Anchor {
+	return a.anchors
+}
+
+// Sources returns the anchors which identify how and when an attribute value was acquired.
+func (a *TimeAttribute) Sources() []*anchor.Anchor {
+	return a.sources
+}
+
+// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
+func (a *TimeAttribute) Verifiers() []*anchor.Anchor {
+	return a.verifiers
 }
