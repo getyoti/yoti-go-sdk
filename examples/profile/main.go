@@ -21,6 +21,7 @@ import (
 
 var (
 	sdkID              string
+	scenarioID         string
 	key                []byte
 	client             *yoti.Client
 	selfSignedCertName = "yotiSelfSignedCert.pem"
@@ -30,6 +31,7 @@ var (
 
 func home(w http.ResponseWriter, req *http.Request) {
 	templateVars := map[string]interface{}{
+		"yotiScenarioID":    os.Getenv("YOTI_SCENARIO_ID"),
 		"yotiApplicationID": os.Getenv("YOTI_APPLICATION_ID")}
 
 	t, _ := template.ParseFiles("login.html")
@@ -58,11 +60,18 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 	userProfile := activityDetails.UserProfile
 
+	selfie := userProfile.Selfie()
 	var base64URL string
-	base64URL, err = userProfile.Selfie().Value.Base64URL()
+	if selfie != nil {
+		base64URL, err = selfie.Value.Base64URL()
 
-	if err != nil {
-		log.Fatalf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: %q", err)
+		if err != nil {
+			log.Fatalf("Unable to retrieve get Base64 URL of selfie. Error: %q", err)
+		}
+
+		decodedImage := decodeImage(selfie.Value.Data)
+		file := createImage()
+		saveImage(decodedImage, file)
 	}
 
 	dob, err := userProfile.DateOfBirth()
@@ -76,10 +85,6 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		"rememberMeID":    activityDetails.RememberMeID,
 		"dateOfBirth":     dob,
 	}
-
-	decodedImage := decodeImage(userProfile.Selfie().Value.Data)
-	file := createImage()
-	saveImage(decodedImage, file)
 
 	var t *template.Template
 	t, err = template.ParseFiles("profile.html")
