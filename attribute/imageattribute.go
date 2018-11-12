@@ -1,6 +1,8 @@
 package attribute
 
 import (
+	"errors"
+
 	"github.com/getyoti/yoti-go-sdk/anchor"
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
 )
@@ -15,8 +17,8 @@ type ImageAttribute struct {
 }
 
 //NewImage creates a new Image attribute
-func NewImage(a *yotiprotoattr_v3.Attribute) *ImageAttribute {
-	var imageType ImageType
+func NewImage(a *yotiprotoattr_v3.Attribute) (*ImageAttribute, error) {
+	var imageType string
 
 	switch a.ContentType {
 	case yotiprotoattr_v3.ContentType_JPEG:
@@ -26,7 +28,7 @@ func NewImage(a *yotiprotoattr_v3.Attribute) *ImageAttribute {
 		imageType = ImageTypePng
 
 	default:
-		imageType = ImageTypeOther
+		return nil, errors.New("Cannot create ImageAttribute with unsupported type")
 	}
 
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
@@ -43,5 +45,5 @@ func NewImage(a *yotiprotoattr_v3.Attribute) *ImageAttribute {
 		Anchors:   parsedAnchors,
 		Sources:   anchor.GetSources(parsedAnchors),
 		Verifiers: anchor.GetVerifiers(parsedAnchors),
-	}
+	}, nil
 }
