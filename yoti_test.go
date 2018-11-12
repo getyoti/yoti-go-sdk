@@ -906,9 +906,9 @@ func TestAnchorParser_Passport(t *testing.T) {
 		t.Error(err)
 	}
 
-	actualAnchor := actualStructuredPostalAddress.Anchors[0]
+	actualAnchor := actualStructuredPostalAddress.Anchors()[0]
 
-	if actualAnchor != actualStructuredPostalAddress.Sources[0] {
+	if actualAnchor != actualStructuredPostalAddress.Sources()[0] {
 		t.Error("Anchors and Sources should be the same when there is only one Source")
 	}
 
@@ -949,9 +949,9 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	result := createProfileWithSingleAttribute(attribute)
 
 	genderAttribute := result.Gender()
-	resultAnchor := genderAttribute.Anchors[0]
+	resultAnchor := genderAttribute.Anchors()[0]
 
-	if resultAnchor != genderAttribute.Sources[0] {
+	if resultAnchor != genderAttribute.Sources()[0] {
 		t.Error("Anchors and Sources should be the same when there is only one Source")
 	}
 
@@ -996,9 +996,9 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 		t.Error(err)
 	}
 
-	resultAnchor := DoB.Anchors[0]
+	resultAnchor := DoB.Anchors()[0]
 
-	if resultAnchor != DoB.Verifiers[0] {
+	if resultAnchor != DoB.Verifiers()[0] {
 		t.Error("Anchors and Verifiers should be the same when there is only one Verifier")
 	}
 
