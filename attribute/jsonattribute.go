@@ -12,9 +12,9 @@ import (
 type JSONAttribute struct {
 	*yotiprotoattr_v3.Attribute // Value returns the value of a JSON attribute in the form of an interface
 	Value                       interface{}
-	Anchors                     []*anchor.Anchor
-	Sources                     []*anchor.Anchor
-	Verifiers                   []*anchor.Anchor
+	anchors                     []*anchor.Anchor
+	sources                     []*anchor.Anchor
+	verifiers                   []*anchor.Anchor
 }
 
 //NewJSON creates a new JSON attribute
@@ -33,9 +33,9 @@ func NewJSON(a *yotiprotoattr_v3.Attribute) (*JSONAttribute, error) {
 			ContentType: a.ContentType,
 		},
 		Value:     interfaceValue,
-		Anchors:   parsedAnchors,
-		Sources:   anchor.GetSources(parsedAnchors),
-		Verifiers: anchor.GetVerifiers(parsedAnchors),
+		anchors:   parsedAnchors,
+		sources:   anchor.GetSources(parsedAnchors),
+		verifiers: anchor.GetVerifiers(parsedAnchors),
 	}, nil
 }
 
@@ -49,4 +49,21 @@ func UnmarshallJSON(byteValue []byte) (result interface{}, err error) {
 	}
 
 	return unmarshalledJSON, err
+}
+
+// Anchors are the metadata associated with an attribute. They describe
+// how an attribute has been provided to Yoti (SOURCE Anchor) and how
+// it has been verified (VERIFIER Anchor).
+func (a *JSONAttribute) Anchors() []*anchor.Anchor {
+	return a.anchors
+}
+
+// Sources returns the anchors which identify how and when an attribute value was acquired.
+func (a *JSONAttribute) Sources() []*anchor.Anchor {
+	return a.sources
+}
+
+// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
+func (a *JSONAttribute) Verifiers() []*anchor.Anchor {
+	return a.verifiers
 }

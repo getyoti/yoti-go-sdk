@@ -155,15 +155,15 @@ Similarly, an attribute _verified_ against the data held by an external party wi
 From each attribute can retrieve the `Anchors`, and subsets `Sources` and `Verifiers` (all as `[]*anchor.Anchor`) as follows:
 
 ```Go
-givenNamesAnchors := userProfile.GivenNames().Anchors
-givenNamesSources := userProfile.GivenNames().Sources
-givenNamesVerifiers := userProfile.GivenNames().Verifiers
+givenNamesAnchors := userProfile.GivenNames().Anchors()
+givenNamesSources := userProfile.GivenNames().Sources()
+givenNamesVerifiers := userProfile.GivenNames().Verifiers()
 ```
 
 You can also retrieve further properties from these respective anchors in the following way:
 
 ```Go
-givenNamesFirstAnchor := userProfile.GivenNames().Anchors[0]
+givenNamesFirstAnchor := userProfile.GivenNames().Anchors()[0]
 
 anchorType := givenNamesFirstAnchor.Type
 signedTimestamp := givenNamesFirstAnchor.SignedTimestamp().Timestamp

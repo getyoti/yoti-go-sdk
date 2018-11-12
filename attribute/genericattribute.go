@@ -12,9 +12,9 @@ import (
 type GenericAttribute struct {
 	*yotiprotoattr_v3.Attribute
 	Value     interface{}
-	Anchors   []*anchor.Anchor
-	Sources   []*anchor.Anchor
-	Verifiers []*anchor.Anchor
+	anchors   []*anchor.Anchor
+	sources   []*anchor.Anchor
+	verifiers []*anchor.Anchor
 }
 
 //NewGeneric creates a new generic attribute
@@ -59,8 +59,25 @@ func NewGeneric(a *yotiprotoattr_v3.Attribute) *GenericAttribute {
 			ContentType: a.ContentType,
 		},
 		Value:     value,
-		Anchors:   parsedAnchors,
-		Sources:   anchor.GetSources(parsedAnchors),
-		Verifiers: anchor.GetVerifiers(parsedAnchors),
+		anchors:   parsedAnchors,
+		sources:   anchor.GetSources(parsedAnchors),
+		verifiers: anchor.GetVerifiers(parsedAnchors),
 	}
+}
+
+// Anchors are the metadata associated with an attribute. They describe
+// how an attribute has been provided to Yoti (SOURCE Anchor) and how
+// it has been verified (VERIFIER Anchor).
+func (a *GenericAttribute) Anchors() []*anchor.Anchor {
+	return a.anchors
+}
+
+// Sources returns the anchors which identify how and when an attribute value was acquired.
+func (a *GenericAttribute) Sources() []*anchor.Anchor {
+	return a.sources
+}
+
+// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
+func (a *GenericAttribute) Verifiers() []*anchor.Anchor {
+	return a.verifiers
 }
