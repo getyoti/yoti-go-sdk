@@ -11,7 +11,7 @@ import (
 //GenericAttribute is a Yoti attribute which returns a generic value
 type GenericAttribute struct {
 	*yotiprotoattr_v3.Attribute
-	Value     interface{}
+	value     interface{}
 	anchors   []*anchor.Anchor
 	sources   []*anchor.Anchor
 	verifiers []*anchor.Anchor
@@ -58,11 +58,16 @@ func NewGeneric(a *yotiprotoattr_v3.Attribute) *GenericAttribute {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		Value:     value,
+		value:     value,
 		anchors:   parsedAnchors,
 		sources:   anchor.GetSources(parsedAnchors),
 		verifiers: anchor.GetVerifiers(parsedAnchors),
 	}
+}
+
+// Value returns the value of the GenericAttribute as an interface
+func (a *GenericAttribute) Value() interface{} {
+	return a.value
 }
 
 // Anchors are the metadata associated with an attribute. They describe
