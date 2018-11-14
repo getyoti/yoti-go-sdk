@@ -318,7 +318,7 @@ func ensureAddressProfile(profile Profile) (address string, err error) {
 		if structuredPostalAddress, err = profile.StructuredPostalAddress(); err == nil {
 			if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
 				var formattedAddress string
-				formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value)
+				formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value())
 				if err == nil {
 					return formattedAddress, nil
 				}

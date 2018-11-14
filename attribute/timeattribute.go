@@ -11,7 +11,7 @@ import (
 //TimeAttribute is a Yoti attribute which returns a time as its value
 type TimeAttribute struct {
 	*yotiprotoattr_v3.Attribute
-	Value     *time.Time
+	value     *time.Time
 	anchors   []*anchor.Anchor
 	sources   []*anchor.Anchor
 	verifiers []*anchor.Anchor
@@ -33,11 +33,16 @@ func NewTime(a *yotiprotoattr_v3.Attribute) (*TimeAttribute, error) {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		Value:     &parsedTime,
+		value:     &parsedTime,
 		anchors:   parsedAnchors,
 		sources:   anchor.GetSources(parsedAnchors),
 		verifiers: anchor.GetVerifiers(parsedAnchors),
 	}, nil
+}
+
+// Value returns the value of the TimeAttribute as *time.Time
+func (a *TimeAttribute) Value() *time.Time {
+	return a.value
 }
 
 // Anchors are the metadata associated with an attribute. They describe

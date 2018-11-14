@@ -11,7 +11,7 @@ import (
 //JSONAttribute is a Yoti attribute which returns an interface as its value
 type JSONAttribute struct {
 	*yotiprotoattr_v3.Attribute // Value returns the value of a JSON attribute in the form of an interface
-	Value                       interface{}
+	value                       interface{}
 	anchors                     []*anchor.Anchor
 	sources                     []*anchor.Anchor
 	verifiers                   []*anchor.Anchor
@@ -32,7 +32,7 @@ func NewJSON(a *yotiprotoattr_v3.Attribute) (*JSONAttribute, error) {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		Value:     interfaceValue,
+		value:     interfaceValue,
 		anchors:   parsedAnchors,
 		sources:   anchor.GetSources(parsedAnchors),
 		verifiers: anchor.GetVerifiers(parsedAnchors),
@@ -49,6 +49,11 @@ func UnmarshallJSON(byteValue []byte) (result interface{}, err error) {
 	}
 
 	return unmarshalledJSON, err
+}
+
+// Value returns the value of the JSONAttribute as an interface
+func (a *JSONAttribute) Value() interface{} {
+	return a.value
 }
 
 // Anchors are the metadata associated with an attribute. They describe
