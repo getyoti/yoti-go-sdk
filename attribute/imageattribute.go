@@ -10,7 +10,7 @@ import (
 //ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	*yotiprotoattr_v3.Attribute
-	Value     *Image
+	value     *Image
 	anchors   []*anchor.Anchor
 	sources   []*anchor.Anchor
 	verifiers []*anchor.Anchor
@@ -38,7 +38,7 @@ func NewImage(a *yotiprotoattr_v3.Attribute) (*ImageAttribute, error) {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		Value: &Image{
+		value: &Image{
 			Data: a.Value,
 			Type: imageType,
 		},
@@ -46,6 +46,11 @@ func NewImage(a *yotiprotoattr_v3.Attribute) (*ImageAttribute, error) {
 		sources:   anchor.GetSources(parsedAnchors),
 		verifiers: anchor.GetVerifiers(parsedAnchors),
 	}, nil
+}
+
+// Value returns the value of the ImageAttribute as *Image
+func (a *ImageAttribute) Value() *Image {
+	return a.value
 }
 
 // Anchors are the metadata associated with an attribute. They describe
