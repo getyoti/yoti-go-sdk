@@ -21,9 +21,9 @@ import (
 
 const token = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
 const encryptedToken = "b6H19bUCJhwh6WqQX_sEHWX9RP-A_ANr1fkApwA4Dp2nJQFAjrF9e6YCXhNBpAIhfHnN0iXubyXxXZMNwNMSQ5VOxkqiytrvPykfKQWHC6ypSbfy0ex8ihndaAXG5FUF-qcU8QaFPMy6iF3x0cxnY0Ij0kZj0Ng2t6oiNafb7AhT-VGXxbFbtZu1QF744PpWMuH0LVyBsAa5N5GJw2AyBrnOh67fWMFDKTJRziP5qCW2k4h5vJfiYr_EOiWKCB1d_zINmUm94ZffGXxcDAkq-KxhN1ZuNhGlJ2fKcFh7KxV0BqlUWPsIEiwS0r9CJ2o1VLbEs2U_hCEXaqseEV7L29EnNIinEPVbL4WR7vkF6zQCbK_cehlk2Qwda-VIATqupRO5grKZN78R9lBitvgilDaoE7JB_VFcPoljGQ48kX0wje1mviX4oJHhuO8GdFITS5LTbojGVQWT7LUNgAUe0W0j-FLHYYck3v84OhWTqads5_jmnnLkp9bdJSRuJF0e8pNdePnn2lgF-GIcyW_0kyGVqeXZrIoxnObLpF-YeUteRBKTkSGFcy7a_V_DLiJMPmH8UXDLOyv8TVt3ppzqpyUrLN2JVMbL5wZ4oriL2INEQKvw_boDJjZDGeRlu5m1y7vGDNBRDo64-uQM9fRUULPw-YkABNwC0DeShswzT00="
+const sdkID = "fake-sdk-id"
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
 	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
@@ -43,7 +43,6 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
@@ -62,7 +61,6 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
@@ -81,7 +79,6 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
@@ -101,7 +98,6 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 }
 
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	expectedAbsoluteURL := "/api/v1/profile/" + token
@@ -132,7 +128,6 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	wrappedReceiptKey := "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
@@ -183,12 +178,12 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	expectedSelfieValue := "selfie0123456789"
 	if profile.Selfie() == nil {
 		t.Error(`expected selfie attribute, but it was not present in the returned profile`)
-	} else if !cmp.Equal(profile.Selfie().Value.Data, []byte(expectedSelfieValue)) {
-		t.Errorf("expected selfie %q, instead received %q", expectedSelfieValue, string(profile.Selfie().Value.Data))
+	} else if !cmp.Equal(profile.Selfie().Value().Data, []byte(expectedSelfieValue)) {
+		t.Errorf("expected selfie %q, instead received %q", expectedSelfieValue, string(profile.Selfie().Value().Data))
 	}
 
-	if !cmp.Equal(profile.MobileNumber().Value, "phone_number0123456789") {
-		t.Errorf("expected mobileNumber %q, instead received %q", "phone_number0123456789", profile.MobileNumber().Value)
+	if !cmp.Equal(profile.MobileNumber().Value(), "phone_number0123456789") {
+		t.Errorf("expected mobileNumber %q, instead received %q", "phone_number0123456789", profile.MobileNumber().Value())
 	}
 
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -200,13 +195,12 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	if actualDoB == nil {
 		t.Error(`expected date of birth, but it was not present in the returned profile`)
-	} else if !actualDoB.Value.Equal(expectedDoB) {
-		t.Errorf("expected date of birth: %q, instead received: %q", expectedDoB.Format(time.UnixDate), actualDoB.Value.Format(time.UnixDate))
+	} else if !actualDoB.Value().Equal(expectedDoB) {
+		t.Errorf("expected date of birth: %q, instead received: %q", expectedDoB.Format(time.UnixDate), actualDoB.Value().Format(time.UnixDate))
 	}
 }
 
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	wrappedReceiptKey := "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
@@ -270,7 +264,6 @@ func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 }
 
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
@@ -304,7 +297,6 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 }
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
-	sdkID := "fake-sdk-id"
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
@@ -560,8 +552,8 @@ func TestProfile_GetAttribute_String(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
 	}
 
-	if !cmp.Equal(att.Value.(string), attributeValueString) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	if !cmp.Equal(att.Value().(string), attributeValueString) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
 	}
 }
 
@@ -583,8 +575,8 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if !cmp.Equal(expectedDate, att.Value.(*time.Time).UTC()) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", expectedDate, att.Value.(*time.Time))
+	if !cmp.Equal(expectedDate, att.Value().(*time.Time).UTC()) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", expectedDate, att.Value().(*time.Time))
 	}
 }
 
@@ -602,8 +594,8 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if !cmp.Equal(att.Value.([]byte), attributeValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	if !cmp.Equal(att.Value().([]byte), attributeValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
 	}
 }
 
@@ -621,8 +613,8 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if !cmp.Equal(att.Value.([]byte), attributeValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	if !cmp.Equal(att.Value().([]byte), attributeValue) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
 	}
 }
 
@@ -641,7 +633,7 @@ func TestProfile_GetAttribute_Bool(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	boolValue, err := strconv.ParseBool(att.Value.(string))
+	boolValue, err := strconv.ParseBool(att.Value().(string))
 	if err != nil {
 		t.Errorf("Unable to parse string to bool. Error: %s", err)
 	}
@@ -672,7 +664,7 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	retrievedAttributeInterfaceArray := att.Value.([]interface{})
+	retrievedAttributeInterfaceArray := att.Value().([]interface{})
 	parsedMap := retrievedAttributeInterfaceArray[0].(map[string]interface{})
 	actualAddressFormat := parsedMap["address_format"]
 
@@ -700,8 +692,8 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
 	}
 
-	if !cmp.Equal(att.Value.(string), attributeValueString) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value)
+	if !cmp.Equal(att.Value().(string), attributeValueString) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
 	}
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
@@ -730,8 +722,8 @@ func TestProfile_StringAttribute(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(as)
 
-	if result.Nationality().Value != attributeValueString {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueString, result.Nationality().Value)
+	if result.Nationality().Value() != attributeValueString {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueString, result.Nationality().Value())
 	}
 
 	if !cmp.Equal(result.Nationality().ContentType, yotiprotoattr_v3.ContentType_STRING) {
@@ -757,8 +749,8 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, selfie.Name)
 	}
 
-	if !reflect.DeepEqual(attributeValue, selfie.Value.Data) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value.Data)
+	if !reflect.DeepEqual(attributeValue, selfie.Value().Data) {
+		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value().Data)
 	}
 
 	if !cmp.Equal(selfie.ContentType, yotiprotoattr_v3.ContentType_PNG) {
@@ -780,8 +772,8 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value.Data, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct Image. Expected %v, actual: %v", byteValue, selfie.Value.Data)
+	if !cmp.Equal(selfie.Value().Data, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct Image. Expected %v, actual: %v", byteValue, selfie.Value().Data)
 	}
 }
 
@@ -799,8 +791,8 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value.Data, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value.Data)
+	if !cmp.Equal(selfie.Value().Data, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value().Data)
 	}
 }
 
@@ -817,8 +809,8 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value.Data, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value.Data)
+	if !cmp.Equal(selfie.Value().Data, byteValue) {
+		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value().Data)
 	}
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
@@ -838,7 +830,7 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 
 	expectedBase64Selfie := "data:image/png;base64;," + base64ImageExpectedValue
 
-	base64Selfie, err := result.Selfie().Value.Base64URL()
+	base64Selfie, err := result.Selfie().Value().Base64URL()
 
 	if err != nil {
 		t.Error(err)
@@ -866,7 +858,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 
 	expectedBase64Selfie := "data:image/jpeg;base64;," + base64ImageExpectedValue
 
-	base64Selfie, err := result.Selfie().Value.Base64URL()
+	base64Selfie, err := result.Selfie().Value().Base64URL()
 
 	if err != nil {
 		t.Error(err)

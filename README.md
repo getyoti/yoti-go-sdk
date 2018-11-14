@@ -112,15 +112,15 @@ You can then get the user profile from the activityDetails struct:
 rememberMeID := activityDetails.RememberMeID
 userProfile := activityDetails.UserProfile
 
-selfie := userProfile.Selfie().Value
-givenNames := userProfile.GivenNames().Value
-familyName := userProfile.FamilyName().Value
-fullName := userProfile.FullName().Value
-mobileNumber := userProfile.MobileNumber().Value
-emailAddress := userProfile.EmailAddress().Value
-address := userProfile.Address().Value
-gender := userProfile.Gender().Value
-nationality := userProfile.Nationality().Value
+selfie := userProfile.Selfie().Value()
+givenNames := userProfile.GivenNames().Value()
+familyName := userProfile.FamilyName().Value()
+fullName := userProfile.FullName().Value()
+mobileNumber := userProfile.MobileNumber().Value()
+emailAddress := userProfile.EmailAddress().Value()
+address := userProfile.Address().Value()
+gender := userProfile.Gender().Value()
+nationality := userProfile.Nationality().Value()
 dob, err := userProfile.DateOfBirth()
 if err != nil {
     //handle error
@@ -132,7 +132,7 @@ if err != nil {
 If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method, which requires the result to be cast to the original type:
 
 ```Go
-userProfile.GetAttribute("age_over:18").Value.(string)
+userProfile.GetAttribute("age_over:18").Value().(string)
 ```
 
 GetAttribute returns an interface, the value can be acquired through a type assertion.
