@@ -109,23 +109,24 @@ if len(errStrings) != 0 {
 You can then get the user profile from the activityDetails struct:
 
 ```Go
-rememberMeID := activityDetails.RememberMeID
-userProfile := activityDetails.UserProfile
+var rememberMeID string = activityDetails.RememberMeID
+var userProfile yoti.Profile = activityDetails.UserProfile
 
-selfie := userProfile.Selfie().Value()
-givenNames := userProfile.GivenNames().Value()
-familyName := userProfile.FamilyName().Value()
-fullName := userProfile.FullName().Value()
-mobileNumber := userProfile.MobileNumber().Value()
-emailAddress := userProfile.EmailAddress().Value()
-address := userProfile.Address().Value()
-gender := userProfile.Gender().Value()
-nationality := userProfile.Nationality().Value()
-dob, err := userProfile.DateOfBirth()
+var selfie = userProfile.Selfie().Value()
+var givenNames string = userProfile.GivenNames().Value()
+var familyName string = userProfile.FamilyName().Value()
+var fullName string = userProfile.FullName().Value()
+var mobileNumber string = userProfile.MobileNumber().Value()
+var emailAddress string = userProfile.EmailAddress().Value()
+var address string = userProfile.Address().Value()
+var gender string = userProfile.Gender().Value()
+var nationality string = userProfile.Nationality().Value()
+var dateOfBirth *time.Time
+dobAttr, err := userProfile.DateOfBirth()
 if err != nil {
-    //handle error
+	//handle error
 } else {
-    dateofBirth = dob
+	dateOfBirth = dobAttr.Value()
 }
 ```
 
@@ -163,12 +164,12 @@ givenNamesVerifiers := userProfile.GivenNames().Verifiers()
 You can also retrieve further properties from these respective anchors in the following way:
 
 ```Go
-givenNamesFirstAnchor := userProfile.GivenNames().Anchors()[0]
+var givenNamesFirstAnchor *anchor.Anchor = userProfile.GivenNames().Anchors()[0]
 
-anchorType := givenNamesFirstAnchor.Type
-signedTimestamp := givenNamesFirstAnchor.SignedTimestamp().Timestamp
-subType := givenNamesFirstAnchor.SubType()
-value := givenNamesFirstAnchor.Value()
+var anchorType anchor.Type = givenNamesFirstAnchor.Type
+var signedTimestamp *time.Time = givenNamesFirstAnchor.SignedTimestamp().Timestamp
+var subType string = givenNamesFirstAnchor.SubType()
+var value []string = givenNamesFirstAnchor.Value()
 ```
 
 ## Handling Users
