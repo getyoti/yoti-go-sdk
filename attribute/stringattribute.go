@@ -2,12 +2,12 @@ package attribute
 
 import (
 	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
 //StringAttribute is a Yoti attribute which returns a string as its value
 type StringAttribute struct {
-	*yotiprotoattr_v3.Attribute
+	*yotiprotoattr.Attribute
 	value     string
 	anchors   []*anchor.Anchor
 	sources   []*anchor.Anchor
@@ -15,11 +15,11 @@ type StringAttribute struct {
 }
 
 //NewString creates a new String attribute
-func NewString(a *yotiprotoattr_v3.Attribute) *StringAttribute {
+func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &StringAttribute{
-		Attribute: &yotiprotoattr_v3.Attribute{
+		Attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},

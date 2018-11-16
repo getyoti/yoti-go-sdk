@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/attribute"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
-	"github.com/getyoti/yoti-go-sdk/yotiprotocom_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/yotiprotocom"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -123,7 +123,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 			err = ErrSharingFailure
 			errStrings = append(errStrings, err.Error())
 		} else {
-			var attributeList *yotiprotoattr_v3.AttributeList
+			var attributeList *yotiprotoattr.AttributeList
 			if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
 				errStrings = append(errStrings, err.Error())
 				return
@@ -150,10 +150,10 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 
 				protoStructuredPostalAddress := getProtobufAttribute(profile, attrConstStructuredPostalAddress)
 
-				addressAttribute := &yotiprotoattr_v3.Attribute{
+				addressAttribute := &yotiprotoattr.Attribute{
 					Name:        attrConstAddress,
 					Value:       []byte(formattedAddress),
-					ContentType: yotiprotoattr_v3.ContentType_STRING,
+					ContentType: yotiprotoattr.ContentType_STRING,
 					Anchors:     protoStructuredPostalAddress.Anchors,
 				}
 
@@ -181,7 +181,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 	return userProfile, activityDetails, errStrings
 }
 
-func getProtobufAttribute(profile Profile, key string) *yotiprotoattr_v3.Attribute {
+func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
 	for _, v := range profile.attributeSlice {
 		if v.Name == attrConstStructuredPostalAddress {
 			return v
@@ -191,7 +191,7 @@ func getProtobufAttribute(profile Profile, key string) *yotiprotoattr_v3.Attribu
 	return nil
 }
 
-func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.AttributeList) (result UserProfile) {
+func addAttributesToUserProfile(id string, attributeList *yotiprotoattr.AttributeList) (result UserProfile) {
 	result = UserProfile{
 		ID:              id,
 		OtherAttributes: make(map[string]AttributeValue)}
@@ -205,11 +205,11 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 		case "selfie":
 
 			switch a.ContentType {
-			case yotiprotoattr_v3.ContentType_JPEG:
+			case yotiprotoattr.ContentType_JPEG:
 				result.Selfie = &Image{
 					Type: ImageTypeJpeg,
 					Data: a.Value}
-			case yotiprotoattr_v3.ContentType_PNG:
+			case yotiprotoattr.ContentType_PNG:
 				result.Selfie = &Image{
 					Type: ImageTypePng,
 					Data: a.Value}
@@ -259,23 +259,23 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 			}
 
 			switch a.ContentType {
-			case yotiprotoattr_v3.ContentType_DATE:
+			case yotiprotoattr.ContentType_DATE:
 				result.OtherAttributes[a.Name] = AttributeValue{
 					Type:  AttributeTypeDate,
 					Value: a.Value}
-			case yotiprotoattr_v3.ContentType_STRING:
+			case yotiprotoattr.ContentType_STRING:
 				result.OtherAttributes[a.Name] = AttributeValue{
 					Type:  AttributeTypeText,
 					Value: a.Value}
-			case yotiprotoattr_v3.ContentType_JPEG:
+			case yotiprotoattr.ContentType_JPEG:
 				result.OtherAttributes[a.Name] = AttributeValue{
 					Type:  AttributeTypeJPEG,
 					Value: a.Value}
-			case yotiprotoattr_v3.ContentType_PNG:
+			case yotiprotoattr.ContentType_PNG:
 				result.OtherAttributes[a.Name] = AttributeValue{
 					Type:  AttributeTypePNG,
 					Value: a.Value}
-			case yotiprotoattr_v3.ContentType_JSON:
+			case yotiprotoattr.ContentType_JSON:
 				result.OtherAttributes[a.Name] = AttributeValue{
 					Type:  AttributeTypeJSON,
 					Value: a.Value}
@@ -292,7 +292,7 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr_v3.Attri
 	return
 }
 
-func createAttributeSlice(id string, protoAttributeList *yotiprotoattr_v3.AttributeList) (result []*yotiprotoattr_v3.Attribute) {
+func createAttributeSlice(id string, protoAttributeList *yotiprotoattr.AttributeList) (result []*yotiprotoattr.Attribute) {
 	if protoAttributeList != nil {
 		result = append(result, protoAttributeList.Attributes...)
 	}
@@ -353,7 +353,7 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 	return
 }
 
-func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr_v3.AttributeList, err error) {
+func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
 	var unwrappedKey []byte
 	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
 		return
@@ -368,7 +368,7 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 		return
 	}
 
-	encryptedData := &yotiprotocom_v3.EncryptedData{}
+	encryptedData := &yotiprotocom.EncryptedData{}
 	if err = proto.Unmarshal(otherPartyProfileContentBytes, encryptedData); err != nil {
 		return nil, err
 	}
@@ -378,7 +378,7 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 		return nil, err
 	}
 
-	attributeList := &yotiprotoattr_v3.AttributeList{}
+	attributeList := &yotiprotoattr.AttributeList{}
 	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
 		return nil, err
 	}
