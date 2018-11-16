@@ -62,7 +62,7 @@ func pkcs7Unpad(ciphertext []byte, blocksize int) (result []byte, err error) {
 		err = fmt.Errorf("blocksize %d is not valid for padding removal", blocksize)
 		return
 	}
-	if ciphertext == nil || len(ciphertext) == 0 {
+	if len(ciphertext) == 0 {
 		err = errors.New("Cannot remove padding on empty byte array")
 		return
 	}
