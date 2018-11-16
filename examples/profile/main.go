@@ -21,7 +21,6 @@ import (
 
 var (
 	sdkID              string
-	scenarioID         string
 	key                []byte
 	client             *yoti.Client
 	selfSignedCertName = "yotiSelfSignedCert.pem"
@@ -34,8 +33,17 @@ func home(w http.ResponseWriter, req *http.Request) {
 		"yotiScenarioID":    os.Getenv("YOTI_SCENARIO_ID"),
 		"yotiApplicationID": os.Getenv("YOTI_APPLICATION_ID")}
 
-	t, _ := template.ParseFiles("login.html")
-	t.Execute(w, templateVars)
+	t, err := template.ParseFiles("login.html")
+
+	if err != nil {
+		panic("Error parsing the template: " + err.Error())
+	}
+
+	err = t.Execute(w, templateVars)
+
+	if err != nil {
+		panic("Error applying the parsed template: " + err.Error())
+	}
 }
 
 func profile(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +91,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		"profile":         userProfile,
 		"selfieBase64URL": template.URL(base64URL),
 		"rememberMeID":    activityDetails.RememberMeID,
-		"dateOfBirth":     dob,
+		"dateOfBirth":     dob.Value().String(),
 	}
 
 	var t *template.Template
@@ -93,7 +101,11 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t.Execute(w, templateVars)
+	err = t.Execute(w, templateVars)
+
+	if err != nil {
+		panic("Error applying the parsed profile template. Error: " + err.Error())
+	}
 }
 
 func main() {
@@ -103,7 +115,7 @@ func main() {
 	if !certificatePresent {
 		err := generateSelfSignedCertificate(selfSignedCertName, selfSignedKeyName, "127.0.0.1:"+portNumber)
 		if err != nil {
-			log.Fatal("Error: Couldn't create https certs.")
+			panic("Error when creating https certs: " + err.Error())
 		}
 	}
 
@@ -121,7 +133,11 @@ func main() {
 	go configureHTTPSRedirection()
 
 	log.Printf("About to listen and serve on %[1]s. Go to https://localhost:%[1]s/", portNumber)
-	http.ListenAndServeTLS(":"+portNumber, selfSignedCertName, selfSignedKeyName, nil)
+	err = http.ListenAndServeTLS(":"+portNumber, selfSignedCertName, selfSignedKeyName, nil)
+
+	if err != nil {
+		panic("Error when calling `ListenAndServeTLS`: " + err.Error())
+	}
 }
 
 func configureHTTPSRedirection() {
@@ -140,17 +156,21 @@ func redirectHandler(w http.ResponseWriter, req *http.Request) {
 		http.StatusMovedPermanently)
 }
 
-func decodeImage(imageBytes []byte) (decodedImage image.Image) {
-	decodedImage, _, _ = image.Decode(bytes.NewReader(imageBytes))
-	return
+func decodeImage(imageBytes []byte) image.Image {
+	decodedImage, _, err := image.Decode(bytes.NewReader(imageBytes))
+
+	if err != nil {
+		panic("Error when decoding the image: " + err.Error())
+	}
+
+	return decodedImage
 }
 
 func createImage() (file *os.File) {
 	file, err := os.Create("./images/YotiSelfie.jpeg")
 
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		panic("Error when creating the image: " + err.Error())
 	}
 	return
 }
@@ -159,5 +179,9 @@ func saveImage(img image.Image, file io.Writer) {
 	var opt jpeg.Options
 	opt.Quality = 100
 
-	jpeg.Encode(file, img, &opt)
+	err := jpeg.Encode(file, img, &opt)
+
+	if err != nil {
+		panic("Error when saving the image: " + err.Error())
+	}
 }

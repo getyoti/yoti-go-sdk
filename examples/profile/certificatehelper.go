@@ -141,9 +141,9 @@ func createPemFile(certPath string, derBytes []byte) error {
 	}
 
 	defer certOut.Close()
-	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
+	err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 
-	return nil
+	return err
 }
 
 func createKeyFile(keyPath string, privateKey interface{}) error {
@@ -155,9 +155,9 @@ func createKeyFile(keyPath string, privateKey interface{}) error {
 	}
 
 	defer keyOut.Close()
-	pem.Encode(keyOut, pemBlockForKey(privateKey))
+	err = pem.Encode(keyOut, pemBlockForKey(privateKey))
 
-	return nil
+	return err
 }
 
 func parseNotBefore(validFrom string) (notBefore time.Time, err error) {
