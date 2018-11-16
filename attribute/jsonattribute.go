@@ -5,20 +5,20 @@ import (
 	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
 //JSONAttribute is a Yoti attribute which returns an interface as its value
 type JSONAttribute struct {
-	*yotiprotoattr_v3.Attribute // Value returns the value of a JSON attribute in the form of an interface
-	value                       interface{}
-	anchors                     []*anchor.Anchor
-	sources                     []*anchor.Anchor
-	verifiers                   []*anchor.Anchor
+	*yotiprotoattr.Attribute // Value returns the value of a JSON attribute in the form of an interface
+	value                    interface{}
+	anchors                  []*anchor.Anchor
+	sources                  []*anchor.Anchor
+	verifiers                []*anchor.Anchor
 }
 
 //NewJSON creates a new JSON attribute
-func NewJSON(a *yotiprotoattr_v3.Attribute) (*JSONAttribute, error) {
+func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 	interfaceValue, err := UnmarshallJSON(a.Value)
 	if err != nil {
 		err = fmt.Errorf("Unable to parse JSON value: %q. Error: %q", a.Value, err)
@@ -28,7 +28,7 @@ func NewJSON(a *yotiprotoattr_v3.Attribute) (*JSONAttribute, error) {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &JSONAttribute{
-		Attribute: &yotiprotoattr_v3.Attribute{
+		Attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},

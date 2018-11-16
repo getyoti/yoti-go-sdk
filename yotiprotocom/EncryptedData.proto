@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package Yoti.Protobuf.compubapi_v3;
+package compubapi_v1;
 
-option java_package = "com.yoti.compubapi_v3";
+option java_package = "com.yoti.api.client.spi.remote.proto";
 option java_outer_classname = "EncryptedDataProto";
 
-option go_package = "yotiprotocom_v3";
+option go_package = "yotiprotocom";
 
 message EncryptedData {
     // the iv will be used in conjunction with the secret key
