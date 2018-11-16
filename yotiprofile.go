@@ -2,7 +2,7 @@ package yoti
 
 import (
 	"github.com/getyoti/yoti-go-sdk/attribute"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 // Yoti attributes: a small piece of information about a Yoti user such as a
 // photo of the user or the user's date of birth.
 type Profile struct {
-	attributeSlice []*yotiprotoattr_v3.Attribute
+	attributeSlice []*yotiprotoattr.Attribute
 }
 
 // Selfie is a photograph of the user. Will be nil if not provided by Yoti

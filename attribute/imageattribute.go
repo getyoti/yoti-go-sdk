@@ -4,12 +4,12 @@ import (
 	"errors"
 
 	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
 //ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
-	*yotiprotoattr_v3.Attribute
+	*yotiprotoattr.Attribute
 	value     *Image
 	anchors   []*anchor.Anchor
 	sources   []*anchor.Anchor
@@ -17,14 +17,14 @@ type ImageAttribute struct {
 }
 
 //NewImage creates a new Image attribute
-func NewImage(a *yotiprotoattr_v3.Attribute) (*ImageAttribute, error) {
+func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	var imageType string
 
 	switch a.ContentType {
-	case yotiprotoattr_v3.ContentType_JPEG:
+	case yotiprotoattr.ContentType_JPEG:
 		imageType = ImageTypeJpeg
 
-	case yotiprotoattr_v3.ContentType_PNG:
+	case yotiprotoattr.ContentType_PNG:
 		imageType = ImageTypePng
 
 	default:
@@ -34,7 +34,7 @@ func NewImage(a *yotiprotoattr_v3.Attribute) (*ImageAttribute, error) {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &ImageAttribute{
-		Attribute: &yotiprotoattr_v3.Attribute{
+		Attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},

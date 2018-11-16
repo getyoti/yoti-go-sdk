@@ -5,8 +5,8 @@ import (
 	"encoding/asn1"
 	"log"
 
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
-	"github.com/getyoti/yoti-go-sdk/yotiprotocom_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/yotiprotocom"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -18,7 +18,7 @@ var sourceOID = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 47127, 1, 1, 1}
 var verifierOID = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 47127, 1, 1, 2}
 
 //ParseAnchors takes a slice of protobuf anchors, parses them, and returns a slice of Yoti SDK Anchors
-func ParseAnchors(protoAnchors []*yotiprotoattr_v3.Anchor) []*Anchor {
+func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 	var processedAnchors []*Anchor
 	for _, protoAnchor := range protoAnchors {
 		var extensions []string
@@ -52,8 +52,8 @@ func ParseAnchors(protoAnchors []*yotiprotoattr_v3.Anchor) []*Anchor {
 	return processedAnchors
 }
 
-func parseSignedTimestamp(rawBytes []byte) yotiprotocom_v3.SignedTimestamp {
-	signedTimestamp := &yotiprotocom_v3.SignedTimestamp{}
+func parseSignedTimestamp(rawBytes []byte) yotiprotocom.SignedTimestamp {
+	signedTimestamp := &yotiprotocom.SignedTimestamp{}
 	if err := proto.Unmarshal(rawBytes, signedTimestamp); err != nil {
 		signedTimestamp = nil
 	}

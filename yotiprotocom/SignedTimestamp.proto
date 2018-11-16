@@ -1,11 +1,11 @@
 ﻿syntax = "proto3";
 
-package Yoti.Protobuf.compubapi_v3;
+package compubapi_v1;
 
 option java_package = "com.yoti.compubapi_v3";
 option java_outer_classname = "SignedTimestampProto";
 
-option go_package = "yotiprotocom_v3";
+option go_package = "yotiprotocom";
 
 // SignedTimestamp is a timestamp associated with a message that has a
 // cryptographic signature proving that it was issued by the correct authority.

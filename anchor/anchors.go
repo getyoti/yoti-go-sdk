@@ -3,7 +3,7 @@ package anchor
 import (
 	"crypto/x509"
 
-	"github.com/getyoti/yoti-go-sdk/yotiprotocom_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotocom"
 )
 
 // Anchor is the metadata associated with an attribute. It describes how an attribute has been provided
@@ -19,7 +19,7 @@ type Anchor struct {
 	value             []string
 }
 
-func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp yotiprotocom_v3.SignedTimestamp, subtype string, value []string) *Anchor {
+func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp yotiprotocom.SignedTimestamp, subtype string, value []string) *Anchor {
 	return &Anchor{
 		Type:              anchorType,
 		originServerCerts: originServerCerts,
