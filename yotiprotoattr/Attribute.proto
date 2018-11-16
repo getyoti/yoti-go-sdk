@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package Yoti.Protobuf.attrpubapi_v3;
+package attrpubapi_v1;
 
-option java_package = "com.yoti.attrpubapi_v3";
+option java_package = "com.yoti.api.client.spi.remote.proto";
 option java_outer_classname = "AttrProto";
 
-option go_package = "yotiprotoattr_v3";
+option go_package = "yotiprotoattr";
 
 
 // ContentType indicates how to interpret the ‘Value’ field of an Attribute.

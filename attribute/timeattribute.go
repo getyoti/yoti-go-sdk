@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr_v3"
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
 //TimeAttribute is a Yoti attribute which returns a time as its value
 type TimeAttribute struct {
-	*yotiprotoattr_v3.Attribute
+	*yotiprotoattr.Attribute
 	value     *time.Time
 	anchors   []*anchor.Anchor
 	sources   []*anchor.Anchor
@@ -18,7 +18,7 @@ type TimeAttribute struct {
 }
 
 //NewTime creates a new Time attribute
-func NewTime(a *yotiprotoattr_v3.Attribute) (*TimeAttribute, error) {
+func NewTime(a *yotiprotoattr.Attribute) (*TimeAttribute, error) {
 	parsedTime, err := time.Parse("2006-01-02", string(a.Value))
 	if err != nil {
 		log.Printf("Unable to parse time value of: %q. Error: %q", a.Value, err)
@@ -29,7 +29,7 @@ func NewTime(a *yotiprotoattr_v3.Attribute) (*TimeAttribute, error) {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &TimeAttribute{
-		Attribute: &yotiprotoattr_v3.Attribute{
+		Attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
