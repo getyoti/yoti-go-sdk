@@ -109,7 +109,7 @@ if len(errStrings) != 0 {
 You can then get the user profile from the activityDetails struct:
 
 ```Go
-var rememberMeID string = activityDetails.RememberMeID
+var rememberMeID string = activityDetails.RememberMeID()
 var userProfile yoti.Profile = activityDetails.UserProfile
 
 var selfie = userProfile.Selfie().Value()
@@ -164,10 +164,10 @@ givenNamesVerifiers := userProfile.GivenNames().Verifiers()
 You can also retrieve further properties from these respective anchors in the following way:
 
 ```Go
-var givenNamesFirstAnchor *anchor.Anchor = userProfile.GivenNames().Anchors()[0]
+var givenNamesFirstAnchor *anchor.Anchor = givenNamesAnchors[0]
 
-var anchorType anchor.Type = givenNamesFirstAnchor.Type
-var signedTimestamp *time.Time = givenNamesFirstAnchor.SignedTimestamp().Timestamp
+var anchorType anchor.Type = givenNamesFirstAnchor.Type()
+var signedTimestamp *time.Time = givenNamesFirstAnchor.SignedTimestamp().Timestamp()
 var subType string = givenNamesFirstAnchor.SubType()
 var value []string = givenNamesFirstAnchor.Value()
 ```
@@ -182,7 +182,7 @@ Here is an example of how this works:
 ```Go
 activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
 if err == nil {
-    user := YourUserSearchFunction(activityDetails.RememberMeID)
+    user := YourUserSearchFunction(activityDetails.RememberMeID())
     if user != nil {
         // handle login
     } else {
@@ -290,7 +290,7 @@ Visiting `https://localhost:8080/` should show a Yoti Connect button
 ## API Coverage
 
 * [X] Activity Details
-  * [X] Remember Me ID `RememberMeID`
+  * [X] Remember Me ID `RememberMeID()`
   * [X] User Profile `UserProfile`
     * [X] Selfie `Selfie()`
     * [X] Selfie Base64 URL `Selfie().Base64URL()`

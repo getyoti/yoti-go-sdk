@@ -171,8 +171,8 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	profile := activityDetails.UserProfile
 
-	if activityDetails.RememberMeID != rememberMeID {
-		t.Errorf("expected id %q, instead received %q", rememberMeID, activityDetails.RememberMeID)
+	if activityDetails.RememberMeID() != rememberMeID {
+		t.Errorf("expected id %q, instead received %q", rememberMeID, activityDetails.RememberMeID())
 	}
 
 	expectedSelfieValue := "selfie0123456789"
@@ -231,8 +231,8 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			t.Errorf("expected id %q instead received %q", rememberMeID, userProfile.ID)
 		}
 
-		if activityDetails.RememberMeID != rememberMeID {
-			t.Errorf("expected id %q instead received %q", rememberMeID, activityDetails.RememberMeID)
+		if activityDetails.RememberMeID() != rememberMeID {
+			t.Errorf("expected id %q instead received %q", rememberMeID, activityDetails.RememberMeID())
 		}
 	}
 }
@@ -904,12 +904,12 @@ func TestAnchorParser_Passport(t *testing.T) {
 		t.Error("Anchors and Sources should be the same when there is only one Source")
 	}
 
-	if actualAnchor.Type != anchor.AnchorTypeSource {
-		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, actualAnchor.Type)
+	if actualAnchor.Type() != anchor.AnchorTypeSource {
+		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, actualAnchor.Type())
 	}
 
 	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 0, time.UTC)
-	actualDate := actualAnchor.SignedTimestamp().Timestamp.UTC()
+	actualDate := actualAnchor.SignedTimestamp().Timestamp().UTC()
 	if actualDate != expectedDate {
 		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
 	}
@@ -947,12 +947,12 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 		t.Error("Anchors and Sources should be the same when there is only one Source")
 	}
 
-	if resultAnchor.Type != anchor.AnchorTypeSource {
-		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, resultAnchor.Type)
+	if resultAnchor.Type() != anchor.AnchorTypeSource {
+		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, resultAnchor.Type())
 	}
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 0, time.UTC)
-	actualDate := resultAnchor.SignedTimestamp().Timestamp.UTC()
+	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
 	if actualDate != expectedDate {
 		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
 	}
@@ -994,12 +994,12 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 		t.Error("Anchors and Verifiers should be the same when there is only one Verifier")
 	}
 
-	if resultAnchor.Type != anchor.AnchorTypeVerifier {
-		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeVerifier, resultAnchor.Type)
+	if resultAnchor.Type() != anchor.AnchorTypeVerifier {
+		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeVerifier, resultAnchor.Type())
 	}
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 0, time.UTC)
-	actualDate := resultAnchor.SignedTimestamp().Timestamp.UTC()
+	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
 	if actualDate != expectedDate {
 		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
 	}
@@ -1016,24 +1016,6 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	AssertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
-}
-
-func TestAnchors_Unknown(t *testing.T) {
-	unknownAnchor := &anchor.Anchor{
-		Type: anchor.AnchorTypeUnknown,
-	}
-
-	anchorSlice := append([]*anchor.Anchor{}, unknownAnchor)
-
-	sources := anchor.GetSources(anchorSlice)
-	if len(sources) > 0 {
-		t.Error("Unknown anchor should not be returned by GetSources")
-	}
-
-	verifiers := anchor.GetVerifiers(anchorSlice)
-	if len(verifiers) > 0 {
-		t.Error("Unknown anchor should not be returned by GetVerifiers")
-	}
 }
 
 func TestAnchors_None(t *testing.T) {

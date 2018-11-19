@@ -90,7 +90,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	templateVars := map[string]interface{}{
 		"profile":         userProfile,
 		"selfieBase64URL": template.URL(base64URL),
-		"rememberMeID":    activityDetails.RememberMeID,
+		"rememberMeID":    activityDetails.RememberMeID(),
 		"dateOfBirth":     dob.Value().String(),
 	}
 
