@@ -12,7 +12,7 @@ import (
 // "USER_PROVIDED" and zero VERIFIER Anchors, then the attribute
 // is a self-certified one
 type Anchor struct {
-	Type
+	anchorType        Type
 	originServerCerts []*x509.Certificate
 	signedTimestamp   SignedTimestamp
 	subtype           string
@@ -21,7 +21,7 @@ type Anchor struct {
 
 func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp yotiprotocom.SignedTimestamp, subtype string, value []string) *Anchor {
 	return &Anchor{
-		Type:              anchorType,
+		anchorType:        anchorType,
 		originServerCerts: originServerCerts,
 		signedTimestamp:   convertSignedTimestamp(signedTimestamp),
 		subtype:           subtype,
@@ -40,6 +40,12 @@ const (
 	//AnchorTypeVerifier - how the anchor has been verified
 	AnchorTypeVerifier
 )
+
+// Type of the Anchor - most likely either SOURCE or VERIFIER, but it's
+// possible that new Anchor types will be added in future
+func (a Anchor) Type() Type {
+	return a.anchorType
+}
 
 // OriginServerCerts are the X.509 certificate chain(DER-encoded ASN.1)
 // from the service that assigned the attribute</para>
@@ -89,7 +95,7 @@ func GetVerifiers(anchors []*Anchor) (sources []*Anchor) {
 
 func filterAnchors(anchors []*Anchor, anchorType Type) (result []*Anchor) {
 	for _, v := range anchors {
-		if v.Type == anchorType {
+		if v.anchorType == anchorType {
 			result = append(result, v)
 		}
 	}
