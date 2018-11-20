@@ -14,7 +14,7 @@ import (
 	"path"
 	"strings"
 
-	yoti "github.com/getyoti/yoti-go-sdk"
+	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	_ "github.com/joho/godotenv/autoload"
 )
 

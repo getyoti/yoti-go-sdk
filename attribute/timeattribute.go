@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/anchor"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 // TimeAttribute is a Yoti attribute which returns a time as its value

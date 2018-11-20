@@ -3,7 +3,7 @@ package anchor
 import (
 	"crypto/x509"
 
-	"github.com/getyoti/yoti-go-sdk/yotiprotocom"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
 )
 
 // Anchor is the metadata associated with an attribute. It describes how an attribute has been provided

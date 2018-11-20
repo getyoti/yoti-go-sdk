@@ -1,8 +1,8 @@
 package yoti
 
 import (
-	"github.com/getyoti/yoti-go-sdk/attribute"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 const (
