@@ -123,10 +123,8 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 
 			userProfile = addAttributesToUserProfile(id, attributeList) //deprecated: will be removed in v3.0.0
 
-			attributeSlice := createAttributeSlice(id, attributeList)
-
 			profile := Profile{
-				attributeSlice: attributeSlice,
+				attributeSlice: createAttributeSlice(attributeList),
 			}
 
 			var formattedAddress string
@@ -283,7 +281,7 @@ func addAttributesToUserProfile(id string, attributeList *yotiprotoattr.Attribut
 	return
 }
 
-func createAttributeSlice(id string, protoAttributeList *yotiprotoattr.AttributeList) (result []*yotiprotoattr.Attribute) {
+func createAttributeSlice(protoAttributeList *yotiprotoattr.AttributeList) (result []*yotiprotoattr.Attribute) {
 	if protoAttributeList != nil {
 		result = append(result, protoAttributeList.Attributes...)
 	}

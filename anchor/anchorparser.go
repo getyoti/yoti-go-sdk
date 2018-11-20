@@ -28,18 +28,20 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 
 		for _, cert := range parsedCerts {
 			for _, ext := range cert.Extensions {
-				var ae anchorExtension
 				if sourceOID.Equal(ext.Id) {
 					anchorType = AnchorTypeSource
+
+					extension := unmarshalExtension(ext.Value)
+					if extension != "" {
+						extensions = append(extensions, extension)
+					}
 				} else if verifierOID.Equal(ext.Id) {
 					anchorType = AnchorTypeVerifier
-				}
 
-				_, err := asn1.Unmarshal(ext.Value, &ae)
-				if err == nil {
-					extensions = append(extensions, ae.Extension)
-				} else {
-					log.Printf("Error unmarshalling anchor extension: %q", err)
+					extension := unmarshalExtension(ext.Value)
+					if extension != "" {
+						extensions = append(extensions, extension)
+					}
 				}
 			}
 		}
@@ -50,6 +52,18 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 	}
 
 	return processedAnchors
+}
+
+func unmarshalExtension(extensionValue []byte) string {
+	var ae anchorExtension
+
+	_, err := asn1.Unmarshal(extensionValue, &ae)
+	if err == nil && ae.Extension != "" {
+		return ae.Extension
+	}
+
+	log.Printf("Error unmarshalling anchor extension: %q", err)
+	return ""
 }
 
 func parseSignedTimestamp(rawBytes []byte) yotiprotocom.SignedTimestamp {
