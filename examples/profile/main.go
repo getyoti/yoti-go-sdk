@@ -14,8 +14,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/getyoti/yoti-go-sdk"
-
+	yoti "github.com/getyoti/yoti-go-sdk"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -87,11 +86,16 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Error parsing Date of Birth attribute. Error %q", err)
 	}
 
+	var dateOfBirthString string
+	if dob != nil {
+		dateOfBirthString = dob.Value().String()
+	}
+
 	templateVars := map[string]interface{}{
 		"profile":         userProfile,
 		"selfieBase64URL": template.URL(base64URL),
 		"rememberMeID":    activityDetails.RememberMeID(),
-		"dateOfBirth":     dob.Value().String(),
+		"dateOfBirth":     dateOfBirthString,
 	}
 
 	var t *template.Template
