@@ -6,8 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/getyoti/yoti-go-sdk"
-
+	yoti "github.com/getyoti/yoti-go-sdk"
 	_ "github.com/joho/godotenv/autoload"
 )
 
