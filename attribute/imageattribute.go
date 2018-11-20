@@ -1,8 +1,8 @@
 package attribute
 
 import (
-	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/anchor"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 // ImageAttribute is a Yoti attribute which returns an image as its value

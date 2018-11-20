@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
-	"github.com/getyoti/yoti-go-sdk/yotiprotocom"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
 	"github.com/golang/protobuf/proto"
 )
 

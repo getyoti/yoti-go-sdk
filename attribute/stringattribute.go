@@ -1,8 +1,8 @@
 package attribute
 
 import (
-	"github.com/getyoti/yoti-go-sdk/anchor"
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/anchor"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 // StringAttribute is a Yoti attribute which returns a string as its value
