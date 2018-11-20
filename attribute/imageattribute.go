@@ -10,10 +10,8 @@ import (
 //ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	*yotiprotoattr.Attribute
-	value     *Image
-	anchors   []*anchor.Anchor
-	sources   []*anchor.Anchor
-	verifiers []*anchor.Anchor
+	value   *Image
+	anchors []*anchor.Anchor
 }
 
 //NewImage creates a new Image attribute
@@ -42,9 +40,7 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 			Data: a.Value,
 			Type: imageType,
 		},
-		anchors:   parsedAnchors,
-		sources:   anchor.GetSources(parsedAnchors),
-		verifiers: anchor.GetVerifiers(parsedAnchors),
+		anchors: parsedAnchors,
 	}, nil
 }
 
@@ -62,10 +58,10 @@ func (a *ImageAttribute) Anchors() []*anchor.Anchor {
 
 // Sources returns the anchors which identify how and when an attribute value was acquired.
 func (a *ImageAttribute) Sources() []*anchor.Anchor {
-	return a.sources
+	return anchor.GetSources(a.anchors)
 }
 
 // Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
 func (a *ImageAttribute) Verifiers() []*anchor.Anchor {
-	return a.verifiers
+	return anchor.GetVerifiers(a.anchors)
 }
