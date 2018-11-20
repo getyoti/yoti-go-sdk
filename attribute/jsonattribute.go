@@ -13,8 +13,6 @@ type JSONAttribute struct {
 	*yotiprotoattr.Attribute // Value returns the value of a JSON attribute in the form of an interface
 	value                    interface{}
 	anchors                  []*anchor.Anchor
-	sources                  []*anchor.Anchor
-	verifiers                []*anchor.Anchor
 }
 
 //NewJSON creates a new JSON attribute
@@ -32,10 +30,8 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		value:     interfaceValue,
-		anchors:   parsedAnchors,
-		sources:   anchor.GetSources(parsedAnchors),
-		verifiers: anchor.GetVerifiers(parsedAnchors),
+		value:   interfaceValue,
+		anchors: parsedAnchors,
 	}, nil
 }
 
@@ -65,10 +61,10 @@ func (a *JSONAttribute) Anchors() []*anchor.Anchor {
 
 // Sources returns the anchors which identify how and when an attribute value was acquired.
 func (a *JSONAttribute) Sources() []*anchor.Anchor {
-	return a.sources
+	return anchor.GetSources(a.anchors)
 }
 
 // Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
 func (a *JSONAttribute) Verifiers() []*anchor.Anchor {
-	return a.verifiers
+	return anchor.GetVerifiers(a.anchors)
 }

@@ -11,10 +11,8 @@ import (
 //TimeAttribute is a Yoti attribute which returns a time as its value
 type TimeAttribute struct {
 	*yotiprotoattr.Attribute
-	value     *time.Time
-	anchors   []*anchor.Anchor
-	sources   []*anchor.Anchor
-	verifiers []*anchor.Anchor
+	value   *time.Time
+	anchors []*anchor.Anchor
 }
 
 //NewTime creates a new Time attribute
@@ -33,10 +31,8 @@ func NewTime(a *yotiprotoattr.Attribute) (*TimeAttribute, error) {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		value:     &parsedTime,
-		anchors:   parsedAnchors,
-		sources:   anchor.GetSources(parsedAnchors),
-		verifiers: anchor.GetVerifiers(parsedAnchors),
+		value:   &parsedTime,
+		anchors: parsedAnchors,
 	}, nil
 }
 
@@ -54,10 +50,10 @@ func (a *TimeAttribute) Anchors() []*anchor.Anchor {
 
 // Sources returns the anchors which identify how and when an attribute value was acquired.
 func (a *TimeAttribute) Sources() []*anchor.Anchor {
-	return a.sources
+	return anchor.GetSources(a.anchors)
 }
 
 // Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
 func (a *TimeAttribute) Verifiers() []*anchor.Anchor {
-	return a.verifiers
+	return anchor.GetVerifiers(a.anchors)
 }
