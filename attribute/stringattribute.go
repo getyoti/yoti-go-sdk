@@ -8,10 +8,8 @@ import (
 //StringAttribute is a Yoti attribute which returns a string as its value
 type StringAttribute struct {
 	*yotiprotoattr.Attribute
-	value     string
-	anchors   []*anchor.Anchor
-	sources   []*anchor.Anchor
-	verifiers []*anchor.Anchor
+	value   string
+	anchors []*anchor.Anchor
 }
 
 //NewString creates a new String attribute
@@ -23,10 +21,8 @@ func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
-		value:     string(a.Value),
-		anchors:   parsedAnchors,
-		sources:   anchor.GetSources(parsedAnchors),
-		verifiers: anchor.GetVerifiers(parsedAnchors),
+		value:   string(a.Value),
+		anchors: parsedAnchors,
 	}
 }
 
@@ -44,10 +40,10 @@ func (a *StringAttribute) Anchors() []*anchor.Anchor {
 
 // Sources returns the anchors which identify how and when an attribute value was acquired.
 func (a *StringAttribute) Sources() []*anchor.Anchor {
-	return a.sources
+	return anchor.GetSources(a.anchors)
 }
 
 // Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
 func (a *StringAttribute) Verifiers() []*anchor.Anchor {
-	return a.verifiers
+	return anchor.GetVerifiers(a.anchors)
 }
