@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (result interface{}) {

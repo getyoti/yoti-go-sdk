@@ -1,7 +1,7 @@
 package attribute
 
 import (
-	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 // Item is a structure which contains information about an attribute value
