@@ -53,7 +53,9 @@ Yoti also allows you to enable user details verification from your mobile app by
 
 ## Installing the SDK
 
-To download and install the Yoti SDK and its dependencies, simply run the following command from your terminal:
+_As of version **2.3.0**, [modules](https://github.com/golang/go/wiki/Modules) are used. This means it's not neccesary to get a copy or fetch all dependencies as instructed below, as the Go toolchain will fetch them as neccesary. You can simply add a `require github.com/getyoti/yoti-go-sdk/v2` to go.mod._
+
+To download and install the Yoti SDK and its dependencies, run the following command from your terminal:
 
 ```Go
 go get "github.com/getyoti/yoti-go-sdk/v2"
