@@ -7,14 +7,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
-//ImageAttribute is a Yoti attribute which returns an image as its value
+// ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	*yotiprotoattr.Attribute
 	value   *Image
 	anchors []*anchor.Anchor
 }
 
-//NewImage creates a new Image attribute
+// NewImage creates a new Image attribute
 func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	var imageType string
 

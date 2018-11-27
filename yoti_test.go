@@ -19,9 +19,12 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-const token = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
-const encryptedToken = "b6H19bUCJhwh6WqQX_sEHWX9RP-A_ANr1fkApwA4Dp2nJQFAjrF9e6YCXhNBpAIhfHnN0iXubyXxXZMNwNMSQ5VOxkqiytrvPykfKQWHC6ypSbfy0ex8ihndaAXG5FUF-qcU8QaFPMy6iF3x0cxnY0Ij0kZj0Ng2t6oiNafb7AhT-VGXxbFbtZu1QF744PpWMuH0LVyBsAa5N5GJw2AyBrnOh67fWMFDKTJRziP5qCW2k4h5vJfiYr_EOiWKCB1d_zINmUm94ZffGXxcDAkq-KxhN1ZuNhGlJ2fKcFh7KxV0BqlUWPsIEiwS0r9CJ2o1VLbEs2U_hCEXaqseEV7L29EnNIinEPVbL4WR7vkF6zQCbK_cehlk2Qwda-VIATqupRO5grKZN78R9lBitvgilDaoE7JB_VFcPoljGQ48kX0wje1mviX4oJHhuO8GdFITS5LTbojGVQWT7LUNgAUe0W0j-FLHYYck3v84OhWTqads5_jmnnLkp9bdJSRuJF0e8pNdePnn2lgF-GIcyW_0kyGVqeXZrIoxnObLpF-YeUteRBKTkSGFcy7a_V_DLiJMPmH8UXDLOyv8TVt3ppzqpyUrLN2JVMbL5wZ4oriL2INEQKvw_boDJjZDGeRlu5m1y7vGDNBRDo64-uQM9fRUULPw-YkABNwC0DeShswzT00="
-const sdkID = "fake-sdk-id"
+const (
+	token             = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
+	encryptedToken    = "b6H19bUCJhwh6WqQX_sEHWX9RP-A_ANr1fkApwA4Dp2nJQFAjrF9e6YCXhNBpAIhfHnN0iXubyXxXZMNwNMSQ5VOxkqiytrvPykfKQWHC6ypSbfy0ex8ihndaAXG5FUF-qcU8QaFPMy6iF3x0cxnY0Ij0kZj0Ng2t6oiNafb7AhT-VGXxbFbtZu1QF744PpWMuH0LVyBsAa5N5GJw2AyBrnOh67fWMFDKTJRziP5qCW2k4h5vJfiYr_EOiWKCB1d_zINmUm94ZffGXxcDAkq-KxhN1ZuNhGlJ2fKcFh7KxV0BqlUWPsIEiwS0r9CJ2o1VLbEs2U_hCEXaqseEV7L29EnNIinEPVbL4WR7vkF6zQCbK_cehlk2Qwda-VIATqupRO5grKZN78R9lBitvgilDaoE7JB_VFcPoljGQ48kX0wje1mviX4oJHhuO8GdFITS5LTbojGVQWT7LUNgAUe0W0j-FLHYYck3v84OhWTqads5_jmnnLkp9bdJSRuJF0e8pNdePnn2lgF-GIcyW_0kyGVqeXZrIoxnObLpF-YeUteRBKTkSGFcy7a_V_DLiJMPmH8UXDLOyv8TVt3ppzqpyUrLN2JVMbL5wZ4oriL2INEQKvw_boDJjZDGeRlu5m1y7vGDNBRDo64-uQM9fRUULPw-YkABNwC0DeShswzT00="
+	sdkID             = "fake-sdk-id"
+	wrappedReceiptKey = "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
+)
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
@@ -130,7 +133,6 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	wrappedReceiptKey := "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	rememberMeID := "remember_me_id0123456789"
 
@@ -202,8 +204,6 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
-
-	wrappedReceiptKey := "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
 	rememberMeID := "remember_me_id0123456789"
 
 	var otherPartyProfileContents = []string{
@@ -217,7 +217,8 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			result = &httpResponse{
 				Success:    true,
 				StatusCode: 200,
-				Content:    `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` + otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
+				Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+					otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
 			return
 		}
 
@@ -314,10 +315,14 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 		sdkID,
 		key)
 
+	var expectedErrString = "AML Check was unsuccessful"
 	if err == nil {
 		t.Error("Expected failure")
-	} else if !strings.HasPrefix(err.Error(), "AML Check was unsuccessful") {
-		t.Errorf("expected outcome type starting with %q instead received %q", "AML Check was unsuccessful", err.Error())
+	} else if !strings.HasPrefix(err.Error(), expectedErrString) {
+		t.Errorf(
+			"expected outcome type starting with %q instead received %q",
+			expectedErrString,
+			err.Error())
 	}
 }
 
@@ -368,8 +373,10 @@ func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
 }
 
 func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
-	const countryIso = "IND"
-	const nestedValue = "NestedValue"
+	const (
+		countryIso  = "IND"
+		nestedValue = "NestedValue"
+	)
 
 	var structuredAddress = []byte(`[
 	{
@@ -450,11 +457,17 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
 
 	if profileAddress != escapedFormattedAddressText {
-		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", profileAddress, formattedAddressText)
+		t.Errorf(
+			"Address does not equal the expected formatted address. address: %q, formatted address: %q",
+			profileAddress,
+			formattedAddressText)
 	}
 
 	if userProfileAddress != escapedFormattedAddressText {
-		t.Errorf("Address does not equal the expected formatted address. address: %q, formatted address: %q", userProfileAddress, formattedAddressText)
+		t.Errorf(
+			"Address does not equal the expected formatted address. address: %q, formatted address: %q",
+			userProfileAddress,
+			formattedAddressText)
 	}
 
 	var structuredPostalAddress *attribute.JSONAttribute
@@ -465,7 +478,10 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	}
 
 	if !cmp.Equal(structuredPostalAddress.ContentType, yotiprotoattr.ContentType_JSON) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", yotiprotoattr.ContentType_JSON, structuredPostalAddress.ContentType)
+		t.Errorf(
+			"Retrieved attribute does not have the correct type. Expected %q, actual: %q",
+			yotiprotoattr.ContentType_JSON,
+			structuredPostalAddress.ContentType)
 	}
 }
 
@@ -549,11 +565,17 @@ func TestProfile_GetAttribute_String(t *testing.T) {
 	att := result.GetAttribute(attributeName)
 
 	if att.Name != attributeName {
-		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
+		t.Errorf(
+			"Retrieved attribute does not have the correct name. Expected %q, actual: %q",
+			attributeName,
+			att.Name)
 	}
 
 	if !cmp.Equal(att.Value().(string), attributeValueString) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValue,
+			att.Value())
 	}
 }
 
@@ -576,7 +598,10 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 	att := result.GetAttribute(attributeName)
 
 	if !cmp.Equal(expectedDate, att.Value().(*time.Time).UTC()) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", expectedDate, att.Value().(*time.Time))
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			expectedDate,
+			att.Value().(*time.Time))
 	}
 }
 
@@ -595,7 +620,10 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	att := result.GetAttribute(attributeName)
 
 	if !cmp.Equal(att.Value().([]byte), attributeValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValue,
+			att.Value())
 	}
 }
 
@@ -614,7 +642,10 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	att := result.GetAttribute(attributeName)
 
 	if !cmp.Equal(att.Value().([]byte), attributeValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValue,
+			att.Value())
 	}
 }
 
@@ -639,7 +670,10 @@ func TestProfile_GetAttribute_Bool(t *testing.T) {
 	}
 
 	if !cmp.Equal(initialBoolValue, boolValue) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %v, actual: %v", initialBoolValue, boolValue)
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %v, actual: %v",
+			initialBoolValue,
+			boolValue)
 	}
 }
 
@@ -669,7 +703,10 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 	actualAddressFormat := parsedMap["address_format"]
 
 	if !cmp.Equal(actualAddressFormat, addressFormat) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", addressFormat, actualAddressFormat)
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			addressFormat,
+			actualAddressFormat)
 	}
 }
 
@@ -689,11 +726,17 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 	att := result.GetAttribute(attributeName)
 
 	if att.Name != attributeName {
-		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, att.Name)
+		t.Errorf(
+			"Retrieved attribute does not have the correct name. Expected %q, actual: %q",
+			attributeName,
+			att.Name)
 	}
 
 	if !cmp.Equal(att.Value().(string), attributeValueString) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, att.Value())
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValue,
+			att.Value())
 	}
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
@@ -723,11 +766,17 @@ func TestProfile_StringAttribute(t *testing.T) {
 	result := createProfileWithSingleAttribute(as)
 
 	if result.Nationality().Value() != attributeValueString {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValueString, result.Nationality().Value())
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValueString,
+			result.Nationality().Value())
 	}
 
 	if !cmp.Equal(result.Nationality().ContentType, yotiprotoattr.ContentType_STRING) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", yotiprotoattr.ContentType_STRING, result.Nationality().ContentType)
+		t.Errorf(
+			"Retrieved attribute does not have the correct type. Expected %q, actual: %q",
+			yotiprotoattr.ContentType_STRING,
+			result.Nationality().ContentType)
 	}
 }
 
@@ -746,15 +795,24 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 	selfie := result.Selfie()
 
 	if selfie.Name != attributeName {
-		t.Errorf("Retrieved attribute does not have the correct name. Expected %q, actual: %q", attributeName, selfie.Name)
+		t.Errorf(
+			"Retrieved attribute does not have the correct name. Expected %q, actual: %q",
+			attributeName,
+			selfie.Name)
 	}
 
 	if !reflect.DeepEqual(attributeValue, selfie.Value().Data) {
-		t.Errorf("Retrieved attribute does not have the correct value. Expected %q, actual: %q", attributeValue, selfie.Value().Data)
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValue,
+			selfie.Value().Data)
 	}
 
 	if !cmp.Equal(selfie.ContentType, yotiprotoattr.ContentType_PNG) {
-		t.Errorf("Retrieved attribute does not have the correct type. Expected %q, actual: %q", yotiprotoattr.ContentType_PNG, selfie.ContentType)
+		t.Errorf(
+			"Retrieved attribute does not have the correct type. Expected %q, actual: %q",
+			yotiprotoattr.ContentType_PNG,
+			selfie.ContentType)
 	}
 }
 
@@ -773,7 +831,10 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 	selfie := result.Selfie()
 
 	if !cmp.Equal(selfie.Value().Data, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct Image. Expected %v, actual: %v", byteValue, selfie.Value().Data)
+		t.Errorf(
+			"Retrieved attribute does not have the correct Image. Expected %v, actual: %v",
+			byteValue,
+			selfie.Value().Data)
 	}
 }
 
@@ -792,7 +853,10 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 	selfie := result.Selfie()
 
 	if !cmp.Equal(selfie.Value().Data, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value().Data)
+		t.Errorf(
+			"Retrieved attribute does not have the correct byte value. Expected %v, actual: %v",
+			byteValue,
+			selfie.Value().Data)
 	}
 }
 
@@ -810,7 +874,10 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	selfie := result.Selfie()
 
 	if !cmp.Equal(selfie.Value().Data, byteValue) {
-		t.Errorf("Retrieved attribute does not have the correct byte value. Expected %v, actual: %v", byteValue, selfie.Value().Data)
+		t.Errorf(
+			"Retrieved attribute does not have the correct byte value. Expected %v, actual: %v",
+			byteValue,
+			selfie.Value().Data)
 	}
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
@@ -837,7 +904,10 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 	}
 
 	if base64Selfie != expectedBase64Selfie {
-		t.Errorf("Base64Selfie does not have the correct value. Expected %q, actual: %q", expectedBase64Selfie, base64Selfie)
+		t.Errorf(
+			"Base64Selfie does not have the correct value. Expected %q, actual: %q",
+			expectedBase64Selfie,
+			base64Selfie)
 	}
 }
 
@@ -865,7 +935,10 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 	}
 
 	if base64Selfie != expectedBase64Selfie {
-		t.Errorf("Base64Selfie does not have the correct value. Expected %q, actual: %q", expectedBase64Selfie, base64Selfie)
+		t.Errorf(
+			"Base64Selfie does not have the correct value. Expected %q, actual: %q",
+			expectedBase64Selfie,
+			base64Selfie)
 	}
 }
 
@@ -905,23 +978,35 @@ func TestAnchorParser_Passport(t *testing.T) {
 	}
 
 	if actualAnchor.Type() != anchor.AnchorTypeSource {
-		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, actualAnchor.Type())
+		t.Errorf(
+			"Parsed anchor type is incorrect. Expected: %q, actual: %q",
+			anchor.AnchorTypeSource,
+			actualAnchor.Type())
 	}
 
 	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 0, time.UTC)
 	actualDate := actualAnchor.SignedTimestamp().Timestamp().UTC()
 	if actualDate != expectedDate {
-		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
+		t.Errorf(
+			"Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q",
+			expectedDate,
+			actualDate)
 	}
 
 	expectedSubType := "OCR"
 	if actualAnchor.SubType() != expectedSubType {
-		t.Errorf("Parsed anchor SubType is incorrect. Expected: %q, actual: %q", expectedSubType, actualAnchor.SubType())
+		t.Errorf(
+			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
+			expectedSubType,
+			actualAnchor.SubType())
 	}
 
 	expectedValue := "PASSPORT"
 	if actualAnchor.Value()[0] != expectedValue {
-		t.Errorf("Parsed anchor Value is incorrect. Expected: %q, actual: %q", expectedValue, actualAnchor.Value()[0])
+		t.Errorf(
+			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
+			expectedValue,
+			actualAnchor.Value()[0])
 	}
 
 	actualSerialNo := actualAnchor.OriginServerCerts()[0].SerialNumber
@@ -948,23 +1033,35 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	}
 
 	if resultAnchor.Type() != anchor.AnchorTypeSource {
-		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeSource, resultAnchor.Type())
+		t.Errorf(
+			"Parsed anchor type is incorrect. Expected: %q, actual: %q",
+			anchor.AnchorTypeSource,
+			resultAnchor.Type())
 	}
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 0, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
 	if actualDate != expectedDate {
-		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
+		t.Errorf(
+			"Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q",
+			expectedDate,
+			actualDate)
 	}
 
 	expectedSubType := ""
 	if resultAnchor.SubType() != expectedSubType {
-		t.Errorf("Parsed anchor SubType is incorrect. Expected: %q, actual: %q", expectedSubType, resultAnchor.SubType())
+		t.Errorf(
+			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
+			expectedSubType,
+			resultAnchor.SubType())
 	}
 
 	expectedValue := "DRIVING_LICENCE"
 	if resultAnchor.Value()[0] != expectedValue {
-		t.Errorf("Parsed anchor Value is incorrect. Expected: %q, actual: %q", expectedValue, resultAnchor.Value()[0])
+		t.Errorf(
+			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
+			expectedValue,
+			resultAnchor.Value()[0])
 	}
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
@@ -995,23 +1092,35 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 	}
 
 	if resultAnchor.Type() != anchor.AnchorTypeVerifier {
-		t.Errorf("Parsed anchor type is incorrect. Expected: %q, actual: %q", anchor.AnchorTypeVerifier, resultAnchor.Type())
+		t.Errorf(
+			"Parsed anchor type is incorrect. Expected: %q, actual: %q",
+			anchor.AnchorTypeVerifier,
+			resultAnchor.Type())
 	}
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 0, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
 	if actualDate != expectedDate {
-		t.Errorf("Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q", expectedDate, actualDate)
+		t.Errorf(
+			"Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q",
+			expectedDate,
+			actualDate)
 	}
 
 	expectedSubType := ""
 	if resultAnchor.SubType() != expectedSubType {
-		t.Errorf("Parsed anchor SubType is incorrect. Expected: %q, actual: %q", expectedSubType, resultAnchor.SubType())
+		t.Errorf(
+			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
+			expectedSubType,
+			resultAnchor.SubType())
 	}
 
 	expectedValue := "YOTI_ADMIN"
 	if resultAnchor.Value()[0] != expectedValue {
-		t.Errorf("Parsed anchor Value is incorrect. Expected: %q, actual: %q", expectedValue, resultAnchor.Value()[0])
+		t.Errorf(
+			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
+			expectedValue,
+			resultAnchor.Value()[0])
 	}
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
@@ -1049,7 +1158,10 @@ func AssertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 	}
 
 	if expectedSerialNoBigInt.Cmp(actualSerialNo) != 0 { //0 == equivalent
-		t.Errorf("Parsed anchor OriginServerCerts is incorrect. Expected: %q, actual: %q", expectedSerialNo, actualSerialNo)
+		t.Errorf(
+			"Parsed anchor OriginServerCerts is incorrect. Expected: %q, actual: %q",
+			expectedSerialNo,
+			actualSerialNo)
 	}
 }
 

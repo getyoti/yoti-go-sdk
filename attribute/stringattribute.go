@@ -5,14 +5,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
-//StringAttribute is a Yoti attribute which returns a string as its value
+// StringAttribute is a Yoti attribute which returns a string as its value
 type StringAttribute struct {
 	*yotiprotoattr.Attribute
 	value   string
 	anchors []*anchor.Anchor
 }
 
-//NewString creates a new String attribute
+// NewString creates a new String attribute
 func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
