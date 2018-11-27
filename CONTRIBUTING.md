@@ -4,7 +4,7 @@ The command `go get "github.com/getyoti/yoti-go-sdk"` downloads the Yoti package
 
 ## Commit Process
 
-1) `go fmt` to format the code
+1) `goimports` formats the code and sanitises imports
 1) `go vet` reports suspicious constructs
 1) `go test` to run the tests
 

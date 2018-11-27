@@ -60,7 +60,7 @@ func (p Profile) FamilyName() *attribute.StringAttribute {
 	return nil
 }
 
-//FullName represents the user's full name. Will be nil if not provided by Yoti
+// FullName represents the user's full name. Will be nil if not provided by Yoti
 func (p Profile) FullName() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstFullName {
