@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	//HTTPMethodPost Post HTTP method
+	// HTTPMethodPost Post HTTP method
 	HTTPMethodPost = "POST"
-	//HTTPMethodGet Get HTTP method
+	// HTTPMethodGet Get HTTP method
 	HTTPMethodGet = "GET"
-	//HTTPMethodPut Put HTTP method
+	// HTTPMethodPut Put HTTP method
 	HTTPMethodPut = "PUT"
-	//HTTPMethodPatch Patch HTTP method
+	// HTTPMethodPatch Patch HTTP method
 	HTTPMethodPatch = "PATCH"
 )
 

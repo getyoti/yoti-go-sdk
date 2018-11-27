@@ -8,14 +8,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
-//JSONAttribute is a Yoti attribute which returns an interface as its value
+// JSONAttribute is a Yoti attribute which returns an interface as its value
 type JSONAttribute struct {
 	*yotiprotoattr.Attribute // Value returns the value of a JSON attribute in the form of an interface
 	value                    interface{}
 	anchors                  []*anchor.Anchor
 }
 
-//NewJSON creates a new JSON attribute
+// NewJSON creates a new JSON attribute
 func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 	interfaceValue, err := UnmarshallJSON(a.Value)
 	if err != nil {

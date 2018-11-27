@@ -6,15 +6,15 @@ import "log"
 type Type int
 
 const (
-	//AttributeTypeDate date format
+	// AttributeTypeDate date format
 	AttributeTypeDate Type = 1 + iota
-	//AttributeTypeText text format
+	// AttributeTypeText text format
 	AttributeTypeText
-	//AttributeTypeJPEG JPEG format
+	// AttributeTypeJPEG JPEG format
 	AttributeTypeJPEG
-	//AttributeTypePNG PNG fornmat
+	// AttributeTypePNG PNG fornmat
 	AttributeTypePNG
-	//AttributeTypeJSON JSON fornmat
+	// AttributeTypeJSON JSON fornmat
 	AttributeTypeJSON
 )
 

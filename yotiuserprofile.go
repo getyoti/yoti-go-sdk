@@ -4,11 +4,11 @@ import (
 	"time"
 )
 
-//Deprecated: Will be removed in v3.0.0. Use `Profile` instead. UserProfile represents the details retrieved for a particular
+// Deprecated: Will be removed in v3.0.0. Use `Profile` instead. UserProfile represents the details retrieved for a particular
 type UserProfile struct {
-	// ID is a unique identifier Yoti assigns to your user, but only for your app
-	// if the same user logs into your app again, you get the same id
-	// if she/he logs into another application, Yoti will assign a different id for that app
+	// ID is a unique identifier Yoti assigns to your user, but only for your app.
+	// If the same user logs into your app again, you get the same id.
+	// If she/he logs into another application, Yoti will assign a different id for that app.
 	ID string
 
 	// Selfie is a photograph of the user. This will be nil if not provided by Yoti

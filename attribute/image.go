@@ -6,13 +6,13 @@ import (
 )
 
 const (
-	//ImageTypeJpeg JPEG format
+	// ImageTypeJpeg JPEG format
 	ImageTypeJpeg string = "jpeg"
-	//ImageTypePng PNG format
+	// ImageTypePng PNG format
 	ImageTypePng string = "png"
 )
 
-//Image format of the image and the image data
+// Image format of the image and the image data
 type Image struct {
 	Type string
 	Data []byte
