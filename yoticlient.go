@@ -19,15 +19,16 @@ import (
 )
 
 const (
-	apiURL        = "https://api.yoti.com/api/v1"
-	sdkIdentifier = "Go"
+	apiURL               = "https://api.yoti.com/api/v1"
+	sdkIdentifier        = "Go"
+	sdkVersionIdentifier = "2.3.0"
 
-	authKeyHeader       = "X-Yoti-Auth-Key"
-	authDigestHeader    = "X-Yoti-Auth-Digest"
-	sdkIdentifierHeader = "X-Yoti-SDK"
-
-	attributeAgeOver  = "age_over:"
-	attributeAgeUnder = "age_under:"
+	authKeyHeader              = "X-Yoti-Auth-Key"
+	authDigestHeader           = "X-Yoti-Auth-Digest"
+	sdkIdentifierHeader        = "X-Yoti-SDK"
+	sdkVersionIdentifierHeader = sdkIdentifierHeader + "-Version"
+	attributeAgeOver           = "age_over:"
+	attributeAgeUnder          = "age_under:"
 )
 
 // Client represents a client that can communicate with yoti and return information about Yoti users.
@@ -470,6 +471,7 @@ func createHeaders(key *rsa.PrivateKey, httpMethod string, endpoint string, cont
 	headers[authKeyHeader] = authKey
 	headers[authDigestHeader] = authDigest
 	headers[sdkIdentifierHeader] = sdkIdentifier
+	headers[sdkVersionIdentifierHeader] = sdkVersionIdentifier
 
 	return headers, err
 }
