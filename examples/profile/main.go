@@ -133,21 +133,11 @@ func main() {
 	http.Handle("/images/", http.StripPrefix("/images",
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
 
-	log.Printf("About to configure HTTPS redirection")
-	go configureHTTPSRedirection()
-
 	log.Printf("About to listen and serve on %[1]s. Go to https://localhost:%[1]s/", portNumber)
 	err = http.ListenAndServeTLS(":"+portNumber, selfSignedCertName, selfSignedKeyName, nil)
 
 	if err != nil {
 		panic("Error when calling `ListenAndServeTLS`: " + err.Error())
-	}
-}
-
-func configureHTTPSRedirection() {
-	err := http.ListenAndServe(":80", http.HandlerFunc(redirectHandler))
-	if err != nil {
-		panic("Error configuring HTTP redirection: " + err.Error())
 	}
 }
 
