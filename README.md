@@ -124,9 +124,9 @@ var nationality string = userProfile.Nationality().Value()
 var dateOfBirth *time.Time
 dobAttr, err := userProfile.DateOfBirth()
 if err != nil {
-	//handle error
+    //handle error
 } else {
-	dateOfBirth = dobAttr.Value()
+    dateOfBirth = dobAttr.Value()
 }
 ```
 
@@ -153,7 +153,7 @@ signedTimestamp | 2017-10-31, 19:45:59.123789
 
 Similarly, an attribute _verified_ against the data held by an external party will have an `Anchor` of type _VERIFIER_, naming the party that verified it.
 
-From each attribute can retrieve the `Anchors`, and subsets `Sources` and `Verifiers` (all as `[]*anchor.Anchor`) as follows:
+From each attribute you can retrieve the `Anchors`, and subsets `Sources` and `Verifiers` (all as `[]*anchor.Anchor`) as follows:
 
 ```Go
 givenNamesAnchors := userProfile.GivenNames().Anchors()
