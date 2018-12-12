@@ -2,8 +2,6 @@ package yoti
 
 import (
 	"encoding/base64"
-	"log"
-	"strconv"
 )
 
 func bytesToUtf8(bytes []byte) string {
@@ -27,15 +25,4 @@ func base64ToBytes(base64Str string) ([]byte, error) {
  */
 func urlSafeBase64ToBytes(urlSafeBase64 string) ([]byte, error) {
 	return base64.URLEncoding.DecodeString(urlSafeBase64)
-}
-
-func bytesToBool(bytes []byte) (result bool, err error) {
-	result, err = strconv.ParseBool(string(bytes))
-	if err != nil {
-		log.Printf(
-			"Unable to parse bytes to bool. Error: %s", err)
-		return false, err
-	}
-
-	return result, nil
 }
