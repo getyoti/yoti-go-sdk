@@ -25,9 +25,9 @@ func GetMIMEType(imageType string) string {
 }
 
 // Base64URL is the Image encoded as a base64 URL
-func (image *Image) Base64URL() (string, error) {
+func (image *Image) Base64URL() string {
 	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
 	contentType := GetMIMEType(image.Type)
 
-	return "data:" + contentType + ";base64;," + base64EncodedImage, nil
+	return "data:" + contentType + ";base64;," + base64EncodedImage
 }

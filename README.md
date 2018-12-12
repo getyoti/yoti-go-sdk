@@ -293,7 +293,7 @@ Visiting `https://localhost:8080/` should show a Yoti Connect button
   * [X] Remember Me ID `RememberMeID()`
   * [X] User Profile `UserProfile`
     * [X] Selfie `Selfie()`
-    * [X] Selfie Base64 URL `Selfie().Base64URL()`
+    * [X] Selfie Base64 URL `Selfie().Value().Base64URL()`
     * [X] Given Names `GivenNames()`
     * [X] Family Name `FamilyName()`
     * [X] Full Name `FullName()`
