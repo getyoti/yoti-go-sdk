@@ -415,7 +415,7 @@ func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID strin
 	}
 
 	if response.Success {
-		result, err = GetAmlResultFromResponse([]byte(response.Content))
+		result, err = GetAmlResult([]byte(response.Content))
 		return
 	}
 
