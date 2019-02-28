@@ -207,9 +207,10 @@ The `profile` object provides a set of attributes corresponding to user attribut
 
 ## Running the Tests
 
-You can run the unit tests for this project by executing the following command inside the repository folder
+You can run the unit tests for this project by executing the following commands inside the repository folder
 
 ```Go
+go get -t
 go test
 ```
 
