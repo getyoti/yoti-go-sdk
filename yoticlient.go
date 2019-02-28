@@ -21,7 +21,7 @@ import (
 const (
 	apiURL               = "https://api.yoti.com/api/v1"
 	sdkIdentifier        = "Go"
-	sdkVersionIdentifier = "2.3.0"
+	sdkVersionIdentifier = "2.3.1"
 
 	authKeyHeader              = "X-Yoti-Auth-Key"
 	authDigestHeader           = "X-Yoti-Auth-Digest"
