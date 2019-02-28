@@ -128,6 +128,13 @@ if err != nil {
 } else {
     dateOfBirth = dobAttr.Value()
 }
+var structuredPostalAddress map[string]interface{}
+structuredPostalAddressAttribute, err := userProfile.StructuredPostalAddress()
+if err != nil {
+    //handle error
+} else {
+    structuredPostalAddress := structuredPostalAddressAttribute.Value().(map[string]interface{})
+}
 ```
 
 If you have chosen Verify Condition on the Yoti Dashboard with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method, which requires the result to be cast to the original type:
@@ -267,7 +274,8 @@ log.Printf(
 }
 ```
 
-Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder. 
+Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder.
+
 * Rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
 * Change directory to the aml example folder: `cd examples/aml`
 * Install the dependencies with `go get`
@@ -301,6 +309,7 @@ Visiting `https://localhost:8080/` should show a Yoti Connect button
     * [X] Email Address `EmailAddress()`
     * [X] Date of Birth `DateOfBirth()`
     * [X] Postal Address `Address()`
+    * [X] Structured Postal Address `StructuredPostalAddress()`
     * [X] Gender `Gender()`
     * [X] Nationality `Nationality()`
 
