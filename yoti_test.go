@@ -403,9 +403,9 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 		t.Errorf("Failed to parse structured address, error was %q", err.Error())
 	}
 
-	parsedStructuredAddressInterfaceArray := parsedStructuredAddress.([]interface{})
+	parsedStructuredAddressInterfaceSlice := parsedStructuredAddress.([]interface{})
 
-	parsedStructuredAddressMap := parsedStructuredAddressInterfaceArray[0].(map[string]interface{})
+	parsedStructuredAddressMap := parsedStructuredAddressInterfaceSlice[0].(map[string]interface{})
 	actualCountryIso := parsedStructuredAddressMap["country_iso"]
 
 	if countryIso != actualCountryIso {
@@ -416,13 +416,13 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	var formattedAddressText = `House No.86-A\nRajgura Nagar\nLudhina\nPunjab\n141012\nIndia`
 
-	var structuredAddressBytes = []byte(`[
+	var structuredAddressBytes = []byte(`
 	{
 		"address_format": 2,
 		"building": "House No.86-A",
 		"formatted_address": "` + formattedAddressText + `"
 	}
-	]`)
+	`)
 
 	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 	if err != nil {
@@ -488,13 +488,12 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T) {
 	var addressText = `PostalAddress`
 
-	var structuredAddressBytes = []byte(`[
+	var structuredAddressBytes = []byte(`
 	{
 		"address_format": 2,
 		"building": "House No.86-A",
 		"formatted_address": "FormattedAddress"
-	}
-	]`)
+	}`)
 	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 
 	if err != nil {
@@ -519,12 +518,11 @@ func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T)
 }
 
 func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
-	var structuredAddressBytes = []byte(`[
+	var structuredAddressBytes = []byte(`
 	{
 		"address_format": 2,
 		"building": "House No.86-A"
-	}
-	]`)
+	}`)
 
 	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 
@@ -681,12 +679,11 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 	attributeName := "test_attribute_name"
 	addressFormat := "2"
 
-	var structuredAddressBytes = []byte(`[
+	var structuredAddressBytes = []byte(`
 		{
 			"address_format": "` + addressFormat + `",
 			"building": "House No.86-A"
-		}
-		]`)
+		}`)
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
@@ -698,9 +695,8 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	retrievedAttributeInterfaceArray := att.Value().([]interface{})
-	parsedMap := retrievedAttributeInterfaceArray[0].(map[string]interface{})
-	actualAddressFormat := parsedMap["address_format"]
+	retrievedAttributeMap := att.Value().(map[string]interface{})
+	actualAddressFormat := retrievedAttributeMap["address_format"]
 
 	if !cmp.Equal(actualAddressFormat, addressFormat) {
 		t.Errorf(
@@ -939,12 +935,11 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchorpassport.txt")
 
-	var structuredAddressBytes = []byte(`[
-		{
-			"address_format": 2,
-			"building": "House No.86-A"
-		}
-		]`)
+	var structuredAddressBytes = []byte(`
+	{
+		"address_format": 2,
+		"building": "House No.86-A"
+	}`)
 
 	a := &yotiprotoattr.Attribute{
 		Name:        attrConstStructuredPostalAddress,

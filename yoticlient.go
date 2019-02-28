@@ -320,8 +320,7 @@ func ensureAddressProfile(profile Profile) (address string, err error) {
 }
 
 func retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress interface{}) (address string, err error) {
-	parsedStructuredAddressInterfaceArray := structuredPostalAddress.([]interface{})
-	parsedStructuredAddressMap := parsedStructuredAddressInterfaceArray[0].(map[string]interface{})
+	parsedStructuredAddressMap := structuredPostalAddress.(map[string]interface{})
 	if formattedAddress, ok := parsedStructuredAddressMap["formatted_address"]; ok {
 		return formattedAddress.(string), nil
 	}
