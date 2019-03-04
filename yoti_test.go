@@ -238,6 +238,34 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	}
 }
 
+func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
+	key, _ := ioutil.ReadFile("test-key.pem")
+
+	var otherPartyProfileContents = []string{
+		`"other_party_profile_content": null,`,
+		`"other_party_profile_content": "",`}
+
+	for _, otherPartyProfileContent := range otherPartyProfileContents {
+
+		var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    true,
+				StatusCode: 200,
+				Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+					otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`}
+			return
+		}
+
+		_, _, err := getActivityDetails(requester, encryptedToken, sdkID, key)
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		if
+	}
+}
+
 func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 	uri := "http://www.url.com"
 	headers := CreateHeaders()
