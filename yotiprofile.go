@@ -17,6 +17,7 @@ const (
 	attrConstStructuredPostalAddress = "structured_postal_address"
 	attrConstGender                  = "gender"
 	attrConstNationality             = "nationality"
+	attrConstDocumentImages          = "document_images"
 )
 
 // Profile represents the details retrieved for a particular user. Consists of
@@ -138,6 +139,16 @@ func (p Profile) Nationality() *attribute.StringAttribute {
 		}
 	}
 	return nil
+}
+
+// DocumentImages returns . Will be nil if not provided by Yoti
+func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
+	for _, a := range p.attributeSlice {
+		if a.Name == attrConstDocumentImages {
+			return attribute.NewImageSlice(a)
+		}
+	}
+	return nil, nil
 }
 
 // GetAttribute retrieve an attribute by name on the Yoti profile. Will return nil if attribute is not present.
