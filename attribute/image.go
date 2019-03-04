@@ -2,7 +2,10 @@ package attribute
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
 const (
@@ -30,4 +33,24 @@ func (image *Image) Base64URL() string {
 	contentType := GetMIMEType(image.Type)
 
 	return "data:" + contentType + ";base64;," + base64EncodedImage
+}
+
+func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*Image, error) {
+	var imageType string
+
+	switch contentType {
+	case yotiprotoattr.ContentType_JPEG:
+		imageType = ImageTypeJpeg
+
+	case yotiprotoattr.ContentType_PNG:
+		imageType = ImageTypePng
+
+	default:
+		return nil, errors.New("Cannot create Image with unsupported type")
+	}
+
+	return &Image{
+		Data: byteValue,
+		Type: imageType,
+	}, nil
 }
