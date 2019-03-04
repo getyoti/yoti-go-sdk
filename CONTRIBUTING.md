@@ -7,6 +7,8 @@ The command `go get "github.com/getyoti/yoti-go-sdk"` downloads the Yoti package
 1) `goimports` formats the code and sanitises imports
 1) `go vet` reports suspicious constructs
 1) `go test` to run the tests
+1) `go test -race` detects for race conditions
+1) `golangci-lint run` for [GolangCI-Lint](https://github.com/golangci/golangci-lint)
 
 ## VS Code
 
