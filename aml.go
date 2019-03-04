@@ -29,7 +29,13 @@ type AmlResult struct {
 //  Deprecated: Will be removed in v3.0.0, please use GetAmlResult below instead. Parses AML result from response
 func GetAmlResultFromResponse(amlResponse []byte) AmlResult {
 	var amlResult AmlResult
-	json.Unmarshal(amlResponse, &amlResult)
+
+	err := json.Unmarshal(amlResponse, &amlResult)
+
+	if err != nil {
+		log.Printf(
+			"Unable to get AML result from response. Error: %s", err)
+	}
 
 	return amlResult
 }
