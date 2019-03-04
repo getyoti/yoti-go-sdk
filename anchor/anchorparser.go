@@ -82,18 +82,6 @@ func parseExtension(ext pkix.Extension) (anchorType Type, val string, err error)
 	return anchorType, val, nil
 }
 
-func unmarshalExtension(extensionValue []byte) string {
-	var ae anchorExtension
-
-	_, err := asn1.Unmarshal(extensionValue, &ae)
-	if err == nil && ae.Extension != "" {
-		return ae.Extension
-	}
-
-	log.Printf("Error unmarshalling anchor extension: %q", err)
-	return ""
-}
-
 func parseSignedTimestamp(rawBytes []byte) yotiprotocom.SignedTimestamp {
 	signedTimestamp := &yotiprotocom.SignedTimestamp{}
 	if err := proto.Unmarshal(rawBytes, signedTimestamp); err != nil {
