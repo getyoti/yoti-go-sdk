@@ -17,38 +17,7 @@ type GenericAttribute struct {
 
 // NewGeneric creates a new generic attribute
 func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
-	var value interface{}
-
-	switch a.ContentType {
-	case yotiprotoattr.ContentType_DATE:
-		parsedTime, err := time.Parse("2006-01-02", string(a.Value))
-		if err == nil {
-			value = &parsedTime
-		} else {
-			log.Printf("Unable to parse date value: %q. Error: %q", string(a.Value), err)
-		}
-
-	case yotiprotoattr.ContentType_JSON:
-		unmarshalledJSON, err := UnmarshallJSON(a.Value)
-
-		if err == nil {
-			value = unmarshalledJSON
-		} else {
-			log.Printf("Unable to parse JSON value: %q. Error: %q", string(a.Value), err)
-		}
-
-	case yotiprotoattr.ContentType_STRING:
-		value = string(a.Value)
-
-	case yotiprotoattr.ContentType_JPEG,
-		yotiprotoattr.ContentType_PNG,
-		yotiprotoattr.ContentType_UNDEFINED:
-		value = a.Value
-
-	default:
-		value = a.Value
-	}
-
+	value := parseValue(a.ContentType, a.Value)
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &GenericAttribute{
@@ -59,6 +28,41 @@ func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
 		value:   value,
 		anchors: parsedAnchors,
 	}
+}
+
+func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (result interface{}) {
+	switch contentType {
+	case yotiprotoattr.ContentType_DATE:
+		parsedTime, err := time.Parse("2006-01-02", string(byteValue))
+		if err == nil {
+			result = &parsedTime
+		} else {
+			log.Printf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
+		}
+
+	case yotiprotoattr.ContentType_JSON:
+		unmarshalledJSON, err := UnmarshallJSON(byteValue)
+
+		if err == nil {
+			result = unmarshalledJSON
+		} else {
+			log.Printf("Unable to parse JSON value: %q. Error: %q", string(byteValue), err)
+		}
+
+	case yotiprotoattr.ContentType_STRING:
+		result = string(byteValue)
+
+	case yotiprotoattr.ContentType_JPEG,
+		yotiprotoattr.ContentType_PNG,
+		yotiprotoattr.ContentType_MULTI_VALUE,
+		yotiprotoattr.ContentType_UNDEFINED:
+		result = byteValue
+
+	default:
+		result = byteValue
+	}
+
+	return result
 }
 
 // Value returns the value of the GenericAttribute as an interface
