@@ -266,7 +266,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 
 func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 	uri := "http://www.url.com"
-	headers := CreateHeaders()
+	headers := createTestHeaders()
 	httpRequestMethod := "UNSUPPORTEDMETHOD"
 	contentBytes := make([]byte, 0)
 
@@ -279,7 +279,7 @@ func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 
 func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 	uri := "http://www.url.com"
-	headers := CreateHeaders()
+	headers := createTestHeaders()
 	httpRequestMethod := HTTPMethodGet
 	contentBytes := make([]byte, 0)
 
@@ -959,7 +959,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 func TestAnchorParser_Passport(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchorpassport.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "testanchorpassport.txt")
 
 	var structuredAddressBytes = []byte(`
 	{
@@ -1023,11 +1023,11 @@ func TestAnchorParser_Passport(t *testing.T) {
 	}
 
 	actualSerialNo := actualAnchor.OriginServerCerts()[0].SerialNumber
-	AssertServerCertSerialNo(t, "277870515583559162487099305254898397834", actualSerialNo)
+	assertServerCertSerialNo(t, "277870515583559162487099305254898397834", actualSerialNo)
 }
 
 func TestAnchorParser_DrivingLicense(t *testing.T) {
-	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchordrivinglicense.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "testanchordrivinglicense.txt")
 
 	attribute := &yotiprotoattr.Attribute{
 		Name:        attrConstGender,
@@ -1078,11 +1078,11 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	}
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
-	AssertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
+	assertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
 }
 
 func TestAnchorParser_YotiAdmin(t *testing.T) {
-	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
 
 	attr := &yotiprotoattr.Attribute{
 		Name:        attrConstDateOfBirth,
@@ -1138,7 +1138,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 	}
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
-	AssertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
+	assertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
 }
 
 func TestAnchors_None(t *testing.T) {
@@ -1156,7 +1156,7 @@ func TestAnchors_None(t *testing.T) {
 }
 
 func TestDateOfBirthAttribute(t *testing.T) {
-	protoAttribute := CreateAttributeFromTestFile(t, "testattributedateofbirth.txt")
+	protoAttribute := createAttributeFromTestFile(t, "testattributedateofbirth.txt")
 
 	dateOfBirthAttribute, err := attribute.NewTime(protoAttribute)
 
@@ -1176,7 +1176,7 @@ func TestDateOfBirthAttribute(t *testing.T) {
 }
 
 func TestDocumentImagesAttribute(t *testing.T) {
-	protoAttribute := CreateAttributeFromTestFile(t, "testattributemultivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
 
 	documentImagesAttribute, err := attribute.NewImageSlice(protoAttribute)
 
@@ -1216,7 +1216,7 @@ func TestDocumentImagesAttribute(t *testing.T) {
 	}
 }
 
-func AssertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSerialNo *big.Int) {
+func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSerialNo *big.Int) {
 	expectedSerialNoBigInt := new(big.Int)
 	expectedSerialNoBigInt, ok := expectedSerialNoBigInt.SetString(expectedSerialNo, 10)
 	if !ok {
@@ -1231,8 +1231,8 @@ func AssertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 	}
 }
 
-func CreateAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
-	attributeBytes, err := DecodeTestFile(t, filename)
+func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
+	attributeBytes, err := decodeTestFile(t, filename)
 
 	if err != nil {
 		t.Errorf("error decoding test file: %q", err)
@@ -1247,8 +1247,8 @@ func CreateAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.A
 	return attributeStruct
 }
 
-func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {
-	anchorBytes, err := DecodeTestFile(t, filename)
+func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {
+	anchorBytes, err := decodeTestFile(t, filename)
 
 	if err != nil {
 		t.Errorf("error decoding test file: %q", err)
@@ -1264,7 +1264,7 @@ func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 	return protoAnchors
 }
 
-func DecodeTestFile(t *testing.T, filename string) (result []byte, err error) {
+func decodeTestFile(t *testing.T, filename string) (result []byte, err error) {
 	base64Bytes := readTestFile(t, filename)
 	base64String := string(base64Bytes)
 	filebytes, err := base64.StdEncoding.DecodeString(base64String)
@@ -1300,8 +1300,7 @@ func readTestFile(t *testing.T, filename string) (result []byte) {
 	return b
 }
 
-func CreateHeaders() (result map[string]string) {
-
+func createTestHeaders() (result map[string]string) {
 	headers := make(map[string]string)
 
 	headers["Header1"] = "test"
