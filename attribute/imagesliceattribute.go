@@ -21,21 +21,11 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 		return nil, errors.New("Creating an Image Slice attribute with content types other than MULTI_VALUE is not supported")
 	}
 
+	multiValueStruct := ParseMultiValue(a.Value)
+
 	var imageSliceValue []*Image
-
-	multiValueStruct := parseMultiValue(a.Value)
 	if multiValueStruct != nil {
-		for _, value := range multiValueStruct.Values {
-
-			imageValue, err := parseImageValue(value.ContentType, value.Data)
-
-			if err != nil {
-				log.Printf("error parsing image value. ContentType: %s, data: %v, error: %v", value.ContentType, value.Data, err)
-				continue
-			}
-
-			imageSliceValue = append(imageSliceValue, imageValue)
-		}
+		imageSliceValue = parseImageSlice(multiValueStruct.Values)
 	}
 
 	return &ImageSliceAttribute{
@@ -46,6 +36,22 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 		value:   imageSliceValue,
 		anchors: anchor.ParseAnchors(a.Anchors),
 	}, nil
+}
+
+func parseImageSlice(multiValue_Value []*yotiprotoattr.MultiValue_Value) (result []*Image) {
+	for _, value := range multiValue_Value {
+
+		imageValue, err := parseImageValue(value.ContentType, value.Data)
+
+		if err != nil {
+			log.Printf("error parsing image value. ContentType: %s, data: %v, error: %v", value.ContentType, value.Data, err)
+			continue
+		}
+
+		result = append(result, imageValue)
+	}
+
+	return result
 }
 
 // Value returns the value of the ImageSliceAttribute as a string

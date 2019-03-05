@@ -261,8 +261,6 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-
-		if
 	}
 }
 
@@ -1082,6 +1080,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	AssertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
 }
+
 func TestAnchorParser_YotiAdmin(t *testing.T) {
 	anchorSlice := CreateAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
 
@@ -1156,12 +1155,64 @@ func TestAnchors_None(t *testing.T) {
 	}
 }
 
-func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
-	var attributeSlice []*yotiprotoattr.Attribute
-	attributeSlice = append(attributeSlice, attr)
+func TestDateOfBirthAttribute(t *testing.T) {
+	protoAttribute := CreateAttributeFromTestFile(t, "testattributedateofbirth.txt")
 
-	return Profile{
-		attributeSlice: attributeSlice,
+	dateOfBirthAttribute, err := attribute.NewTime(protoAttribute)
+
+	if err != nil {
+		t.Errorf("error creating time attribute: %q", err)
+	}
+
+	expectedDateOfBirth := time.Date(1970, time.December, 01, 0, 0, 0, 0, time.UTC)
+	actualDateOfBirth := dateOfBirthAttribute.Value()
+
+	if !actualDateOfBirth.Equal(expectedDateOfBirth) {
+		t.Errorf(
+			"Parsed attribute Date of Birth is incorrect. Expected: %q, actual: %q",
+			expectedDateOfBirth,
+			actualDateOfBirth)
+	}
+}
+
+func TestDocumentImagesAttribute(t *testing.T) {
+	protoAttribute := CreateAttributeFromTestFile(t, "testattributemultivalue.txt")
+
+	documentImagesAttribute, err := attribute.NewImageSlice(protoAttribute)
+
+	if err != nil {
+		t.Errorf("error creating image slice attribute: %q", err)
+	}
+
+	actualDocumentImages := documentImagesAttribute.Value()
+
+	if len(actualDocumentImages) != 2 {
+		t.Error("This Document Images attribute should have two images")
+	}
+
+	if actualDocumentImages[0].Type != "jpeg" || actualDocumentImages[1].Type != "jpeg" {
+		t.Error("Document Images should be `jpeg` for this test")
+	}
+
+	checkBase64URL(t, "vWgD//2Q==", actualDocumentImages[0].Base64URL())
+	checkBase64URL(t, "38TVEH/9k=", actualDocumentImages[1].Base64URL())
+
+	actualAnchor := documentImagesAttribute.Anchors()[0]
+
+	expectedValue := "NATIONAL_ID"
+	if actualAnchor.Value()[0] != expectedValue {
+		t.Errorf(
+			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
+			expectedValue,
+			actualAnchor.Value()[0])
+	}
+
+	expectedSubType := "STATE_ID"
+	if actualAnchor.SubType() != expectedSubType {
+		t.Errorf(
+			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
+			expectedSubType,
+			actualAnchor.SubType())
 	}
 }
 
@@ -1178,6 +1229,22 @@ func AssertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 			expectedSerialNo,
 			actualSerialNo)
 	}
+}
+
+func CreateAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
+	attributeBytes, err := DecodeTestFile(t, filename)
+
+	if err != nil {
+		t.Errorf("error decoding test file: %q", err)
+	}
+
+	attributeStruct := &yotiprotoattr.Attribute{}
+
+	if err := proto.Unmarshal(attributeBytes, attributeStruct); err != nil {
+		t.Errorf("Unable to parse MULTI_VALUE value: %q. Error: %q", string(attributeBytes), err)
+	}
+
+	return attributeStruct
 }
 
 func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {
@@ -1200,11 +1267,28 @@ func CreateAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 func DecodeTestFile(t *testing.T, filename string) (result []byte, err error) {
 	base64Bytes := readTestFile(t, filename)
 	base64String := string(base64Bytes)
-	anchorBytes, err := base64.StdEncoding.DecodeString(base64String)
+	filebytes, err := base64.StdEncoding.DecodeString(base64String)
 	if err != nil {
 		return nil, err
 	}
-	return anchorBytes, nil
+	return filebytes, nil
+}
+
+func checkBase64URL(t *testing.T, expectedBase64URLLast10Chars string, actualBase64URL string) {
+	ActualBase64URLLast10Chars := actualBase64URL[len(actualBase64URL)-10:]
+
+	if ActualBase64URLLast10Chars != expectedBase64URLLast10Chars {
+		t.Errorf("Base64URL does not match. Expected: %q, actual: %q", expectedBase64URLLast10Chars, ActualBase64URLLast10Chars)
+	}
+}
+
+func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
+	var attributeSlice []*yotiprotoattr.Attribute
+	attributeSlice = append(attributeSlice, attr)
+
+	return Profile{
+		attributeSlice: attributeSlice,
+	}
 }
 
 func readTestFile(t *testing.T, filename string) (result []byte) {
