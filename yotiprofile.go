@@ -141,7 +141,7 @@ func (p Profile) Nationality() *attribute.StringAttribute {
 	return nil
 }
 
-// DocumentImages returns . Will be nil if not provided by Yoti
+// DocumentImages returns a slice of document images. Will be nil if not provided by Yoti
 func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstDocumentImages {
