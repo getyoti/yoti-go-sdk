@@ -1175,7 +1175,7 @@ func TestDateOfBirthAttribute(t *testing.T) {
 	}
 }
 
-func TestDocumentImagesAttribute(t *testing.T) {
+func TestNewImageSlice(t *testing.T) {
 	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
 
 	documentImagesAttribute, err := attribute.NewImageSlice(protoAttribute)
@@ -1184,8 +1184,37 @@ func TestDocumentImagesAttribute(t *testing.T) {
 		t.Errorf("error creating image slice attribute: %q", err)
 	}
 
-	actualDocumentImages := documentImagesAttribute.Value()
+	AssertIsExpectedDocumentImagesAttribute(t, documentImagesAttribute.Value(), documentImagesAttribute.Anchors()[0])
+}
 
+func TestNewMultiValue(t *testing.T) {
+	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
+
+	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
+
+	if err != nil {
+		t.Errorf("error creating image slice attribute: %q", err)
+	}
+
+	var documentImagesAttributeItems []*attribute.Image = attribute.CreateImageSlice(multiValueAttribute.Value())
+
+	AssertIsExpectedDocumentImagesAttribute(t, documentImagesAttributeItems, multiValueAttribute.Anchors()[0])
+}
+
+func TestMultiValueGenericGetter(t *testing.T) {
+	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
+	profile := createProfileWithSingleAttribute(protoAttribute)
+
+	multiValueAttribute := profile.GetAttribute(attrConstDocumentImages)
+
+	// We need to cast, since GetAttribute always returns generic attributes
+	multiValueAttributeValue := multiValueAttribute.Value().([]*attribute.Item)
+	imageSlice := attribute.CreateImageSlice(multiValueAttributeValue)
+
+	AssertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
+}
+
+func AssertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*attribute.Image, anchor *anchor.Anchor) {
 	if len(actualDocumentImages) != 2 {
 		t.Error("This Document Images attribute should have two images")
 	}
@@ -1197,22 +1226,20 @@ func TestDocumentImagesAttribute(t *testing.T) {
 	checkBase64URL(t, "vWgD//2Q==", actualDocumentImages[0].Base64URL())
 	checkBase64URL(t, "38TVEH/9k=", actualDocumentImages[1].Base64URL())
 
-	actualAnchor := documentImagesAttribute.Anchors()[0]
-
 	expectedValue := "NATIONAL_ID"
-	if actualAnchor.Value()[0] != expectedValue {
+	if anchor.Value()[0] != expectedValue {
 		t.Errorf(
 			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
 			expectedValue,
-			actualAnchor.Value()[0])
+			anchor.Value()[0])
 	}
 
 	expectedSubType := "STATE_ID"
-	if actualAnchor.SubType() != expectedSubType {
+	if anchor.SubType() != expectedSubType {
 		t.Errorf(
 			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
 			expectedSubType,
-			actualAnchor.SubType())
+			anchor.SubType())
 	}
 }
 
