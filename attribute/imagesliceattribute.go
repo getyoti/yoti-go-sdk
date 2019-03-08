@@ -21,7 +21,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 		return nil, errors.New("Creating an Image Slice attribute with content types other than MULTI_VALUE is not supported")
 	}
 
-	parsedMultiValue := parseMultiValue(a.Value)
+	parsedMultiValue := ParseMultiValue(a.Value)
 
 	var imageSliceValue []*Image
 	if parsedMultiValue != nil {
@@ -42,7 +42,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 func CreateImageSlice(items []*Item) (result []*Image) {
 	for _, item := range items {
 
-		imageValue, err := parseImageValue(item.GetContentType(), item.GetValue().([]byte))
+		imageValue, err := ParseImageValue(item.GetContentType(), item.GetValue().([]byte))
 
 		if err != nil {
 			log.Printf("error parsing image value. ContentType: %s, data: %v, error: %v", item.contentType, item.value.([]byte), err)

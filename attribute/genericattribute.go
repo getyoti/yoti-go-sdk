@@ -14,7 +14,7 @@ type GenericAttribute struct {
 
 // NewGeneric creates a new generic attribute
 func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
-	var value interface{} = parseAttribute(a.ContentType, a.Value)
+	var value interface{} = parseValue(a.ContentType, a.Value)
 	var parsedAnchors []*anchor.Anchor = anchor.ParseAnchors(a.Anchors)
 
 	return &GenericAttribute{

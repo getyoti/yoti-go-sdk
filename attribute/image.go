@@ -35,7 +35,8 @@ func (image *Image) Base64URL() string {
 	return "data:" + contentType + ";base64;," + base64EncodedImage
 }
 
-func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*Image, error) {
+// ParseImageValue wraps image data into an image struct
+func ParseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*Image, error) {
 	var imageType string
 
 	switch contentType {

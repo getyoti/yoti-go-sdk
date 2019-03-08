@@ -17,7 +17,7 @@ type MultiValueAttribute struct {
 
 // NewMultiValue creates a new MultiValue attribute
 func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
-	var attributeItems []*Item = parseMultiValue(a.Value)
+	var attributeItems []*Item = ParseMultiValue(a.Value)
 
 	return &MultiValueAttribute{
 		Attribute: &yotiprotoattr.Attribute{
@@ -29,19 +29,23 @@ func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
 	}, nil
 }
 
-// parseMultiValue recursively unmarshals and converts Multi Value bytes into a slice of Items
-func parseMultiValue(data []byte) []*Item {
+// ParseMultiValue recursively unmarshals and converts Multi Value bytes into a slice of Items
+func ParseMultiValue(data []byte) []*Item {
 	var attributeItems []*Item
 	protoMultiValueStruct := unmarshallMultiValue(data)
 
 	for _, multiValueItem := range protoMultiValueStruct.Values {
 		if multiValueItem.ContentType == yotiprotoattr.ContentType_MULTI_VALUE {
-			var parsedInnerMultiValueItems []*Item = parseMultiValue(multiValueItem.Data)
-			attributeItems = append(attributeItems, parsedInnerMultiValueItems...)
+			var parsedInnerMultiValueItems []*Item = ParseMultiValue(multiValueItem.Data)
+			var parsedInnerMultiValueItemsSingleItem = &Item{
+				contentType: yotiprotoattr.ContentType_MULTI_VALUE,
+				value:       parsedInnerMultiValueItems,
+			}
+			attributeItems = append(attributeItems, parsedInnerMultiValueItemsSingleItem)
 		} else {
 			value := &Item{
 				contentType: multiValueItem.ContentType,
-				value:       multiValueItem.Data,
+				value:       parseValue(multiValueItem.ContentType, multiValueItem.Data),
 			}
 			attributeItems = append(attributeItems, value)
 		}
