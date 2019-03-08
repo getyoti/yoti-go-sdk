@@ -7,7 +7,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/yotiprotoattr"
 )
 
-func parseAttribute(contentType yotiprotoattr.ContentType, byteValue []byte) (result interface{}) {
+func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (result interface{}) {
 	switch contentType {
 	case yotiprotoattr.ContentType_DATE:
 		parsedTime, err := time.Parse("2006-01-02", string(byteValue))
@@ -30,7 +30,7 @@ func parseAttribute(contentType yotiprotoattr.ContentType, byteValue []byte) (re
 		result = string(byteValue)
 
 	case yotiprotoattr.ContentType_MULTI_VALUE:
-		result = parseMultiValue(byteValue)
+		result = ParseMultiValue(byteValue)
 
 	case yotiprotoattr.ContentType_JPEG,
 		yotiprotoattr.ContentType_PNG,

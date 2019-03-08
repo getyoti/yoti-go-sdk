@@ -1184,7 +1184,7 @@ func TestNewImageSlice(t *testing.T) {
 		t.Errorf("error creating image slice attribute: %q", err)
 	}
 
-	AssertIsExpectedDocumentImagesAttribute(t, documentImagesAttribute.Value(), documentImagesAttribute.Anchors()[0])
+	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttribute.Value(), documentImagesAttribute.Anchors()[0])
 }
 
 func TestNewMultiValue(t *testing.T) {
@@ -1193,12 +1193,74 @@ func TestNewMultiValue(t *testing.T) {
 	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
 
 	if err != nil {
-		t.Errorf("error creating image slice attribute: %q", err)
+		t.Errorf("error creating multi value attribute: %q", err)
 	}
 
 	var documentImagesAttributeItems []*attribute.Image = attribute.CreateImageSlice(multiValueAttribute.Value())
 
-	AssertIsExpectedDocumentImagesAttribute(t, documentImagesAttributeItems, multiValueAttribute.Anchors()[0])
+	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttributeItems, multiValueAttribute.Anchors()[0])
+}
+
+func TestNestedMultiValue(t *testing.T) {
+	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "testattributemultivalue.txt").Value
+
+	var intMultiValueItem = &yotiprotoattr.MultiValue_Value{
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Data:        []byte("string"),
+	}
+
+	var multiValueItem = &yotiprotoattr.MultiValue_Value{
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Data:        innerMultiValueProtoValue,
+	}
+
+	var multiValueItemSlice = []*yotiprotoattr.MultiValue_Value{intMultiValueItem, multiValueItem}
+	var multiValueStruct = &yotiprotoattr.MultiValue{
+		Values: multiValueItemSlice,
+	}
+
+	var marshalledMultiValueData = marshallMultiValue(t, multiValueStruct)
+	attributeName := "nestedMultiValue"
+
+	var protoAttribute = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       marshalledMultiValueData,
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
+
+	if err != nil {
+		t.Errorf("error creating multi value attribute: %q", err)
+	}
+
+	for key, value := range multiValueAttribute.Value() {
+		switch key {
+		case 0:
+			value0 := value.GetValue()
+			if value0.(string) != "string" {
+				t.Errorf("Unexpected Value: %q", value0)
+			}
+		case 1:
+			value1 := value.GetValue()
+
+			innerItems, ok := value1.([]*attribute.Item)
+			if !ok {
+				t.Errorf("Unexpected Value: %q", value1)
+			}
+
+			for innerKey, item := range innerItems {
+				switch innerKey {
+				case 0:
+					assertIsExpectedImage(t, parseImage(t, item.GetValue()), "jpeg", "vWgD//2Q==")
+
+				case 1:
+					assertIsExpectedImage(t, parseImage(t, item.GetValue()), "jpeg", "38TVEH/9k=")
+				}
+			}
+		}
+	}
 }
 
 func TestMultiValueGenericGetter(t *testing.T) {
@@ -1211,20 +1273,30 @@ func TestMultiValueGenericGetter(t *testing.T) {
 	multiValueAttributeValue := multiValueAttribute.Value().([]*attribute.Item)
 	imageSlice := attribute.CreateImageSlice(multiValueAttributeValue)
 
-	AssertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
+	assertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
 }
 
-func AssertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*attribute.Image, anchor *anchor.Anchor) {
+func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image {
+	innerImageBytes, ok := innerImageInterface.([]byte)
+	if !ok {
+		t.Errorf("Unexpected Value: %q", innerImageInterface)
+	}
+
+	innerImage, err := attribute.ParseImageValue(yotiprotoattr.ContentType_JPEG, innerImageBytes)
+	if err != nil {
+		t.Errorf("error parsing image: %q", err)
+	}
+
+	return innerImage
+}
+
+func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*attribute.Image, anchor *anchor.Anchor) {
 	if len(actualDocumentImages) != 2 {
 		t.Error("This Document Images attribute should have two images")
 	}
 
-	if actualDocumentImages[0].Type != "jpeg" || actualDocumentImages[1].Type != "jpeg" {
-		t.Error("Document Images should be `jpeg` for this test")
-	}
-
-	checkBase64URL(t, "vWgD//2Q==", actualDocumentImages[0].Base64URL())
-	checkBase64URL(t, "38TVEH/9k=", actualDocumentImages[1].Base64URL())
+	assertIsExpectedImage(t, actualDocumentImages[0], "jpeg", "vWgD//2Q==")
+	assertIsExpectedImage(t, actualDocumentImages[1], "jpeg", "38TVEH/9k=")
 
 	expectedValue := "NATIONAL_ID"
 	if anchor.Value()[0] != expectedValue {
@@ -1241,6 +1313,33 @@ func AssertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages 
 			expectedSubType,
 			anchor.SubType())
 	}
+}
+
+func assertIsExpectedImage(t *testing.T, image *attribute.Image, imageType string, expectedBase64URLLast10 string) {
+	if image.Type != imageType {
+		t.Errorf(
+			"Incorrect image type. Expected: %q, actual: %q",
+			imageType,
+			image.Type)
+	}
+
+	actualBase64URL := image.Base64URL()
+
+	ActualBase64URLLast10Chars := actualBase64URL[len(actualBase64URL)-10:]
+
+	if ActualBase64URLLast10Chars != expectedBase64URLLast10 {
+		t.Errorf("Base64URL does not match. Expected: %q, actual: %q", expectedBase64URLLast10, ActualBase64URLLast10Chars)
+	}
+}
+
+func marshallMultiValue(t *testing.T, multiValue *yotiprotoattr.MultiValue) []byte {
+	marshalled, err := proto.Marshal(multiValue)
+
+	if err != nil {
+		t.Errorf("Unable to marshall MULTI_VALUE value. Error: %q", err)
+	}
+
+	return marshalled
 }
 
 func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSerialNo *big.Int) {
@@ -1299,14 +1398,6 @@ func decodeTestFile(t *testing.T, filename string) (result []byte, err error) {
 		return nil, err
 	}
 	return filebytes, nil
-}
-
-func checkBase64URL(t *testing.T, expectedBase64URLLast10Chars string, actualBase64URL string) {
-	ActualBase64URLLast10Chars := actualBase64URL[len(actualBase64URL)-10:]
-
-	if ActualBase64URLLast10Chars != expectedBase64URLLast10Chars {
-		t.Errorf("Base64URL does not match. Expected: %q, actual: %q", expectedBase64URLLast10Chars, ActualBase64URLLast10Chars)
-	}
 }
 
 func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
