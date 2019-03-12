@@ -10,6 +10,7 @@ type receiptDO struct {
 	PolicyURI                  string `json:"policy_uri"`
 	PersonalKey                string `json:"personal_key"`
 	RememberMeID               string `json:"remember_me_id"`
+	ParentRememberMeID         string `json:"parent_remember_me_id"`
 	SharingOutcome             string `json:"sharing_outcome"`
 	Timestamp                  string `json:"timestamp"`
 }

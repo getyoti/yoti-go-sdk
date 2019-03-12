@@ -151,8 +151,9 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 			}
 
 			activityDetails = ActivityDetails{
-				UserProfile:  profile,
-				rememberMeID: id,
+				UserProfile:        profile,
+				rememberMeID:       id,
+				parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
 			}
 		}
 	} else {

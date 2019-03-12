@@ -202,6 +202,31 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	}
 }
 
+func TestYotiClient_ParentRememberMeID(t *testing.T) {
+	key, _ := ioutil.ReadFile("test-key.pem")
+	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
+	parentRememberMeID := "parent_remember_me_id0123456789"
+
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+		result = &httpResponse{
+			Success:    true,
+			StatusCode: 200,
+			Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey +
+				`","other_party_profile_content": "` + otherPartyProfileContent +
+				`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
+		return
+	}
+
+	_, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+
+	if errorStrings != nil {
+		t.Error(errorStrings)
+	}
+
+	if activityDetails.ParentRememberMeID() != parentRememberMeID {
+		t.Errorf("expected id %q, instead received %q", parentRememberMeID, activityDetails.ParentRememberMeID())
+	}
+}
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	rememberMeID := "remember_me_id0123456789"
