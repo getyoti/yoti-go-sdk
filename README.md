@@ -110,6 +110,7 @@ You can then get the user profile from the activityDetails struct:
 
 ```Go
 var rememberMeID string = activityDetails.RememberMeID()
+var parentRememberMeID string = activityDetails.ParentRememberMeID()
 var userProfile yoti.Profile = activityDetails.UserProfile
 
 var selfie = userProfile.Selfie().Value()
@@ -300,6 +301,7 @@ Visiting `https://localhost:8080/` should show a Yoti Connect button
 
 * [X] Activity Details
   * [X] Remember Me ID `RememberMeID()`
+  * [X] Remember Me ID `ParentRememberMeID()`
   * [X] User Profile `UserProfile`
     * [X] Selfie `Selfie()`
     * [X] Selfie Base64 URL `Selfie().Value().Base64URL()`
