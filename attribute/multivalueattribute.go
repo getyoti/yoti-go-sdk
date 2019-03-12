@@ -35,20 +35,20 @@ func ParseMultiValue(data []byte) []*Item {
 	protoMultiValueStruct := unmarshallMultiValue(data)
 
 	for _, multiValueItem := range protoMultiValueStruct.Values {
+		var value *Item
 		if multiValueItem.ContentType == yotiprotoattr.ContentType_MULTI_VALUE {
 			var parsedInnerMultiValueItems []*Item = ParseMultiValue(multiValueItem.Data)
-			var parsedInnerMultiValueItemsSingleItem = &Item{
+			value = &Item{
 				contentType: yotiprotoattr.ContentType_MULTI_VALUE,
 				value:       parsedInnerMultiValueItems,
 			}
-			attributeItems = append(attributeItems, parsedInnerMultiValueItemsSingleItem)
 		} else {
-			value := &Item{
+			value = &Item{
 				contentType: multiValueItem.ContentType,
 				value:       parseValue(multiValueItem.ContentType, multiValueItem.Data),
 			}
-			attributeItems = append(attributeItems, value)
 		}
+		attributeItems = append(attributeItems, value)
 	}
 
 	return attributeItems
