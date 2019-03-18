@@ -1,45 +1,44 @@
 package attribute
 
 import (
-	"log"
+	"fmt"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
-func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (result interface{}) {
+func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interface{}, error) {
 	switch contentType {
 	case yotiprotoattr.ContentType_DATE:
 		parsedTime, err := time.Parse("2006-01-02", string(byteValue))
+
 		if err == nil {
-			result = &parsedTime
 		} else {
-			log.Printf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
+			return nil, fmt.Errorf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
 		}
+		return &parsedTime, nil
 
 	case yotiprotoattr.ContentType_JSON:
 		unmarshalledJSON, err := UnmarshallJSON(byteValue)
 
 		if err == nil {
-			result = unmarshalledJSON
+			return unmarshalledJSON, nil
 		} else {
-			log.Printf("Unable to parse JSON value: %q. Error: %q", string(byteValue), err)
+			return nil, fmt.Errorf("Unable to parse JSON value: %q. Error: %q", string(byteValue), err)
 		}
 
 	case yotiprotoattr.ContentType_STRING:
-		result = string(byteValue)
+		return string(byteValue), nil
 
 	case yotiprotoattr.ContentType_MULTI_VALUE:
-		result = ParseMultiValue(byteValue)
+		return parseMultiValue(byteValue)
 
 	case yotiprotoattr.ContentType_JPEG,
 		yotiprotoattr.ContentType_PNG,
 		yotiprotoattr.ContentType_UNDEFINED:
-		result = byteValue
+		return byteValue, nil
 
 	default:
-		result = byteValue
+		return byteValue, nil
 	}
-
-	return result
 }
