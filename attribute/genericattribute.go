@@ -1,6 +1,8 @@
 package attribute
 
 import (
+	"log"
+
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
@@ -14,7 +16,13 @@ type GenericAttribute struct {
 
 // NewGeneric creates a new generic attribute
 func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
-	var value interface{} = parseValue(a.ContentType, a.Value)
+	value, err := parseValue(a.ContentType, a.Value)
+
+	if err != nil {
+		log.Printf("Error creating new generic attribute: `%s`", err)
+		return nil
+	}
+
 	var parsedAnchors []*anchor.Anchor = anchor.ParseAnchors(a.Anchors)
 
 	return &GenericAttribute{

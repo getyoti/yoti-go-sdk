@@ -1212,6 +1212,44 @@ func TestNewImageSlice(t *testing.T) {
 	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttribute.Value(), documentImagesAttribute.Anchors()[0])
 }
 
+func TestImageSliceNotCreatedWithNonMultiValueType(t *testing.T) {
+	attributeName := "test_attribute_name"
+	attributeValueString := "value"
+	attributeValue := []byte(attributeValueString)
+
+	var attr = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	_, err := attribute.NewImageSlice(attr)
+
+	if err == nil {
+		t.Error("Expected error when creating image slice from attribute which isn't of multi-value type")
+	}
+}
+
+func TestMultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
+	attributeName := "test_attribute_name"
+	attributeValueString := "value"
+	attributeValue := []byte(attributeValueString)
+
+	var attr = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	_, err := attribute.NewMultiValue(attr)
+
+	if err == nil {
+		t.Error("Expected error when creating multi value from attribute which isn't of multi-value type")
+	}
+}
+
 func TestNewMultiValue(t *testing.T) {
 	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
 
@@ -1226,20 +1264,19 @@ func TestNewMultiValue(t *testing.T) {
 	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttributeItems, multiValueAttribute.Anchors()[0])
 }
 
-func TestNestedMultiValue(t *testing.T) {
-	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "testattributemultivalue.txt").Value
+func TestInvalidMultiValueNotReturned(t *testing.T) {
+	var nilMultiValueItem = &yotiprotoattr.MultiValue_Value{
+		ContentType: yotiprotoattr.ContentType_DATE,
+		Data:        []byte("20O1"),
+	}
 
-	var intMultiValueItem = &yotiprotoattr.MultiValue_Value{
+	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Data:        []byte("string"),
 	}
 
-	var multiValueItem = &yotiprotoattr.MultiValue_Value{
-		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
-		Data:        innerMultiValueProtoValue,
-	}
+	var multiValueItemSlice = []*yotiprotoattr.MultiValue_Value{nilMultiValueItem, stringMultiValueItem}
 
-	var multiValueItemSlice = []*yotiprotoattr.MultiValue_Value{intMultiValueItem, multiValueItem}
 	var multiValueStruct = &yotiprotoattr.MultiValue{
 		Values: multiValueItemSlice,
 	}
@@ -1254,7 +1291,29 @@ func TestNestedMultiValue(t *testing.T) {
 		Anchors:     []*yotiprotoattr.Anchor{},
 	}
 
-	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
+	profile := createProfileWithSingleAttribute(protoAttribute)
+
+	if profile.GetAttribute(attributeName) != nil {
+		t.Error("Excpected to retrieve null attribute when there is erroneous data within the attribute value")
+	}
+}
+
+func TestNestedMultiValue(t *testing.T) {
+	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "testattributemultivalue.txt").Value
+
+	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Data:        []byte("string"),
+	}
+
+	var multiValueItem = &yotiprotoattr.MultiValue_Value{
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Data:        innerMultiValueProtoValue,
+	}
+
+	var multiValueItemSlice = []*yotiprotoattr.MultiValue_Value{stringMultiValueItem, multiValueItem}
+
+	multiValueAttribute, err := createMultiValueAttribute(t, multiValueItemSlice)
 
 	if err != nil {
 		t.Errorf("error creating multi value attribute: %q", err)
@@ -1380,6 +1439,24 @@ func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 			expectedSerialNo,
 			actualSerialNo)
 	}
+}
+
+func createMultiValueAttribute(t *testing.T, multiValueItemSlice []*yotiprotoattr.MultiValue_Value) (*attribute.MultiValueAttribute, error) {
+	var multiValueStruct = &yotiprotoattr.MultiValue{
+		Values: multiValueItemSlice,
+	}
+
+	var marshalledMultiValueData = marshallMultiValue(t, multiValueStruct)
+	attributeName := "nestedMultiValue"
+
+	var protoAttribute = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       marshalledMultiValueData,
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	return attribute.NewMultiValue(protoAttribute)
 }
 
 func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
