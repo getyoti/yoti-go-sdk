@@ -628,6 +628,28 @@ func TestProfile_GetAttribute_String(t *testing.T) {
 	}
 }
 
+func TestEmptyStringIsAllowed(t *testing.T) {
+	attributeValueString := ""
+	attributeValue := []byte(attributeValueString)
+
+	var attr = &yotiprotoattr.Attribute{
+		Name:        attrConstGender,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	profile := createProfileWithSingleAttribute(attr)
+	att := profile.Gender()
+
+	if !cmp.Equal(att.Value(), attributeValueString) {
+		t.Errorf(
+			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
+			attributeValue,
+			att.Value())
+	}
+}
+
 func TestProfile_GetAttribute_Time(t *testing.T) {
 	attributeName := "test_attribute_name"
 
