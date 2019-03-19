@@ -24,6 +24,7 @@ const (
 	encryptedToken    = "b6H19bUCJhwh6WqQX_sEHWX9RP-A_ANr1fkApwA4Dp2nJQFAjrF9e6YCXhNBpAIhfHnN0iXubyXxXZMNwNMSQ5VOxkqiytrvPykfKQWHC6ypSbfy0ex8ihndaAXG5FUF-qcU8QaFPMy6iF3x0cxnY0Ij0kZj0Ng2t6oiNafb7AhT-VGXxbFbtZu1QF744PpWMuH0LVyBsAa5N5GJw2AyBrnOh67fWMFDKTJRziP5qCW2k4h5vJfiYr_EOiWKCB1d_zINmUm94ZffGXxcDAkq-KxhN1ZuNhGlJ2fKcFh7KxV0BqlUWPsIEiwS0r9CJ2o1VLbEs2U_hCEXaqseEV7L29EnNIinEPVbL4WR7vkF6zQCbK_cehlk2Qwda-VIATqupRO5grKZN78R9lBitvgilDaoE7JB_VFcPoljGQ48kX0wje1mviX4oJHhuO8GdFITS5LTbojGVQWT7LUNgAUe0W0j-FLHYYck3v84OhWTqads5_jmnnLkp9bdJSRuJF0e8pNdePnn2lgF-GIcyW_0kyGVqeXZrIoxnObLpF-YeUteRBKTkSGFcy7a_V_DLiJMPmH8UXDLOyv8TVt3ppzqpyUrLN2JVMbL5wZ4oriL2INEQKvw_boDJjZDGeRlu5m1y7vGDNBRDo64-uQM9fRUULPw-YkABNwC0DeShswzT00="
 	sdkID             = "fake-sdk-id"
 	wrappedReceiptKey = "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
+	attributeName     = "test_attribute_name"
 )
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
@@ -599,9 +600,8 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_String(t *testing.T) {
-	attributeName := "test_attribute_name"
-	attributeValueString := "value"
-	attributeValue := []byte(attributeValueString)
+	emptyString := ""
+	attributeValue := []byte(emptyString)
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
@@ -620,7 +620,7 @@ func TestProfile_GetAttribute_String(t *testing.T) {
 			att.Name)
 	}
 
-	if !cmp.Equal(att.Value().(string), attributeValueString) {
+	if !cmp.Equal(att.Value().(string), emptyString) {
 		t.Errorf(
 			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
 			attributeValue,
@@ -651,8 +651,6 @@ func TestEmptyStringIsAllowed(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Time(t *testing.T) {
-	attributeName := "test_attribute_name"
-
 	dateStringValue := "1985-01-01"
 	expectedDate := time.Date(1985, time.January, 1, 0, 0, 0, 0, time.UTC)
 
@@ -677,7 +675,6 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Jpeg(t *testing.T) {
-	attributeName := "test_attribute_name"
 	attributeValue := []byte("value")
 
 	var attr = &yotiprotoattr.Attribute{
@@ -699,7 +696,6 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Png(t *testing.T) {
-	attributeName := "test_attribute_name"
 	attributeValue := []byte("value")
 
 	var attr = &yotiprotoattr.Attribute{
@@ -721,7 +717,6 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {
-	attributeName := "test_attribute_name"
 	var initialBoolValue = true
 	attributeValue := []byte(strconv.FormatBool(initialBoolValue))
 
@@ -749,7 +744,6 @@ func TestProfile_GetAttribute_Bool(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_JSON(t *testing.T) {
-	attributeName := "test_attribute_name"
 	addressFormat := "2"
 
 	var structuredAddressBytes = []byte(`
@@ -780,7 +774,6 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Undefined(t *testing.T) {
-	attributeName := "test_attribute_name"
 	attributeValueString := "value"
 	attributeValue := []byte(attributeValueString)
 
@@ -1235,7 +1228,6 @@ func TestNewImageSlice(t *testing.T) {
 }
 
 func TestImageSliceNotCreatedWithNonMultiValueType(t *testing.T) {
-	attributeName := "test_attribute_name"
 	attributeValueString := "value"
 	attributeValue := []byte(attributeValueString)
 
@@ -1254,7 +1246,6 @@ func TestImageSliceNotCreatedWithNonMultiValueType(t *testing.T) {
 }
 
 func TestMultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
-	attributeName := "test_attribute_name"
 	attributeValueString := "value"
 	attributeValue := []byte(attributeValueString)
 
@@ -1287,9 +1278,9 @@ func TestNewMultiValue(t *testing.T) {
 }
 
 func TestInvalidMultiValueNotReturned(t *testing.T) {
-	var nilMultiValueItem = &yotiprotoattr.MultiValue_Value{
+	var invalidMultiValueItem = &yotiprotoattr.MultiValue_Value{
 		ContentType: yotiprotoattr.ContentType_DATE,
-		Data:        []byte("20O1"),
+		Data:        []byte("invalid"),
 	}
 
 	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
@@ -1297,7 +1288,7 @@ func TestInvalidMultiValueNotReturned(t *testing.T) {
 		Data:        []byte("string"),
 	}
 
-	var multiValueItemSlice = []*yotiprotoattr.MultiValue_Value{nilMultiValueItem, stringMultiValueItem}
+	var multiValueItemSlice = []*yotiprotoattr.MultiValue_Value{invalidMultiValueItem, stringMultiValueItem}
 
 	var multiValueStruct = &yotiprotoattr.MultiValue{
 		Values: multiValueItemSlice,
