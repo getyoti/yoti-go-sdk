@@ -1316,7 +1316,7 @@ func TestInvalidMultiValueNotReturned(t *testing.T) {
 	profile := createProfileWithSingleAttribute(protoAttribute)
 
 	if profile.GetAttribute(attributeName) != nil {
-		t.Error("Excpected to retrieve null attribute when there is erroneous data within the attribute value")
+		t.Error("Expected to retrieve null attribute when there is erroneous data within the attribute value")
 	}
 }
 
