@@ -17,6 +17,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
+	"gotest.tools/assert"
 )
 
 const (
@@ -599,7 +600,7 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 	}
 }
 
-func TestProfile_GetAttribute_String(t *testing.T) {
+func TestProfile_GetAttribute_EmptyString(t *testing.T) {
 	emptyString := ""
 	attributeValue := []byte(emptyString)
 
@@ -626,6 +627,48 @@ func TestProfile_GetAttribute_String(t *testing.T) {
 			attributeValue,
 			att.Value())
 	}
+}
+
+func TestProfile_GetAttribute_Int(t *testing.T) {
+	intValues := [5]int{0, 1, 123, -10, -1}
+
+	for _, integer := range intValues {
+		assertExpectedIntegerIsReturned(t, integer)
+	}
+}
+
+func assertExpectedIntegerIsReturned(t *testing.T, intValue int) {
+	intAsString := strconv.Itoa(intValue)
+
+	var attr = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       []byte(intAsString),
+		ContentType: yotiprotoattr.ContentType_INT,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(attributeName)
+
+	assert.Equal(t, att.Value().(int), intValue)
+}
+
+func TestProfile_GetAttribute_InvalidInt_ReturnsNil(t *testing.T) {
+	invalidIntValue := "1985-01-01"
+
+	var attr = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       []byte(invalidIntValue),
+		ContentType: yotiprotoattr.ContentType_INT,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+
+	log.SetOutput(ioutil.Discard)
+	att := result.GetAttribute(attributeName)
+
+	assert.Assert(t, cmp.Equal(att, nil))
 }
 
 func TestEmptyStringIsAllowed(t *testing.T) {

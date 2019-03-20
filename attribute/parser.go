@@ -2,6 +2,7 @@ package attribute
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
@@ -32,6 +33,15 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 
 	case yotiprotoattr.ContentType_MULTI_VALUE:
 		return parseMultiValue(byteValue)
+
+	case yotiprotoattr.ContentType_INT:
+		var stringValue = string(byteValue)
+		int, err := strconv.Atoi(stringValue)
+		if err == nil {
+			return int, nil
+		} else {
+			return nil, fmt.Errorf("Unable to parse INT value: %q. Error: %q", string(byteValue), err)
+		}
 
 	case yotiprotoattr.ContentType_JPEG,
 		yotiprotoattr.ContentType_PNG,
