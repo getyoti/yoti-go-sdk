@@ -1,7 +1,8 @@
 module github.com/getyoti/yoti-go-sdk/v2
 
 require (
-	github.com/golang/protobuf v1.2.0
+	github.com/golang/protobuf v1.3.1
 	github.com/google/go-cmp v0.2.0
-	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
+	github.com/pkg/errors v0.8.1 // indirect
+	gotest.tools v2.2.0+incompatible
 )
