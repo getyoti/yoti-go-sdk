@@ -16,8 +16,8 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
-	"github.com/google/go-cmp/cmp"
 	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 const (
@@ -180,15 +180,10 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	}
 
 	expectedSelfieValue := "selfie0123456789"
-	if profile.Selfie() == nil {
-		t.Error(`expected selfie attribute, but it was not present in the returned profile`)
-	} else if !cmp.Equal(profile.Selfie().Value().Data, []byte(expectedSelfieValue)) {
-		t.Errorf("expected selfie %q, instead received %q", expectedSelfieValue, string(profile.Selfie().Value().Data))
-	}
 
-	if !cmp.Equal(profile.MobileNumber().Value(), "phone_number0123456789") {
-		t.Errorf("expected mobileNumber %q, instead received %q", "phone_number0123456789", profile.MobileNumber().Value())
-	}
+	assert.Assert(t, profile.Selfie() != nil)
+	assert.DeepEqual(t, profile.Selfie().Value().Data, []byte(expectedSelfieValue))
+	assert.Equal(t, profile.MobileNumber().Value(), "phone_number0123456789")
 
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 
@@ -197,11 +192,8 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 		t.Error(err)
 	}
 
-	if actualDoB == nil {
-		t.Error(`expected date of birth, but it was not present in the returned profile`)
-	} else if !actualDoB.Value().Equal(expectedDoB) {
-		t.Errorf("expected date of birth: %q, instead received: %q", expectedDoB.Format(time.UnixDate), actualDoB.Value().Format(time.UnixDate))
-	}
+	assert.Assert(t, actualDoB != nil)
+	assert.DeepEqual(t, actualDoB.Value(), &expectedDoB)
 }
 
 func TestYotiClient_ParentRememberMeID(t *testing.T) {
@@ -530,12 +522,7 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !cmp.Equal(structuredPostalAddress.ContentType, yotiprotoattr.ContentType_JSON) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct type. Expected %q, actual: %q",
-			yotiprotoattr.ContentType_JSON,
-			structuredPostalAddress.ContentType)
-	}
+	assert.Equal(t, structuredPostalAddress.ContentType, yotiprotoattr.ContentType_JSON)
 }
 
 func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T) {
@@ -621,12 +608,7 @@ func TestProfile_GetAttribute_EmptyString(t *testing.T) {
 			att.Name)
 	}
 
-	if !cmp.Equal(att.Value().(string), emptyString) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValue,
-			att.Value())
-	}
+	assert.Equal(t, att.Value().(string), emptyString)
 }
 
 func TestProfile_GetAttribute_Int(t *testing.T) {
@@ -668,7 +650,7 @@ func TestProfile_GetAttribute_InvalidInt_ReturnsNil(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 	att := result.GetAttribute(attributeName)
 
-	assert.Assert(t, cmp.Equal(att, nil))
+	assert.Assert(t, is.Nil(att))
 }
 
 func TestEmptyStringIsAllowed(t *testing.T) {
@@ -685,12 +667,7 @@ func TestEmptyStringIsAllowed(t *testing.T) {
 	profile := createProfileWithSingleAttribute(attr)
 	att := profile.Gender()
 
-	if !cmp.Equal(att.Value(), attributeValueString) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValue,
-			att.Value())
-	}
+	assert.Equal(t, att.Value(), attributeValueString)
 }
 
 func TestProfile_GetAttribute_Time(t *testing.T) {
@@ -709,12 +686,7 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if !cmp.Equal(expectedDate, att.Value().(*time.Time).UTC()) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			expectedDate,
-			att.Value().(*time.Time))
-	}
+	assert.Equal(t, expectedDate, att.Value().(*time.Time).UTC())
 }
 
 func TestProfile_GetAttribute_Jpeg(t *testing.T) {
@@ -730,12 +702,7 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if !cmp.Equal(att.Value().([]byte), attributeValue) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValue,
-			att.Value())
-	}
+	assert.DeepEqual(t, att.Value().([]byte), attributeValue)
 }
 
 func TestProfile_GetAttribute_Png(t *testing.T) {
@@ -751,12 +718,7 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if !cmp.Equal(att.Value().([]byte), attributeValue) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValue,
-			att.Value())
-	}
+	assert.DeepEqual(t, att.Value().([]byte), attributeValue)
 }
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {
@@ -774,16 +736,9 @@ func TestProfile_GetAttribute_Bool(t *testing.T) {
 	att := result.GetAttribute(attributeName)
 
 	boolValue, err := strconv.ParseBool(att.Value().(string))
-	if err != nil {
-		t.Errorf("Unable to parse string to bool. Error: %s", err)
-	}
 
-	if !cmp.Equal(initialBoolValue, boolValue) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %v, actual: %v",
-			initialBoolValue,
-			boolValue)
-	}
+	assert.Assert(t, is.Nil(err))
+	assert.Equal(t, initialBoolValue, boolValue)
 }
 
 func TestProfile_GetAttribute_JSON(t *testing.T) {
@@ -808,12 +763,7 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 	retrievedAttributeMap := att.Value().(map[string]interface{})
 	actualAddressFormat := retrievedAttributeMap["address_format"]
 
-	if !cmp.Equal(actualAddressFormat, addressFormat) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			addressFormat,
-			actualAddressFormat)
-	}
+	assert.Equal(t, actualAddressFormat, addressFormat)
 }
 
 func TestProfile_GetAttribute_Undefined(t *testing.T) {
@@ -837,12 +787,7 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 			att.Name)
 	}
 
-	if !cmp.Equal(att.Value().(string), attributeValueString) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValue,
-			att.Value())
-	}
+	assert.Equal(t, att.Value().(string), attributeValueString)
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 	result := Profile{
@@ -851,9 +796,7 @@ func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 
 	attribute := result.GetAttribute("attributeName")
 
-	if attribute != nil {
-		t.Error("Attribute should not be retrieved if it is not present")
-	}
+	assert.Assert(t, is.Nil(attribute))
 }
 
 func TestProfile_StringAttribute(t *testing.T) {
@@ -877,12 +820,7 @@ func TestProfile_StringAttribute(t *testing.T) {
 			result.Nationality().Value())
 	}
 
-	if !cmp.Equal(result.Nationality().ContentType, yotiprotoattr.ContentType_STRING) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct type. Expected %q, actual: %q",
-			yotiprotoattr.ContentType_STRING,
-			result.Nationality().ContentType)
-	}
+	assert.Equal(t, result.Nationality().ContentType, yotiprotoattr.ContentType_STRING)
 }
 
 func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
@@ -913,12 +851,7 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 			selfie.Value().Data)
 	}
 
-	if !cmp.Equal(selfie.ContentType, yotiprotoattr.ContentType_PNG) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct type. Expected %q, actual: %q",
-			yotiprotoattr.ContentType_PNG,
-			selfie.ContentType)
-	}
+	assert.Equal(t, selfie.ContentType, yotiprotoattr.ContentType_PNG)
 }
 
 func TestAttributeImage_Image_Png(t *testing.T) {
@@ -935,12 +868,7 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value().Data, byteValue) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct Image. Expected %v, actual: %v",
-			byteValue,
-			selfie.Value().Data)
-	}
+	assert.DeepEqual(t, selfie.Value().Data, byteValue)
 }
 
 func TestAttributeImage_Image_Jpeg(t *testing.T) {
@@ -957,12 +885,7 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value().Data, byteValue) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct byte value. Expected %v, actual: %v",
-			byteValue,
-			selfie.Value().Data)
-	}
+	assert.DeepEqual(t, selfie.Value().Data, byteValue)
 }
 
 func TestAttributeImage_Image_Default(t *testing.T) {
@@ -978,12 +901,7 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if !cmp.Equal(selfie.Value().Data, byteValue) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct byte value. Expected %v, actual: %v",
-			byteValue,
-			selfie.Value().Data)
-	}
+	assert.DeepEqual(t, selfie.Value().Data, byteValue)
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 	attributeName := attrConstSelfie
@@ -1063,9 +981,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	actualStructuredPostalAddress, err := result.StructuredPostalAddress()
 
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	actualAnchor := actualStructuredPostalAddress.Anchors()[0]
 
@@ -1178,9 +1094,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	DoB, err := result.DateOfBirth()
 
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	resultAnchor := DoB.Anchors()[0]
 
@@ -1243,9 +1157,7 @@ func TestDateOfBirthAttribute(t *testing.T) {
 
 	dateOfBirthAttribute, err := attribute.NewTime(protoAttribute)
 
-	if err != nil {
-		t.Errorf("error creating time attribute: %q", err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	expectedDateOfBirth := time.Date(1970, time.December, 01, 0, 0, 0, 0, time.UTC)
 	actualDateOfBirth := dateOfBirthAttribute.Value()
@@ -1263,9 +1175,7 @@ func TestNewImageSlice(t *testing.T) {
 
 	documentImagesAttribute, err := attribute.NewImageSlice(protoAttribute)
 
-	if err != nil {
-		t.Errorf("error creating image slice attribute: %q", err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttribute.Value(), documentImagesAttribute.Anchors()[0])
 }
@@ -1311,9 +1221,7 @@ func TestNewMultiValue(t *testing.T) {
 
 	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
 
-	if err != nil {
-		t.Errorf("error creating multi value attribute: %q", err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	var documentImagesAttributeItems []*attribute.Image = attribute.CreateImageSlice(multiValueAttribute.Value())
 
@@ -1349,9 +1257,7 @@ func TestInvalidMultiValueNotReturned(t *testing.T) {
 
 	profile := createProfileWithSingleAttribute(protoAttribute)
 
-	if profile.GetAttribute(attributeName) != nil {
-		t.Error("Expected to retrieve null attribute when there is erroneous data within the attribute value")
-	}
+	assert.Assert(t, is.Nil(profile.GetAttribute(attributeName)))
 }
 
 func TestNestedMultiValue(t *testing.T) {
@@ -1371,9 +1277,7 @@ func TestNestedMultiValue(t *testing.T) {
 
 	multiValueAttribute, err := createMultiValueAttribute(t, multiValueItemSlice)
 
-	if err != nil {
-		t.Errorf("error creating multi value attribute: %q", err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	for key, value := range multiValueAttribute.Value() {
 		switch key {
@@ -1423,9 +1327,7 @@ func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image 
 	}
 
 	innerImage, err := attribute.ParseImageValue(yotiprotoattr.ContentType_JPEG, innerImageBytes)
-	if err != nil {
-		t.Errorf("error parsing image: %q", err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	return innerImage
 }
@@ -1475,9 +1377,7 @@ func assertIsExpectedImage(t *testing.T, image *attribute.Image, imageType strin
 func marshallMultiValue(t *testing.T, multiValue *yotiprotoattr.MultiValue) []byte {
 	marshalled, err := proto.Marshal(multiValue)
 
-	if err != nil {
-		t.Errorf("Unable to marshall MULTI_VALUE value. Error: %q", err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	return marshalled
 }
@@ -1516,32 +1416,26 @@ func createMultiValueAttribute(t *testing.T, multiValueItemSlice []*yotiprotoatt
 }
 
 func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
-	attributeBytes, err := decodeTestFile(t, filename)
+	attributeBytes, err1 := decodeTestFile(t, filename)
 
-	if err != nil {
-		t.Errorf("error decoding test file: %q", err)
-	}
+	assert.Assert(t, is.Nil(err1))
 
 	attributeStruct := &yotiprotoattr.Attribute{}
 
-	if err := proto.Unmarshal(attributeBytes, attributeStruct); err != nil {
-		t.Errorf("Unable to parse MULTI_VALUE value: %q. Error: %q", string(attributeBytes), err)
-	}
+	err2 := proto.Unmarshal(attributeBytes, attributeStruct)
+
+	assert.Assert(t, is.Nil(err2))
 
 	return attributeStruct
 }
 
 func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {
-	anchorBytes, err := decodeTestFile(t, filename)
-
-	if err != nil {
-		t.Errorf("error decoding test file: %q", err)
-	}
+	anchorBytes, err1 := decodeTestFile(t, filename)
+	assert.Assert(t, is.Nil(err1))
 
 	protoAnchor := &yotiprotoattr.Anchor{}
-	if err := proto.Unmarshal(anchorBytes, protoAnchor); err != nil {
-		t.Errorf("Error converting test anchor bytes into a Protobuf anchor. Error: %q", err)
-	}
+	err2 := proto.Unmarshal(anchorBytes, protoAnchor)
+	assert.Assert(t, is.Nil(err2))
 
 	protoAnchors := append([]*yotiprotoattr.Anchor{}, protoAnchor)
 
@@ -1569,9 +1463,7 @@ func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
 
 func readTestFile(t *testing.T, filename string) (result []byte) {
 	b, err := ioutil.ReadFile(filename)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	return b
 }
