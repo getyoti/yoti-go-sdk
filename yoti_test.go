@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/big"
 	"net/url"
-	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -40,11 +39,8 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 
 	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-	if len(errorStrings) == 0 {
-		t.Error("Expected failure")
-	} else if !strings.HasPrefix(errorStrings[0], "Invalid Key") {
-		t.Errorf("expected outcome type starting with %q instead received %q", "Invalid Key", errorStrings[0])
-	}
+	assert.Assert(t, len(errorStrings) > 0)
+	assert.Check(t, strings.HasPrefix(errorStrings[0], "Invalid Key"))
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
@@ -58,11 +54,9 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	}
 
 	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if len(errorStrings) == 0 {
-		t.Error("Expected failure")
-	} else if !strings.HasPrefix(errorStrings[0], ErrFailure.Error()) {
-		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), errorStrings[0])
-	}
+
+	assert.Assert(t, len(errorStrings) > 0)
+	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrFailure.Error()))
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
@@ -76,11 +70,9 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	}
 
 	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if len(errorStrings) == 0 {
-		t.Error("Expected failure")
-	} else if !strings.HasPrefix(errorStrings[0], ErrProfileNotFound.Error()) {
-		t.Errorf("expected outcome type %q instead received %q", ErrProfileNotFound.Error(), errorStrings[0])
-	}
+
+	assert.Assert(t, len(errorStrings) > 0)
+	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrProfileNotFound.Error()))
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
@@ -95,11 +87,9 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 	}
 
 	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if len(errorStrings) == 0 {
-		t.Error("Expected failure")
-	} else if !strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()) {
-		t.Errorf("expected outcome type %q instead received %q", ErrSharingFailure.Error(), errorStrings[0])
-	}
+
+	assert.Assert(t, len(errorStrings) > 0)
+	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()))
 }
 
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
@@ -107,29 +97,23 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 
 	expectedAbsoluteURL := "/api/v1/profile/" + token
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (*httpResponse, error) {
 		var theURL *url.URL
-		var theError error
-		if theURL, theError = url.Parse(uri); err != nil {
-			t.Errorf("Yoti api did not generate a valid uri. instead it generated: %s", theError)
-		}
+		var err error
 
-		if theURL.Path != expectedAbsoluteURL {
-			t.Errorf("Yoti api did not generate a url path. expected %s, generated: %s", expectedAbsoluteURL, theURL.Path)
-		}
+		theURL, err = url.Parse(uri)
+		assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
+		assert.Equal(t, theURL.Path, expectedAbsoluteURL, "Yoti API did not generate a valid URL path.")
 
-		result = &httpResponse{
+		return &httpResponse{
 			Success:    false,
-			StatusCode: 500}
-		return
+			StatusCode: 500}, err
 	}
 
 	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
-	if len(errorStrings) == 0 {
-		t.Error("Expected failure")
-	} else if !strings.HasPrefix(errorStrings[0], ErrFailure.Error()) {
-		t.Errorf("expected outcome type %q instead received %q", ErrFailure.Error(), errorStrings[0])
-	}
+
+	assert.Assert(t, len(errorStrings) > 0)
+	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrFailure.Error()))
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
@@ -148,36 +132,19 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	userProfile, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-	if errorStrings != nil {
-		t.Error(errorStrings)
-	}
+	assert.Assert(t, is.Nil(errorStrings))
+	assert.Equal(t, userProfile.ID, rememberMeID)
 
-	if userProfile.ID != rememberMeID {
-		t.Errorf("expected id %q instead received %q", rememberMeID, userProfile.ID)
-	}
-
-	if userProfile.Selfie == nil {
-		t.Error(`expected selfie attribute, but it was not present in the returned userProfile`)
-	} else if string(userProfile.Selfie.Data) != "selfie0123456789" {
-		t.Errorf("expected selfie attribute %q, instead received %q", "selfie0123456789", string(userProfile.Selfie.Data))
-	}
-
-	if userProfile.MobileNumber != "phone_number0123456789" {
-		t.Errorf("expected mobileNumber value %q, instead received %q", "phone_number0123456789", userProfile.MobileNumber)
-	}
+	assert.Assert(t, userProfile.Selfie != nil)
+	assert.Equal(t, string(userProfile.Selfie.Data), "selfie0123456789")
+	assert.Equal(t, userProfile.MobileNumber, "phone_number0123456789")
 
 	dobUserProfile := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
-	if userProfile.DateOfBirth == nil {
-		t.Error(`expected date of birth but it was not present in the returned userProfile`)
-	} else if !userProfile.DateOfBirth.Equal(dobUserProfile) {
-		t.Errorf("expected date of birth %q, instead received %q", userProfile.DateOfBirth.Format(time.UnixDate), dobUserProfile.Format(time.UnixDate))
-	}
+	assert.Assert(t, userProfile.DateOfBirth.Equal(dobUserProfile))
 
 	profile := activityDetails.UserProfile
 
-	if activityDetails.RememberMeID() != rememberMeID {
-		t.Errorf("expected id %q, instead received %q", rememberMeID, activityDetails.RememberMeID())
-	}
+	assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 
 	expectedSelfieValue := "selfie0123456789"
 
@@ -188,9 +155,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	actualDoB, err := profile.DateOfBirth()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Assert(t, is.Nil(err))
 
 	assert.Assert(t, actualDoB != nil)
 	assert.DeepEqual(t, actualDoB.Value(), &expectedDoB)
@@ -213,13 +178,8 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 
 	_, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-	if errorStrings != nil {
-		t.Error(errorStrings)
-	}
-
-	if activityDetails.ParentRememberMeID() != parentRememberMeID {
-		t.Errorf("expected id %q, instead received %q", parentRememberMeID, activityDetails.ParentRememberMeID())
-	}
+	assert.Assert(t, is.Nil(errorStrings))
+	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
 }
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
@@ -243,17 +203,9 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 
 		userProfile, activityDetails, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-		if err != nil {
-			t.Error(err)
-		}
-
-		if userProfile.ID != rememberMeID {
-			t.Errorf("expected id %q instead received %q", rememberMeID, userProfile.ID)
-		}
-
-		if activityDetails.RememberMeID() != rememberMeID {
-			t.Errorf("expected id %q instead received %q", rememberMeID, activityDetails.RememberMeID())
-		}
+		assert.Assert(t, is.Nil(err))
+		assert.Equal(t, userProfile.ID, rememberMeID)
+		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 	}
 }
 
@@ -277,9 +229,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 
 		_, _, err := getActivityDetails(requester, encryptedToken, sdkID, key)
 
-		if err != nil {
-			t.Error(err)
-		}
+		assert.Assert(t, is.Nil(err))
 	}
 }
 
@@ -291,9 +241,7 @@ func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
 
 	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)
 
-	if err == nil {
-		t.Error("Expected failure")
-	}
+	assert.Assert(t, err != nil)
 }
 
 func TestYotiClient_SupportedHttpMethod(t *testing.T) {
@@ -304,9 +252,7 @@ func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 
 	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)
 
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Assert(t, is.Nil(err))
 }
 
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
@@ -327,19 +273,11 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 		sdkID,
 		key)
 
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Assert(t, is.Nil(err))
 
-	if !result.OnFraudList {
-		t.Errorf("'OnFraudList' value is expected to be true")
-	}
-	if !result.OnPEPList {
-		t.Errorf("'OnPEPList' value is expected to be true")
-	}
-	if !result.OnWatchList {
-		t.Errorf("'OnWatchList' value is expected to be true")
-	}
+	assert.Check(t, result.OnFraudList)
+	assert.Check(t, result.OnPEPList)
+	assert.Check(t, result.OnWatchList)
 }
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
@@ -361,14 +299,9 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 		key)
 
 	var expectedErrString = "AML Check was unsuccessful"
-	if err == nil {
-		t.Error("Expected failure")
-	} else if !strings.HasPrefix(err.Error(), expectedErrString) {
-		t.Errorf(
-			"expected outcome type starting with %q instead received %q",
-			expectedErrString,
-			err.Error())
-	}
+
+	assert.Assert(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), expectedErrString))
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
@@ -376,13 +309,8 @@ func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
 
 	isAgeVerified, err := parseIsAgeVerifiedValue(trueValue)
 
-	if err != nil {
-		t.Errorf("Failed to parse IsAgeVerified value, error was %q", err.Error())
-	}
-
-	if !*isAgeVerified {
-		t.Error("Expected true")
-	}
+	assert.Assert(t, is.Nil(err), "Failed to parse IsAgeVerified value")
+	assert.Check(t, *isAgeVerified)
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
@@ -390,31 +318,23 @@ func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
 
 	isAgeVerified, err := parseIsAgeVerifiedValue(falseValue)
 
-	if err != nil {
-		t.Errorf("Failed to parse IsAgeVerified value, error was %q", err.Error())
-	}
+	assert.Assert(t, is.Nil(err), "Failed to parse IsAgeVerified value")
+	assert.Check(t, !*isAgeVerified)
 
-	if *isAgeVerified {
-		t.Error("Expected false")
-	}
 }
 func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T) {
 	invalidValue := []byte("invalidBool")
 
 	_, err := parseIsAgeVerifiedValue(invalidValue)
 
-	if err == nil {
-		t.Error("Expected error")
-	}
+	assert.Assert(t, err != nil)
 }
 func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
 	invalidStructuredAddress := []byte("invalidBool")
 
 	_, err := attribute.UnmarshallJSON(invalidStructuredAddress)
 
-	if err == nil {
-		t.Error("Expected error")
-	}
+	assert.Assert(t, err != nil)
 }
 
 func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
@@ -444,18 +364,14 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 
 	parsedStructuredAddress, err := attribute.UnmarshallJSON(structuredAddress)
 
-	if err != nil {
-		t.Errorf("Failed to parse structured address, error was %q", err.Error())
-	}
+	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
 
 	parsedStructuredAddressInterfaceSlice := parsedStructuredAddress.([]interface{})
 
 	parsedStructuredAddressMap := parsedStructuredAddressInterfaceSlice[0].(map[string]interface{})
 	actualCountryIso := parsedStructuredAddressMap["country_iso"]
 
-	if countryIso != actualCountryIso {
-		t.Errorf("expected country_iso: %q, actual value was: %q", countryIso, actualCountryIso)
-	}
+	assert.Equal(t, countryIso, actualCountryIso)
 }
 
 func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
@@ -470,9 +386,8 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	`)
 
 	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
-	if err != nil {
-		t.Errorf("Failed to parse structured address, error was %q", err.Error())
-	}
+
+	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
 
 	var userProfile = UserProfile{
 		ID:                      "remember_me_id0123456789",
@@ -490,39 +405,21 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	profile := createProfileWithSingleAttribute(jsonAttribute)
 
 	profileAddress, profileErr := ensureAddressProfile(profile)
-	if profileErr != nil {
-		t.Errorf("Failed to add formatted address to address on Profile, error was %q", err.Error())
-	}
+	assert.Assert(t, is.Nil(profileErr), "Failed to add formatted address to address on Profile")
 
 	userProfileAddress, userProfileErr := ensureAddressUserProfile(userProfile)
-	if userProfileErr != nil {
-		t.Errorf("Failed to add formatted address to address on UserProfile, error was %q", err.Error())
-	}
+	assert.Assert(t, is.Nil(userProfileErr), "Failed to add formatted address to address on UserProfile")
 
 	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
 
-	if profileAddress != escapedFormattedAddressText {
-		t.Errorf(
-			"Address does not equal the expected formatted address. address: %q, formatted address: %q",
-			profileAddress,
-			formattedAddressText)
-	}
-
-	if userProfileAddress != escapedFormattedAddressText {
-		t.Errorf(
-			"Address does not equal the expected formatted address. address: %q, formatted address: %q",
-			userProfileAddress,
-			formattedAddressText)
-	}
+	assert.Equal(t, profileAddress, escapedFormattedAddressText, "Address does not equal the expected formatted address.")
+	assert.Equal(t, userProfileAddress, escapedFormattedAddressText, "Address does not equal the expected formatted address.")
 
 	var structuredPostalAddress *attribute.JSONAttribute
-
 	structuredPostalAddress, err = profile.StructuredPostalAddress()
-	if err != nil {
-		t.Error(err)
-	}
 
-	assert.Equal(t, structuredPostalAddress.ContentType, yotiprotoattr.ContentType_JSON)
+	assert.Assert(t, is.Nil(err))
+	assert.Equal(t, structuredPostalAddress.ContentType, yotiprotoattr.ContentType_JSON, "Retrieved attribute does not have the correct type")
 }
 
 func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T) {
@@ -536,9 +433,7 @@ func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T)
 	}`)
 	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 
-	if err != nil {
-		t.Errorf("Failed to parse structured address, error was %q", err.Error())
-	}
+	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
 
 	var result = UserProfile{
 		ID:                      "remember_me_id0123456789",
@@ -548,13 +443,8 @@ func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T)
 
 	newFormattedAddress, err := ensureAddressUserProfile(result)
 
-	if err != nil {
-		t.Errorf("Failure when getting formatted address, error was %q", err.Error())
-	}
-
-	if newFormattedAddress != "" {
-		t.Errorf("Address should be unchanged when it is present, but it is : %q", newFormattedAddress)
-	}
+	assert.Assert(t, is.Nil(err), "Failure when getting formatted address")
+	assert.Equal(t, newFormattedAddress, "", "Address should be unchanged when it is present")
 }
 
 func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
@@ -566,9 +456,7 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 
 	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
 
-	if err != nil {
-		t.Errorf("Failed to parse structured address, error was %q", err.Error())
-	}
+	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
 
 	var result = UserProfile{
 		ID:                      "remember_me_id0123456789",
@@ -578,13 +466,8 @@ func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
 
 	address, err := ensureAddressUserProfile(result)
 
-	if err != nil {
-		t.Errorf("Failed to add formatted address to address, error was %q", err.Error())
-	}
-
-	if address != "" {
-		t.Errorf("Formatted address missing, but address was still changed to: %q", address)
-	}
+	assert.Assert(t, is.Nil(err), "Failed to add formatted address to address")
+	assert.Equal(t, address, "", "Formatted address missing, but address was still changed")
 }
 
 func TestProfile_GetAttribute_EmptyString(t *testing.T) {
@@ -601,13 +484,7 @@ func TestProfile_GetAttribute_EmptyString(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if att.Name != attributeName {
-		t.Errorf(
-			"Retrieved attribute does not have the correct name. Expected %q, actual: %q",
-			attributeName,
-			att.Name)
-	}
-
+	assert.Equal(t, att.Name, attributeName)
 	assert.Equal(t, att.Value().(string), emptyString)
 }
 
@@ -780,13 +657,7 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	if att.Name != attributeName {
-		t.Errorf(
-			"Retrieved attribute does not have the correct name. Expected %q, actual: %q",
-			attributeName,
-			att.Name)
-	}
-
+	assert.Equal(t, att.Name, attributeName)
 	assert.Equal(t, att.Value().(string), attributeValueString)
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
@@ -813,12 +684,7 @@ func TestProfile_StringAttribute(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(as)
 
-	if result.Nationality().Value() != attributeValueString {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValueString,
-			result.Nationality().Value())
-	}
+	assert.Equal(t, result.Nationality().Value(), attributeValueString)
 
 	assert.Equal(t, result.Nationality().ContentType, yotiprotoattr.ContentType_STRING)
 }
@@ -837,20 +703,8 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	if selfie.Name != attributeName {
-		t.Errorf(
-			"Retrieved attribute does not have the correct name. Expected %q, actual: %q",
-			attributeName,
-			selfie.Name)
-	}
-
-	if !reflect.DeepEqual(attributeValue, selfie.Value().Data) {
-		t.Errorf(
-			"Retrieved attribute does not have the correct value. Expected %q, actual: %q",
-			attributeValue,
-			selfie.Value().Data)
-	}
-
+	assert.Equal(t, selfie.Name, attributeName)
+	assert.DeepEqual(t, attributeValue, selfie.Value().Data)
 	assert.Equal(t, selfie.ContentType, yotiprotoattr.ContentType_PNG)
 }
 
@@ -922,12 +776,7 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 
 	base64Selfie := result.Selfie().Value().Base64URL()
 
-	if base64Selfie != expectedBase64Selfie {
-		t.Errorf(
-			"Base64Selfie does not have the correct value. Expected %q, actual: %q",
-			expectedBase64Selfie,
-			base64Selfie)
-	}
+	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
 
 func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
@@ -949,12 +798,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 
 	base64Selfie := result.Selfie().Value().Base64URL()
 
-	if base64Selfie != expectedBase64Selfie {
-		t.Errorf(
-			"Base64Selfie does not have the correct value. Expected %q, actual: %q",
-			expectedBase64Selfie,
-			base64Selfie)
-	}
+	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
 
 func TestAnchorParser_Passport(t *testing.T) {
@@ -985,41 +829,18 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	actualAnchor := actualStructuredPostalAddress.Anchors()[0]
 
-	if actualAnchor != actualStructuredPostalAddress.Sources()[0] {
-		t.Error("Anchors and Sources should be the same when there is only one Source")
-	}
-
-	if actualAnchor.Type() != anchor.AnchorTypeSource {
-		t.Errorf(
-			"Parsed anchor type is incorrect. Expected: %q, actual: %q",
-			anchor.AnchorTypeSource,
-			actualAnchor.Type())
-	}
+	assert.Equal(t, actualAnchor, actualStructuredPostalAddress.Sources()[0], "Anchors and Sources should be the same when there is only one Source")
+	assert.Equal(t, actualAnchor.Type(), anchor.AnchorTypeSource)
 
 	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 0, time.UTC)
 	actualDate := actualAnchor.SignedTimestamp().Timestamp().UTC()
-	if actualDate != expectedDate {
-		t.Errorf(
-			"Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q",
-			expectedDate,
-			actualDate)
-	}
+	assert.Equal(t, actualDate, expectedDate)
 
 	expectedSubType := "OCR"
-	if actualAnchor.SubType() != expectedSubType {
-		t.Errorf(
-			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
-			expectedSubType,
-			actualAnchor.SubType())
-	}
+	assert.Equal(t, actualAnchor.SubType(), expectedSubType)
 
 	expectedValue := "PASSPORT"
-	if actualAnchor.Value()[0] != expectedValue {
-		t.Errorf(
-			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
-			expectedValue,
-			actualAnchor.Value()[0])
-	}
+	assert.Equal(t, actualAnchor.Value()[0], expectedValue)
 
 	actualSerialNo := actualAnchor.OriginServerCerts()[0].SerialNumber
 	assertServerCertSerialNo(t, "277870515583559162487099305254898397834", actualSerialNo)
@@ -1040,41 +861,18 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	genderAttribute := result.Gender()
 	resultAnchor := genderAttribute.Anchors()[0]
 
-	if resultAnchor != genderAttribute.Sources()[0] {
-		t.Error("Anchors and Sources should be the same when there is only one Source")
-	}
-
-	if resultAnchor.Type() != anchor.AnchorTypeSource {
-		t.Errorf(
-			"Parsed anchor type is incorrect. Expected: %q, actual: %q",
-			anchor.AnchorTypeSource,
-			resultAnchor.Type())
-	}
+	assert.Equal(t, resultAnchor, genderAttribute.Sources()[0], "Anchors and Sources should be the same when there is only one Source")
+	assert.Equal(t, resultAnchor.Type(), anchor.AnchorTypeSource)
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 0, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
-	if actualDate != expectedDate {
-		t.Errorf(
-			"Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q",
-			expectedDate,
-			actualDate)
-	}
+	assert.Equal(t, actualDate, expectedDate)
 
 	expectedSubType := ""
-	if resultAnchor.SubType() != expectedSubType {
-		t.Errorf(
-			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
-			expectedSubType,
-			resultAnchor.SubType())
-	}
+	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
 
 	expectedValue := "DRIVING_LICENCE"
-	if resultAnchor.Value()[0] != expectedValue {
-		t.Errorf(
-			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
-			expectedValue,
-			resultAnchor.Value()[0])
-	}
+	assert.Equal(t, resultAnchor.Value()[0], expectedValue)
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	assertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
@@ -1098,41 +896,19 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	resultAnchor := DoB.Anchors()[0]
 
-	if resultAnchor != DoB.Verifiers()[0] {
-		t.Error("Anchors and Verifiers should be the same when there is only one Verifier")
-	}
+	assert.Equal(t, resultAnchor, DoB.Verifiers()[0])
 
-	if resultAnchor.Type() != anchor.AnchorTypeVerifier {
-		t.Errorf(
-			"Parsed anchor type is incorrect. Expected: %q, actual: %q",
-			anchor.AnchorTypeVerifier,
-			resultAnchor.Type())
-	}
+	assert.Equal(t, resultAnchor.Type(), anchor.AnchorTypeVerifier)
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 0, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
-	if actualDate != expectedDate {
-		t.Errorf(
-			"Parsed anchor SignedTimestamp is incorrect. Expected: %q, actual: %q",
-			expectedDate,
-			actualDate)
-	}
+	assert.Equal(t, actualDate, expectedDate)
 
 	expectedSubType := ""
-	if resultAnchor.SubType() != expectedSubType {
-		t.Errorf(
-			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
-			expectedSubType,
-			resultAnchor.SubType())
-	}
+	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
 
 	expectedValue := "YOTI_ADMIN"
-	if resultAnchor.Value()[0] != expectedValue {
-		t.Errorf(
-			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
-			expectedValue,
-			resultAnchor.Value()[0])
-	}
+	assert.Equal(t, resultAnchor.Value()[0], expectedValue)
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	assertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)
@@ -1142,14 +918,10 @@ func TestAnchors_None(t *testing.T) {
 	anchorSlice := []*anchor.Anchor{}
 
 	sources := anchor.GetSources(anchorSlice)
-	if len(sources) > 0 {
-		t.Error("GetSources should not return anything with empty anchors")
-	}
+	assert.Equal(t, len(sources), 0, "GetSources should not return anything with empty anchors")
 
 	verifiers := anchor.GetVerifiers(anchorSlice)
-	if len(verifiers) > 0 {
-		t.Error("GetVerifiers should not return anything with empty anchors")
-	}
+	assert.Equal(t, len(verifiers), 0, "GetVerifiers should not return anything with empty anchors")
 }
 
 func TestDateOfBirthAttribute(t *testing.T) {
@@ -1162,12 +934,7 @@ func TestDateOfBirthAttribute(t *testing.T) {
 	expectedDateOfBirth := time.Date(1970, time.December, 01, 0, 0, 0, 0, time.UTC)
 	actualDateOfBirth := dateOfBirthAttribute.Value()
 
-	if !actualDateOfBirth.Equal(expectedDateOfBirth) {
-		t.Errorf(
-			"Parsed attribute Date of Birth is incorrect. Expected: %q, actual: %q",
-			expectedDateOfBirth,
-			actualDateOfBirth)
-	}
+	assert.Assert(t, actualDateOfBirth.Equal(expectedDateOfBirth))
 }
 
 func TestNewImageSlice(t *testing.T) {
@@ -1193,9 +960,7 @@ func TestImageSliceNotCreatedWithNonMultiValueType(t *testing.T) {
 
 	_, err := attribute.NewImageSlice(attr)
 
-	if err == nil {
-		t.Error("Expected error when creating image slice from attribute which isn't of multi-value type")
-	}
+	assert.Assert(t, err != nil, "Expected error when creating image slice from attribute which isn't of multi-value type")
 }
 
 func TestMultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
@@ -1211,9 +976,7 @@ func TestMultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
 
 	_, err := attribute.NewMultiValue(attr)
 
-	if err == nil {
-		t.Error("Expected error when creating multi value from attribute which isn't of multi-value type")
-	}
+	assert.Assert(t, err != nil, "Expected error when creating multi value from attribute which isn't of multi-value type")
 }
 
 func TestNewMultiValue(t *testing.T) {
@@ -1283,16 +1046,13 @@ func TestNestedMultiValue(t *testing.T) {
 		switch key {
 		case 0:
 			value0 := value.GetValue()
-			if value0.(string) != "string" {
-				t.Errorf("Unexpected Value: %q", value0)
-			}
+
+			assert.Equal(t, value0.(string), "string")
 		case 1:
 			value1 := value.GetValue()
 
 			innerItems, ok := value1.([]*attribute.Item)
-			if !ok {
-				t.Errorf("Unexpected Value: %q", value1)
-			}
+			assert.Assert(t, ok)
 
 			for innerKey, item := range innerItems {
 				switch innerKey {
@@ -1322,9 +1082,7 @@ func TestMultiValueGenericGetter(t *testing.T) {
 
 func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image {
 	innerImageBytes, ok := innerImageInterface.([]byte)
-	if !ok {
-		t.Errorf("Unexpected Value: %q", innerImageInterface)
-	}
+	assert.Assert(t, ok)
 
 	innerImage, err := attribute.ParseImageValue(yotiprotoattr.ContentType_JPEG, innerImageBytes)
 	assert.Assert(t, is.Nil(err))
@@ -1333,45 +1091,27 @@ func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image 
 }
 
 func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*attribute.Image, anchor *anchor.Anchor) {
-	if len(actualDocumentImages) != 2 {
-		t.Error("This Document Images attribute should have two images")
-	}
+
+	assert.Equal(t, len(actualDocumentImages), 2, "This Document Images attribute should have two images")
 
 	assertIsExpectedImage(t, actualDocumentImages[0], "jpeg", "vWgD//2Q==")
 	assertIsExpectedImage(t, actualDocumentImages[1], "jpeg", "38TVEH/9k=")
 
 	expectedValue := "NATIONAL_ID"
-	if anchor.Value()[0] != expectedValue {
-		t.Errorf(
-			"Parsed anchor Value is incorrect. Expected: %q, actual: %q",
-			expectedValue,
-			anchor.Value()[0])
-	}
+	assert.Equal(t, anchor.Value()[0], expectedValue)
 
 	expectedSubType := "STATE_ID"
-	if anchor.SubType() != expectedSubType {
-		t.Errorf(
-			"Parsed anchor SubType is incorrect. Expected: %q, actual: %q",
-			expectedSubType,
-			anchor.SubType())
-	}
+	assert.Equal(t, anchor.SubType(), expectedSubType)
 }
 
 func assertIsExpectedImage(t *testing.T, image *attribute.Image, imageType string, expectedBase64URLLast10 string) {
-	if image.Type != imageType {
-		t.Errorf(
-			"Incorrect image type. Expected: %q, actual: %q",
-			imageType,
-			image.Type)
-	}
+	assert.Equal(t, image.Type, imageType)
 
 	actualBase64URL := image.Base64URL()
 
 	ActualBase64URLLast10Chars := actualBase64URL[len(actualBase64URL)-10:]
 
-	if ActualBase64URLLast10Chars != expectedBase64URLLast10 {
-		t.Errorf("Base64URL does not match. Expected: %q, actual: %q", expectedBase64URLLast10, ActualBase64URLLast10Chars)
-	}
+	assert.Equal(t, ActualBase64URLLast10Chars, expectedBase64URLLast10)
 }
 
 func marshallMultiValue(t *testing.T, multiValue *yotiprotoattr.MultiValue) []byte {
@@ -1385,16 +1125,9 @@ func marshallMultiValue(t *testing.T, multiValue *yotiprotoattr.MultiValue) []by
 func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSerialNo *big.Int) {
 	expectedSerialNoBigInt := new(big.Int)
 	expectedSerialNoBigInt, ok := expectedSerialNoBigInt.SetString(expectedSerialNo, 10)
-	if !ok {
-		t.Error("Unexpected error when setting string as big int")
-	}
+	assert.Assert(t, ok, "Unexpected error when setting string as big int")
 
-	if expectedSerialNoBigInt.Cmp(actualSerialNo) != 0 { //0 == equivalent
-		t.Errorf(
-			"Parsed anchor OriginServerCerts is incorrect. Expected: %q, actual: %q",
-			expectedSerialNo,
-			actualSerialNo)
-	}
+	assert.Equal(t, expectedSerialNoBigInt.Cmp(actualSerialNo), 0) //0 == equivalent
 }
 
 func createMultiValueAttribute(t *testing.T, multiValueItemSlice []*yotiprotoattr.MultiValue_Value) (*attribute.MultiValueAttribute, error) {
@@ -1416,9 +1149,7 @@ func createMultiValueAttribute(t *testing.T, multiValueItemSlice []*yotiprotoatt
 }
 
 func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
-	attributeBytes, err1 := decodeTestFile(t, filename)
-
-	assert.Assert(t, is.Nil(err1))
+	attributeBytes := decodeTestFile(t, filename)
 
 	attributeStruct := &yotiprotoattr.Attribute{}
 
@@ -1430,8 +1161,7 @@ func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.A
 }
 
 func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {
-	anchorBytes, err1 := decodeTestFile(t, filename)
-	assert.Assert(t, is.Nil(err1))
+	anchorBytes := decodeTestFile(t, filename)
 
 	protoAnchor := &yotiprotoattr.Anchor{}
 	err2 := proto.Unmarshal(anchorBytes, protoAnchor)
@@ -1442,14 +1172,14 @@ func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 	return protoAnchors
 }
 
-func decodeTestFile(t *testing.T, filename string) (result []byte, err error) {
+func decodeTestFile(t *testing.T, filename string) (result []byte) {
 	base64Bytes := readTestFile(t, filename)
 	base64String := string(base64Bytes)
 	filebytes, err := base64.StdEncoding.DecodeString(base64String)
-	if err != nil {
-		return nil, err
-	}
-	return filebytes, nil
+
+	assert.Assert(t, is.Nil(err))
+
+	return filebytes
 }
 
 func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
