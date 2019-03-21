@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	_ "github.com/joho/godotenv/autoload"
@@ -135,15 +134,6 @@ func main() {
 	if err != nil {
 		panic("Error when calling `ListenAndServeTLS`: " + err.Error())
 	}
-}
-
-func redirectHandler(w http.ResponseWriter, req *http.Request) {
-	hostParts := strings.Split(req.Host, ":")
-	http.Redirect(
-		w,
-		req,
-		fmt.Sprintf("https://%s%s", hostParts[0], req.RequestURI),
-		http.StatusMovedPermanently)
 }
 
 func decodeImage(imageBytes []byte) image.Image {
