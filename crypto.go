@@ -126,7 +126,7 @@ func generateNonce() (string, error) {
 }
 
 func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result string, err error) {
-	// token was encoded as a urlsafe base64 so it can be transfered in a url
+	// token was encoded as a urlsafe base64 so it can be transferred in a url
 	var cipherBytes []byte
 	if cipherBytes, err = urlSafeBase64ToBytes(encryptedConnectToken); err != nil {
 		return "", err
