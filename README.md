@@ -1,6 +1,7 @@
 # Yoti Go SDK
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/getyoti/yoti-go-sdk)](https://goreportcard.com/report/github.com/getyoti/yoti-go-sdk)
+[![Build Status](https://travis-ci.org/getyoti/yoti-go-sdk.svg?branch=master)](https://travis-ci.org/getyoti/yoti-go-sdk)
 
 Welcome to the Yoti Go SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Go back-end with Yoti so that your users can share their identity details with your application in a secure and trusted way.
 
@@ -52,6 +53,11 @@ Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
 ![alt text](login_flow.png "Login flow")
 
 Yoti also allows you to enable user details verification from your mobile app by means of the Android (TBA) and iOS (TBA) SDKs. In that scenario, your Yoti-enabled mobile app is playing both the role of the browser and the Yoti app. Your back-end doesn't need to handle these cases in a significantly different way. You might just decide to handle the `User-Agent` header in order to provide different responses for desktop and mobile clients.
+
+## Requirements
+
+Supported Go Versions:
+- 1.9.7+
 
 ## Installing the SDK
 
