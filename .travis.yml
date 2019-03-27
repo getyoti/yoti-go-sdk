@@ -16,27 +16,33 @@ cache:
   directories:
     - $HOME/.cache/go-build
     - $HOME/gopath/pkg/mod
+    - $HOME/gopath/src/github.com/getyoti
     
 # Skip the installation step. Don't "go get" dependencies.
 install: true
-
-env:
-  global:
-    - GO111MODULE=on
 
 # Only clone the most recent commit.
 git:
   depth: 1
 
+env:
+  global:
+    - GO111MODULE=on
+       
 before_script:
-  # needed until we stop supporting 1.10.x
-  GO111MODULE=off;
-  go get -t -d ./...;   
-
+  # needed until we stop supporting 1.9.7 & 1.10.x
+  - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
+    [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
+      GO111MODULE=off;
+      go get -t -d ./...;
+    fi   
+  
 script:
   - ./.travis.gofmt.sh
   - go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code) # Check that go generate ./... produces a zero diff; clean up any changes afterwards.
   - go vet ./...
   - go test -v -race ./...
-  - go test -v ./...
 
+matrix:
+  allow_failures:
+  - go: master
