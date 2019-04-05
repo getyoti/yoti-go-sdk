@@ -471,7 +471,7 @@ func createHeaders(key *rsa.PrivateKey, httpMethod string, endpoint string, cont
 	headers[authKeyHeader] = authKey
 	headers[authDigestHeader] = authDigest
 	headers[sdkIdentifierHeader] = sdkIdentifier
-	headers[sdkVersionIdentifierHeader] = sdkVersionIdentifier
+	headers[sdkVersionIdentifierHeader] = sdkIdentifier + "-" + sdkVersionIdentifier
 
 	return headers, err
 }
