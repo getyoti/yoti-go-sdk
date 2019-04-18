@@ -86,10 +86,8 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 		return
 	}
 
-	timestamp := getTimestamp()
-
 	// create http endpoint
-	endpoint := getProfileEndpoint(token, nonce, timestamp, sdkID)
+	endpoint := getProfileEndpoint(token, nonce, sdkID)
 
 	var headers map[string]string
 	if headers, err = createHeaders(key, httpMethod, endpoint, nil); err != nil {
@@ -104,65 +102,14 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 	}
 
 	if response.Success {
-		var parsedResponse = profileDO{}
+		return handleSuccessfulResponse(response.Content, key)
+	}
 
-		if err = json.Unmarshal([]byte(response.Content), &parsedResponse); err != nil {
-			errStrings = append(errStrings, err.Error())
-			return
-		}
-
-		if parsedResponse.Receipt.SharingOutcome != "SUCCESS" {
-			err = ErrSharingFailure
-			errStrings = append(errStrings, err.Error())
-		} else {
-			var attributeList *yotiprotoattr.AttributeList
-			if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
-				errStrings = append(errStrings, err.Error())
-				return
-			}
-			id := parsedResponse.Receipt.RememberMeID
-
-			userProfile = addAttributesToUserProfile(id, attributeList) //deprecated: will be removed in v3.0.0
-
-			profile := Profile{
-				attributeSlice: createAttributeSlice(attributeList),
-			}
-
-			var formattedAddress string
-			formattedAddress, err = ensureAddressProfile(profile)
-			if err != nil {
-				log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
-			} else if formattedAddress != "" {
-				if _, err = profile.StructuredPostalAddress(); err != nil {
-					errStrings = append(errStrings, err.Error())
-					return
-				}
-
-				protoStructuredPostalAddress := getProtobufAttribute(profile, attrConstStructuredPostalAddress)
-
-				addressAttribute := &yotiprotoattr.Attribute{
-					Name:        attrConstAddress,
-					Value:       []byte(formattedAddress),
-					ContentType: yotiprotoattr.ContentType_STRING,
-					Anchors:     protoStructuredPostalAddress.Anchors,
-				}
-
-				profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
-			}
-
-			activityDetails = ActivityDetails{
-				UserProfile:        profile,
-				rememberMeID:       id,
-				parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
-			}
-		}
-	} else {
-		switch response.StatusCode {
-		case http.StatusNotFound:
-			err = ErrProfileNotFound
-		default:
-			err = ErrFailure
-		}
+	switch response.StatusCode {
+	case http.StatusNotFound:
+		err = ErrProfileNotFound
+	default:
+		err = ErrFailure
 	}
 
 	if err != nil {
@@ -180,6 +127,64 @@ func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute 
 	}
 
 	return nil
+}
+
+func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (userProfile UserProfile, activityDetails ActivityDetails, errStrings []string) {
+	var parsedResponse = profileDO{}
+	var err error
+
+	if err = json.Unmarshal([]byte(responseContent), &parsedResponse); err != nil {
+		errStrings = append(errStrings, err.Error())
+		return
+	}
+
+	if parsedResponse.Receipt.SharingOutcome != "SUCCESS" {
+		err = ErrSharingFailure
+		errStrings = append(errStrings, err.Error())
+	} else {
+		var attributeList *yotiprotoattr.AttributeList
+		if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
+			errStrings = append(errStrings, err.Error())
+			return
+		}
+		id := parsedResponse.Receipt.RememberMeID
+
+		userProfile = addAttributesToUserProfile(id, attributeList) //deprecated: will be removed in v3.0.0
+
+		profile := Profile{
+			attributeSlice: createAttributeSlice(attributeList),
+		}
+
+		var formattedAddress string
+		formattedAddress, err = ensureAddressProfile(profile)
+		if err != nil {
+			log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
+		} else if formattedAddress != "" {
+			if _, err = profile.StructuredPostalAddress(); err != nil {
+				errStrings = append(errStrings, err.Error())
+				return
+			}
+
+			protoStructuredPostalAddress := getProtobufAttribute(profile, attrConstStructuredPostalAddress)
+
+			addressAttribute := &yotiprotoattr.Attribute{
+				Name:        attrConstAddress,
+				Value:       []byte(formattedAddress),
+				ContentType: yotiprotoattr.ContentType_STRING,
+				Anchors:     protoStructuredPostalAddress.Anchors,
+			}
+
+			profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
+		}
+
+		activityDetails = ActivityDetails{
+			UserProfile:        profile,
+			rememberMeID:       id,
+			parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
+		}
+	}
+
+	return userProfile, activityDetails, errStrings
 }
 
 func addAttributesToUserProfile(id string, attributeList *yotiprotoattr.AttributeList) (result UserProfile) {
@@ -396,8 +401,7 @@ func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID strin
 		return
 	}
 
-	timestamp := getTimestamp()
-	endpoint := getAMLEndpoint(nonce, timestamp, sdkID)
+	endpoint := getAMLEndpoint(nonce, sdkID)
 
 	var content []byte
 	if content, err = json.Marshal(amlProfile); err != nil {
@@ -425,14 +429,6 @@ func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID strin
 	return
 }
 
-func getProfileEndpoint(token, nonce, timestamp, sdkID string) string {
-	return fmt.Sprintf("/profile/%s?nonce=%s&timestamp=%s&appId=%s", token, nonce, timestamp, sdkID)
-}
-
-func getAMLEndpoint(nonce, timestamp, sdkID string) string {
-	return fmt.Sprintf("/aml-check?appId=%s&timestamp=%s&nonce=%s", sdkID, timestamp, nonce)
-}
-
 func getAuthDigest(endpoint string, key *rsa.PrivateKey, httpMethod string, content []byte) (result string, err error) {
 	digest := httpMethod + "&" + endpoint
 
@@ -449,10 +445,6 @@ func getAuthDigest(endpoint string, key *rsa.PrivateKey, httpMethod string, cont
 
 	result = bytesToBase64(signedDigestBytes)
 	return
-}
-
-func getTimestamp() string {
-	return strconv.FormatInt(time.Now().Unix()*1000, 10)
 }
 
 func createHeaders(key *rsa.PrivateKey, httpMethod string, endpoint string, content []byte) (headers map[string]string, err error) {
