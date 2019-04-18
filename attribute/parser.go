@@ -2,6 +2,7 @@ package attribute
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -15,18 +16,18 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 
 		if err == nil {
 			return &parsedTime, nil
-		} else {
-			return nil, fmt.Errorf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
 		}
+
+		return nil, fmt.Errorf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
 
 	case yotiprotoattr.ContentType_JSON:
 		unmarshalledJSON, err := UnmarshallJSON(byteValue)
 
 		if err == nil {
 			return unmarshalledJSON, nil
-		} else {
-			return nil, fmt.Errorf("Unable to parse JSON value: %q. Error: %q", string(byteValue), err)
 		}
+
+		return nil, fmt.Errorf("Unable to parse JSON value: %q. Error: %q", string(byteValue), err)
 
 	case yotiprotoattr.ContentType_STRING:
 		return string(byteValue), nil
@@ -39,16 +40,16 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 		int, err := strconv.Atoi(stringValue)
 		if err == nil {
 			return int, nil
-		} else {
-			return nil, fmt.Errorf("Unable to parse INT value: %q. Error: %q", string(byteValue), err)
 		}
 
+		return nil, fmt.Errorf("Unable to parse INT value: %q. Error: %q", string(byteValue), err)
+
 	case yotiprotoattr.ContentType_JPEG,
-		yotiprotoattr.ContentType_PNG,
-		yotiprotoattr.ContentType_UNDEFINED:
+		yotiprotoattr.ContentType_PNG:
 		return byteValue, nil
 
 	default:
-		return byteValue, nil
+		log.Printf("Unknown type '%s', attempting to parse it as a String", contentType)
+		return string(byteValue), nil
 	}
 }
