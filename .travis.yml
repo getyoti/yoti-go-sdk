@@ -12,6 +12,8 @@ os:
   - linux
   - osx
 
+go_import_path: github.com/getyoti/yoti-go-sdk
+
 cache:
   directories:
     - $HOME/.cache/go-build
@@ -19,7 +21,7 @@ cache:
     - $HOME/gopath/src/github.com/getyoti
     
 # Skip the installation step. Don't "go get" dependencies.
-install: true
+install: false
 
 # Only clone the most recent commit.
 git:
