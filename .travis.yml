@@ -12,13 +12,10 @@ os:
   - linux
   - osx
 
-go_import_path: github.com/getyoti/yoti-go-sdk
-
 cache:
   directories:
     - $HOME/.cache/go-build
     - $HOME/gopath/pkg/mod
-    - $HOME/gopath/src/github.com/getyoti
     
 # Skip the installation step. Don't "go get" dependencies.
 install: false
