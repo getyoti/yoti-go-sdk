@@ -27,7 +27,7 @@ type Profile struct {
 	attributeSlice []*yotiprotoattr.Attribute
 }
 
-// Selfie is a photograph of the user. Will be nil if not provided by Yoti
+// Selfie is a photograph of the user. Will be nil if not provided by Yoti.
 func (p Profile) Selfie() *attribute.ImageAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstSelfie {
@@ -41,7 +41,7 @@ func (p Profile) Selfie() *attribute.ImageAttribute {
 	return nil
 }
 
-// GivenNames represents the user's given names. Will be nil if not provided by Yoti
+// GivenNames corresponds to secondary names in passport, and first/middle names in English. Will be nil if not provided by Yoti.
 func (p Profile) GivenNames() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstGivenNames {
@@ -51,7 +51,7 @@ func (p Profile) GivenNames() *attribute.StringAttribute {
 	return nil
 }
 
-// FamilyName represents the user's family name. Will be nil if not provided by Yoti
+// FamilyName corresponds to primary name in passport, and surname in English. Will be nil if not provided by Yoti.
 func (p Profile) FamilyName() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstFamilyName {
@@ -61,7 +61,9 @@ func (p Profile) FamilyName() *attribute.StringAttribute {
 	return nil
 }
 
-// FullName represents the user's full name. Will be nil if not provided by Yoti
+// FullName represents the user's full name.
+// If family_name/given_names are present, the value will be equal to the string 'given_names + " " family_name'.
+// Will be nil if not provided by Yoti.
 func (p Profile) FullName() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstFullName {
@@ -71,7 +73,9 @@ func (p Profile) FullName() *attribute.StringAttribute {
 	return nil
 }
 
-// MobileNumber represents the user's mobile phone number. Will be nil if not provided by Yoti
+// MobileNumber represents the user's mobile phone number, as verified at registration time.
+// The value will be a number in E.164 format (i.e. '+' for international prefix and no spaces, e.g. "+447777123456").
+// Will be nil if not provided by Yoti.
 func (p Profile) MobileNumber() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstMobileNumber {
@@ -81,7 +85,7 @@ func (p Profile) MobileNumber() *attribute.StringAttribute {
 	return nil
 }
 
-// EmailAddress represents the user's email address. Will be nil if not provided by Yoti
+// EmailAddress represents the user's verified email address. Will be nil if not provided by Yoti.
 func (p Profile) EmailAddress() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstEmailAddress {
@@ -91,7 +95,8 @@ func (p Profile) EmailAddress() *attribute.StringAttribute {
 	return nil
 }
 
-// DateOfBirth represents the user's date of birth. Will be nil if not provided by Yoti. Has an err value which will be filled if there is an error parsing the date.
+// DateOfBirth represents the user's date of birth. Will be nil if not provided by Yoti.
+// Has an err value which will be filled if there is an error parsing the date.
 func (p Profile) DateOfBirth() (*attribute.TimeAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstDateOfBirth {
@@ -101,7 +106,7 @@ func (p Profile) DateOfBirth() (*attribute.TimeAttribute, error) {
 	return nil, nil
 }
 
-// Address represents the user's address. Will be nil if not provided by Yoti
+// Address represents the user's address. Will be nil if not provided by Yoti.
 func (p Profile) Address() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstAddress {
@@ -111,7 +116,7 @@ func (p Profile) Address() *attribute.StringAttribute {
 	return nil
 }
 
-// StructuredPostalAddress represents the user's address in a JSON format. Will be nil if not provided by Yoti
+// StructuredPostalAddress represents the user's address in a JSON format. Will be nil if not provided by Yoti.
 func (p Profile) StructuredPostalAddress() (*attribute.JSONAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstStructuredPostalAddress {
@@ -121,7 +126,8 @@ func (p Profile) StructuredPostalAddress() (*attribute.JSONAttribute, error) {
 	return nil, nil
 }
 
-// Gender represents the user's gender. Will be nil if not provided by Yoti
+// Gender corresponds to the gender in the registered document; the value will be one of the strings "MALE", "FEMALE", "TRANSGENDER" or "OTHER".
+// Will be nil if not provided by Yoti.
 func (p Profile) Gender() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstGender {
@@ -131,7 +137,9 @@ func (p Profile) Gender() *attribute.StringAttribute {
 	return nil
 }
 
-// Nationality represents the user's nationality. Will be nil if not provided by Yoti
+// Nationality corresponds to the nationality in the passport.
+// The value is an ISO-3166-1 alpha-3 code with ICAO9303 (passport) extensions.
+// Will be nil if not provided by Yoti.
 func (p Profile) Nationality() *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstNationality {
@@ -141,7 +149,9 @@ func (p Profile) Nationality() *attribute.StringAttribute {
 	return nil
 }
 
-// DocumentImages returns a slice of document images. Will be nil if not provided by Yoti
+// DocumentImages returns a slice of document images cropped from the image in the capture page.
+// There can be multiple images as per the number of regions in the capture in this attribute.
+// Will be nil if not provided by Yoti.
 func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstDocumentImages {
