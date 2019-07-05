@@ -137,14 +137,14 @@ var nationality string = userProfile.Nationality().Value()
 var dateOfBirth *time.Time
 dobAttr, err := userProfile.DateOfBirth()
 if err != nil {
-    //handle error
+    // handle error
 } else {
     dateOfBirth = dobAttr.Value()
 }
 var structuredPostalAddress map[string]interface{}
 structuredPostalAddressAttribute, err := userProfile.StructuredPostalAddress()
 if err != nil {
-    //handle error
+    // handle error
 } else {
     structuredPostalAddress := structuredPostalAddressAttribute.Value().(map[string]interface{})
 }
