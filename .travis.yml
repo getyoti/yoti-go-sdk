@@ -20,9 +20,8 @@ cache:
 # Skip the installation step. Don't "go get" dependencies.
 install: false
 
-# Only clone the most recent commit.
 git:
-  depth: 1
+  depth: 3
 
 env:
   global:
