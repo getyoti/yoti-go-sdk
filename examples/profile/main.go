@@ -93,7 +93,23 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var t *template.Template
-	t, err = template.ParseFiles("profile.html")
+	t, err = template.New("profile.html").
+		Funcs(template.FuncMap{
+			"marshalAttribute": func(name string, icon string, property interface{}, prevalue string) interface{} {
+				return struct {
+					Name     string
+					Icon     string
+					Prop     interface{}
+					Prevalue string
+				}{
+					name,
+					icon,
+					property,
+					prevalue,
+				}
+			},
+		}).
+		ParseFiles("profile.html")
 	if err != nil {
 		fmt.Println(err)
 		return
