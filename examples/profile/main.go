@@ -29,7 +29,6 @@ var (
 func home(w http.ResponseWriter, req *http.Request) {
 	templateVars := map[string]interface{}{
 		"yotiScenarioID":    os.Getenv("YOTI_SCENARIO_ID"),
-		"yotiApplicationID": os.Getenv("YOTI_APPLICATION_ID")}
 
 	t, err := template.ParseFiles("login.html")
 
@@ -127,6 +126,8 @@ func main() {
 	}
 	http.Handle("/images/", http.StripPrefix("/images",
 		http.FileServer(http.Dir(path.Join(rootdir, "images/")))))
+	http.Handle("/static/", http.StripPrefix("/static",
+		http.FileServer(http.Dir(path.Join(rootdir, "static/")))))
 
 	log.Printf("About to listen and serve on %[1]s. Go to https://localhost:%[1]s/", portNumber)
 	err = http.ListenAndServeTLS(":"+portNumber, selfSignedCertName, selfSignedKeyName, nil)
