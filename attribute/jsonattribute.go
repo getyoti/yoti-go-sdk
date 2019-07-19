@@ -47,9 +47,7 @@ func UnmarshallJSON(byteValue []byte) (result interface{}, err error) {
 	return unmarshalledJSON, err
 }
 
-// Value returns the value of the JSONAttribute as an interface. This can be
-// accessed as a map[string]interface{} using a type assertion, e.g.:
-//	structuredPostalAddress := structuredPostalAddressAttribute.Value().(map[string]interface{})
+// Value returns the value of the JSONAttribute as an interface.
 func (a *JSONAttribute) Value() interface{} {
 	return a.value
 }
