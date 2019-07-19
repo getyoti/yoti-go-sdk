@@ -118,8 +118,8 @@ func (p Profile) Address() *attribute.StringAttribute {
 
 // StructuredPostalAddress represents the user's address in a JSON format.
 // Will be nil if not provided by Yoti. This can be accessed as a
-//	map[string]string{} using a type assertion, e.g.:
-//	structuredPostalAddress := structuredPostalAddressAttribute.Value().(map[string]string{})
+// map[string]string{} using a type assertion, e.g.:
+// structuredPostalAddress := structuredPostalAddressAttribute.Value().(map[string]string{})
 func (p Profile) StructuredPostalAddress() (*attribute.JSONAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstStructuredPostalAddress {
