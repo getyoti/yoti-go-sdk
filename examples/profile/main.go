@@ -2,6 +2,7 @@ package main
 
 import (
 	bytes "bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"image"
@@ -16,6 +17,8 @@ import (
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	_ "github.com/joho/godotenv/autoload"
 )
+
+type contextKey string
 
 var (
 	sdkID              string
@@ -43,13 +46,35 @@ func home(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func errorPage(w http.ResponseWriter, r *http.Request) {
+	templateVars := map[string]interface{}{
+		"yotiError": r.Context().Value(contextKey("yotiError")).(string),
+	}
+	t, err := template.ParseFiles("error.html")
+	if err != nil {
+		panic("Error parsing the template: " + err.Error())
+	}
+
+	err = t.Execute(w, templateVars)
+	if err != nil {
+		panic("Error applying the parsed template: " + err.Error())
+	}
+
+}
+
 func profile(w http.ResponseWriter, r *http.Request) {
 	var err error
 	key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	if err != nil {
-		log.Fatalf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
+		errorPage(w, r.WithContext(context.WithValue(
+			r.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err),
+		)))
+		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
+		return
 	}
 
 	client = &yoti.Client{
@@ -60,7 +85,13 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 	activityDetails, errStrings := client.GetActivityDetails(yotiOneTimeUseToken)
 	if len(errStrings) != 0 {
-		log.Fatalf("Errors: %v", errStrings)
+		errorPage(w, r.WithContext(context.WithValue(
+			r.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Errors: %v", errStrings),
+		)))
+		log.Printf("Errors: %v", errStrings)
+		return
 	}
 
 	userProfile := activityDetails.UserProfile
@@ -77,7 +108,13 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 	dob, err := userProfile.DateOfBirth()
 	if err != nil {
-		log.Fatalf("Error parsing Date of Birth attribute. Error %q", err)
+		errorPage(w, r.WithContext(context.WithValue(
+			r.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error parsing Date of Birth attribute. Error %q", err),
+		)))
+		log.Printf("Error parsing Date of Birth attribute. Error %q", err)
+		return
 	}
 
 	var dateOfBirthString string
