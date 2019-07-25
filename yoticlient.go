@@ -34,11 +34,11 @@ const (
 // Client represents a client that can communicate with yoti and return information about Yoti users.
 type Client struct {
 	// SdkID represents the SDK ID and NOT the App ID. This can be found in the integration section of your
-	// application dashboard at https://www.yoti.com/dashboard/
+	// application hub at https://hub.yoti.com/
 	SdkID string
 
 	// Key should be the security key given to you by yoti (see: security keys section of
-	// https://www.yoti.com/dashboard/) for more information about how to load your key from a file see:
+	// https://hub.yoti.com) for more information about how to load your key from a file see:
 	// https://github.com/getyoti/yoti-go-sdk/blob/master/README.md
 	Key []byte
 }
