@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	_ "github.com/joho/godotenv/autoload"
@@ -88,7 +89,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		errorPage(w, r.WithContext(context.WithValue(
 			r.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Errors: %v", errStrings),
+			strings.Join(errStrings, ", "),
 		)))
 		log.Printf("Errors: %v", errStrings)
 		return
