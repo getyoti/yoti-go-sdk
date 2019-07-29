@@ -32,7 +32,8 @@ var (
 
 func home(w http.ResponseWriter, req *http.Request) {
 	templateVars := map[string]interface{}{
-		"yotiScenarioID": os.Getenv("YOTI_SCENARIO_ID")}
+		"yotiScenarioID": os.Getenv("YOTI_SCENARIO_ID"),
+		"yotiClientSdkID": os.Getenv("YOTI_CLIENT_SDK_ID")}
 
 	t, err := template.ParseFiles("login.html")
 
