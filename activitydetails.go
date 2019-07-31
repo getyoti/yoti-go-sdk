@@ -7,7 +7,7 @@ type ActivityDetails struct {
 	parentRememberMeID string
 	timestamp          string
 	receiptID          string
-	ApplicationProfile interface{} // TODO
+	ApplicationProfile ApplicationProfile
 }
 
 // RememberMeID is a unique, stable identifier for a user in the context
