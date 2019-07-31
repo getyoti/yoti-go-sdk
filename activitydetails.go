@@ -5,6 +5,9 @@ type ActivityDetails struct {
 	UserProfile        Profile
 	rememberMeID       string
 	parentRememberMeID string
+	timestamp          string
+	receiptID          string
+	ApplicationProfile interface{} // TODO
 }
 
 // RememberMeID is a unique, stable identifier for a user in the context
@@ -20,4 +23,14 @@ func (a ActivityDetails) RememberMeID() string {
 // belonging to a single organisation.
 func (a ActivityDetails) ParentRememberMeID() string {
 	return a.parentRememberMeID
+}
+
+// Timestamp is the Time and date of the sharing activity
+func (a ActivityDetails) Timestamp() string {
+	return a.timestamp
+}
+
+// ReceiptID identifies a completed activity
+func (a ActivityDetails) ReceiptID() string {
+	return a.receiptID
 }
