@@ -181,6 +181,8 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			UserProfile:        profile,
 			rememberMeID:       id,
 			parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
+			timestamp:          parsedResponse.Receipt.Timestamp,
+			receiptID:          parsedResponse.Receipt.ReceiptID,
 		}
 	}
 
