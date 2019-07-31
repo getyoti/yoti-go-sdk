@@ -662,7 +662,9 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 	result := Profile{
-		attributeSlice: []*yotiprotoattr.Attribute{},
+		baseProfile{
+			attributeSlice: []*yotiprotoattr.Attribute{},
+		},
 	}
 
 	attribute := result.GetAttribute("attributeName")
@@ -1215,7 +1217,9 @@ func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
 	attributeSlice = append(attributeSlice, attr)
 
 	return Profile{
-		attributeSlice: attributeSlice,
+		baseProfile{
+			attributeSlice: attributeSlice,
+		},
 	}
 }
 

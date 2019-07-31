@@ -152,7 +152,9 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 		userProfile = addAttributesToUserProfile(id, attributeList) //deprecated: will be removed in v3.0.0
 
 		profile := Profile{
-			attributeSlice: createAttributeSlice(attributeList),
+			baseProfile{
+				attributeSlice: createAttributeSlice(attributeList),
+			},
 		}
 
 		var formattedAddress string
