@@ -488,6 +488,70 @@ func TestProfile_GetAttribute_EmptyString(t *testing.T) {
 	assert.Equal(t, att.Value().(string), emptyString)
 }
 
+func TestProfile_GetApplicationAttribute(t *testing.T) {
+	var attr = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	appProfile := createProfileWithSingleAttribute(attr)
+	attribute := appProfile.GetAttribute(attributeName)
+	assert.Equal(t, attribute.Name, attributeName)
+}
+
+func TestProfile_GetApplicationName(t *testing.T) {
+	attributeValue := "APPLICATION NAME"
+	var attr = &yotiprotoattr.Attribute{
+		Name:        "application_name",
+		Value:       []byte(attributeValue),
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	appProfile := createAppProfileWithSingleAttribute(attr)
+	assert.Equal(t, attributeValue, appProfile.ApplicationName().Value())
+}
+
+func TestProfile_GetApplicationURL(t *testing.T) {
+	attributeValue := "APPLICATION URL"
+	var attr = &yotiprotoattr.Attribute{
+		Name:        "application_url",
+		Value:       []byte(attributeValue),
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	appProfile := createAppProfileWithSingleAttribute(attr)
+	assert.Equal(t, attributeValue, appProfile.ApplicationURL().Value())
+}
+
+func TestProfile_GetApplicationLogo(t *testing.T) {
+	attributeValue := "APPLICATION LOGO"
+	var attr = &yotiprotoattr.Attribute{
+		Name:        "application_logo",
+		Value:       []byte(attributeValue),
+		ContentType: yotiprotoattr.ContentType_JPEG,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	appProfile := createAppProfileWithSingleAttribute(attr)
+	assert.Equal(t, 16, len(appProfile.ApplicationLogo().Value().Data))
+}
+
+func TestProfile_GetApplicationBGColor(t *testing.T) {
+	attributeValue := "BG VALUE"
+	var attr = &yotiprotoattr.Attribute{
+		Name:        "application_receipt_bgcolor",
+		Value:       []byte(attributeValue),
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	appProfile := createAppProfileWithSingleAttribute(attr)
+	assert.Equal(t, attributeValue, appProfile.ApplicationReceiptBgColor().Value())
+}
+
 func TestProfile_GetAttribute_Int(t *testing.T) {
 	intValues := [5]int{0, 1, 123, -10, -1}
 
@@ -1217,6 +1281,17 @@ func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
 	attributeSlice = append(attributeSlice, attr)
 
 	return Profile{
+		baseProfile{
+			attributeSlice: attributeSlice,
+		},
+	}
+}
+
+func createAppProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) ApplicationProfile {
+	var attributeSlice []*yotiprotoattr.Attribute
+	attributeSlice = append(attributeSlice, attr)
+
+	return ApplicationProfile{
 		baseProfile{
 			attributeSlice: attributeSlice,
 		},
