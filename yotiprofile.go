@@ -2,7 +2,6 @@ package yoti
 
 import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 const (
@@ -24,20 +23,10 @@ const (
 	attrConstApplicationReceiptBGColor = "application_receipt_bgcolor"
 )
 
-type baseProfile struct {
-	attributeSlice []*yotiprotoattr.Attribute
-}
-
 // Profile represents the details retrieved for a particular user. Consists of
 // Yoti attributes: a small piece of information about a Yoti user such as a
 // photo of the user or the user's date of birth.
 type Profile struct {
-	baseProfile
-}
-
-// ApplicationProfile is the profile of an application with convenience methods
-// to access well-known attributes.
-type ApplicationProfile struct {
 	baseProfile
 }
 
@@ -119,69 +108,6 @@ func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstDocumentImages {
 			return attribute.NewImageSlice(a)
-		}
-	}
-	return nil, nil
-}
-
-// ApplicationName is the name of the application
-func (p ApplicationProfile) ApplicationName() *attribute.StringAttribute {
-	return p.GetStringAttribute(attrConstApplicationName)
-}
-
-// ApplicationURL is the URL where the application is available at
-func (p ApplicationProfile) ApplicationURL() *attribute.StringAttribute {
-	return p.GetStringAttribute(attrConstApplicationURL)
-}
-
-// ApplicationReceiptBgColor is the background colour that will be displayed on
-// each receipt the user gets as a result of a sharing with the application.
-func (p ApplicationProfile) ApplicationReceiptBgColor() *attribute.StringAttribute {
-	return p.GetStringAttribute(attrConstApplicationReceiptBGColor)
-}
-
-// ApplicationLogo is the logo of the application that will be displayed to
-// those users that perform a sharing with it.
-func (p ApplicationProfile) ApplicationLogo() *attribute.ImageAttribute {
-	return p.GetImageAttribute(attrConstApplicationLogo)
-}
-
-// GetAttribute retrieve an attribute by name on the Yoti profile. Will return nil if attribute is not present.
-func (p baseProfile) GetAttribute(attributeName string) *attribute.GenericAttribute {
-	for _, a := range p.attributeSlice {
-		if a.Name == attributeName {
-			return attribute.NewGeneric(a)
-		}
-	}
-	return nil
-}
-
-func (p baseProfile) GetStringAttribute(attributeName string) *attribute.StringAttribute {
-	for _, a := range p.attributeSlice {
-		if a.Name == attributeName {
-			return attribute.NewString(a)
-		}
-	}
-	return nil
-}
-
-func (p baseProfile) GetImageAttribute(attributeName string) *attribute.ImageAttribute {
-	for _, a := range p.attributeSlice {
-		if a.Name == attributeName {
-			attribute, err := attribute.NewImage(a)
-
-			if err == nil {
-				return attribute
-			}
-		}
-	}
-	return nil
-}
-
-func (p baseProfile) GetJSONAttribute(attributeName string) (*attribute.JSONAttribute, error) {
-	for _, a := range p.attributeSlice {
-		if a.Name == attributeName {
-			return attribute.NewJSON(a)
 		}
 	}
 	return nil, nil
