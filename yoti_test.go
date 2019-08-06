@@ -37,7 +37,7 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 		return
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], "Invalid Key"))
@@ -53,7 +53,7 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		return
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrFailure.Error()))
@@ -69,7 +69,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		return
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrProfileNotFound.Error()))
@@ -86,7 +86,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		return
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()))
@@ -110,7 +110,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 			StatusCode: 500}, err
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "https://api.yoti.com/api/v1")
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrFailure.Error()))
@@ -130,7 +130,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 		return
 	}
 
-	userProfile, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	userProfile, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, userProfile.ID, rememberMeID)
@@ -176,7 +176,7 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 		return
 	}
 
-	_, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key)
+	_, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
@@ -201,7 +201,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			return
 		}
 
-		userProfile, activityDetails, err := getActivityDetails(requester, encryptedToken, sdkID, key)
+		userProfile, activityDetails, err := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 		assert.Assert(t, is.Nil(err))
 		assert.Equal(t, userProfile.ID, rememberMeID)
@@ -227,7 +227,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 			return
 		}
 
-		_, _, err := getActivityDetails(requester, encryptedToken, sdkID, key)
+		_, _, err := getActivityDetails(requester, encryptedToken, sdkID, key, "")
 
 		assert.Assert(t, is.Nil(err))
 	}
@@ -271,7 +271,9 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 		createStandardAmlProfile(),
 		requester,
 		sdkID,
-		key)
+		key,
+		"",
+	)
 
 	assert.Assert(t, is.Nil(err))
 
@@ -296,7 +298,9 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 		createStandardAmlProfile(),
 		requester,
 		sdkID,
-		key)
+		key,
+		"",
+	)
 
 	var expectedErrString = "AML Check was unsuccessful"
 
