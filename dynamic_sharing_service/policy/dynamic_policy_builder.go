@@ -2,6 +2,7 @@ package policy
 
 import (
 	"encoding/json"
+	"strconv"
 )
 
 const (
@@ -137,13 +138,13 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *Dynam
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeOver(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(attributeAgeOverConst + string(age))
+	return b.WithAgeDerivedAttribute(attributeAgeOverConst + strconv.Itoa(age))
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeUnder(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(attributeAgeUnderConst + string(age))
+	return b.WithAgeDerivedAttribute(attributeAgeUnderConst + strconv.Itoa(age))
 }
 
 // WithWantedRememberMe sets the Policy as requiring a remember me id
