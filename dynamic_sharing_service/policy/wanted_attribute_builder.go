@@ -47,8 +47,8 @@ func (builder *WantedAttributeBuilder) Build() WantedAttribute {
 // MarshalJSON ...
 func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name       string `json:"name"`
-		Derivation string `json:"derivation"`
+		Name       string `json:"name,omitempty"`
+		Derivation string `json:"derivation,omitempty"`
 	}{
 		Name:       attr.name,
 		Derivation: attr.derivation,
