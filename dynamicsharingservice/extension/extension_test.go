@@ -11,4 +11,5 @@ func ExampleExtension() {
 
 	data, _ := extension.MarshalJSON()
 	fmt.Println(string(data))
+	// Output: {"type":"SOME_TYPE","content":"SOME CONTENT"}
 }
