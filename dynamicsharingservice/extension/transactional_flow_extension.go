@@ -37,7 +37,7 @@ func (builder *TransactionalFlowExtensionBuilder) Build() TransactionalFlowExten
 }
 
 // MarshalJSON ...
-func (extension *TransactionalFlowExtension) MarshalJSON() ([]byte, error) {
+func (extension TransactionalFlowExtension) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type    string      `json:"type"`
 		Content interface{} `json:"content"`

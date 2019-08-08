@@ -21,6 +21,7 @@ type DynamicScenario struct {
 // New initializes the state of a DynamicScenarioBuilder before its use
 func (builder *DynamicScenarioBuilder) New() *DynamicScenarioBuilder {
 	builder.scenario.policy = (&policy.DynamicPolicyBuilder{}).New().Build()
+	builder.scenario.extensions = make([]interface{}, 0)
 	builder.scenario.callbackEndpoint = ""
 	return builder
 }
@@ -28,6 +29,12 @@ func (builder *DynamicScenarioBuilder) New() *DynamicScenarioBuilder {
 // WithPolicy attaches a DynamicPolicy to the DynamicScenario
 func (builder *DynamicScenarioBuilder) WithPolicy(policy policy.DynamicPolicy) *DynamicScenarioBuilder {
 	builder.scenario.policy = policy
+	return builder
+}
+
+// WithExtension adds an extension to the scenario
+func (builder *DynamicScenarioBuilder) WithExtension(extension interface{}) *DynamicScenarioBuilder {
+	builder.scenario.extensions = append(builder.scenario.extensions, extension)
 	return builder
 }
 
@@ -43,14 +50,14 @@ func (builder *DynamicScenarioBuilder) Build() DynamicScenario {
 }
 
 // MarshalJSON ...
-func (scenario *DynamicScenario) MarshalJSON() ([]byte, error) {
+func (scenario DynamicScenario) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Policy           policy.DynamicPolicy `json:"policy"`
 		Extensions       []interface{}        `json:"extensions"`
 		CallbackEndpoint string               `json:"callback_endpoint"`
 	}{
 		Policy:           scenario.policy,
-		Extensions:       make([]interface{}, 0),
+		Extensions:       scenario.extensions,
 		CallbackEndpoint: scenario.callbackEndpoint,
 	})
 }

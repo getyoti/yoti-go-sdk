@@ -1,6 +1,7 @@
 package extension
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -11,7 +12,7 @@ func ExampleTransactionalFlowExtension() {
 		WithContent(content).
 		Build()
 
-	data, _ := extension.MarshalJSON()
+	data, _ := json.Marshal(extension)
 	fmt.Println(string(data))
 	// Output: {"type":"TRANSACTIONAL_FLOW","content":"SOME CONTENT"}
 }
