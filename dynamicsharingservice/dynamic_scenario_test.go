@@ -3,6 +3,7 @@ package dynamicsharingservice
 import (
 	"fmt"
 
+	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/extension"
 	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
 )
 
@@ -20,4 +21,18 @@ func ExampleDynamicScenarioBuilder_WithPolicy() {
 	data, _ := scenario.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"policy":{"wanted":[{"name":"email_address"}],"wanted_auth_types":[2],"wanted_remember_me":false},"extensions":[],"callback_endpoint":"/foo"}
+}
+
+func ExampleDynamicScenarioBuilder_WithExtension() {
+	policy := (&policy.DynamicPolicyBuilder{}).New().WithFullName().Build()
+	extension := (&extension.TransactionalFlowExtensionBuilder{}).New().
+		WithContent("Transactional Flow Extension").
+		Build()
+
+	scenario := (&DynamicScenarioBuilder{}).New().WithExtension(extension).WithPolicy(policy).Build()
+
+	data, _ := scenario.MarshalJSON()
+	fmt.Println(string(data))
+	// Output: {"policy":{"wanted":[{"name":"full_name"}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"callback_endpoint":""}
+
 }

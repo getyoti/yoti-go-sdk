@@ -42,7 +42,7 @@ func (builder *ExtensionBuilder) Build() Extension {
 }
 
 // MarshalJSON ...
-func (extension *Extension) MarshalJSON() ([]byte, error) {
+func (extension Extension) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type    string      `json:"type"`
 		Content interface{} `json:"content"`
