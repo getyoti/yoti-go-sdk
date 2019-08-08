@@ -40,9 +40,9 @@ func ExampleDynamicPolicyBuilder_WithWantedRememberMe() {
 }
 
 func ExampleDynamicPolicyBuilder() {
-	policy := (&DynamicPolicyBuilder{}).New().WithSelfie().WithFullName().WithEmail().
+	policy := (&DynamicPolicyBuilder{}).New().WithFullName().
 		WithPinAuth().WithWantedRememberMe().Build()
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"selfie"},{"name":"full_name"},{"name":"email_address"}],"wanted_auth_types":[2],"wanted_remember_me":true}
+	// Output: {"wanted":[{"name":"full_name"}],"wanted_auth_types":[2],"wanted_remember_me":true}
 }
