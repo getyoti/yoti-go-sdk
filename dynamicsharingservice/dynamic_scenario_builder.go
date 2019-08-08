@@ -2,6 +2,7 @@ package dynamicsharingservice
 
 import (
 	"encoding/json"
+
 	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
 )
 
