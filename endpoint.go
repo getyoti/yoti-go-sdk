@@ -22,7 +22,8 @@ func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix()*1000, 10)
 }
 
-func GetDynamicShareEndpoint(client *Client) (string, error) {
+// GetDynamicShareEndpoint gets the Dynamic Share Endpoint URI
+func GetDynamicShareEndpoint(client ClientInterface) (string, error) {
 	timestamp := getTimestamp()
 	nonce, err := generateNonce()
 	if err != nil {
@@ -31,7 +32,7 @@ func GetDynamicShareEndpoint(client *Client) (string, error) {
 
 	return fmt.Sprintf(
 		"/qrcodes/apps/%s?nonce=%s&timestamp=%s",
-		client.SdkID,
+		client.GetSdkID(),
 		nonce,
 		timestamp,
 	), nil
