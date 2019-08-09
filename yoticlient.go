@@ -29,6 +29,17 @@ const (
 	sdkVersionIdentifierHeader = sdkIdentifierHeader + "-Version"
 	attributeAgeOver           = "age_over:"
 	attributeAgeUnder          = "age_under:"
+
+	defaultUnknownErrorMessageConst = "Unknown HTTP Error: %[1]d: %[2]s"
+)
+
+var (
+	// DefaultHTTPErrorMessages maps HTTP error status codes to format strings
+	// to create useful error messages. -1 is used to specify a default message
+	// that can be used if an error code is not explicitly defined
+	DefaultHTTPErrorMessages = map[int]string{
+		-1: defaultUnknownErrorMessageConst,
+	}
 )
 
 // Client represents a client that can communicate with yoti and return information about Yoti users.
@@ -76,6 +87,63 @@ func (client *Client) getAPIURL() string {
 func (client *Client) GetActivityDetails(token string) (ActivityDetails, []string) {
 	_, activityDetails, errStrings := getActivityDetails(doRequest, token, client.SdkID, client.Key, client.getAPIURL())
 	return activityDetails, errStrings
+}
+
+func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) error {
+	for _, handler := range errorMessages {
+		for code, message := range handler {
+			if code == response.StatusCode {
+				return fmt.Errorf(
+					message,
+					response.StatusCode,
+					response.Content,
+				)
+			}
+
+		}
+		if defaultMessage, ok := handler[-1]; ok {
+			return fmt.Errorf(
+				defaultMessage,
+				response.StatusCode,
+				response.Content,
+			)
+		}
+
+	}
+	return fmt.Errorf(
+		defaultUnknownErrorMessageConst,
+		response.StatusCode,
+		response.Content,
+	)
+}
+
+// MakeRequest is used by other yoti Packages to make requests using a single
+// common client object. Users should not use this function directly
+func (client *Client) MakeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
+	key, err := loadRsaKey(client.Key)
+	if err != nil {
+		return
+	}
+
+	headers, err := createHeaders(key, httpMethod, endpoint, payload)
+	if err != nil {
+		return
+	}
+
+	var response *httpResponse
+	if response, err = doRequest(client.apiURL+endpoint, headers, httpMethod, payload); err != nil {
+		return
+	}
+
+	if response.Success {
+		responseData = response.Content
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		err = handleHTTPError(response, httpErrorMessages...)
+		return
+	}
+	return
 }
 
 func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, keyBytes []byte, apiURL string) (userProfile UserProfile, activityDetails ActivityDetails, errStrings []string) {

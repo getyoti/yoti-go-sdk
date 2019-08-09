@@ -16,6 +16,8 @@ import (
 	"strings"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
+	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice"
+	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -43,6 +45,55 @@ func home(w http.ResponseWriter, req *http.Request) {
 
 	err = t.Execute(w, templateVars)
 
+	if err != nil {
+		panic("Error applying the parsed template: " + err.Error())
+	}
+}
+
+func dynamicShare(w http.ResponseWriter, req *http.Request) {
+	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
+
+	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err),
+		)))
+		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
+		return
+	}
+
+	client := yoti.Client{
+		SdkID: sdkID,
+		Key:   key,
+	}
+
+	scenario := (&dynamicsharingservice.DynamicScenarioBuilder{}).New().WithPolicy(
+		(&policy.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build(),
+	).WithCallbackEndpoint("/profile").Build()
+
+	share, err := dynamicsharingservice.CreateShareURL(&client, &scenario)
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("%s", err),
+		)))
+		return
+	}
+
+	templateVars := map[string]interface{}{
+		"yotiClientSdkID": sdkID,
+		"yotiShareURL":    share.ShareURL,
+	}
+
+	t, err := template.ParseFiles("dynamic-share.html")
+	if err != nil {
+		panic("Error parsing template: " + err.Error())
+	}
+
+	err = t.Execute(w, templateVars)
 	if err != nil {
 		panic("Error applying the parsed template: " + err.Error())
 	}
@@ -174,6 +225,7 @@ func main() {
 
 	http.HandleFunc("/", home)
 	http.HandleFunc("/profile", profile)
+	http.HandleFunc("/dynamic-share", dynamicShare)
 
 	rootdir, err := os.Getwd()
 	if err != nil {

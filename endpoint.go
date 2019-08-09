@@ -21,3 +21,18 @@ func getAMLEndpoint(nonce, sdkID string) string {
 func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix()*1000, 10)
 }
+
+func GetDynamicShareEndpoint(client *Client) (string, error) {
+	timestamp := getTimestamp()
+	nonce, err := generateNonce()
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf(
+		"/qrcodes/apps/%s?nonce=%s&timestamp=%s",
+		client.SdkID,
+		nonce,
+		timestamp,
+	), nil
+}
