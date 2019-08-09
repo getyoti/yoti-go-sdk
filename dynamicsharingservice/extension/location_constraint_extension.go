@@ -16,7 +16,7 @@ type LocationConstraintExtensionBuilder struct {
 // LocationConstraintExtension is an extension representing a geographic constraint
 type LocationConstraintExtension struct {
 	latitude    float64
-	longtitude  float64
+	longitude   float64
 	radius      float64
 	uncertainty float64
 }
@@ -24,7 +24,7 @@ type LocationConstraintExtension struct {
 // New initializes the builder
 func (builder *LocationConstraintExtensionBuilder) New() *LocationConstraintExtensionBuilder {
 	builder.extension.latitude = 0
-	builder.extension.longtitude = 0
+	builder.extension.longitude = 0
 	builder.extension.radius = 0
 	builder.extension.uncertainty = 0
 	return builder
@@ -36,9 +36,9 @@ func (builder *LocationConstraintExtensionBuilder) WithLatitude(latitude float64
 	return builder
 }
 
-// WithLongtitude sets the longtitude of the location constraint
-func (builder *LocationConstraintExtensionBuilder) WithLongtitude(longtitude float64) *LocationConstraintExtensionBuilder {
-	builder.extension.longtitude = longtitude
+// WithLongitude sets the longitude of the location constraint
+func (builder *LocationConstraintExtensionBuilder) WithLongtitude(longitude float64) *LocationConstraintExtensionBuilder {
+	builder.extension.longitude = longitude
 	return builder
 }
 
@@ -61,11 +61,14 @@ func (builder *LocationConstraintExtensionBuilder) Build() LocationConstraintExt
 
 // MarshalJSON ...
 func (extension LocationConstraintExtension) MarshalJSON() ([]byte, error) {
-	type content struct {
+	type location struct {
 		Latitude       float64 `json:"latitude"`
-		Longtitude     float64 `json:"longtitude"`
+		Longitude      float64 `json:"longitude"`
 		Radius         float64 `json:"radius"`
 		MaxUncertainty float64 `json:"max_uncertainty_radius"`
+	}
+	type content struct {
+		Location location `json:"expected_device_location"`
 	}
 	return json.Marshal(&struct {
 		Type    string  `json:"type"`
@@ -73,10 +76,12 @@ func (extension LocationConstraintExtension) MarshalJSON() ([]byte, error) {
 	}{
 		Type: locationConstraintExtensionTypeConst,
 		Content: content{
-			Latitude:       extension.latitude,
-			Longtitude:     extension.longtitude,
-			Radius:         extension.radius,
-			MaxUncertainty: extension.uncertainty,
+			Location: location{
+				Latitude:       extension.latitude,
+				Longitude:      extension.longitude,
+				Radius:         extension.radius,
+				MaxUncertainty: extension.uncertainty,
+			},
 		},
 	})
 }
