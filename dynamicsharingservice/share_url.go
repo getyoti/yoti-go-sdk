@@ -22,7 +22,7 @@ type ShareURL struct {
 }
 
 // CreateShareURL creates a QR Code for a dynamic scenario
-func CreateShareURL(client *yoti.Client, scenario *DynamicScenario) (share ShareURL, err error) {
+func CreateShareURL(client yoti.ClientInterface, scenario *DynamicScenario) (share ShareURL, err error) {
 	httpMethod := "POST"
 	endpoint, err := yoti.GetDynamicShareEndpoint(client)
 	if err != nil {
