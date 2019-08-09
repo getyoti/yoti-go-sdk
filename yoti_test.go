@@ -832,7 +832,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 	assert.Equal(t, actualAnchor, actualStructuredPostalAddress.Sources()[0], "Anchors and Sources should be the same when there is only one Source")
 	assert.Equal(t, actualAnchor.Type(), anchor.AnchorTypeSource)
 
-	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 0, time.UTC)
+	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 835537e3, time.UTC)
 	actualDate := actualAnchor.SignedTimestamp().Timestamp().UTC()
 	assert.Equal(t, actualDate, expectedDate)
 
@@ -864,7 +864,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	assert.Equal(t, resultAnchor, genderAttribute.Sources()[0], "Anchors and Sources should be the same when there is only one Source")
 	assert.Equal(t, resultAnchor.Type(), anchor.AnchorTypeSource)
 
-	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 0, time.UTC)
+	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 923537e3, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
 	assert.Equal(t, actualDate, expectedDate)
 
@@ -900,7 +900,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	assert.Equal(t, resultAnchor.Type(), anchor.AnchorTypeVerifier)
 
-	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 0, time.UTC)
+	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 95238e3, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
 	assert.Equal(t, actualDate, expectedDate)
 
