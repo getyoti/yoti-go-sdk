@@ -878,6 +878,34 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	assertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
 }
 
+func TestAnchorParser_UnknownAnchor(t *testing.T) {
+	anchorSlice := createAnchorSliceFromTestFile(t, "testanchorunknown.txt")
+
+	attr := &yotiprotoattr.Attribute{
+		Name:        attrConstDateOfBirth,
+		Value:       []byte("1999-01-01"),
+		ContentType: yotiprotoattr.ContentType_DATE,
+		Anchors:     anchorSlice,
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+
+	DoB, err := result.DateOfBirth()
+
+	assert.Assert(t, is.Nil(err))
+	resultAnchor := DoB.Anchors()[0]
+
+	expectedDate := time.Date(2019, time.March, 5, 10, 45, 11, 840037e3, time.UTC)
+	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
+	assert.Equal(t, actualDate, expectedDate)
+
+	expectedSubType := "TEST UNKNOWN SUB TYPE"
+	expectedType := anchor.AnchorTypeUnknown
+	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
+	assert.Equal(t, resultAnchor.Type(), expectedType)
+	assert.Equal(t, len(resultAnchor.Value()), 0)
+}
+
 func TestAnchorParser_YotiAdmin(t *testing.T) {
 	anchorSlice := createAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
 
