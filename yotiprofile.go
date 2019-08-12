@@ -17,6 +17,7 @@ const (
 	attrConstGender                    = "gender"
 	attrConstNationality               = "nationality"
 	attrConstDocumentImages            = "document_images"
+	attrConstDocumentDetails           = "document_details"
 	attrConstApplicationName           = "application_name"
 	attrConstApplicationURL            = "application_url"
 	attrConstApplicationLogo           = "application_logo"
@@ -111,4 +112,25 @@ func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 		}
 	}
 	return nil, nil
+}
+
+// DocumentDetails returns information about the issuing authority behind
+// a Profile's identity documentation
+func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) {
+	for _, a := range p.attributeSlice {
+		if a.Name == attrConstDocumentDetails {
+			return attribute.NewDocumentDetails(a)
+		}
+	}
+	return nil, nil
+}
+
+// GetAttribute retrieve an attribute by name on the Yoti profile. Will return nil if attribute is not present.
+func (p Profile) GetAttribute(attributeName string) *attribute.GenericAttribute {
+	for _, a := range p.attributeSlice {
+		if a.Name == attributeName {
+			return attribute.NewGeneric(a)
+		}
+	}
+	return nil
 }
