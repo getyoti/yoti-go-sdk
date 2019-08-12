@@ -157,8 +157,12 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 		err = ErrSharingFailure
 		errStrings = append(errStrings, err.Error())
 	} else {
-		var attributeList *yotiprotoattr.AttributeList
+		var attributeList, appAttributeList *yotiprotoattr.AttributeList
 		if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
+			errStrings = append(errStrings, err.Error())
+			return
+		}
+		if appAttributeList, err = decryptCurrentApplicationProfile(&parsedResponse.Receipt, key); err != nil {
 			errStrings = append(errStrings, err.Error())
 			return
 		}
@@ -169,6 +173,11 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 		profile := Profile{
 			baseProfile{
 				attributeSlice: createAttributeSlice(attributeList),
+			},
+		}
+		appProfile := ApplicationProfile{
+			baseProfile{
+				attributeSlice: createAttributeSlice(appAttributeList),
 			},
 		}
 
@@ -200,6 +209,7 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
 			timestamp:          parsedResponse.Receipt.Timestamp,
 			receiptID:          parsedResponse.Receipt.ReceiptID,
+			ApplicationProfile: appProfile,
 		}
 	}
 
@@ -365,6 +375,38 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 	result = &parseResult
 
 	return
+}
+func decryptCurrentApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
+	var unwrappedKey []byte
+	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
+		return
+	}
+
+	if receipt.ProfileContent == "" {
+		return
+	}
+
+	var profileContentBytes []byte
+	if profileContentBytes, err = base64ToBytes(receipt.ProfileContent); err != nil {
+		return
+	}
+
+	encryptedData := &yotiprotocom.EncryptedData{}
+	if err = proto.Unmarshal(profileContentBytes, encryptedData); err != nil {
+		return nil, err
+	}
+
+	var decipheredBytes []byte
+	if decipheredBytes, err = decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
+		return nil, err
+	}
+
+	attributeList := &yotiprotoattr.AttributeList{}
+	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
+		return nil, err
+	}
+
+	return attributeList, nil
 }
 
 func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
