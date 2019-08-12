@@ -23,8 +23,10 @@ type DocumentDetails struct {
 	DocumentType     string
 	IssuingCountry   string
 	DocumentNumber   string
-	ExpirationDate   time.Time
+	ExpirationDate   *time.Time
 	IssuingAuthority string
+
+	expirationDateData time.Time
 }
 
 // DocumentDetailsAttribute wraps a document details with anchor data
@@ -66,9 +68,10 @@ func (details *DocumentDetails) Parse(data string) (err error) {
 	details.IssuingCountry = dataSlice[1]
 	details.DocumentNumber = dataSlice[2]
 	if len(dataSlice) > 3 {
-		details.ExpirationDate, err = time.Parse(documentDetailsDateFormatConst, dataSlice[3])
-		if err != nil {
-			return
+		var dateerr error
+		details.expirationDateData, dateerr = time.Parse(documentDetailsDateFormatConst, dataSlice[3])
+		if dateerr == nil {
+			details.ExpirationDate = &details.expirationDateData
 		}
 	}
 	if len(dataSlice) > 4 {
