@@ -400,7 +400,7 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 		Address:                 ""}
 
 	var jsonAttribute = &yotiprotoattr.Attribute{
-		Name:        attrConstStructuredPostalAddress,
+		Name:        AttrConstStructuredPostalAddress,
 		Value:       structuredAddressBytes,
 		ContentType: yotiprotoattr.ContentType_JSON,
 		Anchors:     []*yotiprotoattr.Anchor{},
@@ -603,7 +603,7 @@ func TestEmptyStringIsAllowed(t *testing.T) {
 	attributeValue := []byte(attributeValueString)
 
 	var attr = &yotiprotoattr.Attribute{
-		Name:        attrConstGender,
+		Name:        AttrConstGender,
 		Value:       attributeValue,
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     []*yotiprotoattr.Anchor{},
@@ -741,7 +741,7 @@ func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 }
 
 func TestProfile_StringAttribute(t *testing.T) {
-	attributeName := attrConstNationality
+	attributeName := AttrConstNationality
 	attributeValueString := "value"
 	attributeValueBytes := []byte(attributeValueString)
 
@@ -760,7 +760,7 @@ func TestProfile_StringAttribute(t *testing.T) {
 }
 
 func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
-	attributeName := attrConstSelfie
+	attributeName := AttrConstSelfie
 	attributeValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -779,7 +779,7 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 }
 
 func TestAttributeImage_Image_Png(t *testing.T) {
-	attributeName := attrConstSelfie
+	attributeName := AttrConstSelfie
 	byteValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -796,7 +796,7 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 }
 
 func TestAttributeImage_Image_Jpeg(t *testing.T) {
-	attributeName := attrConstSelfie
+	attributeName := AttrConstSelfie
 	byteValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -813,7 +813,7 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 }
 
 func TestAttributeImage_Image_Default(t *testing.T) {
-	attributeName := attrConstSelfie
+	attributeName := AttrConstSelfie
 	byteValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -828,7 +828,7 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	assert.DeepEqual(t, selfie.Value().Data, byteValue)
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
-	attributeName := attrConstSelfie
+	attributeName := AttrConstSelfie
 	imageBytes := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -850,7 +850,7 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 }
 
 func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
-	attributeName := attrConstSelfie
+	attributeName := AttrConstSelfie
 	imageBytes := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -883,7 +883,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 	}`)
 
 	a := &yotiprotoattr.Attribute{
-		Name:        attrConstStructuredPostalAddress,
+		Name:        AttrConstStructuredPostalAddress,
 		Value:       structuredAddressBytes,
 		ContentType: yotiprotoattr.ContentType_JSON,
 		Anchors:     anchorSlice,
@@ -920,7 +920,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	anchorSlice := createAnchorSliceFromTestFile(t, "testanchordrivinglicense.txt")
 
 	attribute := &yotiprotoattr.Attribute{
-		Name:        attrConstGender,
+		Name:        AttrConstGender,
 		Value:       []byte("value"),
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     anchorSlice,
@@ -952,7 +952,7 @@ func TestAnchorParser_UnknownAnchor(t *testing.T) {
 	anchorSlice := createAnchorSliceFromTestFile(t, "testanchorunknown.txt")
 
 	attr := &yotiprotoattr.Attribute{
-		Name:        attrConstDateOfBirth,
+		Name:        AttrConstDateOfBirth,
 		Value:       []byte("1999-01-01"),
 		ContentType: yotiprotoattr.ContentType_DATE,
 		Anchors:     anchorSlice,
@@ -980,7 +980,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 	anchorSlice := createAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
 
 	attr := &yotiprotoattr.Attribute{
-		Name:        attrConstDateOfBirth,
+		Name:        AttrConstDateOfBirth,
 		Value:       []byte("1999-01-01"),
 		ContentType: yotiprotoattr.ContentType_DATE,
 		Anchors:     anchorSlice,
@@ -1169,7 +1169,7 @@ func TestMultiValueGenericGetter(t *testing.T) {
 	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
 	profile := createProfileWithSingleAttribute(protoAttribute)
 
-	multiValueAttribute := profile.GetAttribute(attrConstDocumentImages)
+	multiValueAttribute := profile.GetAttribute(AttrConstDocumentImages)
 
 	// We need to cast, since GetAttribute always returns generic attributes
 	multiValueAttributeValue := multiValueAttribute.Value().([]*attribute.Item)
