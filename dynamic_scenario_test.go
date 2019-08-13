@@ -1,10 +1,8 @@
-package dynamicsharingservice
+package yoti
 
 import (
 	"fmt"
-
-	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/extension"
-	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
+	"github.com/getyoti/yoti-go-sdk/v2/extension"
 )
 
 func ExampleDynamicScenarioBuilder() {
@@ -15,7 +13,7 @@ func ExampleDynamicScenarioBuilder() {
 }
 
 func ExampleDynamicScenarioBuilder_WithPolicy() {
-	policy := (&policy.DynamicPolicyBuilder{}).New().WithEmail().WithPinAuth().Build()
+	policy := (&DynamicPolicyBuilder{}).New().WithEmail().WithPinAuth().Build()
 	scenario := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/foo").Build()
 
 	data, _ := scenario.MarshalJSON()
@@ -24,7 +22,7 @@ func ExampleDynamicScenarioBuilder_WithPolicy() {
 }
 
 func ExampleDynamicScenarioBuilder_WithExtension() {
-	policy := (&policy.DynamicPolicyBuilder{}).New().WithFullName().Build()
+	policy := (&DynamicPolicyBuilder{}).New().WithFullName().Build()
 	extension := (&extension.TransactionalFlowExtensionBuilder{}).New().
 		WithContent("Transactional Flow Extension").
 		Build()

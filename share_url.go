@@ -1,9 +1,7 @@
-package dynamicsharingservice
+package yoti
 
 import (
 	"encoding/json"
-
-	yoti "github.com/getyoti/yoti-go-sdk/v2"
 )
 
 var (
@@ -22,9 +20,9 @@ type ShareURL struct {
 }
 
 // CreateShareURL creates a QR Code for a dynamic scenario
-func CreateShareURL(client yoti.ClientInterface, scenario *DynamicScenario) (share ShareURL, err error) {
+func CreateShareURL(client ClientInterface, scenario *DynamicScenario) (share ShareURL, err error) {
 	httpMethod := "POST"
-	endpoint, err := yoti.GetDynamicShareEndpoint(client)
+	endpoint, err := GetDynamicShareEndpoint(client)
 	if err != nil {
 		return
 	}
@@ -33,7 +31,7 @@ func CreateShareURL(client yoti.ClientInterface, scenario *DynamicScenario) (sha
 		return
 	}
 
-	response, err := client.MakeRequest(httpMethod, endpoint, payload, ShareURLHTTPErrorMessages, yoti.DefaultHTTPErrorMessages)
+	response, err := client.MakeRequest(httpMethod, endpoint, payload, ShareURLHTTPErrorMessages, DefaultHTTPErrorMessages)
 	if err != nil {
 		return
 	}

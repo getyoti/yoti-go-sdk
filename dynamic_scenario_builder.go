@@ -1,9 +1,7 @@
-package dynamicsharingservice
+package yoti
 
 import (
 	"encoding/json"
-
-	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
 )
 
 // DynamicScenarioBuilder builds a Dynamic Scenario
@@ -13,21 +11,21 @@ type DynamicScenarioBuilder struct {
 
 // DynamicScenario represents a dynamic scenario
 type DynamicScenario struct {
-	policy           policy.DynamicPolicy
+	policy           DynamicPolicy
 	extensions       []interface{}
 	callbackEndpoint string
 }
 
 // New initializes the state of a DynamicScenarioBuilder before its use
 func (builder *DynamicScenarioBuilder) New() *DynamicScenarioBuilder {
-	builder.scenario.policy = (&policy.DynamicPolicyBuilder{}).New().Build()
+	builder.scenario.policy = (&DynamicPolicyBuilder{}).New().Build()
 	builder.scenario.extensions = make([]interface{}, 0)
 	builder.scenario.callbackEndpoint = ""
 	return builder
 }
 
 // WithPolicy attaches a DynamicPolicy to the DynamicScenario
-func (builder *DynamicScenarioBuilder) WithPolicy(policy policy.DynamicPolicy) *DynamicScenarioBuilder {
+func (builder *DynamicScenarioBuilder) WithPolicy(policy DynamicPolicy) *DynamicScenarioBuilder {
 	builder.scenario.policy = policy
 	return builder
 }
@@ -52,9 +50,9 @@ func (builder *DynamicScenarioBuilder) Build() DynamicScenario {
 // MarshalJSON ...
 func (scenario DynamicScenario) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Policy           policy.DynamicPolicy `json:"policy"`
-		Extensions       []interface{}        `json:"extensions"`
-		CallbackEndpoint string               `json:"callback_endpoint"`
+		Policy           DynamicPolicy `json:"policy"`
+		Extensions       []interface{} `json:"extensions"`
+		CallbackEndpoint string        `json:"callback_endpoint"`
 	}{
 		Policy:           scenario.policy,
 		Extensions:       scenario.extensions,
