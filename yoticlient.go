@@ -143,7 +143,7 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 	}
 
 	var response *httpResponse
-	if response, err = doRequest(client.apiURL+endpoint, headers, httpMethod, payload); err != nil {
+	if response, err = doRequest(client.getAPIURL()+endpoint, headers, httpMethod, payload); err != nil {
 		return
 	}
 
