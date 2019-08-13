@@ -23,7 +23,7 @@ func getTimestamp() string {
 }
 
 // GetDynamicShareEndpoint gets the Dynamic Share Endpoint URI
-func GetDynamicShareEndpoint(client ClientInterface) (string, error) {
+func getDynamicShareEndpoint(client clientInterface) (string, error) {
 	timestamp := getTimestamp()
 	nonce, err := generateNonce()
 	if err != nil {

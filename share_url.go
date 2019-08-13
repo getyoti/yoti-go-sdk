@@ -20,9 +20,9 @@ type ShareURL struct {
 }
 
 // CreateShareURL creates a QR Code for a dynamic scenario
-func CreateShareURL(client ClientInterface, scenario *DynamicScenario) (share ShareURL, err error) {
+func CreateShareURL(client clientInterface, scenario *DynamicScenario) (share ShareURL, err error) {
 	httpMethod := "POST"
-	endpoint, err := GetDynamicShareEndpoint(client)
+	endpoint, err := getDynamicShareEndpoint(client)
 	if err != nil {
 		return
 	}
@@ -31,7 +31,7 @@ func CreateShareURL(client ClientInterface, scenario *DynamicScenario) (share Sh
 		return
 	}
 
-	response, err := client.MakeRequest(httpMethod, endpoint, payload, ShareURLHTTPErrorMessages, DefaultHTTPErrorMessages)
+	response, err := client.makeRequest(httpMethod, endpoint, payload, ShareURLHTTPErrorMessages, DefaultHTTPErrorMessages)
 	if err != nil {
 		return
 	}

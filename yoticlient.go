@@ -44,9 +44,8 @@ var (
 
 // ClientInterface defines the interface required to Mock the YotiClient for
 // testing
-type ClientInterface interface {
-	GetActivityDetails(string) (ActivityDetails, []string)
-	MakeRequest(string, string, []byte, ...map[int]string) (string, error)
+type clientInterface interface {
+	makeRequest(string, string, []byte, ...map[int]string) (string, error)
 	GetSdkID() string
 }
 
@@ -132,7 +131,7 @@ func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) er
 
 // MakeRequest is used by other yoti Packages to make requests using a single
 // common client object. Users should not use this function directly
-func (client *Client) MakeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
+func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
 		return
