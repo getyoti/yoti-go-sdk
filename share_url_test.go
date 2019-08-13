@@ -1,10 +1,7 @@
-package dynamicsharingservice
+package yoti
 
 import (
 	"fmt"
-
-	"github.com/getyoti/yoti-go-sdk/v2"
-	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
 )
 
 type yotiClientMock struct {
@@ -26,8 +23,8 @@ func (mock *yotiClientMock) MakeRequest(httpMethod, endpoint string, payload []b
 	panic("Mock undefined")
 }
 
-func (mock *yotiClientMock) GetActivityDetails(string) (yoti.ActivityDetails, []string) {
-	return yoti.ActivityDetails{}, nil
+func (mock *yotiClientMock) GetActivityDetails(string) (ActivityDetails, []string) {
+	return ActivityDetails{}, nil
 }
 
 func ExampleCreateShareURL() {
@@ -38,7 +35,7 @@ func ExampleCreateShareURL() {
 		},
 	}
 
-	policy := (&policy.DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
+	policy := (&DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
 	scenario := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).Build()
 
 	share, _ := CreateShareURL(&mockYoti, &scenario)

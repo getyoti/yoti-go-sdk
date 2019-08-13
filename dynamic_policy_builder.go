@@ -1,9 +1,8 @@
-package policy
+package yoti
 
 import (
 	"encoding/json"
 	"fmt"
-	yoti "github.com/getyoti/yoti-go-sdk/v2"
 )
 
 const (
@@ -56,57 +55,57 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string) *DynamicPo
 
 // WithFamilyName adds the family name attribute
 func (b *DynamicPolicyBuilder) WithFamilyName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstFamilyName)
+	return b.WithWantedAttributeByName(AttrConstFamilyName)
 }
 
 // WithGivenNames adds the given names attribute
 func (b *DynamicPolicyBuilder) WithGivenNames() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstGivenNames)
+	return b.WithWantedAttributeByName(AttrConstGivenNames)
 }
 
 // WithFullName adds the full name attribute
 func (b *DynamicPolicyBuilder) WithFullName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstFullName)
+	return b.WithWantedAttributeByName(AttrConstFullName)
 }
 
 // WithDateOfBirth adds the date of birth attribute
 func (b *DynamicPolicyBuilder) WithDateOfBirth() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstDateOfBirth)
+	return b.WithWantedAttributeByName(AttrConstDateOfBirth)
 }
 
 // WithGender adds the gender attribute
 func (b *DynamicPolicyBuilder) WithGender() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstGender)
+	return b.WithWantedAttributeByName(AttrConstGender)
 }
 
 // WithPostalAddress adds the postal address attribute
 func (b *DynamicPolicyBuilder) WithPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstAddress)
+	return b.WithWantedAttributeByName(AttrConstAddress)
 }
 
 // WithStructuredPostalAddress adds the structured postal address attribute
 func (b *DynamicPolicyBuilder) WithStructuredPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstStructuredPostalAddress)
+	return b.WithWantedAttributeByName(AttrConstStructuredPostalAddress)
 }
 
 // WithNationality adds the nationality attribute
 func (b *DynamicPolicyBuilder) WithNationality() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstNationality)
+	return b.WithWantedAttributeByName(AttrConstNationality)
 }
 
 // WithPhoneNumber adds the phone number attribute
 func (b *DynamicPolicyBuilder) WithPhoneNumber() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstMobileNumber)
+	return b.WithWantedAttributeByName(AttrConstMobileNumber)
 }
 
 // WithSelfie adds the selfie attribute
 func (b *DynamicPolicyBuilder) WithSelfie() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstSelfie)
+	return b.WithWantedAttributeByName(AttrConstSelfie)
 }
 
 // WithEmail adds the email address attribute
 func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(yoti.AttrConstEmailAddress)
+	return b.WithWantedAttributeByName(AttrConstEmailAddress)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
@@ -114,7 +113,7 @@ func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
 func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *DynamicPolicyBuilder {
 	var attribute WantedAttributeBuilder
 	attribute.New().
-		WithName(yoti.AttrConstDateOfBirth).
+		WithName(AttrConstDateOfBirth).
 		WithDerivation(derivation)
 
 	return b.WithWantedAttribute(attribute.Build())
@@ -123,13 +122,13 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *Dynam
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeOver(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(fmt.Sprintf(yoti.AttrConstAgeOver, age))
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeOver, age))
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeUnder(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(fmt.Sprintf(yoti.AttrConstAgeUnder, age))
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeUnder, age))
 }
 
 // WithWantedRememberMe sets the Policy as requiring a remember me id
