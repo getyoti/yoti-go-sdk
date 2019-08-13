@@ -127,7 +127,7 @@ func (client *Client) getActivityDetails(token string) (userProfile UserProfile,
 		return
 	}
 
-	endpoint := getProfileEndpoint(token, nonce, sdkID)
+	endpoint := getProfileEndpoint(token, nonce, client.GetSdkID())
 
 	response, err := client.makeRequest(
 		httpMethod,
