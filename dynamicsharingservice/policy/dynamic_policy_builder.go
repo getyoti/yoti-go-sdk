@@ -5,20 +5,21 @@ import (
 	"strconv"
 )
 
+// Attribute names
 const (
-	attributeFamilyNameConst              = "family_name"
-	attributeGivenNamesConst              = "given_names"
-	attributeFullNameConst                = "full_name"
-	attributeDateOfBirthConst             = "date_of_birth"
-	attributeGenderConst                  = "gender"
-	attributePostalAddressConst           = "postal_address"
-	attributeNationalityConst             = "nationality"
-	attributePhoneNumberConst             = "phone_number"
-	attributeSelfieConst                  = "selfie"
-	attributeEmailAddressConst            = "email_address"
-	attributeStructuredPostalAddressConst = "structured_postal_address"
-	attributeAgeOverConst                 = "age_over:"
-	attributeAgeUnderConst                = "age_under:"
+	AttributeFamilyNameConst              = "family_name"
+	AttributeGivenNamesConst              = "given_names"
+	AttributeFullNameConst                = "full_name"
+	AttributeDateOfBirthConst             = "date_of_birth"
+	AttributeGenderConst                  = "gender"
+	AttributePostalAddressConst           = "postal_address"
+	AttributeNationalityConst             = "nationality"
+	AttributePhoneNumberConst             = "phone_number"
+	AttributeSelfieConst                  = "selfie"
+	AttributeEmailAddressConst            = "email_address"
+	AttributeStructuredPostalAddressConst = "structured_postal_address"
+	AttributeAgeOverConst                 = "age_over:"
+	AttributeAgeUnderConst                = "age_under:"
 )
 
 const (
@@ -71,57 +72,57 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string) *DynamicPo
 
 // WithFamilyName adds the family name attribute
 func (b *DynamicPolicyBuilder) WithFamilyName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeFamilyNameConst)
+	return b.WithWantedAttributeByName(AttributeFamilyNameConst)
 }
 
 // WithGivenNames adds the given names attribute
 func (b *DynamicPolicyBuilder) WithGivenNames() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeGivenNamesConst)
+	return b.WithWantedAttributeByName(AttributeGivenNamesConst)
 }
 
 // WithFullName adds the full name attribute
 func (b *DynamicPolicyBuilder) WithFullName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeFullNameConst)
+	return b.WithWantedAttributeByName(AttributeFullNameConst)
 }
 
 // WithDateOfBirth adds the date of birth attribute
 func (b *DynamicPolicyBuilder) WithDateOfBirth() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeDateOfBirthConst)
+	return b.WithWantedAttributeByName(AttributeDateOfBirthConst)
 }
 
 // WithGender adds the gender attribute
 func (b *DynamicPolicyBuilder) WithGender() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeGenderConst)
+	return b.WithWantedAttributeByName(AttributeGenderConst)
 }
 
 // WithPostalAddress adds the postal address attribute
 func (b *DynamicPolicyBuilder) WithPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributePostalAddressConst)
+	return b.WithWantedAttributeByName(AttributePostalAddressConst)
 }
 
 // WithStructuredPostalAddress adds the structured postal address attribute
 func (b *DynamicPolicyBuilder) WithStructuredPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeStructuredPostalAddressConst)
+	return b.WithWantedAttributeByName(AttributeStructuredPostalAddressConst)
 }
 
 // WithNationality adds the nationality attribute
 func (b *DynamicPolicyBuilder) WithNationality() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeNationalityConst)
+	return b.WithWantedAttributeByName(AttributeNationalityConst)
 }
 
 // WithPhoneNumber adds the phone number attribute
 func (b *DynamicPolicyBuilder) WithPhoneNumber() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributePhoneNumberConst)
+	return b.WithWantedAttributeByName(AttributePhoneNumberConst)
 }
 
 // WithSelfie adds the selfie attribute
 func (b *DynamicPolicyBuilder) WithSelfie() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeSelfieConst)
+	return b.WithWantedAttributeByName(AttributeSelfieConst)
 }
 
 // WithEmail adds the email address attribute
 func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(attributeEmailAddressConst)
+	return b.WithWantedAttributeByName(AttributeEmailAddressConst)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
@@ -129,7 +130,7 @@ func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
 func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *DynamicPolicyBuilder {
 	var attribute WantedAttributeBuilder
 	attribute.New().
-		WithName(attributeDateOfBirthConst).
+		WithName(AttributeDateOfBirthConst).
 		WithDerivation(derivation)
 
 	return b.WithWantedAttribute(attribute.Build())
@@ -138,13 +139,13 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *Dynam
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeOver(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(attributeAgeOverConst + strconv.Itoa(age))
+	return b.WithAgeDerivedAttribute(AttributeAgeOverConst + strconv.Itoa(age))
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeUnder(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(attributeAgeUnderConst + strconv.Itoa(age))
+	return b.WithAgeDerivedAttribute(AttributeAgeUnderConst + strconv.Itoa(age))
 }
 
 // WithWantedRememberMe sets the Policy as requiring a remember me id
