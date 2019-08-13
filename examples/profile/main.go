@@ -16,8 +16,6 @@ import (
 	"strings"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
-	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice"
-	"github.com/getyoti/yoti-go-sdk/v2/dynamicsharingservice/policy"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -69,11 +67,11 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		Key:   key,
 	}
 
-	scenario := (&dynamicsharingservice.DynamicScenarioBuilder{}).New().WithPolicy(
-		(&policy.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build(),
+	scenario := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(
+		(&yoti.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build(),
 	).WithCallbackEndpoint("/profile").Build()
 
-	share, err := dynamicsharingservice.CreateShareURL(&client, &scenario)
+	share, err := yoti.CreateShareURL(&client, &scenario)
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
