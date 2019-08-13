@@ -30,14 +30,17 @@ const (
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-		result = &httpResponse{
-			Success:    false,
-			StatusCode: 500}
-		return
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    false,
+				StatusCode: 500}
+			return
+		},
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+	_, _, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], "Invalid Key"))
@@ -46,47 +49,56 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-		result = &httpResponse{
-			Success:    false,
-			StatusCode: 500}
-		return
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    false,
+				StatusCode: 500}
+			return
+		},
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+	_, _, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrFailure.Error()))
+	assert.Check(t, strings.HasPrefix(errorStrings[0], "Unknown HTTP Error"))
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-		result = &httpResponse{
-			Success:    false,
-			StatusCode: 404}
-		return
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    false,
+				StatusCode: 404}
+			return
+		},
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+	_, _, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrProfileNotFound.Error()))
+	assert.Check(t, strings.HasPrefix(errorStrings[0], "Profile Not Found"))
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-		result = &httpResponse{
-			Success:    true,
-			StatusCode: 200,
-			Content:    `{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"}}`}
-		return
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    true,
+				StatusCode: 200,
+				Content:    `{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"}}`}
+			return
+		},
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+	_, _, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()))
@@ -97,23 +109,26 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 
 	expectedAbsoluteURL := "/api/v1/profile/" + token
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (*httpResponse, error) {
-		var theURL *url.URL
-		var err error
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (*httpResponse, error) {
+			var theURL *url.URL
+			var err error
 
-		theURL, err = url.Parse(uri)
-		assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
-		assert.Equal(t, theURL.Path, expectedAbsoluteURL, "Yoti API did not generate a valid URL path.")
+			theURL, err = url.Parse(uri)
+			assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
+			assert.Equal(t, theURL.Path, expectedAbsoluteURL, "Yoti API did not generate a valid URL path.")
 
-		return &httpResponse{
-			Success:    false,
-			StatusCode: 500}, err
+			return &httpResponse{
+				Success:    false,
+				StatusCode: 500}, err
+		},
 	}
 
-	_, _, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "https://api.yoti.com/api/v1")
+	_, _, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrFailure.Error()))
+	assert.Check(t, strings.HasPrefix(errorStrings[0], "Unknown HTTP Error"))
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
@@ -122,15 +137,18 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	rememberMeID := "remember_me_id0123456789"
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-		result = &httpResponse{
-			Success:    true,
-			StatusCode: 200,
-			Content:    `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
-		return
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    true,
+				StatusCode: 200,
+				Content:    `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
+			return
+		},
 	}
 
-	userProfile, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+	userProfile, activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, userProfile.ID, rememberMeID)
@@ -166,17 +184,20 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	parentRememberMeID := "parent_remember_me_id0123456789"
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-		result = &httpResponse{
-			Success:    true,
-			StatusCode: 200,
-			Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey +
-				`","other_party_profile_content": "` + otherPartyProfileContent +
-				`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
-		return
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+			result = &httpResponse{
+				Success:    true,
+				StatusCode: 200,
+				Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey +
+					`","other_party_profile_content": "` + otherPartyProfileContent +
+					`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
+			return
+		},
 	}
 
-	_, activityDetails, errorStrings := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+	_, activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
@@ -192,16 +213,19 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 
 	for _, otherPartyProfileContent := range otherPartyProfileContents {
 
-		var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    true,
-				StatusCode: 200,
-				Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-					otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
-			return
+		client := Client{
+			Key: key,
+			requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+				result = &httpResponse{
+					Success:    true,
+					StatusCode: 200,
+					Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+						otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
+				return
+			},
 		}
 
-		userProfile, activityDetails, err := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+		userProfile, activityDetails, err := client.getActivityDetails(encryptedToken)
 
 		assert.Assert(t, is.Nil(err))
 		assert.Equal(t, userProfile.ID, rememberMeID)
@@ -218,16 +242,19 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 
 	for _, otherPartyProfileContent := range otherPartyProfileContents {
 
-		var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    true,
-				StatusCode: 200,
-				Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-					otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`}
-			return
+		client := Client{
+			Key: key,
+			requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+				result = &httpResponse{
+					Success:    true,
+					StatusCode: 200,
+					Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+						otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`}
+				return
+			},
 		}
 
-		_, _, err := getActivityDetails(requester, encryptedToken, sdkID, key, "")
+		_, _, err := client.getActivityDetails(encryptedToken)
 
 		assert.Assert(t, is.Nil(err))
 	}

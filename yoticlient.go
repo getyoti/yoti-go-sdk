@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -81,12 +80,12 @@ func (client *Client) OverrideAPIURL(apiURL string) {
 // It returns the outcome of the request. If the request was successful it will include the users details, otherwise
 // it will specify a reason the request failed.
 func (client *Client) GetUserProfile(token string) (userProfile UserProfile, firstError error) {
-	var errStrings []string
-	userProfile, _, errStrings = getActivityDetails(client.doRequest, token, client.SdkID, client.Key, client.getAPIURL())
+	profile, _, errStrings := client.getActivityDetails(token)
+	var err error
 	if len(errStrings) > 0 {
-		firstError = errors.New(errStrings[0])
+		err = errors.New(errStrings[0])
 	}
-	return userProfile, firstError
+	return profile, err
 }
 
 func (client *Client) getAPIURL() string {
@@ -105,8 +104,43 @@ func (client *Client) GetSdkID() string {
 // It returns the outcome of the request. If the request was successful it will include the users details, otherwise
 // it will specify a reason the request failed.
 func (client *Client) GetActivityDetails(token string) (ActivityDetails, []string) {
-	_, activityDetails, errStrings := getActivityDetails(client.doRequest, token, client.SdkID, client.Key, client.getAPIURL())
-	return activityDetails, errStrings
+	_, activity, errStrings := client.getActivityDetails(token)
+	return activity, errStrings
+}
+
+func (client *Client) getActivityDetails(token string) (userProfile UserProfile, activity ActivityDetails, errStrings []string) {
+
+	httpMethod := HTTPMethodGet
+	key, err := loadRsaKey(client.Key)
+	if err != nil {
+		errStrings = append(errStrings, fmt.Sprintf("Invalid Key: %s", err.Error()))
+		return
+	}
+	token, err = decryptToken(token, key)
+	if err != nil {
+		errStrings = append(errStrings, fmt.Sprintf("Invalid Key: %s", err.Error()))
+		return
+	}
+	nonce, err := generateNonce()
+	if err != nil {
+		errStrings = append(errStrings, err.Error())
+		return
+	}
+
+	endpoint := getProfileEndpoint(token, nonce, sdkID)
+
+	response, err := client.makeRequest(
+		httpMethod,
+		endpoint,
+		nil,
+		map[int]string{404: "Profile Not Found%[2]s"},
+		DefaultHTTPErrorMessages,
+	)
+	if err != nil {
+		errStrings = append(errStrings, err.Error())
+		return
+	}
+	return handleSuccessfulResponse(response, key)
 }
 
 func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) error {
@@ -164,62 +198,6 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		return
 	}
 	return
-}
-
-func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, keyBytes []byte, apiURL string) (userProfile UserProfile, activityDetails ActivityDetails, errStrings []string) {
-	var err error
-	var key *rsa.PrivateKey
-	var httpMethod = HTTPMethodGet
-
-	if key, err = loadRsaKey(keyBytes); err != nil {
-		errStrings = append(errStrings, fmt.Sprintf("Invalid Key: %s", err.Error()))
-		return
-	}
-
-	// query parameters
-	var token string
-	if token, err = decryptToken(encryptedToken, key); err != nil {
-		errStrings = append(errStrings, err.Error())
-		return
-	}
-
-	var nonce string
-	if nonce, err = generateNonce(); err != nil {
-		errStrings = append(errStrings, err.Error())
-		return
-	}
-
-	// create http endpoint
-	endpoint := getProfileEndpoint(token, nonce, sdkID)
-
-	var headers map[string]string
-	if headers, err = createHeaders(key, httpMethod, endpoint, nil); err != nil {
-		errStrings = append(errStrings, err.Error())
-		return
-	}
-
-	var response *httpResponse
-	if response, err = requester(apiURL+endpoint, headers, httpMethod, nil); err != nil {
-		errStrings = append(errStrings, err.Error())
-		return
-	}
-
-	if response.Success {
-		return handleSuccessfulResponse(response.Content, key)
-	}
-
-	switch response.StatusCode {
-	case http.StatusNotFound:
-		err = ErrProfileNotFound
-	default:
-		err = ErrFailure
-	}
-
-	if err != nil {
-		errStrings = append(errStrings, err.Error())
-	}
-
-	return userProfile, activityDetails, errStrings
 }
 
 func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
