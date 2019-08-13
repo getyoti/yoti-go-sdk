@@ -18,7 +18,7 @@ const (
 	documentDetailsDateFormatConst = "2006-01-02"
 )
 
-// DocumentDetails provides information about a profile's identity document
+// DocumentDetails represents information extracted from a document provided by the user
 type DocumentDetails struct {
 	DocumentType     string
 	IssuingCountry   string
