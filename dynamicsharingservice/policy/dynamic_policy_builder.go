@@ -2,24 +2,8 @@ package policy
 
 import (
 	"encoding/json"
-	"strconv"
-)
-
-// Attribute names
-const (
-	AttributeFamilyNameConst              = "family_name"
-	AttributeGivenNamesConst              = "given_names"
-	AttributeFullNameConst                = "full_name"
-	AttributeDateOfBirthConst             = "date_of_birth"
-	AttributeGenderConst                  = "gender"
-	AttributePostalAddressConst           = "postal_address"
-	AttributeNationalityConst             = "nationality"
-	AttributePhoneNumberConst             = "phone_number"
-	AttributeSelfieConst                  = "selfie"
-	AttributeEmailAddressConst            = "email_address"
-	AttributeStructuredPostalAddressConst = "structured_postal_address"
-	AttributeAgeOverConst                 = "age_over:"
-	AttributeAgeUnderConst                = "age_under:"
+	"fmt"
+	yoti "github.com/getyoti/yoti-go-sdk/v2"
 )
 
 const (
@@ -72,57 +56,57 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string) *DynamicPo
 
 // WithFamilyName adds the family name attribute
 func (b *DynamicPolicyBuilder) WithFamilyName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeFamilyNameConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstFamilyName)
 }
 
 // WithGivenNames adds the given names attribute
 func (b *DynamicPolicyBuilder) WithGivenNames() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeGivenNamesConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstGivenNames)
 }
 
 // WithFullName adds the full name attribute
 func (b *DynamicPolicyBuilder) WithFullName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeFullNameConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstFullName)
 }
 
 // WithDateOfBirth adds the date of birth attribute
 func (b *DynamicPolicyBuilder) WithDateOfBirth() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeDateOfBirthConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstDateOfBirth)
 }
 
 // WithGender adds the gender attribute
 func (b *DynamicPolicyBuilder) WithGender() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeGenderConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstGender)
 }
 
 // WithPostalAddress adds the postal address attribute
 func (b *DynamicPolicyBuilder) WithPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributePostalAddressConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstAddress)
 }
 
 // WithStructuredPostalAddress adds the structured postal address attribute
 func (b *DynamicPolicyBuilder) WithStructuredPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeStructuredPostalAddressConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstStructuredPostalAddress)
 }
 
 // WithNationality adds the nationality attribute
 func (b *DynamicPolicyBuilder) WithNationality() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeNationalityConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstNationality)
 }
 
 // WithPhoneNumber adds the phone number attribute
 func (b *DynamicPolicyBuilder) WithPhoneNumber() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributePhoneNumberConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstMobileNumber)
 }
 
 // WithSelfie adds the selfie attribute
 func (b *DynamicPolicyBuilder) WithSelfie() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeSelfieConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstSelfie)
 }
 
 // WithEmail adds the email address attribute
 func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttributeEmailAddressConst)
+	return b.WithWantedAttributeByName(yoti.AttrConstEmailAddress)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
@@ -130,7 +114,7 @@ func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
 func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *DynamicPolicyBuilder {
 	var attribute WantedAttributeBuilder
 	attribute.New().
-		WithName(AttributeDateOfBirthConst).
+		WithName(yoti.AttrConstDateOfBirth).
 		WithDerivation(derivation)
 
 	return b.WithWantedAttribute(attribute.Build())
@@ -139,13 +123,13 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *Dynam
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeOver(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(AttributeAgeOverConst + strconv.Itoa(age))
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(yoti.AttrConstAgeOver, age))
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeUnder(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(AttributeAgeUnderConst + strconv.Itoa(age))
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(yoti.AttrConstAgeUnder, age))
 }
 
 // WithWantedRememberMe sets the Policy as requiring a remember me id

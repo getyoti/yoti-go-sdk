@@ -12,22 +12,22 @@ type ApplicationProfile struct {
 
 // ApplicationName is the name of the application
 func (p ApplicationProfile) ApplicationName() *attribute.StringAttribute {
-	return p.GetStringAttribute(attrConstApplicationName)
+	return p.GetStringAttribute(AttrConstApplicationName)
 }
 
 // ApplicationURL is the URL where the application is available at
 func (p ApplicationProfile) ApplicationURL() *attribute.StringAttribute {
-	return p.GetStringAttribute(attrConstApplicationURL)
+	return p.GetStringAttribute(AttrConstApplicationURL)
 }
 
 // ApplicationReceiptBgColor is the background colour that will be displayed on
 // each receipt the user gets as a result of a sharing with the application.
 func (p ApplicationProfile) ApplicationReceiptBgColor() *attribute.StringAttribute {
-	return p.GetStringAttribute(attrConstApplicationReceiptBGColor)
+	return p.GetStringAttribute(AttrConstApplicationReceiptBGColor)
 }
 
 // ApplicationLogo is the logo of the application that will be displayed to
 // those users that perform a sharing with it.
 func (p ApplicationProfile) ApplicationLogo() *attribute.ImageAttribute {
-	return p.GetImageAttribute(attrConstApplicationLogo)
+	return p.GetImageAttribute(AttrConstApplicationLogo)
 }

@@ -217,7 +217,7 @@ func getActivityDetails(requester httpRequester, encryptedToken, sdkID string, k
 
 func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
 	for _, v := range profile.attributeSlice {
-		if v.Name == attrConstStructuredPostalAddress {
+		if v.Name == AttrConstStructuredPostalAddress {
 			return v
 		}
 	}
@@ -272,10 +272,10 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 				return
 			}
 
-			protoStructuredPostalAddress := getProtobufAttribute(profile, attrConstStructuredPostalAddress)
+			protoStructuredPostalAddress := getProtobufAttribute(profile, AttrConstStructuredPostalAddress)
 
 			addressAttribute := &yotiprotoattr.Attribute{
-				Name:        attrConstAddress,
+				Name:        AttrConstAddress,
 				Value:       []byte(formattedAddress),
 				ContentType: yotiprotoattr.ContentType_STRING,
 				Anchors:     protoStructuredPostalAddress.Anchors,
