@@ -258,54 +258,49 @@ func TestYotiClient_SupportedHttpMethod(t *testing.T) {
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 
-		result = &httpResponse{
-			Success:    true,
-			StatusCode: 200,
-			Content:    `{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`}
-		return
+			result = &httpResponse{
+				Success:    true,
+				StatusCode: 200,
+				Content:    `{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`}
+			return
+		},
 	}
 
-	result, err := performAmlCheck(
-		createStandardAmlProfile(),
-		requester,
-		sdkID,
-		key,
-		"",
-	)
+	result, err := client.PerformAmlCheck(createStandardAmlProfile())
 
 	assert.Assert(t, is.Nil(err))
 
 	assert.Check(t, result.OnFraudList)
 	assert.Check(t, result.OnPEPList)
 	assert.Check(t, result.OnWatchList)
+
 }
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
+	client := Client{
+		Key: key,
+		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
 
-	var requester = func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-
-		result = &httpResponse{
-			Success:    false,
-			StatusCode: 503,
-			Content:    `SERVICE UNAVAILABLE - Unable to reach the Integrity Service`}
-		return
+			result = &httpResponse{
+				Success:    false,
+				StatusCode: 503,
+				Content:    `SERVICE UNAVAILABLE - Unable to reach the Integrity Service`}
+			return
+		},
 	}
 
-	_, err := performAmlCheck(
-		createStandardAmlProfile(),
-		requester,
-		sdkID,
-		key,
-		"",
-	)
+	_, err := client.PerformAmlCheck(createStandardAmlProfile())
 
 	var expectedErrString = "AML Check was unsuccessful"
 
 	assert.Assert(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), expectedErrString))
+
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {

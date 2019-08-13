@@ -60,7 +60,15 @@ type Client struct {
 	// https://github.com/getyoti/yoti-go-sdk/blob/master/README.md
 	Key []byte
 
-	apiURL string
+	apiURL    string
+	requester func(string, map[string]string, string, []byte) (*httpResponse, error)
+}
+
+func (client *Client) doRequest(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (*httpResponse, error) {
+	if client.requester != nil {
+		return client.requester(uri, headers, httpRequestMethod, contentBytes)
+	}
+	return doRequest(uri, headers, httpRequestMethod, contentBytes)
 }
 
 // OverrideAPIURL overrides the default API URL for this Yoti Client to permit
@@ -74,7 +82,7 @@ func (client *Client) OverrideAPIURL(apiURL string) {
 // it will specify a reason the request failed.
 func (client *Client) GetUserProfile(token string) (userProfile UserProfile, firstError error) {
 	var errStrings []string
-	userProfile, _, errStrings = getActivityDetails(doRequest, token, client.SdkID, client.Key, client.getAPIURL())
+	userProfile, _, errStrings = getActivityDetails(client.doRequest, token, client.SdkID, client.Key, client.getAPIURL())
 	if len(errStrings) > 0 {
 		firstError = errors.New(errStrings[0])
 	}
@@ -97,7 +105,7 @@ func (client *Client) GetSdkID() string {
 // It returns the outcome of the request. If the request was successful it will include the users details, otherwise
 // it will specify a reason the request failed.
 func (client *Client) GetActivityDetails(token string) (ActivityDetails, []string) {
-	_, activityDetails, errStrings := getActivityDetails(doRequest, token, client.SdkID, client.Key, client.getAPIURL())
+	_, activityDetails, errStrings := getActivityDetails(client.doRequest, token, client.SdkID, client.Key, client.getAPIURL())
 	return activityDetails, errStrings
 }
 
@@ -143,7 +151,7 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 	}
 
 	var response *httpResponse
-	if response, err = doRequest(client.getAPIURL()+endpoint, headers, httpMethod, payload); err != nil {
+	if response, err = client.doRequest(client.getAPIURL()+endpoint, headers, httpMethod, payload); err != nil {
 		return
 	}
 
@@ -524,49 +532,26 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
-func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (AmlResult, error) {
-	return performAmlCheck(amlProfile, doRequest, client.SdkID, client.Key, client.getAPIURL())
-}
-
-func performAmlCheck(amlProfile AmlProfile, requester httpRequester, sdkID string, keyBytes []byte, apiURL string) (result AmlResult, err error) {
-	var key *rsa.PrivateKey
+func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResult, err error) {
 	var httpMethod = HTTPMethodPost
+	nonce, err := generateNonce()
+	if err != nil {
+		return
+	}
+	endpoint := getAMLEndpoint(nonce, client.GetSdkID())
+	content, err := json.Marshal(amlProfile)
+	if err != nil {
+		return
+	}
+	amlErrorMessages := make(map[int]string, 0)
+	amlErrorMessages[-1] = "AML Check was unsuccessful, status code: '%[1]d', content '%[2]s'"
 
-	if key, err = loadRsaKey(keyBytes); err != nil {
-		err = fmt.Errorf("Invalid Key: %s", err.Error())
+	response, err := client.makeRequest(httpMethod, endpoint, content, amlErrorMessages)
+	if err != nil {
 		return
 	}
 
-	var nonce string
-	if nonce, err = generateNonce(); err != nil {
-		return
-	}
-
-	endpoint := getAMLEndpoint(nonce, sdkID)
-
-	var content []byte
-	if content, err = json.Marshal(amlProfile); err != nil {
-		return
-	}
-
-	var headers map[string]string
-	if headers, err = createHeaders(key, httpMethod, endpoint, content); err != nil {
-		return
-	}
-
-	var response *httpResponse
-	if response, err = requester(apiURL+endpoint, headers, httpMethod, content); err != nil {
-		return
-	}
-
-	if response.Success {
-		result, err = GetAmlResult([]byte(response.Content))
-		return
-	}
-
-	err = fmt.Errorf(
-		"AML Check was unsuccessful, status code: '%d', content:'%s'", response.StatusCode, response.Content)
-
+	amlResult, err = GetAmlResult([]byte(response))
 	return
 }
 
