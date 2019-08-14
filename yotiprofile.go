@@ -114,8 +114,7 @@ func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 	return nil, nil
 }
 
-// DocumentDetails returns information about the issuing authority behind
-// a Profile's identity documentation
+// DocumentDetails represents information extracted from a document provided by the user
 func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attrConstDocumentDetails {

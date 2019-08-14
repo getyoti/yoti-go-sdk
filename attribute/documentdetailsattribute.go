@@ -25,8 +25,6 @@ type DocumentDetails struct {
 	DocumentNumber   string
 	ExpirationDate   *time.Time
 	IssuingAuthority string
-
-	expirationDateData time.Time
 }
 
 // DocumentDetailsAttribute wraps a document details with anchor data
@@ -56,7 +54,7 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 	}, nil
 }
 
-// Parse filles a DocumentDetails object from a raw string
+// Parse fills a DocumentDetails object from a raw string
 func (details *DocumentDetails) Parse(data string) (err error) {
 	if !documentDetailsValidateRegexp.MatchString(data) {
 		return fmt.Errorf("Document Details data is invalid, %s", data)
@@ -69,9 +67,9 @@ func (details *DocumentDetails) Parse(data string) (err error) {
 	details.DocumentNumber = dataSlice[2]
 	if len(dataSlice) > 3 {
 		var dateerr error
-		details.expirationDateData, dateerr = time.Parse(documentDetailsDateFormatConst, dataSlice[3])
+		expirationDateData, dateerr := time.Parse(documentDetailsDateFormatConst, dataSlice[3])
 		if dateerr == nil {
-			details.ExpirationDate = &details.expirationDateData
+			details.ExpirationDate = &expirationDateData
 		}
 	}
 	if len(dataSlice) > 4 {
