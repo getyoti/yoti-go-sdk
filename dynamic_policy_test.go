@@ -19,8 +19,7 @@ func ExampleDynamicPolicyBuilder_WithSelfie() {
 }
 
 func ExampleDynamicPolicyBuilder_WithAgeOver() {
-	drivingLicence := (&WantedAnchorBuilder{}).New().WithValue("DRIVING_LICENCE").Build()
-	constraint := (&SourceConstraintBuilder{}).New().WithAnchor(drivingLicence).Build()
+	constraint := (&SourceConstraintBuilder{}).New().WithDrivingLicence("").Build()
 
 	policy := (&DynamicPolicyBuilder{}).New().WithAgeOver(18, constraint).Build()
 
@@ -44,8 +43,7 @@ func ExampleDynamicPolicyBuilder_WithWantedRememberMe() {
 }
 
 func ExampleDynamicPolicyBuilder_WithFullName() {
-	anchor := (&WantedAnchorBuilder{}).New().WithValue("PASSPORT").Build()
-	constraint := (&SourceConstraintBuilder{}).New().WithAnchor(anchor).Build()
+	constraint := (&SourceConstraintBuilder{}).New().WithPassport("").Build()
 	policy := (&DynamicPolicyBuilder{}).New().WithFullName(&constraint).Build()
 
 	json, _ := policy.MarshalJSON()
