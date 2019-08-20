@@ -16,3 +16,20 @@ func ExampleWantedAttributeBuilder_WithDerivation() {
 	fmt.Println(attribute.derivation)
 	// Output: TEST DERIVATION
 }
+
+func ExampleWantedAttributeBuilder_WithConstraint() {
+	constraint := (&SourceConstraintBuilder{}).New().Build()
+	attribute := (&WantedAttributeBuilder{}).New().WithConstraint(&constraint).Build()
+
+	json, _ := attribute.MarshalJSON()
+	fmt.Println(string(json))
+	// Output: {"constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
+}
+
+func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
+	attribute := (&WantedAttributeBuilder{}).New().WithAcceptSelfAsserted(true).Build()
+
+	json, _ := attribute.MarshalJSON()
+	fmt.Println(string(json))
+	// Output: {"accept_self_asserted":true}
+}

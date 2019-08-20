@@ -47,88 +47,112 @@ func (b *DynamicPolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *D
 
 // WithWantedAttributeByName adds an attribute by its name. This is not the preferred
 // way of adding an attribute - instead use the other methods below
-func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string) *DynamicPolicyBuilder {
-	attribute := (&WantedAttributeBuilder{}).New().WithName(name).Build()
+func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ...interface{}) *DynamicPolicyBuilder {
+	attributeBuilder := (&WantedAttributeBuilder{}).New().WithName(name)
+
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			attributeBuilder.WithConstraint(&value)
+		case constraintInterface:
+			attributeBuilder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("Not a valid option type, %v", value))
+		}
+	}
+
+	attribute := attributeBuilder.Build()
 	b.WithWantedAttribute(attribute)
 	return b
 }
 
 // WithFamilyName adds the family name attribute
-func (b *DynamicPolicyBuilder) WithFamilyName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstFamilyName)
+func (b *DynamicPolicyBuilder) WithFamilyName(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstFamilyName, options...)
 }
 
 // WithGivenNames adds the given names attribute
-func (b *DynamicPolicyBuilder) WithGivenNames() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstGivenNames)
+func (b *DynamicPolicyBuilder) WithGivenNames(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstGivenNames, options...)
 }
 
 // WithFullName adds the full name attribute
-func (b *DynamicPolicyBuilder) WithFullName() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstFullName)
+func (b *DynamicPolicyBuilder) WithFullName(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstFullName, options...)
 }
 
 // WithDateOfBirth adds the date of birth attribute
-func (b *DynamicPolicyBuilder) WithDateOfBirth() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstDateOfBirth)
+func (b *DynamicPolicyBuilder) WithDateOfBirth(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstDateOfBirth, options...)
 }
 
 // WithGender adds the gender attribute
-func (b *DynamicPolicyBuilder) WithGender() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstGender)
+func (b *DynamicPolicyBuilder) WithGender(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstGender, options...)
 }
 
 // WithPostalAddress adds the postal address attribute
-func (b *DynamicPolicyBuilder) WithPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstAddress)
+func (b *DynamicPolicyBuilder) WithPostalAddress(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstAddress, options...)
 }
 
 // WithStructuredPostalAddress adds the structured postal address attribute
-func (b *DynamicPolicyBuilder) WithStructuredPostalAddress() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstStructuredPostalAddress)
+func (b *DynamicPolicyBuilder) WithStructuredPostalAddress(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstStructuredPostalAddress, options...)
 }
 
 // WithNationality adds the nationality attribute
-func (b *DynamicPolicyBuilder) WithNationality() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstNationality)
+func (b *DynamicPolicyBuilder) WithNationality(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstNationality, options...)
 }
 
 // WithPhoneNumber adds the phone number attribute
-func (b *DynamicPolicyBuilder) WithPhoneNumber() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstMobileNumber)
+func (b *DynamicPolicyBuilder) WithPhoneNumber(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstMobileNumber, options...)
 }
 
 // WithSelfie adds the selfie attribute
-func (b *DynamicPolicyBuilder) WithSelfie() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstSelfie)
+func (b *DynamicPolicyBuilder) WithSelfie(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstSelfie, options...)
 }
 
 // WithEmail adds the email address attribute
-func (b *DynamicPolicyBuilder) WithEmail() *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstEmailAddress)
+func (b *DynamicPolicyBuilder) WithEmail(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(AttrConstEmailAddress, options...)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
 // Prefer to use WithAgeOver and WithAgeUnder instead of using this directly
-func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string) *DynamicPolicyBuilder {
-	var attribute WantedAttributeBuilder
-	attribute.New().
+func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *DynamicPolicyBuilder {
+	var attributeBuilder WantedAttributeBuilder
+	attributeBuilder.New().
 		WithName(AttrConstDateOfBirth).
 		WithDerivation(derivation)
 
-	return b.WithWantedAttribute(attribute.Build())
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			attributeBuilder.WithConstraint(&value)
+		case constraintInterface:
+			attributeBuilder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("Not a valid option type, %v", value))
+		}
+	}
+
+	return b.WithWantedAttribute(attributeBuilder.Build())
 }
 
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
-func (b *DynamicPolicyBuilder) WithAgeOver(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeOver, age))
+func (b *DynamicPolicyBuilder) WithAgeOver(age int, options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeOver, age), options...)
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
-func (b *DynamicPolicyBuilder) WithAgeUnder(age int) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeUnder, age))
+func (b *DynamicPolicyBuilder) WithAgeUnder(age int, options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeUnder, age), options...)
 }
 
 // WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"
