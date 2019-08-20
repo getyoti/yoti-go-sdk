@@ -4,6 +4,14 @@ import (
 	"encoding/json"
 )
 
+// Anchor name constants
+const (
+	AnchorDrivingLicenceConst = "DRIVING_LICENCE"
+	AnchorPassportConst       = "PASSPORT"
+	AnchorNationalIDConst     = "NATIONAL_ID"
+	AnchorPassCardConst       = "PASS_CARD"
+)
+
 // SourceConstraint describes a requirement or preference for a particular set
 // of anchors
 type SourceConstraint struct {
@@ -23,10 +31,41 @@ func (b *SourceConstraintBuilder) New() *SourceConstraintBuilder {
 	return b
 }
 
+// WithAnchorByValue is a helper method which builds an anchor and adds it to
+// the source constraint
+func (b *SourceConstraintBuilder) WithAnchorByValue(value, subtype string) *SourceConstraintBuilder {
+	anchor := (&WantedAnchorBuilder{}).New().
+		WithValue(value).
+		WithSubType(subtype).
+		Build()
+
+	return b.WithAnchor(anchor)
+}
+
 // WithAnchor adds an anchor to the preference list
 func (b *SourceConstraintBuilder) WithAnchor(anchor WantedAnchor) *SourceConstraintBuilder {
 	b.sourceConstraint.anchors = append(b.sourceConstraint.anchors, anchor)
 	return b
+}
+
+// WithPassport adds a passport anchor
+func (b *SourceConstraintBuilder) WithPassport(subtype string) *SourceConstraintBuilder {
+	return b.WithAnchorByValue(AnchorPassportConst, subtype)
+}
+
+// WithDrivingLicence adds a Driving Licence anchor
+func (b *SourceConstraintBuilder) WithDrivingLicence(subtype string) *SourceConstraintBuilder {
+	return b.WithAnchorByValue(AnchorDrivingLicenceConst, subtype)
+}
+
+// WithNationalID adds a national ID anchor
+func (b *SourceConstraintBuilder) WithNationalID(subtype string) *SourceConstraintBuilder {
+	return b.WithAnchorByValue(AnchorNationalIDConst, subtype)
+}
+
+// WithPasscard adds a passcard anchor
+func (b *SourceConstraintBuilder) WithPasscard(subtype string) *SourceConstraintBuilder {
+	return b.WithAnchorByValue(AnchorPassCardConst, subtype)
 }
 
 // WithSoftPreference sets this constraint as a 'soft requirement' if the
