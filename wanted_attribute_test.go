@@ -26,6 +26,17 @@ func ExampleWantedAttributeBuilder_WithConstraint() {
 	// Output: {"constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
 }
 
+func ExampleWantedAttributeBuilder_WithOptional() {
+	attribute := (&WantedAttributeBuilder{}).New().
+		WithName(AttrConstGender).
+		WithOptional(true).
+		Build()
+
+	json, _ := attribute.MarshalJSON()
+	fmt.Println(string(json))
+	// Output: {"name":"gender","optional":true}
+}
+
 func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
 	attribute := (&WantedAttributeBuilder{}).New().WithAcceptSelfAsserted(true).Build()
 
