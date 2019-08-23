@@ -14,7 +14,6 @@ type DynamicScenario struct {
 	policy           DynamicPolicy
 	extensions       []interface{}
 	callbackEndpoint string
-	autoAllow        bool
 }
 
 // New initializes the state of a DynamicScenarioBuilder before its use
@@ -43,12 +42,6 @@ func (builder *DynamicScenarioBuilder) WithCallbackEndpoint(endpoint string) *Dy
 	return builder
 }
 
-// WithAutoAllow sets the auto allow parameter
-func (builder *DynamicScenarioBuilder) WithAutoAllow(allow bool) *DynamicScenarioBuilder {
-	builder.scenario.autoAllow = allow
-	return builder
-}
-
 // Build constructs the DynamicScenario
 func (builder *DynamicScenarioBuilder) Build() DynamicScenario {
 	return builder.scenario
@@ -60,11 +53,9 @@ func (scenario DynamicScenario) MarshalJSON() ([]byte, error) {
 		Policy           DynamicPolicy `json:"policy"`
 		Extensions       []interface{} `json:"extensions"`
 		CallbackEndpoint string        `json:"callback_endpoint"`
-		AutoAllow        bool          `json:"auto_allow,omitempty"`
 	}{
 		Policy:           scenario.policy,
 		Extensions:       scenario.extensions,
 		CallbackEndpoint: scenario.callbackEndpoint,
-		AutoAllow:        scenario.autoAllow,
 	})
 }

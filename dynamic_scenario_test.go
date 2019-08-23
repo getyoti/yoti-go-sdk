@@ -35,12 +35,3 @@ func ExampleDynamicScenarioBuilder_WithExtension() {
 	// Output: {"policy":{"wanted":[{"name":"full_name"}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"callback_endpoint":""}
 
 }
-
-func ExampleDynamicScenarioBuilder_WithAutoAllow() {
-	policy := (&DynamicPolicyBuilder{}).New().WithFullName().Build()
-	scenario := (&DynamicScenarioBuilder{}).WithPolicy(policy).WithAutoAllow(true).Build()
-
-	data, _ := scenario.MarshalJSON()
-	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[{"name":"full_name"}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":null,"callback_endpoint":"","auto_allow":true}
-}
