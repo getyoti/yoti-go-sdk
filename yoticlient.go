@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/requests"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
 	"github.com/golang/protobuf/proto"
@@ -121,13 +122,7 @@ func (client *Client) getActivityDetails(token string) (userProfile UserProfile,
 		errStrings = append(errStrings, fmt.Sprintf("Invalid Key: %s", err.Error()))
 		return
 	}
-	nonce, err := generateNonce()
-	if err != nil {
-		errStrings = append(errStrings, err.Error())
-		return
-	}
-
-	endpoint := getProfileEndpoint(token, nonce, client.GetSdkID())
+	endpoint := getProfileEndpoint(token, client.GetSdkID())
 
 	response, err := client.makeRequest(
 		httpMethod,
@@ -171,19 +166,41 @@ func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) er
 	)
 }
 
+func (client *Client) getDefaultHeaders() (headers map[string][]string) {
+	headers = map[string][]string{
+		sdkIdentifierHeader:        {sdkIdentifier},
+		sdkVersionIdentifierHeader: {sdkIdentifier + "-" + sdkVersionIdentifier},
+	}
+	return
+}
+
+// MakeRequest is used by other yoti Packages to make requests using a single
+// common client object. Users should not use this function directly
 func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
 		return
 	}
 
-	headers, err := createHeaders(key, httpMethod, endpoint, payload)
+	request, err := (&requests.SignedMessage{
+		Key:        key,
+		HTTPMethod: httpMethod,
+		BaseURL:    client.getAPIURL(),
+		Endpoint:   endpoint,
+		Headers:    client.getDefaultHeaders(),
+		Body:       payload,
+	}).Request()
+
 	if err != nil {
 		return
 	}
+	headers := make(map[string]string)
+	for key, list := range request.Header {
+		headers[key] = list[0]
+	}
 
 	var response *httpResponse
-	if response, err = client.doRequest(client.getAPIURL()+endpoint, headers, httpMethod, payload); err != nil {
+	if response, err = client.doRequest(request.URL.String(), headers, httpMethod, payload); err != nil {
 		return
 	}
 
@@ -514,7 +531,7 @@ func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResul
 	if err != nil {
 		return
 	}
-	endpoint := getAMLEndpoint(nonce, client.GetSdkID())
+	endpoint := getAMLEndpoint(client.GetSdkID())
 	content, err := json.Marshal(amlProfile)
 	if err != nil {
 		return
