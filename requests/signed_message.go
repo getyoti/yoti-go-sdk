@@ -15,14 +15,6 @@ import (
 	"time"
 )
 
-// Predefined headers for common use cases
-var (
-	JSONHeaders = map[string][]string{
-		"Content-Type": {"application/json"},
-		"Accept":       {"application/json"},
-	}
-)
-
 // SignedMessage is a builder for constructing a http.Request with Yoti signing
 type SignedMessage struct {
 	Key        *rsa.PrivateKey
