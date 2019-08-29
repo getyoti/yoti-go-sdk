@@ -131,24 +131,24 @@ func (b *DynamicPolicyBuilder) WithAgeUnder(age int) *DynamicPolicyBuilder {
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeUnder, age))
 }
 
-// WithWantedRememberMe sets the Policy as requiring a remember me id
+// WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"
 func (b *DynamicPolicyBuilder) WithWantedRememberMe() *DynamicPolicyBuilder {
 	b.isWantedRememberMe = true
 	return b
 }
 
-// WithWantedAuthType sets this dynamic policy as requiring a specific auth type
+// WithWantedAuthType sets this dynamic policy as requiring a specific authentication type
 func (b *DynamicPolicyBuilder) WithWantedAuthType(wantedAuthType int) *DynamicPolicyBuilder {
 	b.wantedAuthTypes[wantedAuthType] = true
 	return b
 }
 
-// WithSelfieAuth sets this dynamic policy as requiring Selfie-based auth
+// WithSelfieAuth sets this dynamic policy as requiring Selfie-based authentication
 func (b *DynamicPolicyBuilder) WithSelfieAuth() *DynamicPolicyBuilder {
 	return b.WithWantedAuthType(authTypeSelfieConst)
 }
 
-// WithPinAuth sets this dynamic policy as requiring Pin auth
+// WithPinAuth sets this dynamic policy as requiring PIN authentication
 func (b *DynamicPolicyBuilder) WithPinAuth() *DynamicPolicyBuilder {
 	return b.WithWantedAuthType(authTypePinConst)
 }

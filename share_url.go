@@ -13,7 +13,7 @@ var (
 	}
 )
 
-// ShareURL contains a dynamic share qr code
+// ShareURL contains a dynamic share QR code
 type ShareURL struct {
 	ShareURL string `json:"qrcode"`
 	RefID    string `json:"ref_id"`

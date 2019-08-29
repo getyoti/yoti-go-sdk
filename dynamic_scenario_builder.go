@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-// DynamicScenarioBuilder builds a Dynamic Scenario
+// DynamicScenarioBuilder builds a dynamic scenario
 type DynamicScenarioBuilder struct {
 	scenario DynamicScenario
 }
