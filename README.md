@@ -47,7 +47,7 @@ Please feel free to reach out
 ## An Architectural View
 
 Before you start your integration, here is a bit of background on how the integration works. To integrate your application with Yoti, your back-end must expose a GET endpoint that Yoti will use to forward tokens.
-The endpoint is configured in the [Yoti Hub](https://hub.yoti.com) where you create/update your application. For more information on how to create an application please check our [developer page](https://www.yoti.com/developers/documentation/#login-button-setup).
+The endpoint is configured in the [Yoti Hub](https://hub.yoti.com) where you create/update your application. For more information on how to create an application please see [integration steps](https://developers.yoti.com/yoti-app/web-integration#integration-steps).
 
 The image below shows how your application back-end and Yoti integrate into the context of a Login flow.
 Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
