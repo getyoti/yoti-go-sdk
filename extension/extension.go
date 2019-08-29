@@ -41,7 +41,7 @@ func (builder *ExtensionBuilder) Build() Extension {
 	return builder.extension
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (extension Extension) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type    string      `json:"type"`

@@ -47,7 +47,7 @@ func (builder *DynamicScenarioBuilder) Build() DynamicScenario {
 	return builder.scenario
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (scenario DynamicScenario) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Policy           DynamicPolicy `json:"policy"`

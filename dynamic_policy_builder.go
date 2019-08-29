@@ -181,7 +181,7 @@ func (b *DynamicPolicyBuilder) authTypesAsList() []int {
 	return authTypeList
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (policy *DynamicPolicy) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Wanted           []WantedAttribute `json:"wanted"`

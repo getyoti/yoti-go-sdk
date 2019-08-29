@@ -36,7 +36,7 @@ func (builder *TransactionalFlowExtensionBuilder) Build() TransactionalFlowExten
 	return builder.extension
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (extension TransactionalFlowExtension) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type    string      `json:"type"`
