@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -23,8 +25,6 @@ const (
 	sdkIdentifier        = "Go"
 	sdkVersionIdentifier = "2.5.0"
 
-	authKeyHeader              = "X-Yoti-Auth-Key"
-	authDigestHeader           = "X-Yoti-Auth-Digest"
 	sdkIdentifierHeader        = "X-Yoti-SDK"
 	sdkVersionIdentifierHeader = sdkIdentifierHeader + "-Version"
 	attributeAgeOver           = "age_over:"
@@ -60,15 +60,15 @@ type Client struct {
 	// https://github.com/getyoti/yoti-go-sdk/blob/master/README.md
 	Key []byte
 
-	apiURL    string
-	requester func(string, map[string]string, string, []byte) (*httpResponse, error)
+	apiURL     string
+	httpClient // Mockable HTTP Client Interface
 }
 
-func (client *Client) doRequest(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (*httpResponse, error) {
-	if client.requester != nil {
-		return client.requester(uri, headers, httpRequestMethod, contentBytes)
+func (client *Client) doRequest(request *http.Request) (*http.Response, error) {
+	if client.httpClient == nil {
+		client.httpClient = &http.Client{}
 	}
-	return doRequest(uri, headers, httpRequestMethod, contentBytes)
+	return client.httpClient.Do(request)
 }
 
 // OverrideAPIURL overrides the default API URL for this Yoti Client to permit
@@ -111,7 +111,7 @@ func (client *Client) GetActivityDetails(token string) (ActivityDetails, []strin
 
 func (client *Client) getActivityDetails(token string) (userProfile UserProfile, activity ActivityDetails, errStrings []string) {
 
-	httpMethod := HTTPMethodGet
+	httpMethod := http.MethodGet
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
 		errStrings = append(errStrings, fmt.Sprintf("Invalid Key: %s", err.Error()))
@@ -138,14 +138,20 @@ func (client *Client) getActivityDetails(token string) (userProfile UserProfile,
 	return handleSuccessfulResponse(response, key)
 }
 
-func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) error {
+func handleHTTPError(response *http.Response, errorMessages ...map[int]string) error {
+	var body []byte
+	if response.Body != nil {
+		body, _ = ioutil.ReadAll(response.Body)
+	} else {
+		body = make([]byte, 0)
+	}
 	for _, handler := range errorMessages {
 		for code, message := range handler {
 			if code == response.StatusCode {
 				return fmt.Errorf(
 					message,
 					response.StatusCode,
-					response.Content,
+					body,
 				)
 			}
 
@@ -154,7 +160,7 @@ func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) er
 			return fmt.Errorf(
 				defaultMessage,
 				response.StatusCode,
-				response.Content,
+				body,
 			)
 		}
 
@@ -162,7 +168,7 @@ func handleHTTPError(response *httpResponse, errorMessages ...map[int]string) er
 	return fmt.Errorf(
 		defaultUnknownErrorMessageConst,
 		response.StatusCode,
-		response.Content,
+		body,
 	)
 }
 
@@ -199,19 +205,22 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		headers[key] = list[0]
 	}
 
-	var response *httpResponse
-	if response, err = client.doRequest(request.URL.String(), headers, httpMethod, payload); err != nil {
+	var response *http.Response
+	if response, err = client.doRequest(request); err != nil {
 		return
 	}
 
-	if response.Success {
-		responseData = response.Content
-	}
-
-	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		err = handleHTTPError(response, httpErrorMessages...)
+	if response.StatusCode < 300 && response.StatusCode >= 200 {
+		var tmp []byte
+		if response.Body != nil {
+			tmp, err = ioutil.ReadAll(response.Body)
+		} else {
+			tmp = make([]byte, 0)
+		}
+		responseData = string(tmp)
 		return
 	}
+	err = handleHTTPError(response, httpErrorMessages...)
 	return
 }
 
@@ -526,17 +535,13 @@ func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
 func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResult, err error) {
-	var httpMethod = HTTPMethodPost
-	nonce, err := generateNonce()
-	if err != nil {
-		return
-	}
+	var httpMethod = http.MethodPost
 	endpoint := getAMLEndpoint(client.GetSdkID())
 	content, err := json.Marshal(amlProfile)
 	if err != nil {
 		return
 	}
-	amlErrorMessages := make(map[int]string, 0)
+	amlErrorMessages := make(map[int]string)
 	amlErrorMessages[-1] = "AML Check was unsuccessful, status code: '%[1]d', content '%[2]s'"
 
 	response, err := client.makeRequest(httpMethod, endpoint, content, amlErrorMessages)
@@ -546,43 +551,4 @@ func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResul
 
 	amlResult, err = GetAmlResult([]byte(response))
 	return
-}
-
-func getAuthDigest(endpoint string, key *rsa.PrivateKey, httpMethod string, content []byte) (result string, err error) {
-	digest := httpMethod + "&" + endpoint
-
-	if content != nil {
-		digest += "&" + bytesToBase64(content)
-	}
-
-	digestBytes := utfToBytes(digest)
-	var signedDigestBytes []byte
-
-	if signedDigestBytes, err = signDigest(digestBytes, key); err != nil {
-		return
-	}
-
-	result = bytesToBase64(signedDigestBytes)
-	return
-}
-
-func createHeaders(key *rsa.PrivateKey, httpMethod string, endpoint string, content []byte) (headers map[string]string, err error) {
-	var authKey string
-	if authKey, err = getAuthKey(key); err != nil {
-		return
-	}
-
-	var authDigest string
-	if authDigest, err = getAuthDigest(endpoint, key, httpMethod, content); err != nil {
-		return
-	}
-
-	headers = make(map[string]string)
-
-	headers[authKeyHeader] = authKey
-	headers[authDigestHeader] = authDigest
-	headers[sdkIdentifierHeader] = sdkIdentifier
-	headers[sdkVersionIdentifierHeader] = sdkIdentifier + "-" + sdkVersionIdentifier
-
-	return headers, err
 }
