@@ -59,7 +59,7 @@ func (builder *LocationConstraintExtensionBuilder) Build() LocationConstraintExt
 	return builder.extension
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (extension LocationConstraintExtension) MarshalJSON() ([]byte, error) {
 	type location struct {
 		Latitude       float64 `json:"latitude"`

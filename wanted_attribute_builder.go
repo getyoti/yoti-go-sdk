@@ -44,7 +44,7 @@ func (builder *WantedAttributeBuilder) Build() WantedAttribute {
 	return attr
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name       string `json:"name,omitempty"`
