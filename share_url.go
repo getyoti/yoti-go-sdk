@@ -19,7 +19,7 @@ type ShareURL struct {
 	RefID    string `json:"ref_id"`
 }
 
-// CreateShareURL creates a QR Code for a dynamic scenario
+// CreateShareURL creates a QR code for a dynamic scenario
 func CreateShareURL(client clientInterface, scenario *DynamicScenario) (share ShareURL, err error) {
 	httpMethod := "POST"
 	endpoint, err := getDynamicShareEndpoint(client)

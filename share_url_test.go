@@ -36,7 +36,7 @@ func ExampleCreateShareURL() {
 
 	share, _ := CreateShareURL(&mockYoti, &scenario)
 
-	fmt.Printf("QR Code: %s", share.ShareURL)
-	// Output: QR Code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
+	fmt.Printf("QR code: %s", share.ShareURL)
+	// Output: QR code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
 
 }
