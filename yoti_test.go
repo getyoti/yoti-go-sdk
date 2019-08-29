@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/big"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -22,21 +23,32 @@ import (
 const (
 	token             = "NpdmVVGC-28356678-c236-4518-9de4-7a93009ccaf0-c5f92f2a-5539-453e-babc-9b06e1d6b7de"
 	encryptedToken    = "b6H19bUCJhwh6WqQX_sEHWX9RP-A_ANr1fkApwA4Dp2nJQFAjrF9e6YCXhNBpAIhfHnN0iXubyXxXZMNwNMSQ5VOxkqiytrvPykfKQWHC6ypSbfy0ex8ihndaAXG5FUF-qcU8QaFPMy6iF3x0cxnY0Ij0kZj0Ng2t6oiNafb7AhT-VGXxbFbtZu1QF744PpWMuH0LVyBsAa5N5GJw2AyBrnOh67fWMFDKTJRziP5qCW2k4h5vJfiYr_EOiWKCB1d_zINmUm94ZffGXxcDAkq-KxhN1ZuNhGlJ2fKcFh7KxV0BqlUWPsIEiwS0r9CJ2o1VLbEs2U_hCEXaqseEV7L29EnNIinEPVbL4WR7vkF6zQCbK_cehlk2Qwda-VIATqupRO5grKZN78R9lBitvgilDaoE7JB_VFcPoljGQ48kX0wje1mviX4oJHhuO8GdFITS5LTbojGVQWT7LUNgAUe0W0j-FLHYYck3v84OhWTqads5_jmnnLkp9bdJSRuJF0e8pNdePnn2lgF-GIcyW_0kyGVqeXZrIoxnObLpF-YeUteRBKTkSGFcy7a_V_DLiJMPmH8UXDLOyv8TVt3ppzqpyUrLN2JVMbL5wZ4oriL2INEQKvw_boDJjZDGeRlu5m1y7vGDNBRDo64-uQM9fRUULPw-YkABNwC0DeShswzT00="
-	sdkID             = "fake-sdk-id"
 	wrappedReceiptKey = "kyHPjq2+Y48cx+9yS/XzmW09jVUylSdhbP+3Q9Tc9p6bCEnyfa8vj38AIu744RzzE+Dc4qkSF21VfzQKtJVILfOXu5xRc7MYa5k3zWhjiesg/gsrv7J4wDyyBpHIJB8TWXnubYMbSYQJjlsfwyxE9kGe0YI08pRo2Tiht0bfR5Z/YrhAk4UBvjp84D+oyug/1mtGhKphA4vgPhQ9/y2wcInYxju7Q6yzOsXGaRUXR38Tn2YmY9OBgjxiTnhoYJFP1X9YJkHeWMW0vxF1RHxgIVrpf7oRzdY1nq28qzRg5+wC7cjRpS2i/CKUAo0oVG4pbpXsaFhaTewStVC7UFtA77JHb3EnF4HcSWMnK5FM7GGkL9MMXQenh11NZHKPWXpux0nLZ6/vwffXZfsiyTIcFL/NajGN8C/hnNBljoQ+B3fzWbjcq5ueUOPwARZ1y38W83UwMynzkud/iEdHLaZIu4qUCRkfSxJg7Dc+O9/BdiffkOn2GyFmNjVeq754DCUypxzMkjYxokedN84nK13OU4afVyC7t5DDxAK/MqAc69NCBRLqMi5f8BMeOZfMcSWPGC9a2Qu8VgG125TuZT4+wIykUhGyj3Bb2/fdPsxwuKFR+E0uqs0ZKvcv1tkNRRtKYBqTacgGK9Yoehg12cyLrITLdjU1fmIDn4/vrhztN5w="
 	attributeName     = "test_attribute_name"
 )
+
+type mockHTTPClient struct {
+	do func(*http.Request) (*http.Response, error)
+}
+
+func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
+	if mock.do != nil {
+		return mock.do(request)
+	}
+	return nil, nil
+}
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    false,
-				StatusCode: 500}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 500,
+				}, nil
+			},
 		},
 	}
 
@@ -51,11 +63,12 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    false,
-				StatusCode: 500}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 500,
+				}, nil
+			},
 		},
 	}
 
@@ -70,11 +83,12 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    false,
-				StatusCode: 404}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 404,
+				}, nil
+			},
 		},
 	}
 
@@ -89,12 +103,13 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    true,
-				StatusCode: 200,
-				Content:    `{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"}}`}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"}}`)),
+				}, nil
+			},
 		},
 	}
 
@@ -111,17 +126,16 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (*httpResponse, error) {
-			var theURL *url.URL
-			var err error
+		httpClient: &mockHTTPClient{
+			do: func(request *http.Request) (*http.Response, error) {
+				parsed, err := url.Parse(request.URL.String())
+				assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
+				assert.Equal(t, parsed.Path, expectedAbsoluteURL, "Yoti API did not generate a valid URL path.")
 
-			theURL, err = url.Parse(uri)
-			assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
-			assert.Equal(t, theURL.Path, expectedAbsoluteURL, "Yoti API did not generate a valid URL path.")
-
-			return &httpResponse{
-				Success:    false,
-				StatusCode: 500}, err
+				return &http.Response{
+					StatusCode: 500,
+				}, nil
+			},
 		},
 	}
 
@@ -139,12 +153,13 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    true,
-				StatusCode: 200,
-				Content:    `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+				}, nil
+			},
 		},
 	}
 
@@ -186,14 +201,15 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-			result = &httpResponse{
-				Success:    true,
-				StatusCode: 200,
-				Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey +
-					`","other_party_profile_content": "` + otherPartyProfileContent +
-					`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey +
+						`","other_party_profile_content": "` + otherPartyProfileContent +
+						`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+				}, nil
+			},
 		},
 	}
 
@@ -215,13 +231,14 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 
 		client := Client{
 			Key: key,
-			requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-				result = &httpResponse{
-					Success:    true,
-					StatusCode: 200,
-					Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-						otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`}
-				return
+			httpClient: &mockHTTPClient{
+				do: func(*http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: 200,
+						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+					}, nil
+				},
 			},
 		}
 
@@ -244,13 +261,14 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 
 		client := Client{
 			Key: key,
-			requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-				result = &httpResponse{
-					Success:    true,
-					StatusCode: 200,
-					Content: `{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-						otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`}
-				return
+			httpClient: &mockHTTPClient{
+				do: func(*http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: 200,
+						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+							otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`)),
+					}, nil
+				},
 			},
 		}
 
@@ -260,40 +278,18 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 	}
 }
 
-func TestYotiClient_UnsupportedHttpMethod_ReturnsError(t *testing.T) {
-	uri := "http://www.url.com"
-	headers := createTestHeaders()
-	httpRequestMethod := "UNSUPPORTEDMETHOD"
-	contentBytes := make([]byte, 0)
-
-	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)
-
-	assert.Assert(t, err != nil)
-}
-
-func TestYotiClient_SupportedHttpMethod(t *testing.T) {
-	uri := "http://www.url.com"
-	headers := createTestHeaders()
-	httpRequestMethod := HTTPMethodGet
-	contentBytes := make([]byte, 0)
-
-	_, err := doRequest(uri, headers, httpRequestMethod, contentBytes)
-
-	assert.Assert(t, is.Nil(err))
-}
-
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-
-			result = &httpResponse{
-				Success:    true,
-				StatusCode: 200,
-				Content:    `{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`)),
+				}, nil
+			},
 		},
 	}
 
@@ -311,13 +307,13 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	client := Client{
 		Key: key,
-		requester: func(uri string, headers map[string]string, httpRequestMethod string, contentBytes []byte) (result *httpResponse, err error) {
-
-			result = &httpResponse{
-				Success:    false,
-				StatusCode: 503,
-				Content:    `SERVICE UNAVAILABLE - Unable to reach the Integrity Service`}
-			return
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 503,
+					Body:       ioutil.NopCloser(strings.NewReader(`SERVICE UNAVAILABLE - Unable to reach the Integrity Service`)),
+				}, nil
+			},
 		},
 	}
 
@@ -1329,14 +1325,6 @@ func readTestFile(t *testing.T, filename string) (result []byte) {
 	assert.Assert(t, is.Nil(err))
 
 	return b
-}
-
-func createTestHeaders() (result map[string]string) {
-	headers := make(map[string]string)
-
-	headers["Header1"] = "test"
-
-	return headers
 }
 
 func createStandardAmlProfile() (result AmlProfile) {

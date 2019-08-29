@@ -47,10 +47,10 @@ func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix()*1000, 10)
 }
 
-func getNonce() string {
+func getNonce() (string, error) {
 	nonce := make([]byte, 16)
-	rand.Read(nonce)
-	return fmt.Sprintf("%X-%X-%X-%X-%X", nonce[0:4], nonce[4:6], nonce[6:8], nonce[8:10], nonce[10:])
+	_, err := rand.Read(nonce)
+	return fmt.Sprintf("%X-%X-%X-%X-%X", nonce[0:4], nonce[4:6], nonce[6:8], nonce[8:10], nonce[10:]), err
 }
 
 // Request builds a http.Request with signature headers
@@ -89,11 +89,15 @@ func (msg *SignedMessage) Request() (request *http.Request, err error) {
 		endpoint = endpoint + "&"
 	}
 
+	nonce, err := getNonce()
+	if err != nil {
+		return
+	}
 	endpoint = fmt.Sprintf(
 		"%stimestamp=%s&nonce=%s",
 		endpoint,
 		getTimestamp(),
-		getNonce(),
+		nonce,
 	)
 
 	// Generate and Sign the message digest
