@@ -7,7 +7,7 @@ import (
 func ExampleLocationConstraintExtension() {
 	extension := (&LocationConstraintExtensionBuilder{}).New().
 		WithLatitude(51.511831).
-		WithLongtitude(-0.081446).
+		WithLongitude(-0.081446).
 		WithRadius(0.001).
 		WithUncertainty(0.001).
 		Build()
