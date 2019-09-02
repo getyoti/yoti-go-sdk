@@ -23,7 +23,6 @@ type WantedAttribute struct {
 	derivation         string
 	constraints        []constraintInterface
 	acceptSelfAsserted bool
-	optional           bool
 }
 
 // New initialises the internal state of a WantedAttributeBuilder so that
@@ -60,12 +59,6 @@ func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *Want
 	return builder
 }
 
-// WithOptional sets a wanted attribute as optional
-func (builder *WantedAttributeBuilder) WithOptional(optional bool) *WantedAttributeBuilder {
-	builder.attr.optional = optional
-	return builder
-}
-
 // Build generates the wanted attribute's specification
 func (builder *WantedAttributeBuilder) Build() WantedAttribute {
 	attr := builder.attr
@@ -79,12 +72,10 @@ func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
 		Derivation         string                `json:"derivation,omitempty"`
 		Constraints        []constraintInterface `json:"constraints,omitempty"`
 		AcceptSelfAsserted bool                  `json:"accept_self_asserted,omitempty"`
-		Optional           bool                  `json:"optional,omitempty"`
 	}{
 		Name:               attr.name,
 		Derivation:         attr.derivation,
 		Constraints:        attr.constraints,
 		AcceptSelfAsserted: attr.acceptSelfAsserted,
-		Optional:           attr.optional,
 	})
 }
