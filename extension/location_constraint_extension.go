@@ -37,7 +37,7 @@ func (builder *LocationConstraintExtensionBuilder) WithLatitude(latitude float64
 }
 
 // WithLongitude sets the longitude of the location constraint
-func (builder *LocationConstraintExtensionBuilder) WithLongtitude(longitude float64) *LocationConstraintExtensionBuilder {
+func (builder *LocationConstraintExtensionBuilder) WithLongitude(longitude float64) *LocationConstraintExtensionBuilder {
 	builder.extension.longitude = longitude
 	return builder
 }
