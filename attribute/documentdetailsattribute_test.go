@@ -2,8 +2,9 @@ package attribute
 
 import (
 	"fmt"
-	"gotest.tools/assert"
 	"testing"
+
+	"gotest.tools/assert"
 )
 
 func ExampleDocumentDetails_Parse() {

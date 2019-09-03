@@ -34,6 +34,28 @@ type DocumentDetailsAttribute struct {
 	anchors []*anchor.Anchor
 }
 
+// Value returns the document details struct attached to this attribute
+func (attr *DocumentDetailsAttribute) Value() DocumentDetails {
+	return attr.value
+}
+
+// Anchors are the metadata associated with an attribute. They describe
+// how an attribute has been provided to Yoti (SOURCE Anchor) and how
+// it has been verified (VERIFIER Anchor).
+func (attr *DocumentDetailsAttribute) Anchors() []*anchor.Anchor {
+	return attr.anchors
+}
+
+// Sources returns the anchors which identify how and when an attribute value was acquired.
+func (attr *DocumentDetailsAttribute) Sources() []*anchor.Anchor {
+	return anchor.GetSources(attr.anchors)
+}
+
+// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
+func (attr *DocumentDetailsAttribute) Verifiers() []*anchor.Anchor {
+	return anchor.GetVerifiers(attr.anchors)
+}
+
 // NewDocumentDetails creates a DocumentDetailsAttribute which wraps a
 // DocumentDetails with anchor data
 func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, error) {
