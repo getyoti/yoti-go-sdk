@@ -8,6 +8,8 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -15,18 +17,20 @@ import (
 	"time"
 )
 
-// SignedMessage is a builder for constructing a http.Request with Yoti signing
-type SignedMessage struct {
+// SignedRequest is a builder for constructing a http.Request with Yoti signing
+type SignedRequest struct {
 	Key        *rsa.PrivateKey
 	HTTPMethod string
 	BaseURL    string
 	Port       int
 	Endpoint   string
 	Headers    map[string][]string
+	Params     map[string]string
 	Body       []byte
+	Error      error
 }
 
-func (msg *SignedMessage) signDigest(digest []byte) (string, error) {
+func (msg *SignedRequest) signDigest(digest []byte) (string, error) {
 	hash := sha256.Sum256(digest)
 	signed, err := rsa.SignPKCS1v15(rand.Reader, msg.Key, crypto.SHA256, hash[:])
 	if err != nil {
@@ -45,8 +49,27 @@ func getNonce() (string, error) {
 	return fmt.Sprintf("%X-%X-%X-%X-%X", nonce[0:4], nonce[4:6], nonce[6:8], nonce[8:10], nonce[10:]), err
 }
 
+// WithPemFile loads the private key from a PEM file reader
+func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
+	block, _ := pem.Decode(in)
+	if block == nil {
+		msg.Error = errors.New("Not PEM-encoded")
+		return msg
+	}
+	if block.Type != "RSA PRIVATE KEY" {
+		msg.Error = errors.New("Not an ESA Private Key")
+		return msg
+	}
+
+	msg.Key, msg.Error = x509.ParsePKCS1PrivateKey(block.Bytes)
+	return msg
+}
+
 // Request builds a http.Request with signature headers
-func (msg *SignedMessage) Request() (request *http.Request, err error) {
+func (msg SignedRequest) Request() (request *http.Request, err error) {
+	if msg.Error != nil {
+		return nil, msg.Error
+	}
 	// Check for mandatorys
 	if msg.Key == nil {
 		err = fmt.Errorf("Missing Private Key")
@@ -73,6 +96,20 @@ func (msg *SignedMessage) Request() (request *http.Request, err error) {
 		baseURL = strings.Join(parts, "/")
 	}
 
+	if msg.Params == nil {
+		msg.Params = make(map[string]string)
+	}
+	if _, ok := msg.Params["nonce"]; !ok {
+		nonce, err := getNonce()
+		if err != nil {
+			return nil, err
+		}
+		msg.Params["nonce"] = nonce
+	}
+	if _, ok := msg.Params["timestamp"]; !ok {
+		msg.Params["timestamp"] = getTimestamp()
+	}
+
 	// Add Timestamp/Nonce to Endpoint
 	endpoint := msg.Endpoint
 	if !strings.Contains(endpoint, "?") {
@@ -81,16 +118,15 @@ func (msg *SignedMessage) Request() (request *http.Request, err error) {
 		endpoint = endpoint + "&"
 	}
 
-	nonce, err := getNonce()
-	if err != nil {
-		return
+	var firstParam = true
+	for param, value := range msg.Params {
+		var formatString = "%s&%s=%s"
+		if firstParam {
+			formatString = "%s%s=%s"
+		}
+		endpoint = fmt.Sprintf(formatString, endpoint, param, value)
+		firstParam = false
 	}
-	endpoint = fmt.Sprintf(
-		"%stimestamp=%s&nonce=%s",
-		endpoint,
-		getTimestamp(),
-		nonce,
-	)
 
 	// Generate and Sign the message digest
 	var digest string

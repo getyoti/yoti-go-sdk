@@ -188,14 +188,14 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		return
 	}
 
-	request, err := (&requests.SignedMessage{
+	request, err := requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: httpMethod,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   endpoint,
 		Headers:    client.getDefaultHeaders(),
 		Body:       payload,
-	}).Request()
+	}.Request()
 
 	if err != nil {
 		return
