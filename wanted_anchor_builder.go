@@ -10,7 +10,7 @@ type WantedAnchor struct {
 	subType string
 }
 
-// WantedAnchorBuilder sets the
+// WantedAnchorBuilder describes a desired anchor for user profile data
 type WantedAnchorBuilder struct {
 	wantedAnchor WantedAnchor
 }

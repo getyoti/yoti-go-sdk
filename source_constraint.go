@@ -84,7 +84,7 @@ func (constraint *SourceConstraint) isConstraint() bool {
 	return true
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (constraint *SourceConstraint) MarshalJSON() ([]byte, error) {
 	type PreferenceList struct {
 		Anchors        []WantedAnchor `json:"anchors"`
