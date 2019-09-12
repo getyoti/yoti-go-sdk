@@ -1,3 +1,4 @@
+repos:
 - repo: git://github.com/dnephin/pre-commit-golang
   rev: master
   hooks:
@@ -13,5 +14,15 @@
 - repo: local
   hooks:
     - id: local-tidy
+      name: 'tidy imports'
+      entry: tidy.sh
+      language: 'script'
+      description: "Tidy imports"
+
     - id: local-go-test
+      name: 'tests'
+      entry: test.sh
+      language: 'script'
+      description: "Run unit tests"
+
 
