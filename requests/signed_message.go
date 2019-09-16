@@ -64,36 +64,15 @@ func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
 	return msg
 }
 
-// Request builds a http.Request with signature headers
-func (msg SignedRequest) Request() (request *http.Request, err error) {
-	if msg.Error != nil {
-		return nil, msg.Error
-	}
-	// Check for mandatories
-	if msg.Key == nil {
-		err = fmt.Errorf("Missing Private Key")
-		return
-	}
-	if msg.HTTPMethod == "" {
-		err = fmt.Errorf("Missing HTTPMethod")
-		return
-	}
-	if msg.BaseURL == "" {
-		err = fmt.Errorf("Missing BaseURL")
-		return
-	}
-	if msg.Endpoint == "" {
-		err = fmt.Errorf("Missing Endpoint")
-		return
-	}
-
+func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error) {
 	if msg.Params == nil {
 		msg.Params = make(map[string]string)
 	}
+	// Add Timestamp/Nonce
 	if _, ok := msg.Params["nonce"]; !ok {
 		nonce, err := getNonce()
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 		msg.Params["nonce"] = nonce
 	}
@@ -101,8 +80,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 		msg.Params["timestamp"] = getTimestamp()
 	}
 
-	// Add Timestamp/Nonce to Endpoint
-	endpoint := msg.Endpoint
+	endpoint = msg.Endpoint
 	if !strings.Contains(endpoint, "?") {
 		endpoint = endpoint + "?"
 	} else {
@@ -118,9 +96,11 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 		endpoint = fmt.Sprintf(formatString, endpoint, param, value)
 		firstParam = false
 	}
+	return
+}
 
-	// Generate and Sign the message digest
-	var digest string
+func (msg *SignedRequest) generateDigest(endpoint string) (digest string) {
+	// Generate the message digest
 	if msg.Body != nil {
 		digest = fmt.Sprintf(
 			"%s&%s&%s",
@@ -134,7 +114,40 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 			endpoint,
 		)
 	}
-	signedDigest, err := msg.signDigest([]byte(digest))
+	return
+}
+
+func (msg *SignedRequest) checkMandatories() error {
+	if msg.Error != nil {
+		return msg.Error
+	}
+	if msg.Key == nil {
+		return fmt.Errorf("Missing Private Key")
+	}
+	if msg.HTTPMethod == "" {
+		return fmt.Errorf("Missing HTTPMethod")
+	}
+	if msg.BaseURL == "" {
+		return fmt.Errorf("Missing BaseURL")
+	}
+	if msg.Endpoint == "" {
+		return fmt.Errorf("Missing Endpoint")
+	}
+	return nil
+}
+
+// Request builds a http.Request with signature headers
+func (msg SignedRequest) Request() (request *http.Request, err error) {
+	err = msg.checkMandatories()
+	if err != nil {
+		return
+	}
+
+	endpoint, err := msg.addParametersToEndpoint()
+	if err != nil {
+		return
+	}
+	signedDigest, err := msg.signDigest([]byte(msg.generateDigest(endpoint)))
 	if err != nil {
 		return
 	}
