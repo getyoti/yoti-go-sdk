@@ -180,8 +180,6 @@ func (client *Client) getDefaultHeaders() (headers map[string][]string) {
 	return
 }
 
-// MakeRequest is used by other yoti Packages to make requests using a single
-// common client object. Users should not use this function directly
 func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
