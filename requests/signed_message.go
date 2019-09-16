@@ -69,7 +69,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	if msg.Error != nil {
 		return nil, msg.Error
 	}
-	// Check for mandatorys
+	// Check for mandatories
 	if msg.Key == nil {
 		err = fmt.Errorf("Missing Private Key")
 		return
