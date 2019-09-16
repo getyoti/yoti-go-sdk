@@ -22,7 +22,6 @@ type SignedRequest struct {
 	Key        *rsa.PrivateKey
 	HTTPMethod string
 	BaseURL    string
-	Port       int
 	Endpoint   string
 	Headers    map[string][]string
 	Params     map[string]string
@@ -88,14 +87,6 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 		return
 	}
 
-	// Mangle BaseURL to allow for optional port number
-	baseURL := msg.BaseURL
-	if msg.Port != 0 {
-		parts := strings.Split(baseURL, "/")
-		parts[2] = fmt.Sprintf("%s:%d", parts[2], msg.Port)
-		baseURL = strings.Join(parts, "/")
-	}
-
 	if msg.Params == nil {
 		msg.Params = make(map[string]string)
 	}
@@ -151,7 +142,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	// Construct the HTTP Request
 	request, err = http.NewRequest(
 		msg.HTTPMethod,
-		baseURL+endpoint,
+		msg.BaseURL+endpoint,
 		bytes.NewReader(msg.Body),
 	)
 	if err != nil {
