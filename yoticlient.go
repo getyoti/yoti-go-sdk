@@ -23,7 +23,7 @@ import (
 const (
 	apiDefaultURL        = "https://api.yoti.com/api/v1"
 	sdkIdentifier        = "Go"
-	sdkVersionIdentifier = "2.5.0"
+	sdkVersionIdentifier = "2.6.0"
 
 	sdkIdentifierHeader        = "X-Yoti-SDK"
 	sdkVersionIdentifierHeader = sdkIdentifierHeader + "-Version"
