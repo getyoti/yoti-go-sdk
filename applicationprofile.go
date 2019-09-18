@@ -4,6 +4,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 )
 
+// Attribute names for application attributes
+const (
+	AttrConstApplicationName           = "application_name"
+	AttrConstApplicationURL            = "application_url"
+	AttrConstApplicationLogo           = "application_logo"
+	AttrConstApplicationReceiptBGColor = "application_receipt_bgcolor"
+)
+
 // ApplicationProfile is the profile of an application with convenience methods
 // to access well-known attributes.
 type ApplicationProfile struct {

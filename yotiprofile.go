@@ -4,27 +4,23 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 )
 
-// Attribute names
+// Attribute names for user profile attributes
 const (
-	AttrConstSelfie                    = "selfie"
-	AttrConstGivenNames                = "given_names"
-	AttrConstFamilyName                = "family_name"
-	AttrConstFullName                  = "full_name"
-	AttrConstMobileNumber              = "phone_number"
-	AttrConstEmailAddress              = "email_address"
-	AttrConstDateOfBirth               = "date_of_birth"
-	AttrConstAddress                   = "postal_address"
-	AttrConstStructuredPostalAddress   = "structured_postal_address"
-	AttrConstGender                    = "gender"
-	AttrConstNationality               = "nationality"
-	AttrConstDocumentImages            = "document_images"
-	AttrConstDocumentDetails           = "document_details"
-	AttrConstApplicationName           = "application_name"
-	AttrConstApplicationURL            = "application_url"
-	AttrConstApplicationLogo           = "application_logo"
-	AttrConstApplicationReceiptBGColor = "application_receipt_bgcolor"
-	AttrConstAgeOver                   = "age_over:%d"
-	AttrConstAgeUnder                  = "age_under:%d"
+	AttrConstSelfie                  = "selfie"
+	AttrConstGivenNames              = "given_names"
+	AttrConstFamilyName              = "family_name"
+	AttrConstFullName                = "full_name"
+	AttrConstMobileNumber            = "phone_number"
+	AttrConstEmailAddress            = "email_address"
+	AttrConstDateOfBirth             = "date_of_birth"
+	AttrConstAddress                 = "postal_address"
+	AttrConstStructuredPostalAddress = "structured_postal_address"
+	AttrConstGender                  = "gender"
+	AttrConstNationality             = "nationality"
+	AttrConstDocumentImages          = "document_images"
+	AttrConstDocumentDetails         = "document_details"
+	AttrConstAgeOver                 = "age_over:%d"
+	AttrConstAgeUnder                = "age_under:%d"
 )
 
 // Profile represents the details retrieved for a particular user. Consists of
