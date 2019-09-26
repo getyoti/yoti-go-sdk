@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>Yoti Dynamic Share example</title>
+  <title>Yoti {{.pageTitle}}</title>
   <link rel="stylesheet" type="text/css" href="/static/index.css" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet" />
 </head>
@@ -21,7 +21,7 @@
           alt="Yoti"/>
       </div>
 
-      <h1 class="yoti-top-header">Dynamic Share Example</h1>
+      <h1 class="yoti-top-header">{{.pageTitle}}</h1>
 
       <div class="yoti-sdk-integration-section">
           <div id="yoti-share-button"></div>
