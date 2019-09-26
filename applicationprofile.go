@@ -29,13 +29,13 @@ func (p ApplicationProfile) ApplicationURL() *attribute.StringAttribute {
 }
 
 // ApplicationReceiptBgColor is the background colour that will be displayed on
-// each receipt the user gets as a result of a sharing with the application.
+// each receipt the user gets as a result of a share with the application.
 func (p ApplicationProfile) ApplicationReceiptBgColor() *attribute.StringAttribute {
 	return p.GetStringAttribute(AttrConstApplicationReceiptBGColor)
 }
 
 // ApplicationLogo is the logo of the application that will be displayed to
-// those users that perform a sharing with it.
+// those users that perform a share with it.
 func (p ApplicationProfile) ApplicationLogo() *attribute.ImageAttribute {
 	return p.GetImageAttribute(AttrConstApplicationLogo)
 }
