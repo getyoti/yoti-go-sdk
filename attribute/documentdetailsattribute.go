@@ -87,11 +87,14 @@ func (details *DocumentDetails) Parse(data string) (err error) {
 	details.DocumentType = dataSlice[0]
 	details.IssuingCountry = dataSlice[1]
 	details.DocumentNumber = dataSlice[2]
-	if len(dataSlice) > 3 {
+	if len(dataSlice) > 3 && dataSlice[3] != "-" {
 		var dateerr error
 		expirationDateData, dateerr := time.Parse(documentDetailsDateFormatConst, dataSlice[3])
+
 		if dateerr == nil {
 			details.ExpirationDate = &expirationDateData
+		} else {
+			return dateerr
 		}
 	}
 	if len(dataSlice) > 4 {
