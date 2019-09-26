@@ -4,7 +4,9 @@ repos:
   hooks:
       - id: go-build
       - id: go-fmt
+        exclude: ".pb.go"
       - id: go-vet
+        exclude: "examples/"
 
 - repo: git://github.com/golangci/golangci-lint
   rev: master
