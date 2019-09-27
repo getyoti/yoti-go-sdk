@@ -24,7 +24,7 @@ func ExampleDocumentDetails_Parse() {
 	// Output: Document Type: PASSPORT, Issuing Country: GBR, Document Number: 1234567, Expiration Date: 2022-09-12 00:00:00 +0000 UTC
 }
 
-func TestDocumentDetailsDrivingLicence1(t *testing.T) {
+func TestDocumentDetailsShouldParseDrivingLicenceWithoutExpiry(t *testing.T) {
 	drivingLicenceGBR := "PASS_CARD GBR 1234abc - DVLA"
 
 	details := DocumentDetails{}
@@ -39,7 +39,7 @@ func TestDocumentDetailsDrivingLicence1(t *testing.T) {
 	assert.Equal(t, details.IssuingAuthority, "DVLA")
 }
 
-func TestDocumentDetailsDrivingLicence2(t *testing.T) {
+func TestDocumentDetailsShouldParseDrivingLicenceWithExtraAttribute(t *testing.T) {
 	drivingLicenceGBR := "DRIVING_LICENCE GBR 1234abc 2016-05-01 DVLA someThirdAttribute"
 	details := DocumentDetails{}
 	err := details.Parse(drivingLicenceGBR)
@@ -53,7 +53,7 @@ func TestDocumentDetailsDrivingLicence2(t *testing.T) {
 	assert.Equal(t, details.IssuingAuthority, "DVLA")
 }
 
-func TestDocumentDetailsDrivingLicence3(t *testing.T) {
+func TestDocumentDetailsShouldParseDrivingLicenceWithAllOptionalAttributes(t *testing.T) {
 	drivingLicenceGBR := "DRIVING_LICENCE GBR 1234abc 2016-05-01 DVLA"
 
 	details := DocumentDetails{}
@@ -68,7 +68,7 @@ func TestDocumentDetailsDrivingLicence3(t *testing.T) {
 	assert.Equal(t, details.IssuingAuthority, "DVLA")
 }
 
-func TestDocumentDetailsAadhaar(t *testing.T) {
+func TestDocumentDetailsShouldParseAadhaar(t *testing.T) {
 	aadhaar := "AADHAAR IND 1234abc 2016-05-01"
 
 	details := DocumentDetails{}
@@ -82,7 +82,7 @@ func TestDocumentDetailsAadhaar(t *testing.T) {
 	assert.Equal(t, details.IssuingCountry, "IND")
 }
 
-func TestDocumentDetailsPassport(t *testing.T) {
+func TestDocumentDetailsShouldParsePassportWithMandatoryFieldsOnly(t *testing.T) {
 	passportGBR := "PASSPORT GBR 1234abc"
 
 	details := DocumentDetails{}
@@ -95,4 +95,41 @@ func TestDocumentDetailsPassport(t *testing.T) {
 	assert.Assert(t, details.ExpirationDate == nil)
 	assert.Equal(t, details.IssuingCountry, "GBR")
 	assert.Equal(t, details.IssuingAuthority, "")
+}
+
+func TestDocumentDetailsShouldErrorOnEmptyString(t *testing.T) {
+	empty := ""
+
+	details := DocumentDetails{}
+	err := details.Parse(empty)
+	assert.ErrorContains(t, err, "Document Details data is invalid")
+}
+
+func TestDocumentDetailsShouldErrorIfLessThan3Words(t *testing.T) {
+	corrupt := "PASS_CARD GBR"
+	details := DocumentDetails{}
+	err := details.Parse(corrupt)
+	assert.ErrorContains(t, err, "Document Details data is invalid")
+}
+
+func TestDocumentDetailsShouldErrorForInvalidCountry(t *testing.T) {
+	corrupt := "PASSPORT 13 1234abc 2016-05-01"
+	details := DocumentDetails{}
+	err := details.Parse(corrupt)
+	assert.ErrorContains(t, err, "Document Details data is invalid")
+}
+
+func TestDocumentDetailsShouldErrorForInvalidNumber(t *testing.T) {
+	corrupt := "PASSPORT GBR $%^$%^£ 2016-05-01"
+	details := DocumentDetails{}
+	err := details.Parse(corrupt)
+	assert.ErrorContains(t, err, "Document Details data is invalid")
+}
+
+func TestDocumentDetailsShouldErrorForInvalidExpirationDate(t *testing.T) {
+	corrupt := "PASSPORT GBR 1234abc X016-05-01"
+	details := DocumentDetails{}
+	err := details.Parse(corrupt)
+	fmt.Printf("!DEBUG! %v\n", details.ExpirationDate)
+	assert.ErrorContains(t, err, "cannot parse")
 }

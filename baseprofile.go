@@ -19,6 +19,7 @@ func (p baseProfile) GetAttribute(attributeName string) *attribute.GenericAttrib
 	return nil
 }
 
+// GetStringAttribute retrieves a string attribute by name. Will return nil if attribute is not present.
 func (p baseProfile) GetStringAttribute(attributeName string) *attribute.StringAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attributeName {
@@ -28,6 +29,7 @@ func (p baseProfile) GetStringAttribute(attributeName string) *attribute.StringA
 	return nil
 }
 
+// GetImageAttribute retrieves an image attribute by name. Will return nil if attribute is not present.
 func (p baseProfile) GetImageAttribute(attributeName string) *attribute.ImageAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attributeName {
@@ -41,6 +43,7 @@ func (p baseProfile) GetImageAttribute(attributeName string) *attribute.ImageAtt
 	return nil
 }
 
+// GetJSONAttribute retrieves a JSON attribute by name. Will return nil if attribute is not present.
 func (p baseProfile) GetJSONAttribute(attributeName string) (*attribute.JSONAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == attributeName {

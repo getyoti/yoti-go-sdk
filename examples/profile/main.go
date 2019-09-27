@@ -49,55 +49,23 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 
 func sourceConstraints(w http.ResponseWriter, req *http.Request) {
-	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
-
-	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
-	if err != nil {
-		errorPage(w, req.WithContext(context.WithValue(
-			req.Context(),
-			contextKey("yotiError"),
-			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err),
-		)))
-		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
-		return
-	}
-
-	client := yoti.Client{
-		SdkID: sdkID,
-		Key:   key,
-	}
-
 	constraint := (&yoti.SourceConstraintBuilder{}).New().WithDrivingLicence("").WithPassport("").Build()
 	scenario := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(
 		(&yoti.DynamicPolicyBuilder{}).New().WithFullName(constraint).WithStructuredPostalAddress(constraint).Build(),
 	).WithCallbackEndpoint("/profile").Build()
 
-	share, err := yoti.CreateShareURL(&client, &scenario)
-	if err != nil {
-		errorPage(w, req.WithContext(context.WithValue(
-			req.Context(),
-			contextKey("yotiError"),
-			fmt.Sprintf("%s", err),
-		)))
-		return
-	}
-
-	templateVars := map[string]interface{}{
-		"yotiClientSdkID": sdkID,
-		"yotiShareURL":    share.ShareURL,
-	}
-
-	t, err := template.ParseFiles("dynamic-share.html")
-	if err != nil {
-		panic("Error parsing template: " + err.Error())
-	}
-
-	err = t.Execute(w, templateVars)
-	if err != nil {
-		panic("Error applying the parsed template: " + err.Error())
-	}
+	pageFromScenario(w, req, "Source Constraint example", scenario)
 }
+
 func dynamicShare(w http.ResponseWriter, req *http.Request) {
+	scenario := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(
+		(&yoti.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build(),
+	).WithCallbackEndpoint("/profile").Build()
+
+	pageFromScenario(w, req, "Dynamic Share example", scenario)
+}
+
+func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, scenario yoti.DynamicScenario) {
 	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
@@ -116,10 +84,6 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		Key:   key,
 	}
 
-	scenario := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(
-		(&yoti.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build(),
-	).WithCallbackEndpoint("/profile").Build()
-
 	share, err := yoti.CreateShareURL(&client, &scenario)
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
@@ -131,6 +95,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 	}
 
 	templateVars := map[string]interface{}{
+		"pageTitle":       title,
 		"yotiClientSdkID": sdkID,
 		"yotiShareURL":    share.ShareURL,
 	}
