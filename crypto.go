@@ -1,12 +1,10 @@
 package yoti
 
 import (
-	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -86,43 +84,6 @@ func pkcs7Unpad(ciphertext []byte, blocksize int) (result []byte, err error) {
 		}
 	}
 	return ciphertext[:len(ciphertext)-n], nil
-}
-
-func signDigest(digest []byte, key *rsa.PrivateKey) ([]byte, error) {
-	hashed := sha256.Sum256(digest)
-
-	signedDigest, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA256, hashed[:])
-	if err != nil {
-		return []byte{}, err
-	}
-
-	return signedDigest, nil
-}
-
-func getAuthKey(key *rsa.PrivateKey) (string, error) {
-	return getDerEncodedPublicKey(key)
-}
-
-func getDerEncodedPublicKey(key *rsa.PrivateKey) (result string, err error) {
-	var derEncodedBytes []byte
-	if derEncodedBytes, err = x509.MarshalPKIXPublicKey(key.Public()); err != nil {
-		return
-	}
-
-	result = bytesToBase64(derEncodedBytes)
-	return
-}
-
-func generateNonce() (string, error) {
-	b := make([]byte, 16)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
-	}
-
-	uuid := fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-
-	return uuid, nil
 }
 
 func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result string, err error) {

@@ -8,14 +8,6 @@ func bytesToUtf8(bytes []byte) string {
 	return string(bytes)
 }
 
-func bytesToBase64(bytes []byte) string {
-	return base64.StdEncoding.EncodeToString(bytes)
-}
-
-func utfToBytes(utf8 string) []byte {
-	return []byte(utf8)
-}
-
 func base64ToBytes(base64Str string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(base64Str)
 }

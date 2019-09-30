@@ -15,7 +15,7 @@ type SignedTimestamp struct {
 func convertSignedTimestamp(protoSignedTimestamp yotiprotocom.SignedTimestamp) SignedTimestamp {
 	uintTimestamp := protoSignedTimestamp.Timestamp
 	intTimestamp := int64(uintTimestamp)
-	unixTime := time.Unix(intTimestamp/1000000, 0)
+	unixTime := time.Unix(intTimestamp/1e6, (intTimestamp%1e6)*1e3)
 
 	return SignedTimestamp{
 		version:   protoSignedTimestamp.Version,

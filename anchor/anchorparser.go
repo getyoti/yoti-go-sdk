@@ -37,13 +37,14 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 					value string
 					err   error
 				)
-				anchorType, value, err = parseExtension(ext)
+				parsedAnchorType, value, err := parseExtension(ext)
 				if err != nil {
 					log.Printf("error parsing anchor extension, %v", err)
 					continue
-				} else if anchorType == AnchorTypeUnknown {
+				} else if parsedAnchorType == AnchorTypeUnknown {
 					continue
 				}
+				anchorType = parsedAnchorType
 				extensions = append(extensions, value)
 			}
 		}
