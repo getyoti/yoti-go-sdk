@@ -17,6 +17,14 @@ import (
 	"time"
 )
 
+// JSONHeaders is a header prototype for JSON based requests
+func JSONHeaders() map[string][]string {
+	return map[string][]string{
+		"Content-Type": {"application/json"},
+		"Accept":       {"application/json"},
+	}
+}
+
 // SignedRequest is a builder for constructing a http.Request with Yoti signing
 type SignedRequest struct {
 	Key        *rsa.PrivateKey
