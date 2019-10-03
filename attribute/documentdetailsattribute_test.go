@@ -130,6 +130,5 @@ func TestDocumentDetailsShouldErrorForInvalidExpirationDate(t *testing.T) {
 	corrupt := "PASSPORT GBR 1234abc X016-05-01"
 	details := DocumentDetails{}
 	err := details.Parse(corrupt)
-	fmt.Printf("!DEBUG! %v\n", details.ExpirationDate)
 	assert.ErrorContains(t, err, "cannot parse")
 }
