@@ -75,16 +75,9 @@ func (p Profile) DateOfBirth() (*attribute.TimeAttribute, error) {
 	return nil, nil
 }
 
-// TODO Address represents the user's address. Will be nil if not provided by Yoti.
+// Address represents the user's address. Will be nil if not provided by Yoti.
 func (p Profile) Address() *attribute.StringAttribute {
-	address := p.GetStringAttribute(AttrConstAddress)
-	if address == nil {
-		structuredAddress, _ := p.StructuredPostalAddress()
-		if structuredAddress != nil {
-			return structuredAddress.GetStringAttribute("formatted_address")
-		}
-	}
-	return address
+	return p.GetStringAttribute(AttrConstAddress)
 }
 
 // StructuredPostalAddress represents the user's address in a JSON format.

@@ -68,22 +68,3 @@ func (a *JSONAttribute) Sources() []*anchor.Anchor {
 func (a *JSONAttribute) Verifiers() []*anchor.Anchor {
 	return anchor.GetVerifiers(a.anchors)
 }
-
-// GetStringAttribute creates a StringAttribute from part of a JSON attribute
-func (a *JSONAttribute) GetStringAttribute(field string) (attr *StringAttribute) {
-	defer func() {
-		if recover() != nil {
-			attr = nil
-		}
-	}()
-
-	value := a.Value().(map[string]interface{})["formatted_address"]
-	if value != nil {
-		attr = &StringAttribute{
-			Attribute: a.Attribute,
-			value:     value.(string),
-			anchors:   a.anchors,
-		}
-	}
-	return
-}
