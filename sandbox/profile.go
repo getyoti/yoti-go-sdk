@@ -8,6 +8,7 @@ import (
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
 )
 
+// Profile describes a sandbox profile share
 type Profile struct {
 	RememberMeID string      `json:"remember_me_id"`
 	Attributes   []Attribute `json:"profile_attributes"`
@@ -27,7 +28,7 @@ func (profile Profile) WithAttribute(name, value string, anchors []Anchor) Profi
 	return profile
 }
 
-// WithGivennames adds given names to the sandbox profile
+// WithGivenNames adds given names to the sandbox profile
 func (profile Profile) WithGivenNames(value string, anchors []Anchor) Profile {
 	return profile.WithAttribute(yoti.AttrConstGivenNames, value, anchors)
 }
