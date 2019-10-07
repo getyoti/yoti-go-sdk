@@ -6,12 +6,13 @@ import (
 )
 
 func ExampleAttribute_WithAnchor() {
+	time.Local = time.UTC
 	attribute := Attribute{
 		Name:  "AttributeName",
 		Value: "Value",
 	}.WithAnchor(SourceAnchor("", time.Unix(1234567890, 0), ""))
 	fmt.Println(attribute)
-	// Output: {AttributeName Value   [{SOURCE   2009-02-13 23:31:30 +0000 GMT}]}
+	// Output: {AttributeName Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC}]}
 }
 
 func ExampleDerivation_AgeOver() {
