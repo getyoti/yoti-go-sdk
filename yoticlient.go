@@ -16,8 +16,6 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
-	"github.com/golang/protobuf/proto"
 )
 
 const (
@@ -245,27 +243,27 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 		err = ErrSharingFailure
 		errStrings = append(errStrings, err.Error())
 	} else {
-		var attributeList, appAttributeList *yotiprotoattr.AttributeList
-		if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
+		var userAttributeList, applicationAttributeList *yotiprotoattr.AttributeList
+		if userAttributeList, err = parseUserProfile(&parsedResponse.Receipt, key); err != nil {
 			errStrings = append(errStrings, err.Error())
 			return
 		}
-		if appAttributeList, err = decryptCurrentApplicationProfile(&parsedResponse.Receipt, key); err != nil {
+		if applicationAttributeList, err = parseApplicationProfile(&parsedResponse.Receipt, key); err != nil {
 			errStrings = append(errStrings, err.Error())
 			return
 		}
 		id := parsedResponse.Receipt.RememberMeID
 
-		userProfile = addAttributesToUserProfile(id, attributeList) //deprecated: will be removed in v3.0.0
+		userProfile = addAttributesToUserProfile(id, userAttributeList) //deprecated: will be removed in v3.0.0
 
 		profile := Profile{
 			baseProfile{
-				attributeSlice: createAttributeSlice(attributeList),
+				attributeSlice: createAttributeSlice(userAttributeList),
 			},
 		}
 		appProfile := ApplicationProfile{
 			baseProfile{
-				attributeSlice: createAttributeSlice(appAttributeList),
+				attributeSlice: createAttributeSlice(applicationAttributeList),
 			},
 		}
 
@@ -464,71 +462,7 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 
 	return
 }
-func decryptCurrentApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
-	var unwrappedKey []byte
-	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
-		return
-	}
 
-	if receipt.ProfileContent == "" {
-		return
-	}
-
-	var profileContentBytes []byte
-	if profileContentBytes, err = base64ToBytes(receipt.ProfileContent); err != nil {
-		return
-	}
-
-	encryptedData := &yotiprotocom.EncryptedData{}
-	if err = proto.Unmarshal(profileContentBytes, encryptedData); err != nil {
-		return nil, err
-	}
-
-	var decipheredBytes []byte
-	if decipheredBytes, err = decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
-		return nil, err
-	}
-
-	attributeList := &yotiprotoattr.AttributeList{}
-	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
-		return nil, err
-	}
-
-	return attributeList, nil
-}
-
-func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
-	var unwrappedKey []byte
-	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
-		return
-	}
-
-	if receipt.OtherPartyProfileContent == "" {
-		return
-	}
-
-	var otherPartyProfileContentBytes []byte
-	if otherPartyProfileContentBytes, err = base64ToBytes(receipt.OtherPartyProfileContent); err != nil {
-		return
-	}
-
-	encryptedData := &yotiprotocom.EncryptedData{}
-	if err = proto.Unmarshal(otherPartyProfileContentBytes, encryptedData); err != nil {
-		return nil, err
-	}
-
-	var decipheredBytes []byte
-	if decipheredBytes, err = decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
-		return nil, err
-	}
-
-	attributeList := &yotiprotoattr.AttributeList{}
-	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
-		return nil, err
-	}
-
-	return attributeList, nil
-}
 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
