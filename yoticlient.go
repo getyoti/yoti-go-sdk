@@ -463,7 +463,6 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 	return
 }
 
-
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
 func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResult, err error) {
