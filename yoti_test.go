@@ -179,6 +179,8 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 
+	assert.Assert(t, is.Nil(activityDetails.ExtraData().CredentialIssuanceDetails()))
+
 	expectedSelfieValue := "selfie0123456789"
 
 	assert.Assert(t, profile.Selfie() != nil)
@@ -1217,6 +1219,21 @@ func TestMultiValueGenericGetter(t *testing.T) {
 	imageSlice := attribute.CreateImageSlice(multiValueAttributeValue)
 
 	assertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
+}
+
+func TestNewThirdPartyAttribute(t *testing.T) {
+	protoAttribute := createAttributeFromTestFile(t, "testattributethirdparty.txt")
+
+	stringAttribute := attribute.NewString(protoAttribute)
+
+	assert.Equal(t, stringAttribute.Value(), "test-third-party-attribute-0")
+	assert.Equal(t, stringAttribute.GetName(), "com.thirdparty.id")
+
+	assert.Equal(t, stringAttribute.Sources()[0].Value()[0], "THIRD_PARTY")
+	assert.Equal(t, stringAttribute.Sources()[0].SubType(), "orgName")
+
+	assert.Equal(t, stringAttribute.Verifiers()[0].Value()[0], "THIRD_PARTY")
+	assert.Equal(t, stringAttribute.Verifiers()[0].SubType(), "orgName")
 }
 
 func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image {
