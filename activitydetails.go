@@ -1,5 +1,7 @@
 package yoti
 
+import "github.com/getyoti/yoti-go-sdk/v2/share"
+
 // ActivityDetails represents the result of an activity between a user and the application.
 type ActivityDetails struct {
 	UserProfile        Profile
@@ -8,6 +10,7 @@ type ActivityDetails struct {
 	timestamp          string
 	receiptID          string
 	ApplicationProfile ApplicationProfile
+	extraData          *share.ExtraData
 }
 
 // RememberMeID is a unique, stable identifier for a user in the context
@@ -33,4 +36,9 @@ func (a ActivityDetails) Timestamp() string {
 // ReceiptID identifies a completed activity
 func (a ActivityDetails) ReceiptID() string {
 	return a.receiptID
+}
+
+// ExtraData represents extra pieces information on the receipt
+func (a ActivityDetails) ExtraData() *share.ExtraData {
+	return a.extraData
 }

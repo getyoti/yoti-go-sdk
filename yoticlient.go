@@ -15,6 +15,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
+	"github.com/getyoti/yoti-go-sdk/v2/share"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
@@ -289,6 +290,17 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
 		}
 
+		var extraData *share.ExtraData = share.DefaultExtraData()
+
+		if parsedResponse.Receipt.ExtraDataContent != "" {
+			extraData, err = share.NewExtraData(parsedResponse.Receipt.ExtraDataContent)
+
+			if err != nil {
+				log.Printf("Unable to parse ExtraData from the receipt. Error: %q", err)
+				errStrings = append(errStrings, err.Error())
+			}
+		}
+
 		activityDetails = ActivityDetails{
 			UserProfile:        profile,
 			rememberMeID:       id,
@@ -296,6 +308,7 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			timestamp:          parsedResponse.Receipt.Timestamp,
 			receiptID:          parsedResponse.Receipt.ReceiptID,
 			ApplicationProfile: appProfile,
+			extraData:          extraData,
 		}
 	}
 
