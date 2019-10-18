@@ -14,7 +14,9 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/test"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
@@ -179,11 +181,10 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 
-	assert.Assert(t, is.Nil(activityDetails.ExtraData().CredentialIssuanceDetails()))
+	assert.Assert(t, is.Nil(activityDetails.ExtraData().AttributeIssuanceDetails()))
 
 	expectedSelfieValue := "selfie0123456789"
 
-	assert.Assert(t, profile.Selfie() != nil)
 	assert.DeepEqual(t, profile.Selfie().Value().Data, []byte(expectedSelfieValue))
 	assert.Equal(t, profile.MobileNumber().Value(), "phone_number0123456789")
 
@@ -250,6 +251,49 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 		assert.Equal(t, userProfile.ID, rememberMeID)
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 	}
+}
+
+func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
+	var attributeName string = "attributeName"
+	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
+	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
+	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "")
+
+	dataEntries = append(dataEntries, &thirdPartyAttributeDataEntry)
+	protoExtraData := &yotiprotoshare.ExtraData{
+		List: dataEntries,
+	}
+
+	marshalled, protoErr := proto.Marshal(protoExtraData)
+	assert.Assert(t, is.Nil(protoErr))
+	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
+
+	extraDataContent := base64.StdEncoding.EncodeToString(marshalled)
+	_ = extraDataContent
+	key, _ := ioutil.ReadFile("test-key.pem")
+	rememberMeID := "remember_me_id0123456789"
+
+	client := Client{
+		Key: key,
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
+						wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
+						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+				}, nil
+			},
+		},
+	}
+
+	_, activityDetails, err := client.getActivityDetails(encryptedToken)
+
+	assert.Check(t, strings.HasPrefix(err[0], "Issuance Token is invalid"))
+
+	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
+	assert.Assert(t, is.Nil(activityDetails.ExtraData().AttributeIssuanceDetails()))
+	assert.Equal(t, activityDetails.UserProfile.MobileNumber().Value(), "phone_number0123456789")
 }
 
 func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {

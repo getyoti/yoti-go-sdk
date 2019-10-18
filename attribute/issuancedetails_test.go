@@ -1,4 +1,4 @@
-package credential
+package attribute
 
 import (
 	"strings"
@@ -14,19 +14,21 @@ import (
 )
 
 func TestShouldParseThirdPartyAttributeCorrectly(t *testing.T) {
-	var thirdPartyAttributeBytes []byte = test.GetTestFileBytes(t, "testcredentialissuancedetails.txt")
+	var thirdPartyAttributeBytes []byte = test.GetTestFileBytes(t, "testthirdpartyattribute.txt")
 	issuanceDetails, err := ParseIssuanceDetails(thirdPartyAttributeBytes)
 
 	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, issuanceDetails.IssuingAttributes()[0], "com.thirdparty.id")
+	assert.Equal(t, issuanceDetails.Attributes()[0].Name(), "com.thirdparty.id")
 	assert.Equal(t, issuanceDetails.Token(), "someIssuanceToken")
 	assert.Equal(t,
 		issuanceDetails.ExpiryDate().Format("2006-01-02T15:04:05.000Z"),
 		"2019-10-15T22:04:05.123Z")
 }
 
-func TestCredentialIssuanceDetailsShouldReturnNullIfErrorInParsing(t *testing.T) {
+func TestShouldLogWarningIfErrorInParsingExpiryDate(t *testing.T) {
+	var tokenValue string = "41548a175dfaw"
 	thirdPartyAttribute := &yotiprotoshare.ThirdPartyAttribute{
+		IssuanceToken: []byte(tokenValue),
 		IssuingAttributes: &yotiprotoshare.IssuingAttributes{
 			ExpiryDate: "2006-13-02T15:04:05.000Z",
 		},
@@ -37,8 +39,8 @@ func TestCredentialIssuanceDetailsShouldReturnNullIfErrorInParsing(t *testing.T)
 	assert.Assert(t, is.Nil(err))
 
 	result, err := ParseIssuanceDetails(marshalled)
-
-	assert.Assert(t, is.Nil(result))
+	assert.Equal(t, tokenValue, result.Token())
+	assert.Assert(t, is.Nil(result.ExpiryDate()))
 	assert.Equal(t, "parsing time \"2006-13-02T15:04:05.000Z\": month out of range", err.Error())
 }
 
