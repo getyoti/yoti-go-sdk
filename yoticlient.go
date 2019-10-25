@@ -21,14 +21,10 @@ import (
 )
 
 const (
-	apiDefaultURL        = "https://api.yoti.com/api/v1"
-	sdkIdentifier        = "Go"
-	sdkVersionIdentifier = "2.6.0"
+	apiDefaultURL = "https://api.yoti.com/api/v1"
 
-	sdkIdentifierHeader        = "X-Yoti-SDK"
-	sdkVersionIdentifierHeader = sdkIdentifierHeader + "-Version"
-	attributeAgeOver           = "age_over:"
-	attributeAgeUnder          = "age_under:"
+	attributeAgeOver  = "age_over:"
+	attributeAgeUnder = "age_under:"
 
 	defaultUnknownErrorMessageConst = "Unknown HTTP Error: %[1]d: %[2]s"
 )
@@ -172,14 +168,6 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 	)
 }
 
-func (client *Client) getDefaultHeaders() (headers map[string][]string) {
-	headers = map[string][]string{
-		sdkIdentifierHeader:        {sdkIdentifier},
-		sdkVersionIdentifierHeader: {sdkIdentifier + "-" + sdkVersionIdentifier},
-	}
-	return
-}
-
 func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
@@ -191,11 +179,8 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		HTTPMethod: httpMethod,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   endpoint,
-		Headers: requests.MergeHeaders(
-			client.getDefaultHeaders(),
-			requests.AuthKeyHeader(&key.PublicKey),
-		),
-		Body: payload,
+		Headers:    requests.AuthKeyHeader(&key.PublicKey),
+		Body:       payload,
 	}.Request()
 
 	if err != nil {
