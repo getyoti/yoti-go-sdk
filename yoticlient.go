@@ -124,6 +124,7 @@ func (client *Client) getActivityDetails(token string) (userProfile UserProfile,
 		httpMethod,
 		endpoint,
 		nil,
+		true,
 		map[int]string{404: "Profile Not Found%[2]s"},
 		DefaultHTTPErrorMessages,
 	)
@@ -168,10 +169,15 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 	)
 }
 
-func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
+func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, includeKey bool, httpErrorMessages ...map[int]string) (responseData string, err error) {
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
 		return
+	}
+
+	var headers map[string][]string
+	if includeKey {
+		headers = requests.AuthKeyHeader(&key.PublicKey)
 	}
 
 	request, err := requests.SignedRequest{
@@ -179,16 +185,12 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		HTTPMethod: httpMethod,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   endpoint,
-		Headers:    requests.AuthKeyHeader(&key.PublicKey),
+		Headers:    headers,
 		Body:       payload,
 	}.Request()
 
 	if err != nil {
 		return
-	}
-	headers := make(map[string]string)
-	for key, list := range request.Header {
-		headers[key] = list[0]
 	}
 
 	var response *http.Response
@@ -530,7 +532,7 @@ func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResul
 	amlErrorMessages := make(map[int]string)
 	amlErrorMessages[-1] = "AML Check was unsuccessful, status code: '%[1]d', content '%[2]s'"
 
-	response, err := client.makeRequest(httpMethod, endpoint, content, amlErrorMessages)
+	response, err := client.makeRequest(httpMethod, endpoint, content, false, amlErrorMessages)
 	if err != nil {
 		return
 	}
