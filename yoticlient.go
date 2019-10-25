@@ -191,8 +191,11 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		HTTPMethod: httpMethod,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   endpoint,
-		Headers:    client.getDefaultHeaders(),
-		Body:       payload,
+		Headers: requests.MergeHeaders(
+			client.getDefaultHeaders(),
+			requests.AuthKeyHeader(&key.PublicKey),
+		),
+		Body: payload,
 	}.Request()
 
 	if err != nil {
