@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
 )
 
 // MergeHeaders merges two or more header prototypes together from left to right
@@ -197,6 +199,9 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 		return
 	}
 	request.Header.Add("X-Yoti-Auth-Digest", signedDigest)
+	request.Header.Add("X-Yoti-SDK", consts.SDKIdentifier)
+	request.Header.Add("X-Yoti-SDK-Verson", consts.SDKVersionIdentifier)
+
 	for key, values := range msg.Headers {
 		for _, value := range values {
 			request.Header.Add(key, value)
