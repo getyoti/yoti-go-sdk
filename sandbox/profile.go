@@ -112,7 +112,7 @@ func (profile Profile) WithDocumentDetails(value string, anchors []Anchor) Profi
 // WithoutAttributes initialises a sandbox profile with the minimum to get
 // a response from the sandbox server
 func (profile Profile) WithoutAttributes() Profile {
-	profile.Attributes = []Attribute{Attribute{
+	profile.Attributes = []Attribute{{
 		Name:    "unused",
 		Value:   "unused",
 		Anchors: make([]Anchor, 0),

@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 )
 
-const ()
-
 type constraintInterface interface {
 	MarshalJSON() ([]byte, error)
 	isConstraint() bool // This function is not used but makes inheritance explicit
