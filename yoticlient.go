@@ -41,7 +41,7 @@ var (
 // ClientInterface defines the interface required to Mock the YotiClient for
 // testing
 type clientInterface interface {
-	makeRequest(string, string, []byte, ...map[int]string) (string, error)
+	makeRequest(string, string, []byte, bool, ...map[int]string) (string, error)
 	GetSdkID() string
 }
 
