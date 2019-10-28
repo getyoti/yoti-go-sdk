@@ -5,6 +5,7 @@ repos:
       - id: go-build
       - id: go-fmt
         exclude: ".pb.go"
+        args: ["-s"]
       - id: go-vet
         exclude: "examples/"
 
