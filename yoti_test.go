@@ -185,6 +185,25 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	assert.DeepEqual(t, profile.Selfie().Value().Data, []byte(expectedSelfieValue))
 	assert.Equal(t, profile.MobileNumber().Value(), "phone_number0123456789")
 
+	assert.Equal(
+		t,
+		profile.GetAttribute("phone_number").Value(),
+		"phone_number0123456789",
+	)
+
+	assert.Check(t,
+		profile.GetImageAttribute("doesnt_exist") == nil,
+	)
+
+	assert.Check(t, profile.GivenNames() == nil)
+	assert.Check(t, profile.FamilyName() == nil)
+	assert.Check(t, profile.FullName() == nil)
+	assert.Check(t, profile.EmailAddress() == nil)
+	images, _ := profile.DocumentImages()
+	assert.Check(t, images == nil)
+	documentDetails, _ := profile.DocumentDetails()
+	assert.Check(t, documentDetails == nil)
+
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	actualDoB, err := profile.DateOfBirth()
@@ -221,6 +240,8 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	rememberMeID := "remember_me_id0123456789"
+	timestamp := "123456789"
+	receiptID := "receipt_id123"
 
 	var otherPartyProfileContents = []string{
 		`"other_party_profile_content": null,`,
@@ -236,7 +257,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 					return &http.Response{
 						StatusCode: 200,
 						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"` + timestamp + `", "receipt_id":"` + receiptID + `"}}`)),
 					}, nil
 				},
 			},
@@ -247,6 +268,8 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 		assert.Assert(t, is.Nil(err))
 		assert.Equal(t, userProfile.ID, rememberMeID)
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
+		assert.Equal(t, activityDetails.Timestamp(), timestamp)
+		assert.Equal(t, activityDetails.ReceiptID(), receiptID)
 	}
 }
 
