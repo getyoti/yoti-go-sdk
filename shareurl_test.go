@@ -6,7 +6,7 @@ import (
 
 type yotiClientMock struct {
 	mockGetSdkID    func() string
-	mockMakeRequest func(string, string, []byte, ...map[int]string) (string, error)
+	mockMakeRequest func(string, string, []byte, bool, ...map[int]string) (string, error)
 }
 
 func (mock *yotiClientMock) GetSdkID() string {
@@ -16,9 +16,9 @@ func (mock *yotiClientMock) GetSdkID() string {
 	panic("Mock undefined")
 }
 
-func (mock *yotiClientMock) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (string, error) {
+func (mock *yotiClientMock) makeRequest(httpMethod, endpoint string, payload []byte, includePubKey bool, httpErrorMessages ...map[int]string) (string, error) {
 	if mock.mockMakeRequest != nil {
-		return mock.mockMakeRequest(httpMethod, endpoint, payload, httpErrorMessages...)
+		return mock.mockMakeRequest(httpMethod, endpoint, payload, includePubKey, httpErrorMessages...)
 	}
 	panic("Mock undefined")
 }
@@ -26,7 +26,7 @@ func (mock *yotiClientMock) makeRequest(httpMethod, endpoint string, payload []b
 func ExampleCreateShareURL() {
 	mockYoti := yotiClientMock{
 		mockGetSdkID: func() string { return "0000-0000-0000-0000" },
-		mockMakeRequest: func(string, string, []byte, ...map[int]string) (string, error) {
+		mockMakeRequest: func(string, string, []byte, bool, ...map[int]string) (string, error) {
 			return "{\"qrcode\":\"https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC\",\"ref_id\":\"0\"}", nil
 		},
 	}
