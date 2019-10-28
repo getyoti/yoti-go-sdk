@@ -122,13 +122,3 @@ func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) 
 	}
 	return nil, nil
 }
-
-// GetAttribute retrieve an attribute by name on the Yoti profile. Will return nil if attribute is not present.
-func (p Profile) GetAttribute(attributeName string) *attribute.GenericAttribute {
-	for _, a := range p.attributeSlice {
-		if a.Name == attributeName {
-			return attribute.NewGeneric(a)
-		}
-	}
-	return nil
-}
