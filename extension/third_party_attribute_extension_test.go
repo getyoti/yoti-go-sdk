@@ -10,7 +10,7 @@ import (
 	"gotest.tools/assert"
 )
 
-func CreateDefinitionByName(name string) attribute.AttributeDefinition {
+func createDefinitionByName(name string) attribute.AttributeDefinition {
 	return attribute.NewAttributeDefinition(name)
 }
 
@@ -32,18 +32,18 @@ func ExampleThirdPartyAttributeExtension() {
 	// Output: {"type":"THIRD_PARTY_ATTRIBUTE","content":{"expiry_date":"2019-10-30T12:10:09.458Z","definitions":[{"name":"some_value"}]}}
 }
 
-func WithDefinitionShouldAddToList(t *testing.T) {
+func TestWithDefinitionShouldAddToList(t *testing.T) {
 	now, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
 	if err != nil {
 		log.Printf("Error parsing date, %v", err)
 	}
 
 	definitionList := []attribute.AttributeDefinition{
-		CreateDefinitionByName("some_attribute"),
-		CreateDefinitionByName("some_other_attribute"),
+		createDefinitionByName("some_attribute"),
+		createDefinitionByName("some_other_attribute"),
 	}
 
-	someOtherDefinition := CreateDefinitionByName("wanted_definition")
+	someOtherDefinition := createDefinitionByName("wanted_definition")
 
 	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
 		WithExpiryDate(&now).
@@ -57,18 +57,18 @@ func WithDefinitionShouldAddToList(t *testing.T) {
 	assert.Equal(t, extension.definitions[2].Name(), "wanted_definition")
 }
 
-func WithDefinitionsShouldOverwriteList(t *testing.T) {
+func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 	now, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
 	if err != nil {
 		log.Printf("Error parsing date, %v", err)
 	}
 
 	definitionList := []attribute.AttributeDefinition{
-		CreateDefinitionByName("some_attribute"),
-		CreateDefinitionByName("some_other_attribute"),
+		createDefinitionByName("some_attribute"),
+		createDefinitionByName("some_other_attribute"),
 	}
 
-	someOtherDefinition := CreateDefinitionByName("wanted_definition")
+	someOtherDefinition := createDefinitionByName("wanted_definition")
 
 	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
 		WithExpiryDate(&now).
