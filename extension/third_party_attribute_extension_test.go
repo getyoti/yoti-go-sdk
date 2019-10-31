@@ -17,13 +17,13 @@ func createDefinitionByName(name string) attribute.AttributeDefinition {
 func ExampleThirdPartyAttributeExtension() {
 	attributeDefinition := attribute.NewAttributeDefinition("some_value")
 
-	now, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
+	datetime, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
 	if err != nil {
 		log.Printf("Error parsing date, %v", err)
 	}
 
 	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
-		WithExpiryDate(&now).
+		WithExpiryDate(&datetime).
 		WithDefinition(attributeDefinition).
 		Build()
 
@@ -33,7 +33,7 @@ func ExampleThirdPartyAttributeExtension() {
 }
 
 func TestWithDefinitionShouldAddToList(t *testing.T) {
-	now, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
+	datetime, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
 	if err != nil {
 		log.Printf("Error parsing date, %v", err)
 	}
@@ -46,7 +46,7 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
 	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
-		WithExpiryDate(&now).
+		WithExpiryDate(&datetime).
 		WithDefinitions(definitionList).
 		WithDefinition(someOtherDefinition).
 		Build()
@@ -58,7 +58,7 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 }
 
 func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
-	now, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
+	datetime, err := time.Parse("2006-01-02T15:04:05.999Z", "2019-10-30T12:10:09.458Z")
 	if err != nil {
 		log.Printf("Error parsing date, %v", err)
 	}
@@ -71,7 +71,7 @@ func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
 	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
-		WithExpiryDate(&now).
+		WithExpiryDate(&datetime).
 		WithDefinition(someOtherDefinition).
 		WithDefinitions(definitionList).
 		Build()
