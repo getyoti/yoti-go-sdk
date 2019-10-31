@@ -52,9 +52,6 @@ func (builder *ThirdPartyAttributeExtensionBuilder) Build() ThirdPartyAttributeE
 
 // MarshalJSON returns the JSON encoding
 func (extension ThirdPartyAttributeExtension) MarshalJSON() ([]byte, error) {
-	type attributeDefinition struct {
-		Name string `json:"name"`
-	}
 	type thirdPartyAttributeExtension struct {
 		ExpiryDate  string                          `json:"expiry_date"`
 		Definitions []attribute.AttributeDefinition `json:"definitions"`
