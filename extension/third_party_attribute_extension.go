@@ -27,7 +27,7 @@ func (builder *ThirdPartyAttributeExtensionBuilder) New() *ThirdPartyAttributeEx
 	return builder
 }
 
-// WithExpiryDate sets the expiry date of the extension
+// WithExpiryDate sets the expiry date of the extension as a UTC timestamp
 func (builder *ThirdPartyAttributeExtensionBuilder) WithExpiryDate(expiryDate *time.Time) *ThirdPartyAttributeExtensionBuilder {
 	builder.extension.expiryDate = expiryDate
 	return builder
