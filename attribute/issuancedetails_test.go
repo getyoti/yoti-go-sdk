@@ -1,6 +1,7 @@
 package attribute
 
 import (
+	"encoding/base64"
 	"strings"
 	"testing"
 
@@ -19,7 +20,7 @@ func TestShouldParseThirdPartyAttributeCorrectly(t *testing.T) {
 
 	assert.Assert(t, is.Nil(err))
 	assert.Equal(t, issuanceDetails.Attributes()[0].Name(), "com.thirdparty.id")
-	assert.Equal(t, issuanceDetails.Token(), "someIssuanceToken")
+	assert.Equal(t, issuanceDetails.Token(), "c29tZUlzc3VhbmNlVG9rZW4=")
 	assert.Equal(t,
 		issuanceDetails.ExpiryDate().Format("2006-01-02T15:04:05.000Z"),
 		"2019-10-15T22:04:05.123Z")
@@ -38,8 +39,11 @@ func TestShouldLogWarningIfErrorInParsingExpiryDate(t *testing.T) {
 
 	assert.Assert(t, is.Nil(err))
 
+	var tokenBytes []byte = []byte(tokenValue)
+	var expectedBase64Token string = base64.StdEncoding.EncodeToString(tokenBytes)
+
 	result, err := ParseIssuanceDetails(marshalled)
-	assert.Equal(t, tokenValue, result.Token())
+	assert.Equal(t, expectedBase64Token, result.Token())
 	assert.Assert(t, is.Nil(result.ExpiryDate()))
 	assert.Equal(t, "parsing time \"2006-13-02T15:04:05.000Z\": month out of range", err.Error())
 }

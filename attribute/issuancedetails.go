@@ -1,6 +1,7 @@
 package attribute
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -46,14 +47,16 @@ func ParseIssuanceDetails(thirdPartyAttributeBytes []byte) (*IssuanceDetails, er
 
 	expiryDate, dateParseErr := parseExpiryDate(issuingAttributesProto.ExpiryDate)
 
-	var issuanceToken string = string(thirdPartyAttributeStruct.GetIssuanceToken())
+	var issuanceTokenBytes []byte = thirdPartyAttributeStruct.GetIssuanceToken()
 
-	if issuanceToken == "" {
+	if len(issuanceTokenBytes) == 0 {
 		return nil, errors.New("Issuance Token is invalid")
 	}
 
+	base64EncodedToken := base64.StdEncoding.EncodeToString(issuanceTokenBytes)
+
 	return &IssuanceDetails{
-		token:      issuanceToken,
+		token:      base64EncodedToken,
 		expiryDate: expiryDate,
 		attributes: issuingAttributeDefinitions,
 	}, dateParseErr
