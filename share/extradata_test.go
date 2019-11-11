@@ -26,7 +26,9 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
-	thirdPartyAttributeDataEntry1 := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{"attributeName1"}, "tokenValue1")
+	var tokenValue1 string = "tokenValue1"
+
+	thirdPartyAttributeDataEntry1 := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{"attributeName1"}, tokenValue1)
 	thirdPartyAttributeDataEntry2 := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{"attributeName2"}, "tokenValue2")
 
 	dataEntries = append(dataEntries, &thirdPartyAttributeDataEntry1, &thirdPartyAttributeDataEntry2)
@@ -39,7 +41,10 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 
 	result := parsedExtraData.AttributeIssuanceDetails()
 
-	assert.Equal(t, result.Token(), "tokenValue1")
+	var tokenBytes []byte = []byte(tokenValue1)
+	var base64EncodedToken string = base64.StdEncoding.EncodeToString(tokenBytes)
+
+	assert.Equal(t, result.Token(), base64EncodedToken)
 	assert.Equal(t, result.Attributes()[0].Name(), "attributeName1")
 	assert.Equal(t,
 		result.ExpiryDate().Format("2006-01-02T15:04:05.000Z"),
@@ -54,7 +59,7 @@ func TestShouldParseMultipleIssuingAttributes(t *testing.T) {
 
 	result := extraData.AttributeIssuanceDetails()
 
-	assert.Equal(t, result.Token(), "someIssuanceToken")
+	assert.Equal(t, result.Token(), "c29tZUlzc3VhbmNlVG9rZW4=")
 	assert.Equal(t,
 		result.ExpiryDate().Format("2006-01-02T15:04:05.000Z"),
 		time.Date(2019, time.October, 15, 22, 04, 05, 123000000, time.UTC).Format("2006-01-02T15:04:05.000Z"))
@@ -84,9 +89,9 @@ func TestShouldHandleNoExpiryDate(t *testing.T) {
 }
 
 func TestShouldHandleNoIssuingAttributes(t *testing.T) {
-	var tokenValue string = "token"
+	var tokenValueBytes []byte = []byte("token")
 	thirdPartyAttribute := &yotiprotoshare.ThirdPartyAttribute{
-		IssuanceToken:     []byte(tokenValue),
+		IssuanceToken:     tokenValueBytes,
 		IssuingAttributes: &yotiprotoshare.IssuingAttributes{},
 	}
 
@@ -96,14 +101,14 @@ func TestShouldHandleNoIssuingAttributes(t *testing.T) {
 	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
 	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, tokenValue, result.Token())
+	assert.Equal(t, base64.StdEncoding.EncodeToString(tokenValueBytes), result.Token())
 }
 
 func TestShouldHandleNoIssuingAttributeDefinitions(t *testing.T) {
-	var tokenValue string = "token"
+	var tokenValueBytes []byte = []byte("token")
 
 	thirdPartyAttribute := &yotiprotoshare.ThirdPartyAttribute{
-		IssuanceToken: []byte(tokenValue),
+		IssuanceToken: tokenValueBytes,
 		IssuingAttributes: &yotiprotoshare.IssuingAttributes{
 			ExpiryDate:  time.Now().UTC().AddDate(0, 0, 1).Format("2006-01-02T15:04:05.000Z"),
 			Definitions: []*yotiprotoshare.Definition{},
@@ -116,7 +121,7 @@ func TestShouldHandleNoIssuingAttributeDefinitions(t *testing.T) {
 	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
 	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, tokenValue, result.Token())
+	assert.Equal(t, base64.StdEncoding.EncodeToString(tokenValueBytes), result.Token())
 }
 
 func processThirdPartyAttribute(t *testing.T, marshalledThirdPartyAttribute []byte) (*attribute.IssuanceDetails, error) {
