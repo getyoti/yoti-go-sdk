@@ -46,6 +46,36 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
+func CreateExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotiprotoshare.ExtraData) string {
+	outBytes, err := proto.Marshal(protoExtraData)
+	assert.NilError(t, err)
+	outBytes = []byte(base64.StdEncoding.EncodeToString(outBytes))
+
+	keyBytes, _ := pem.Decode(pemBytes)
+	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
+	assert.NilError(t, err)
+	unwrappedKey, err := unwrapKey(wrappedReceiptKey, key)
+	assert.NilError(t, err)
+	cipherBlock, err := aes.NewCipher(unwrappedKey)
+	assert.NilError(t, err)
+
+	padLength := cipherBlock.BlockSize() - len(outBytes)%cipherBlock.BlockSize()
+	outBytes = append(outBytes, bytes.Repeat([]byte{byte(padLength)}, padLength)...)
+
+	iv := make([]byte, cipherBlock.BlockSize())
+	encrypter := cipher.NewCBCEncrypter(cipherBlock, iv)
+	encrypter.CryptBlocks(outBytes, outBytes)
+
+	outProto := &yotiprotocom.EncryptedData{
+		CipherText: outBytes,
+		Iv:         iv,
+	}
+	outBytes, err = proto.Marshal(outProto)
+	assert.NilError(t, err)
+
+	return base64.StdEncoding.EncodeToString(outBytes)
+}
+
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
@@ -259,6 +289,48 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	}
 }
 
+func TestShouldParseAndDecryptExtraDataContent(t *testing.T) {
+	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
+	rememberMeID := "remember_me_id0123456789"
+
+	pemBytes, err := ioutil.ReadFile("test-key.pem")
+	assert.NilError(t, err)
+
+	attributeName := "attributeName"
+	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
+	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
+	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "tokenValue")
+
+	dataEntries = append(dataEntries, &thirdPartyAttributeDataEntry)
+	protoExtraData := &yotiprotoshare.ExtraData{
+		List: dataEntries,
+	}
+
+	extraDataContent := CreateExtraDataContent(t, pemBytes, protoExtraData)
+
+	client := Client{
+		Key: pemBytes,
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
+						wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
+						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+				}, nil
+			},
+		},
+	}
+
+	_, activityDetails, errList := client.getActivityDetails(encryptedToken)
+
+	assert.Equal(t, len(errList), 0)
+
+	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
+	assert.Assert(t, activityDetails.ExtraData().AttributeIssuanceDetails() != nil)
+	assert.Equal(t, activityDetails.UserProfile.MobileNumber().Value(), "phone_number0123456789")
+}
+
 func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 	var attributeName = "attributeName"
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
@@ -270,36 +342,11 @@ func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 		List: dataEntries,
 	}
 
-	marshalled, protoErr := proto.Marshal(protoExtraData)
-	marshalled = []byte(base64.StdEncoding.EncodeToString(marshalled))
-
 	pemBytes, err := ioutil.ReadFile("test-key.pem")
 	assert.NilError(t, err)
-	keyBytes, _ := pem.Decode(pemBytes)
-	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
-	assert.NilError(t, err)
-	unwrappedKey, err := unwrapKey(wrappedReceiptKey, key) // TODO
-	assert.NilError(t, err)
-	cipherBlock, err := aes.NewCipher(unwrappedKey)
-	assert.NilError(t, err)
 
-	padLength := cipherBlock.BlockSize() - len(marshalled)%cipherBlock.BlockSize()
-	marshalled = append(marshalled, bytes.Repeat([]byte{byte(padLength)}, padLength)...)
+	extraDataContent := CreateExtraDataContent(t, pemBytes, protoExtraData)
 
-	encryptedExtraDataBytes := make([]byte, len(marshalled))
-	iv := make([]byte, cipherBlock.BlockSize())
-	encrypter := cipher.NewCBCEncrypter(cipherBlock, iv)
-	encrypter.CryptBlocks(encryptedExtraDataBytes, marshalled)
-
-	extraDataContentProto := &yotiprotocom.EncryptedData{
-		CipherText: encryptedExtraDataBytes,
-		Iv:         iv,
-	}
-	extraDataContentBytes, err := proto.Marshal(extraDataContentProto)
-	assert.NilError(t, err)
-	extraDataContent := base64.StdEncoding.EncodeToString(extraDataContentBytes)
-
-	assert.Assert(t, is.Nil(protoErr))
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 
 	rememberMeID := "remember_me_id0123456789"
