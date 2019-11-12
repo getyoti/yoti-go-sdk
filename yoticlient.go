@@ -290,15 +290,17 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
 		}
 
-		var extraData *share.ExtraData = share.DefaultExtraData()
+		decryptedExtraData, err := parseExtraData(&parsedResponse.Receipt, key)
+		if err != nil {
+			log.Printf("Unable to decrypt ExtraData from the receipt. Error: %q", err)
+			errStrings = append(errStrings, err.Error())
+		}
 
-		if parsedResponse.Receipt.ExtraDataContent != "" {
-			extraData, err = share.NewExtraData(parsedResponse.Receipt.ExtraDataContent)
+		extraData, err := share.NewExtraData(decryptedExtraData)
 
-			if err != nil {
-				log.Printf("Unable to parse ExtraData from the receipt. Error: %q", err)
-				errStrings = append(errStrings, err.Error())
-			}
+		if err != nil {
+			log.Printf("Unable to parse ExtraData from the receipt. Error: %q", err)
+			errStrings = append(errStrings, err.Error())
 		}
 
 		activityDetails = ActivityDetails{

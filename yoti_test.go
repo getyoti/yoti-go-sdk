@@ -1,7 +1,12 @@
 package yoti
 
 import (
+	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -16,6 +21,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/test"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/assert"
@@ -254,7 +260,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 }
 
 func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
-	var attributeName string = "attributeName"
+	var attributeName = "attributeName"
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
 	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "")
@@ -265,16 +271,41 @@ func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 	}
 
 	marshalled, protoErr := proto.Marshal(protoExtraData)
+	marshalled = []byte(base64.StdEncoding.EncodeToString(marshalled))
+
+	pemBytes, err := ioutil.ReadFile("test-key.pem")
+	assert.NilError(t, err)
+	keyBytes, _ := pem.Decode(pemBytes)
+	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
+	assert.NilError(t, err)
+	unwrappedKey, err := unwrapKey(wrappedReceiptKey, key) // TODO
+	assert.NilError(t, err)
+	cipherBlock, err := aes.NewCipher(unwrappedKey)
+	assert.NilError(t, err)
+
+	padLength := cipherBlock.BlockSize() - len(marshalled)%cipherBlock.BlockSize()
+	marshalled = append(marshalled, bytes.Repeat([]byte{byte(padLength)}, padLength)...)
+
+	encryptedExtraDataBytes := make([]byte, len(marshalled))
+	iv := make([]byte, cipherBlock.BlockSize())
+	encrypter := cipher.NewCBCEncrypter(cipherBlock, iv)
+	encrypter.CryptBlocks(encryptedExtraDataBytes, marshalled)
+
+	extraDataContentProto := &yotiprotocom.EncryptedData{
+		CipherText: encryptedExtraDataBytes,
+		Iv:         iv,
+	}
+	extraDataContentBytes, err := proto.Marshal(extraDataContentProto)
+	assert.NilError(t, err)
+	extraDataContent := base64.StdEncoding.EncodeToString(extraDataContentBytes)
+
 	assert.Assert(t, is.Nil(protoErr))
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 
-	extraDataContent := base64.StdEncoding.EncodeToString(marshalled)
-	_ = extraDataContent
-	key, _ := ioutil.ReadFile("test-key.pem")
 	rememberMeID := "remember_me_id0123456789"
 
 	client := Client{
-		Key: key,
+		Key: pemBytes,
 		httpClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -287,9 +318,9 @@ func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 		},
 	}
 
-	_, activityDetails, err := client.getActivityDetails(encryptedToken)
+	_, activityDetails, errList := client.getActivityDetails(encryptedToken)
 
-	assert.Check(t, strings.HasPrefix(err[0], "Issuance Token is invalid"))
+	assert.Check(t, strings.HasPrefix(errList[0], "Issuance Token is invalid"))
 
 	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
 	assert.Assert(t, is.Nil(activityDetails.ExtraData().AttributeIssuanceDetails()))
