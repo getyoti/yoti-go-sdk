@@ -1,8 +1,6 @@
 package share
 
 import (
-	"encoding/base64"
-
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
@@ -22,14 +20,9 @@ func DefaultExtraData() (extraData *ExtraData) {
 }
 
 // NewExtraData takes a base64 encoded string and parses it into ExtraData
-func NewExtraData(extraDataEncodedString string) (*ExtraData, error) {
-	var extraDataBytes []byte
+func NewExtraData(extraDataBytes []byte) (*ExtraData, error) {
 	var err error
 	var extraData *ExtraData = DefaultExtraData()
-
-	if extraDataBytes, err = base64.StdEncoding.DecodeString(extraDataEncodedString); err != nil {
-		return extraData, err
-	}
 
 	extraDataProto := &yotiprotoshare.ExtraData{}
 	if err = proto.Unmarshal(extraDataBytes, extraDataProto); err != nil {
