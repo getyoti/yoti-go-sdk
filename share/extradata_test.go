@@ -26,7 +26,7 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
-	var tokenValue1 string = "tokenValue1"
+	var tokenValue1 = "tokenValue1"
 
 	thirdPartyAttributeDataEntry1 := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{"attributeName1"}, tokenValue1)
 	thirdPartyAttributeDataEntry2 := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{"attributeName2"}, "tokenValue2")
@@ -41,8 +41,8 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 
 	result := parsedExtraData.AttributeIssuanceDetails()
 
-	var tokenBytes []byte = []byte(tokenValue1)
-	var base64EncodedToken string = base64.StdEncoding.EncodeToString(tokenBytes)
+	var tokenBytes = []byte(tokenValue1)
+	var base64EncodedToken = base64.StdEncoding.EncodeToString(tokenBytes)
 
 	assert.Equal(t, result.Token(), base64EncodedToken)
 	assert.Equal(t, result.Attributes()[0].Name(), "attributeName1")
@@ -53,8 +53,10 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 
 func TestShouldParseMultipleIssuingAttributes(t *testing.T) {
 	var base64ExtraData string = test.GetTestFileAsString(t, "testextradata.txt")
+	rawExtraData, err := base64.StdEncoding.DecodeString(base64ExtraData)
+	assert.NilError(t, err)
 
-	extraData, err := NewExtraData(base64ExtraData)
+	extraData, err := NewExtraData(rawExtraData)
 	assert.Assert(t, is.Nil(err))
 
 	result := extraData.AttributeIssuanceDetails()
@@ -89,7 +91,7 @@ func TestShouldHandleNoExpiryDate(t *testing.T) {
 }
 
 func TestShouldHandleNoIssuingAttributes(t *testing.T) {
-	var tokenValueBytes []byte = []byte("token")
+	var tokenValueBytes = []byte("token")
 	thirdPartyAttribute := &yotiprotoshare.ThirdPartyAttribute{
 		IssuanceToken:     tokenValueBytes,
 		IssuingAttributes: &yotiprotoshare.IssuingAttributes{},
@@ -105,7 +107,7 @@ func TestShouldHandleNoIssuingAttributes(t *testing.T) {
 }
 
 func TestShouldHandleNoIssuingAttributeDefinitions(t *testing.T) {
-	var tokenValueBytes []byte = []byte("token")
+	var tokenValueBytes = []byte("token")
 
 	thirdPartyAttribute := &yotiprotoshare.ThirdPartyAttribute{
 		IssuanceToken: tokenValueBytes,
@@ -146,6 +148,5 @@ func parseProtoExtraData(t *testing.T, protoExtraData *yotiprotoshare.ExtraData)
 	extraDataMarshalled, err := proto.Marshal(protoExtraData)
 	assert.Assert(t, is.Nil(err))
 
-	extraDataBase64 := base64.StdEncoding.EncodeToString(extraDataMarshalled)
-	return NewExtraData(extraDataBase64)
+	return NewExtraData(extraDataMarshalled)
 }

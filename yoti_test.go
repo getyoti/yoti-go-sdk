@@ -49,7 +49,6 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 func CreateExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotiprotoshare.ExtraData) string {
 	outBytes, err := proto.Marshal(protoExtraData)
 	assert.NilError(t, err)
-	outBytes = []byte(base64.StdEncoding.EncodeToString(outBytes))
 
 	keyBytes, _ := pem.Decode(pemBytes)
 	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
