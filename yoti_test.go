@@ -1343,6 +1343,14 @@ func createAppProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Applicat
 	}
 }
 
+func createProfileWithMultipleAttributes(list ...*yotiprotoattr.Attribute) Profile {
+	return Profile{
+		baseProfile{
+			attributeSlice: list,
+		},
+	}
+}
+
 func readTestFile(t *testing.T, filename string) (result []byte) {
 	b, err := ioutil.ReadFile(filename)
 	assert.Assert(t, is.Nil(err))

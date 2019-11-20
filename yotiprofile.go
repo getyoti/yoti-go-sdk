@@ -1,6 +1,8 @@
 package yoti
 
 import (
+	"strings"
+
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 )
 
@@ -121,4 +123,22 @@ func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) 
 		}
 	}
 	return nil, nil
+}
+
+// AgeVerifications returns a list of shared age verifications
+func (p Profile) AgeVerifications() (out []AgeVerifications, err error) {
+	ageUnderString := strings.Replace(AttrConstAgeUnder, "%d", "", -1)
+	ageOverString := strings.Replace(AttrConstAgeOver, "%d", "", -1)
+
+	for _, a := range p.attributeSlice {
+		if strings.Contains(a.Name, ageUnderString) ||
+			strings.Contains(a.Name, ageOverString) {
+			verification, err := AgeVerifications{}.New(a)
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, verification)
+		}
+	}
+	return out, err
 }
