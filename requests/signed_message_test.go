@@ -11,11 +11,15 @@ import (
 )
 
 func ExampleMergeHeaders() {
-	left := map[string][]string{"A": []string{"Value"}}
-	right := map[string][]string{"B": []string{"Value"}}
+	left := map[string][]string{"A": {"Value Of A"}}
+	right := map[string][]string{"B": {"Value Of B"}}
 
-	fmt.Println(MergeHeaders(left, right))
-	// Output: map[A:[Value] B:[Value]]
+	merged := MergeHeaders(left, right)
+	fmt.Println(merged["A"])
+	fmt.Println(merged["B"])
+	// Output:
+	// [Value Of A]
+	// [Value Of B]
 }
 
 func TestRequestShouldBuildForValid(t *testing.T) {
