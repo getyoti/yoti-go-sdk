@@ -2,6 +2,8 @@ package yoti
 
 import (
 	"fmt"
+	"gotest.tools/assert"
+	"testing"
 )
 
 func ExampleWantedAttributeBuilder_WithName() {
@@ -19,17 +21,25 @@ func ExampleWantedAttributeBuilder_WithDerivation() {
 
 func ExampleWantedAttributeBuilder_WithConstraint() {
 	constraint := (&SourceConstraintBuilder{}).New().Build()
-	attribute := (&WantedAttributeBuilder{}).New().WithConstraint(&constraint).Build()
+	attribute := (&WantedAttributeBuilder{}).New().WithName("attr").WithConstraint(&constraint).Build()
 
 	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
-	// Output: {"constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
+	// Output: {"name":"attr","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
 }
 
 func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
-	attribute := (&WantedAttributeBuilder{}).New().WithAcceptSelfAsserted(true).Build()
+	attribute := (&WantedAttributeBuilder{}).New().WithName("attr").WithAcceptSelfAsserted(true).Build()
 
 	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
-	// Output: {"accept_self_asserted":true}
+	// Output: {"name":"attr","accept_self_asserted":true}
+}
+
+func TestWantedAttributeBuilderShouldRejectEmptyName(t *testing.T) {
+	attribute := (&WantedAttributeBuilder{}).New().Build()
+	json, err := attribute.MarshalJSON()
+	assert.Check(t, err != nil)
+	assert.Equal(t, err.Error(), "Wanted attribute names must not be empty")
+	assert.Equal(t, len(json), 0)
 }
