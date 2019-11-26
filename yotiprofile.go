@@ -126,14 +126,14 @@ func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) 
 }
 
 // AgeVerifications returns a list of shared age verifications
-func (p Profile) AgeVerifications() (out []AgeVerifications, err error) {
+func (p Profile) AgeVerifications() (out []AgeVerification, err error) {
 	ageUnderString := strings.Replace(AttrConstAgeUnder, "%d", "", -1)
 	ageOverString := strings.Replace(AttrConstAgeOver, "%d", "", -1)
 
 	for _, a := range p.attributeSlice {
-		if strings.Contains(a.Name, ageUnderString) ||
-			strings.Contains(a.Name, ageOverString) {
-			verification, err := AgeVerifications{}.New(a)
+		if strings.HasPrefix(a.Name, ageUnderString) ||
+			strings.HasPrefix(a.Name, ageOverString) {
+			verification, err := AgeVerification{}.New(a)
 			if err != nil {
 				return nil, err
 			}
