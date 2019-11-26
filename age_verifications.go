@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-// AgeVerifications encapsulates the result of a single age verification
+// AgeVerification encapsulates the result of a single age verification
 // as part of a share
-type AgeVerifications struct {
+type AgeVerification struct {
 	Age       int
 	CheckType string
 	Result    bool
@@ -16,7 +16,7 @@ type AgeVerifications struct {
 }
 
 // New constructs an AgeVerification from a protobuffer
-func (AgeVerifications) New(attr *yotiprotoattr.Attribute) (value AgeVerifications, err error) {
+func (AgeVerification) New(attr *yotiprotoattr.Attribute) (value AgeVerification, err error) {
 	split := strings.Split(attr.Name, ":")
 	value.Age, err = strconv.Atoi(split[1])
 	value.CheckType = split[0]
