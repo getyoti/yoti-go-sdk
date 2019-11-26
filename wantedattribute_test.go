@@ -2,8 +2,9 @@ package yoti
 
 import (
 	"fmt"
-	"gotest.tools/assert"
 	"testing"
+
+	"gotest.tools/assert"
 )
 
 func ExampleWantedAttributeBuilder_WithName() {
