@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	_ "github.com/joho/godotenv/autoload"
@@ -148,14 +147,14 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 	yotiOneTimeUseToken := r.URL.Query().Get("token")
 
-	activityDetails, errStrings := client.GetActivityDetails(yotiOneTimeUseToken)
-	if len(errStrings) != 0 {
+	activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
+	if err != nil {
 		errorPage(w, r.WithContext(context.WithValue(
 			r.Context(),
 			contextKey("yotiError"),
-			strings.Join(errStrings, ", "),
+			err,
 		)))
-		log.Printf("Errors: %v", errStrings)
+		log.Printf("Errors: %v", err)
 		return
 	}
 
