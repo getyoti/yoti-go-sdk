@@ -182,6 +182,7 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, i
 
 	var response *http.Response
 	if response, err = client.doRequest(request); err != nil {
+		err = TemporaryError{err}
 		return
 	}
 
