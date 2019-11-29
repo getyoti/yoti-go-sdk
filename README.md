@@ -110,9 +110,25 @@ Keeping your settings and access keys outside your repository is highly recommen
 When your application receives a one time use token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the activity details by adding the following to your endpoint handler:
 
 ```Go
-activityDetails, errStrings := client.GetActivityDetails(yotiOneTimeUseToken)
-if len(errStrings) != 0 {
+activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
+if err != nil {
   // handle unhappy path
+}
+```
+
+## Handling Errors
+If a network error occurs that can be handled by resending the request occurs,
+the error returned by the SDK will have the TemporaryError type. This can be tested
+for using either errors.Is or a type assertion and resent.
+
+```Go
+while true {
+  activityDetails, err := client.GetActivityDetails(token)
+  var temp *yoti.TemporaryError
+  if !errors.Is(err, &temp) {
+    break
+  }
+  // Log the temporary error as a warning
 }
 ```
 
