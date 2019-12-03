@@ -1,9 +1,10 @@
 package yoti
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"strconv"
 	"strings"
+
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
 // AgeVerification encapsulates the result of a single age verification
