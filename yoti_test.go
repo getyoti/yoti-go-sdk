@@ -1,7 +1,12 @@
 package yoti
 
 import (
+	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -14,7 +19,10 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/test"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
@@ -36,6 +44,35 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 		return mock.do(request)
 	}
 	return nil, nil
+}
+
+func CreateExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotiprotoshare.ExtraData) string {
+	outBytes, err := proto.Marshal(protoExtraData)
+	assert.NilError(t, err)
+
+	keyBytes, _ := pem.Decode(pemBytes)
+	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
+	assert.NilError(t, err)
+	unwrappedKey, err := unwrapKey(wrappedReceiptKey, key)
+	assert.NilError(t, err)
+	cipherBlock, err := aes.NewCipher(unwrappedKey)
+	assert.NilError(t, err)
+
+	padLength := cipherBlock.BlockSize() - len(outBytes)%cipherBlock.BlockSize()
+	outBytes = append(outBytes, bytes.Repeat([]byte{byte(padLength)}, padLength)...)
+
+	iv := make([]byte, cipherBlock.BlockSize())
+	encrypter := cipher.NewCBCEncrypter(cipherBlock, iv)
+	encrypter.CryptBlocks(outBytes, outBytes)
+
+	outProto := &yotiprotocom.EncryptedData{
+		CipherText: outBytes,
+		Iv:         iv,
+	}
+	outBytes, err = proto.Marshal(outProto)
+	assert.NilError(t, err)
+
+	return base64.StdEncoding.EncodeToString(outBytes)
 }
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
@@ -179,11 +216,31 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 
+	assert.Assert(t, is.Nil(activityDetails.ExtraData().AttributeIssuanceDetails()))
+
 	expectedSelfieValue := "selfie0123456789"
 
-	assert.Assert(t, profile.Selfie() != nil)
 	assert.DeepEqual(t, profile.Selfie().Value().Data, []byte(expectedSelfieValue))
 	assert.Equal(t, profile.MobileNumber().Value(), "phone_number0123456789")
+
+	assert.Equal(
+		t,
+		profile.GetAttribute("phone_number").Value(),
+		"phone_number0123456789",
+	)
+
+	assert.Check(t,
+		profile.GetImageAttribute("doesnt_exist") == nil,
+	)
+
+	assert.Check(t, profile.GivenNames() == nil)
+	assert.Check(t, profile.FamilyName() == nil)
+	assert.Check(t, profile.FullName() == nil)
+	assert.Check(t, profile.EmailAddress() == nil)
+	images, _ := profile.DocumentImages()
+	assert.Check(t, images == nil)
+	documentDetails, _ := profile.DocumentDetails()
+	assert.Check(t, documentDetails == nil)
 
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 
@@ -221,6 +278,8 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	rememberMeID := "remember_me_id0123456789"
+	timestamp := "123456789"
+	receiptID := "receipt_id123"
 
 	var otherPartyProfileContents = []string{
 		`"other_party_profile_content": null,`,
@@ -236,7 +295,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 					return &http.Response{
 						StatusCode: 200,
 						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"` + timestamp + `", "receipt_id":"` + receiptID + `"}}`)),
 					}, nil
 				},
 			},
@@ -247,7 +306,94 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 		assert.Assert(t, is.Nil(err))
 		assert.Equal(t, userProfile.ID, rememberMeID)
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
+		assert.Equal(t, activityDetails.Timestamp(), timestamp)
+		assert.Equal(t, activityDetails.ReceiptID(), receiptID)
 	}
+}
+
+func TestShouldParseAndDecryptExtraDataContent(t *testing.T) {
+	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
+	rememberMeID := "remember_me_id0123456789"
+
+	pemBytes, err := ioutil.ReadFile("test-key.pem")
+	assert.NilError(t, err)
+
+	attributeName := "attributeName"
+	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
+	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
+	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "tokenValue")
+
+	dataEntries = append(dataEntries, &thirdPartyAttributeDataEntry)
+	protoExtraData := &yotiprotoshare.ExtraData{
+		List: dataEntries,
+	}
+
+	extraDataContent := CreateExtraDataContent(t, pemBytes, protoExtraData)
+
+	client := Client{
+		Key: pemBytes,
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
+						wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
+						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+				}, nil
+			},
+		},
+	}
+
+	_, activityDetails, errList := client.getActivityDetails(encryptedToken)
+
+	assert.Equal(t, len(errList), 0)
+
+	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
+	assert.Assert(t, activityDetails.ExtraData().AttributeIssuanceDetails() != nil)
+	assert.Equal(t, activityDetails.UserProfile.MobileNumber().Value(), "phone_number0123456789")
+}
+
+func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
+	var attributeName = "attributeName"
+	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
+	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
+	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "")
+
+	dataEntries = append(dataEntries, &thirdPartyAttributeDataEntry)
+	protoExtraData := &yotiprotoshare.ExtraData{
+		List: dataEntries,
+	}
+
+	pemBytes, err := ioutil.ReadFile("test-key.pem")
+	assert.NilError(t, err)
+
+	extraDataContent := CreateExtraDataContent(t, pemBytes, protoExtraData)
+
+	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
+
+	rememberMeID := "remember_me_id0123456789"
+
+	client := Client{
+		Key: pemBytes,
+		httpClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
+						wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
+						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+				}, nil
+			},
+		},
+	}
+
+	_, activityDetails, errList := client.getActivityDetails(encryptedToken)
+
+	assert.Check(t, strings.HasPrefix(errList[0], "Issuance Token is invalid"))
+
+	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
+	assert.Assert(t, is.Nil(activityDetails.ExtraData().AttributeIssuanceDetails()))
+	assert.Equal(t, activityDetails.UserProfile.MobileNumber().Value(), "phone_number0123456789")
 }
 
 func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
@@ -1196,6 +1342,21 @@ func TestMultiValueGenericGetter(t *testing.T) {
 	assertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
 }
 
+func TestNewThirdPartyAttribute(t *testing.T) {
+	protoAttribute := createAttributeFromTestFile(t, "testattributethirdparty.txt")
+
+	stringAttribute := attribute.NewString(protoAttribute)
+
+	assert.Equal(t, stringAttribute.Value(), "test-third-party-attribute-0")
+	assert.Equal(t, stringAttribute.GetName(), "com.thirdparty.id")
+
+	assert.Equal(t, stringAttribute.Sources()[0].Value()[0], "THIRD_PARTY")
+	assert.Equal(t, stringAttribute.Sources()[0].SubType(), "orgName")
+
+	assert.Equal(t, stringAttribute.Verifiers()[0].Value()[0], "THIRD_PARTY")
+	assert.Equal(t, stringAttribute.Verifiers()[0].SubType(), "orgName")
+}
+
 func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image {
 	innerImageBytes, ok := innerImageInterface.([]byte)
 	assert.Assert(t, ok)
@@ -1316,6 +1477,14 @@ func createAppProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Applicat
 	return ApplicationProfile{
 		baseProfile{
 			attributeSlice: attributeSlice,
+		},
+	}
+}
+
+func createProfileWithMultipleAttributes(list ...*yotiprotoattr.Attribute) Profile {
+	return Profile{
+		baseProfile{
+			attributeSlice: list,
 		},
 	}
 }

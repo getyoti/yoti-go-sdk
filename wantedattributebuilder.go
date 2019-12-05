@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 )
 
-const ()
-
 type constraintInterface interface {
 	MarshalJSON() ([]byte, error)
 	isConstraint() bool // This function is not used but makes inheritance explicit
@@ -67,6 +65,10 @@ func (builder *WantedAttributeBuilder) Build() WantedAttribute {
 
 // MarshalJSON returns the JSON encoding
 func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
+	err := notEmpty(attr.name, "Wanted attribute names must not be empty")
+	if err != nil {
+		return nil, err
+	}
 	return json.Marshal(&struct {
 		Name               string                `json:"name,omitempty"`
 		Derivation         string                `json:"derivation,omitempty"`

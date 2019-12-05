@@ -15,20 +15,15 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
+	"github.com/getyoti/yoti-go-sdk/v2/share"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
-	"github.com/golang/protobuf/proto"
 )
 
 const (
-	apiDefaultURL        = "https://api.yoti.com/api/v1"
-	sdkIdentifier        = "Go"
-	sdkVersionIdentifier = "2.6.0"
+	apiDefaultURL = "https://api.yoti.com/api/v1"
 
-	sdkIdentifierHeader        = "X-Yoti-SDK"
-	sdkVersionIdentifierHeader = sdkIdentifierHeader + "-Version"
-	attributeAgeOver           = "age_over:"
-	attributeAgeUnder          = "age_under:"
+	attributeAgeOver  = "age_over:"
+	attributeAgeUnder = "age_under:"
 
 	defaultUnknownErrorMessageConst = "Unknown HTTP Error: %[1]d: %[2]s"
 )
@@ -45,7 +40,7 @@ var (
 // ClientInterface defines the interface required to Mock the YotiClient for
 // testing
 type clientInterface interface {
-	makeRequest(string, string, []byte, ...map[int]string) (string, error)
+	makeRequest(string, string, []byte, bool, ...map[int]string) (string, error)
 	GetSdkID() string
 }
 
@@ -128,6 +123,7 @@ func (client *Client) getActivityDetails(token string) (userProfile UserProfile,
 		httpMethod,
 		endpoint,
 		nil,
+		true,
 		map[int]string{404: "Profile Not Found%[2]s"},
 		DefaultHTTPErrorMessages,
 	)
@@ -172,18 +168,15 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 	)
 }
 
-func (client *Client) getDefaultHeaders() (headers map[string][]string) {
-	headers = map[string][]string{
-		sdkIdentifierHeader:        {sdkIdentifier},
-		sdkVersionIdentifierHeader: {sdkIdentifier + "-" + sdkVersionIdentifier},
-	}
-	return
-}
-
-func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, httpErrorMessages ...map[int]string) (responseData string, err error) {
+func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, includeKey bool, httpErrorMessages ...map[int]string) (responseData string, err error) {
 	key, err := loadRsaKey(client.Key)
 	if err != nil {
 		return
+	}
+
+	var headers map[string][]string
+	if includeKey {
+		headers = requests.AuthKeyHeader(&key.PublicKey)
 	}
 
 	request, err := requests.SignedRequest{
@@ -191,16 +184,12 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, h
 		HTTPMethod: httpMethod,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   endpoint,
-		Headers:    client.getDefaultHeaders(),
+		Headers:    headers,
 		Body:       payload,
 	}.Request()
 
 	if err != nil {
 		return
-	}
-	headers := make(map[string]string)
-	for key, list := range request.Header {
-		headers[key] = list[0]
 	}
 
 	var response *http.Response
@@ -245,27 +234,27 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 		err = ErrSharingFailure
 		errStrings = append(errStrings, err.Error())
 	} else {
-		var attributeList, appAttributeList *yotiprotoattr.AttributeList
-		if attributeList, err = decryptCurrentUserReceipt(&parsedResponse.Receipt, key); err != nil {
+		var userAttributeList, applicationAttributeList *yotiprotoattr.AttributeList
+		if userAttributeList, err = parseUserProfile(&parsedResponse.Receipt, key); err != nil {
 			errStrings = append(errStrings, err.Error())
 			return
 		}
-		if appAttributeList, err = decryptCurrentApplicationProfile(&parsedResponse.Receipt, key); err != nil {
+		if applicationAttributeList, err = parseApplicationProfile(&parsedResponse.Receipt, key); err != nil {
 			errStrings = append(errStrings, err.Error())
 			return
 		}
 		id := parsedResponse.Receipt.RememberMeID
 
-		userProfile = addAttributesToUserProfile(id, attributeList) //deprecated: will be removed in v3.0.0
+		userProfile = addAttributesToUserProfile(id, userAttributeList) //deprecated: will be removed in v3.0.0
 
 		profile := Profile{
 			baseProfile{
-				attributeSlice: createAttributeSlice(attributeList),
+				attributeSlice: createAttributeSlice(userAttributeList),
 			},
 		}
 		appProfile := ApplicationProfile{
 			baseProfile{
-				attributeSlice: createAttributeSlice(appAttributeList),
+				attributeSlice: createAttributeSlice(applicationAttributeList),
 			},
 		}
 
@@ -291,6 +280,19 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
 		}
 
+		decryptedExtraData, err := parseExtraData(&parsedResponse.Receipt, key)
+		if err != nil {
+			log.Printf("Unable to decrypt ExtraData from the receipt. Error: %q", err)
+			errStrings = append(errStrings, err.Error())
+		}
+
+		extraData, err := share.NewExtraData(decryptedExtraData)
+
+		if err != nil {
+			log.Printf("Unable to parse ExtraData from the receipt. Error: %q", err)
+			errStrings = append(errStrings, err.Error())
+		}
+
 		activityDetails = ActivityDetails{
 			UserProfile:        profile,
 			rememberMeID:       id,
@@ -298,6 +300,7 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (user
 			timestamp:          parsedResponse.Receipt.Timestamp,
 			receiptID:          parsedResponse.Receipt.ReceiptID,
 			ApplicationProfile: appProfile,
+			extraData:          extraData,
 		}
 	}
 
@@ -464,71 +467,6 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 
 	return
 }
-func decryptCurrentApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
-	var unwrappedKey []byte
-	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
-		return
-	}
-
-	if receipt.ProfileContent == "" {
-		return
-	}
-
-	var profileContentBytes []byte
-	if profileContentBytes, err = base64ToBytes(receipt.ProfileContent); err != nil {
-		return
-	}
-
-	encryptedData := &yotiprotocom.EncryptedData{}
-	if err = proto.Unmarshal(profileContentBytes, encryptedData); err != nil {
-		return nil, err
-	}
-
-	var decipheredBytes []byte
-	if decipheredBytes, err = decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
-		return nil, err
-	}
-
-	attributeList := &yotiprotoattr.AttributeList{}
-	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
-		return nil, err
-	}
-
-	return attributeList, nil
-}
-
-func decryptCurrentUserReceipt(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
-	var unwrappedKey []byte
-	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
-		return
-	}
-
-	if receipt.OtherPartyProfileContent == "" {
-		return
-	}
-
-	var otherPartyProfileContentBytes []byte
-	if otherPartyProfileContentBytes, err = base64ToBytes(receipt.OtherPartyProfileContent); err != nil {
-		return
-	}
-
-	encryptedData := &yotiprotocom.EncryptedData{}
-	if err = proto.Unmarshal(otherPartyProfileContentBytes, encryptedData); err != nil {
-		return nil, err
-	}
-
-	var decipheredBytes []byte
-	if decipheredBytes, err = decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
-		return nil, err
-	}
-
-	attributeList := &yotiprotoattr.AttributeList{}
-	if err := proto.Unmarshal(decipheredBytes, attributeList); err != nil {
-		return nil, err
-	}
-
-	return attributeList, nil
-}
 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
@@ -542,7 +480,7 @@ func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResul
 	amlErrorMessages := make(map[int]string)
 	amlErrorMessages[-1] = "AML Check was unsuccessful, status code: '%[1]d', content '%[2]s'"
 
-	response, err := client.makeRequest(httpMethod, endpoint, content, amlErrorMessages)
+	response, err := client.makeRequest(httpMethod, endpoint, content, false, amlErrorMessages)
 	if err != nil {
 		return
 	}

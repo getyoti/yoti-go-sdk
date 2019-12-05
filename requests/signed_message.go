@@ -15,7 +15,44 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
 )
+
+// MergeHeaders merges two or more header prototypes together from left to right
+func MergeHeaders(headers ...map[string][]string) map[string][]string {
+	if len(headers) == 0 {
+		return make(map[string][]string)
+	}
+	out := headers[0]
+	for _, element := range headers[1:] {
+		for k, v := range element {
+			out[k] = v
+		}
+	}
+	return out
+}
+
+// JSONHeaders is a header prototype for JSON based requests
+func JSONHeaders() map[string][]string {
+	return map[string][]string{
+		"Content-Type": {"application/json"},
+		"Accept":       {"application/json"},
+	}
+}
+
+// AuthKeyHeader is a header prototype including an encoded RSA PublicKey
+func AuthKeyHeader(key *rsa.PublicKey) map[string][]string {
+	return map[string][]string{
+		"X-Yoti-Auth-Key": {
+			base64.StdEncoding.EncodeToString(
+				func(a []byte, _ error) []byte {
+					return a
+				}(x509.MarshalPKIXPublicKey(key)),
+			),
+		},
+	}
+}
 
 // SignedRequest is a builder for constructing a http.Request with Yoti signing
 type SignedRequest struct {
@@ -162,8 +199,9 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 		return
 	}
 	request.Header.Add("X-Yoti-Auth-Digest", signedDigest)
-	publicKeyBytes, err := x509.MarshalPKIXPublicKey(&msg.Key.PublicKey)
-	request.Header.Add("X-Yoti-Auth-Key", base64.StdEncoding.EncodeToString(publicKeyBytes))
+	request.Header.Add("X-Yoti-SDK", consts.SDKIdentifier)
+	request.Header.Add("X-Yoti-SDK-Verson", consts.SDKVersionIdentifier)
+
 	for key, values := range msg.Headers {
 		for _, value := range values {
 			request.Header.Add(key, value)

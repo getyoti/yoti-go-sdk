@@ -1,0 +1,31 @@
+repos:
+- repo: git://github.com/dnephin/pre-commit-golang
+  rev: master
+  hooks:
+      - id: go-build
+      - id: go-fmt
+        exclude: ".pb.go"
+        args: ["-s"]
+      - id: go-vet
+        exclude: "examples/"
+
+- repo: git://github.com/golangci/golangci-lint
+  rev: master
+  hooks:
+    - id: golangci-lint
+
+- repo: local
+  hooks:
+    - id: local-tidy
+      name: 'tidy imports'
+      entry: tidy.sh
+      language: 'script'
+      description: "Tidy imports"
+
+    - id: local-go-test
+      name: 'tests'
+      entry: test.sh
+      language: 'script'
+      description: "Run unit tests"
+
+

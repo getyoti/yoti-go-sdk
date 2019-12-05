@@ -1,6 +1,8 @@
 package yoti
 
 import (
+	"strings"
+
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 )
 
@@ -123,12 +125,20 @@ func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) 
 	return nil, nil
 }
 
-// GetAttribute retrieve an attribute by name on the Yoti profile. Will return nil if attribute is not present.
-func (p Profile) GetAttribute(attributeName string) *attribute.GenericAttribute {
+// AgeVerifications returns a list of shared age verifications
+func (p Profile) AgeVerifications() (out []AgeVerification, err error) {
+	ageUnderString := strings.Replace(AttrConstAgeUnder, "%d", "", -1)
+	ageOverString := strings.Replace(AttrConstAgeOver, "%d", "", -1)
+
 	for _, a := range p.attributeSlice {
-		if a.Name == attributeName {
-			return attribute.NewGeneric(a)
+		if strings.HasPrefix(a.Name, ageUnderString) ||
+			strings.HasPrefix(a.Name, ageOverString) {
+			verification, err := AgeVerification{}.New(a)
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, verification)
 		}
 	}
-	return nil
+	return out, err
 }

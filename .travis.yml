@@ -1,17 +1,5 @@
 language: go
 
-go:
-  - "1.9.7"
-  - "1.10.x"
-  - "1.11.x"
-  - "1.12.x"
-  - "1.x"
-  - master
-  
-os:
-  - linux
-  - osx
-
 cache:
   directories:
     - $HOME/.cache/go-build
@@ -26,21 +14,79 @@ git:
 env:
   global:
     - GO111MODULE=on
-       
-before_script:
-  # needed until we stop supporting 1.9.7 & 1.10.x
-  - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
-    [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
-      GO111MODULE=off;
-      go get -t -d ./...;
-    fi   
-  
-script:
-  - ./.travis.gofmt.sh
-  - go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code) # Check that go generate ./... produces a zero diff; clean up any changes afterwards.
-  - go vet ./...
-  - go test -v -race ./...
 
-matrix:
+jobs:
   allow_failures:
-  - go: master
+    - go: master
+  include:
+    - &test
+      stage: Test
+      go: "1.9.7"
+      os: "linux"
+      before_script:
+        # needed until we stop supporting 1.9.7 & 1.10.x
+        - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
+          [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
+            GO111MODULE=off;
+            go get -t -d ./...;
+          fi
+        - go get golang.org/x/tools/cmd/goimports
+      script:
+        - ./.travis.gofmt.sh
+        - diff <(goimports -d $(find . -type f -name '*.go' -not -path "./yotiprotoattr/*" -not -path "./yotiprotocom/*" -not -path "./yotiprotoshare/*")) <(printf "")
+        # Check that go generate ./... produces a zero diff; clean up any changes afterwards.
+        - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
+          [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
+            go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code) 
+          else
+            go generate -x ./... && go mod tidy && git diff --exit-code; code=$?; git checkout -- .; (exit $code) 
+          fi
+        - go vet ./...
+        - go test -v -race ./...
+    - <<: *test
+      go: "1.9.7"
+      os: "osx"
+    - <<: *test
+      go: "1.10.x"
+      os: "linux"
+    - <<: *test
+      go: "1.10.x"
+      os: "osx"
+    - <<: *test
+      go: "1.11.x"
+      os: "linux"
+    - <<: *test
+      go: "1.11.x"
+      os: "osx"
+    - <<: *test
+      go: "1.12.x"
+      os: "linux"
+    - <<: *test
+      go: "1.12.x"
+      os: "osx"
+    - <<: *test
+      go: "1.x"
+      os: "linux"
+    - <<: *test
+      go: "1.x"
+      os: "osx"
+    - <<: *test
+      go: "master"
+      os: "linux"
+    - <<: *test
+      go: "master"
+      os: "osx"
+    - &coveralls
+      stage: Coverage
+      name: Coveralls
+      go: "1.12.x"
+      install:
+        - go get -t -d ./...
+        - go get golang.org/x/tools/cmd/cover
+        - go get github.com/mattn/goveralls
+      script:
+        - go test -v ./... -covermode=count -coverprofile=coverage.out
+        - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
+      if: type = pull_request OR branch = master
+      after_success:
+        - coveralls

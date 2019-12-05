@@ -31,7 +31,7 @@ func CreateShareURL(client clientInterface, scenario *DynamicScenario) (share Sh
 		return
 	}
 
-	response, err := client.makeRequest(httpMethod, endpoint, payload, ShareURLHTTPErrorMessages, DefaultHTTPErrorMessages)
+	response, err := client.makeRequest(httpMethod, endpoint, payload, false, ShareURLHTTPErrorMessages, DefaultHTTPErrorMessages)
 	if err != nil {
 		return
 	}
