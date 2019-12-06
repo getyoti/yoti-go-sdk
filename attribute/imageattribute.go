@@ -7,9 +7,9 @@ import (
 
 // ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
-	*yotiprotoattr.Attribute
-	value   *Image
-	anchors []*anchor.Anchor
+	attribute *yotiprotoattr.Attribute
+	value     *Image
+	anchors   []*anchor.Anchor
 }
 
 // NewImage creates a new Image attribute
@@ -22,7 +22,7 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	}
 
 	return &ImageAttribute{
-		Attribute: &yotiprotoattr.Attribute{
+		attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
@@ -34,6 +34,16 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 // Value returns the value of the ImageAttribute as *Image
 func (a *ImageAttribute) Value() *Image {
 	return a.value
+}
+
+// Name returns the name as a string
+func (a *ImageAttribute) Name() string {
+	return a.attribute.Name
+}
+
+// ContentType returns the content type as a string
+func (a *ImageAttribute) ContentType() string {
+	return a.attribute.ContentType.String()
 }
 
 // Anchors are the metadata associated with an attribute. They describe

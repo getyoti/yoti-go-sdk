@@ -10,9 +10,9 @@ import (
 
 // ImageSliceAttribute is a Yoti attribute which returns a slice of images as its value
 type ImageSliceAttribute struct {
-	*yotiprotoattr.Attribute
-	value   []*Image
-	anchors []*anchor.Anchor
+	attribute *yotiprotoattr.Attribute
+	value     []*Image
+	anchors   []*anchor.Anchor
 }
 
 // NewImageSlice creates a new ImageSlice attribute
@@ -33,7 +33,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 	}
 
 	return &ImageSliceAttribute{
-		Attribute: &yotiprotoattr.Attribute{
+		attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
@@ -62,6 +62,16 @@ func CreateImageSlice(items []*Item) (result []*Image) {
 // Value returns the value of the ImageSliceAttribute as a string
 func (a *ImageSliceAttribute) Value() []*Image {
 	return a.value
+}
+
+// Name returns the name as a string
+func (a *ImageSliceAttribute) Name() string {
+	return a.attribute.Name
+}
+
+// ContentType returns the content type as a string
+func (a *ImageSliceAttribute) ContentType() string {
+	return a.attribute.ContentType.String()
 }
 
 // Anchors are the metadata associated with an attribute. They describe

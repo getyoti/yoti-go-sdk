@@ -29,14 +29,24 @@ type DocumentDetails struct {
 
 // DocumentDetailsAttribute wraps a document details with anchor data
 type DocumentDetailsAttribute struct {
-	*yotiprotoattr.Attribute
-	value   DocumentDetails
-	anchors []*anchor.Anchor
+	attribute *yotiprotoattr.Attribute
+	value     DocumentDetails
+	anchors   []*anchor.Anchor
 }
 
 // Value returns the document details struct attached to this attribute
 func (attr *DocumentDetailsAttribute) Value() DocumentDetails {
 	return attr.value
+}
+
+// Name returns the name as a string
+func (a *DocumentDetailsAttribute) Name() string {
+	return a.attribute.Name
+}
+
+// ContentType returns the content type as a string
+func (a *DocumentDetailsAttribute) ContentType() string {
+	return a.attribute.ContentType.String()
 }
 
 // Anchors are the metadata associated with an attribute. They describe
@@ -67,7 +77,7 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 	}
 
 	return &DocumentDetailsAttribute{
-		Attribute: &yotiprotoattr.Attribute{
+		attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},

@@ -10,9 +10,9 @@ import (
 
 // MultiValueAttribute is a Yoti attribute which returns a multi-valued attribute
 type MultiValueAttribute struct {
-	*yotiprotoattr.Attribute
-	items   []*Item
-	anchors []*anchor.Anchor
+	attribute *yotiprotoattr.Attribute
+	items     []*Item
+	anchors   []*anchor.Anchor
 }
 
 // NewMultiValue creates a new MultiValue attribute
@@ -24,7 +24,7 @@ func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
 	}
 
 	return &MultiValueAttribute{
-		Attribute: &yotiprotoattr.Attribute{
+		attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
@@ -87,6 +87,16 @@ func unmarshallMultiValue(bytes []byte) (*yotiprotoattr.MultiValue, error) {
 // Value returns the value of the MultiValueAttribute as a string
 func (a *MultiValueAttribute) Value() []*Item {
 	return a.items
+}
+
+// Name returns the name as a string
+func (a *MultiValueAttribute) Name() string {
+	return a.attribute.Name
+}
+
+// ContentType returns the content type as a string
+func (a *MultiValueAttribute) ContentType() string {
+	return a.attribute.ContentType.String()
 }
 
 // Anchors are the metadata associated with an attribute. They describe

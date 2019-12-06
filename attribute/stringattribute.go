@@ -7,9 +7,9 @@ import (
 
 // StringAttribute is a Yoti attribute which returns a string as its value
 type StringAttribute struct {
-	*yotiprotoattr.Attribute
-	value   string
-	anchors []*anchor.Anchor
+	attribute *yotiprotoattr.Attribute
+	value     string
+	anchors   []*anchor.Anchor
 }
 
 // NewString creates a new String attribute
@@ -17,13 +17,23 @@ func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &StringAttribute{
-		Attribute: &yotiprotoattr.Attribute{
+		attribute: &yotiprotoattr.Attribute{
 			Name:        a.Name,
 			ContentType: a.ContentType,
 		},
 		value:   string(a.Value),
 		anchors: parsedAnchors,
 	}
+}
+
+// Name returns the name of the StringAttribute as a string
+func (a *StringAttribute) Name() string {
+	return a.attribute.Name
+}
+
+// ContentType returns the content type of the StringAttribute as a string
+func (a *StringAttribute) ContentType() string {
+	return a.attribute.ContentType.String()
 }
 
 // Value returns the value of the StringAttribute as a string
