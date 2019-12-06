@@ -62,7 +62,9 @@ type Client struct {
 
 func (client *Client) doRequest(request *http.Request) (*http.Response, error) {
 	if client.httpClient == nil {
-		client.httpClient = &http.Client{}
+		client.httpClient = &http.Client{
+			Timeout: time.Second * 10,
+		}
 	}
 	return client.httpClient.Do(request)
 }
