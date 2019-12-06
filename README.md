@@ -118,13 +118,13 @@ if err != nil {
 
 ## Handling Errors
 If a network error occurs that can be handled by resending the request occurs,
-the error returned by the SDK will have the TemporaryError type. This can be tested
-for using either errors.Is or a type assertion and resent.
+the error returned by the SDK will implement the temporary error interface. 
+This can be tested for using either errors.Is or a type assertion, and resent.
 
 ```Go
 while true {
   activityDetails, err := client.GetActivityDetails(token)
-  var temp *yoti.TemporaryError
+  var temp interface{ Temporary() bool }
   if !errors.Is(err, &temp) {
     break
   }

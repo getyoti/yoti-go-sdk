@@ -14,3 +14,8 @@ func (e TemporaryError) Error() string {
 func (e TemporaryError) Unwrap() error {
 	return e.Err
 }
+
+// Temporary indicates this error is a temporary error
+func (e TemporaryError) Temporary() bool {
+	return true
+}
