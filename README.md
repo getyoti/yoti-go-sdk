@@ -117,9 +117,9 @@ if err != nil {
 ```
 
 ## Handling Errors
-If a network error occurs that can be handled by resending the request occurs,
+If a network error occurs that can be handled by resending the request,
 the error returned by the SDK will implement the temporary error interface. 
-This can be tested for using either errors.Is or a type assertion, and resent.
+This can be tested for using either `errors.Is` or a type assertion, and resent.
 
 ```Go
 while true {
