@@ -9,6 +9,27 @@ import (
 	"fmt"
 )
 
+// LoadPEM loads a PEM encoded RSA private key
+func LoadPEM(keyBytes []byte) (*rsa.PrivateKey, error) {
+	// Extract the PEM-encoded data
+	block, _ := pem.Decode(keyBytes)
+
+	if block == nil {
+		return nil, errors.New("Invalid Key: not PEM-encoded")
+	}
+
+	if block.Type != "RSA PRIVATE KEY" {
+		return nil, errors.New("Invalid Key: not RSA private key")
+	}
+
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, errors.New("Invalid Key: bad RSA private key")
+	}
+
+	return key, nil
+}
+
 func decryptRsa(cipherBytes []byte, key *rsa.PrivateKey) ([]byte, error) {
 	return rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
 }
