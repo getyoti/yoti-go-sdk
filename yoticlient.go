@@ -50,7 +50,7 @@ type Client struct {
 	// Key should be the security key given to you by yoti (see: security keys section of
 	// https://hub.yoti.com) for more information about how to load your key from a file see:
 	// https://github.com/getyoti/yoti-go-sdk/blob/master/README.md
-	Key []byte
+	Key *rsa.PrivateKey
 
 	apiURL     string
 	HTTPClient httpClient // Mockable HTTP Client Interface
@@ -103,11 +103,6 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 	httpMethod := http.MethodGet
 	key, err := cryptoutil.ParseRSAKey(client.Key)
 	if err != nil {
-		err = fmt.Errorf("Invalid Key: %s", err.Error())
-		return
-	}
-	token, err = decryptToken(token, key)
-	if err != nil {
 		err = fmt.Errorf("Invalid Token: %s", err.Error())
 		return
 	}
@@ -124,7 +119,7 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 	if err != nil {
 		return
 	}
-	return handleSuccessfulResponse(response, key)
+	return handleSuccessfulResponse(response, client.Key)
 }
 
 func handleHTTPError(response *http.Response, errorMessages ...map[int]string) error {
@@ -162,18 +157,18 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 }
 
 func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, includeKey bool, httpErrorMessages ...map[int]string) (responseData string, err error) {
-	key, err := cryptoutil.ParseRSAKey(client.Key)
+	key, err := cryptoutil.ParseRSAKey(&client.Key.PublicKey)
 	if err != nil {
 		return
 	}
 
 	var headers map[string][]string
 	if includeKey {
-		headers = requests.AuthKeyHeader(&key.PublicKey)
+		headers = requests.AuthKeyHeader(key)
 	}
 
 	request, err := requests.SignedRequest{
-		Key:        key,
+		Key:        client.Key,
 		HTTPMethod: httpMethod,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   endpoint,

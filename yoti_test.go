@@ -95,21 +95,10 @@ func TestYotiClient_SetHTTPClientTimeout(t *testing.T) {
 }
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
+	var err error
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
-	client := Client{
-		Key: key,
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 500,
-				}, nil
-			},
-		},
-	}
-
-	_, err := client.getActivityDetails(encryptedToken)
-
+	_, err = LoadPEM(key)
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Key"))
 	tempError, temporary := err.(interface {
@@ -119,10 +108,10 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestYotiClient_InvalidToken(t *testing.T) {
+	var err error
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -131,8 +120,10 @@ func TestYotiClient_InvalidToken(t *testing.T) {
 			},
 		},
 	}
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
-	_, err := client.getActivityDetails("")
+	_, err = client.getActivityDetails("")
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Token"))
@@ -146,7 +137,6 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -155,8 +145,11 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
-	_, err := client.getActivityDetails(encryptedToken)
+	_, err = client.getActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
@@ -171,7 +164,6 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -180,8 +172,11 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
-	_, err := client.getActivityDetails(encryptedToken)
+	_, err = client.getActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Profile Not Found"))
@@ -195,7 +190,6 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -205,8 +199,11 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
-	_, err := client.getActivityDetails(encryptedToken)
+	_, err = client.getActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), ErrSharingFailure.Error()))
@@ -222,7 +219,6 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 	expectedAbsoluteURL := "/api/v1/profile/" + token
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(request *http.Request) (*http.Response, error) {
 				parsed, err := url.Parse(request.URL.String())
@@ -235,8 +231,11 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
-	_, err := client.getActivityDetails(encryptedToken)
+	_, err = client.getActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
@@ -253,7 +252,6 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	rememberMeID := "remember_me_id0123456789"
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -263,6 +261,9 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
 	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
 
@@ -313,7 +314,6 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 	parentRememberMeID := "parent_remember_me_id0123456789"
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -325,6 +325,9 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
 	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
 
@@ -345,7 +348,6 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	for _, otherPartyProfileContent := range otherPartyProfileContents {
 
 		client := Client{
-			Key: key,
 			HTTPClient: &mockHTTPClient{
 				do: func(*http.Request) (*http.Response, error) {
 					return &http.Response{
@@ -356,10 +358,13 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 				},
 			},
 		}
+		var err error
+		client.Key, err = LoadPEM(key)
+		assert.NilError(t, err)
 
-		activityDetails, err := client.getActivityDetails(encryptedToken)
+		activityDetails, errStrings := client.getActivityDetails(encryptedToken)
 
-		assert.Assert(t, is.Nil(err))
+		assert.Assert(t, is.Nil(errStrings))
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 		assert.Equal(t, activityDetails.Timestamp(), timestamp)
 		assert.Equal(t, activityDetails.ReceiptID(), receiptID)
@@ -461,7 +466,6 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 	for _, otherPartyProfileContent := range otherPartyProfileContents {
 
 		client := Client{
-			Key: key,
 			HTTPClient: &mockHTTPClient{
 				do: func(*http.Request) (*http.Response, error) {
 					return &http.Response{
@@ -472,10 +476,13 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 				},
 			},
 		}
+		var err error
+		client.Key, err = LoadPEM(key)
+		assert.NilError(t, err)
 
-		_, err := client.getActivityDetails(encryptedToken)
+		_, errStrings := client.getActivityDetails(encryptedToken)
 
-		assert.Assert(t, is.Nil(err))
+		assert.Assert(t, is.Nil(errStrings))
 	}
 }
 
@@ -483,7 +490,6 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -493,6 +499,9 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
 	result, err := client.PerformAmlCheck(createStandardAmlProfile())
 
@@ -507,7 +516,6 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	client := Client{
-		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -517,8 +525,11 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 			},
 		},
 	}
+	var err error
+	client.Key, err = LoadPEM(key)
+	assert.NilError(t, err)
 
-	_, err := client.PerformAmlCheck(createStandardAmlProfile())
+	_, err = client.PerformAmlCheck(createStandardAmlProfile())
 
 	var expectedErrString = "AML Check was unsuccessful"
 
