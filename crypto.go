@@ -11,21 +11,22 @@ import (
 	"fmt"
 )
 
-func loadRsaKey(keyBytes []byte) (*rsa.PrivateKey, error) {
+// LoadPEM loads a PEM encoded RSA private key
+func LoadPEM(keyBytes []byte) (*rsa.PrivateKey, error) {
 	// Extract the PEM-encoded data
 	block, _ := pem.Decode(keyBytes)
 
 	if block == nil {
-		return nil, errors.New("not PEM-encoded")
+		return nil, errors.New("Invalid Key: not PEM-encoded")
 	}
 
 	if block.Type != "RSA PRIVATE KEY" {
-		return nil, errors.New("not RSA private key")
+		return nil, errors.New("Invalid Key: not RSA private key")
 	}
 
 	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, errors.New("bad RSA private key")
+		return nil, errors.New("Invalid Key: bad RSA private key")
 	}
 
 	return key, nil
