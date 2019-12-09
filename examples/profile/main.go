@@ -120,7 +120,14 @@ func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, sc
 
 	client := yoti.Client{
 		SdkID: sdkID,
-		Key:   key,
+	}
+	client.Key, err = yoti.LoadPEM(key)
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("%s", err),
+		)))
 	}
 
 	share, err := yoti.CreateShareURL(&client, &scenario)
@@ -183,7 +190,15 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 	client = &yoti.Client{
 		SdkID: sdkID,
-		Key:   key}
+	}
+	client.Key, err = yoti.LoadPEM(key)
+	if err != nil {
+		errorPage(w, r.WithContext(context.WithValue(
+			r.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("%s", err),
+		)))
+	}
 
 	yotiOneTimeUseToken := r.URL.Query().Get("token")
 
