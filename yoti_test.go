@@ -38,6 +38,25 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
+func TestYotiClient_DefaultHTTPClientShouldTimeout(t *testing.T) {
+	client := Client{}
+	defer func() {
+		_ = recover()
+		assert.Assert(t, client.HTTPClient.(*http.Client).Timeout == 10*time.Second)
+	}()
+	_, _ = client.doRequest(nil)
+}
+
+func TestYotiClient_SetHTTPClientTimeout(t *testing.T) {
+	client := Client{}
+	client.HTTPClient = &http.Client{Timeout: 12 * time.Minute}
+	defer func() {
+		_ = recover()
+		assert.Assert(t, client.HTTPClient.(*http.Client).Timeout == 12*time.Minute)
+	}()
+	_, _ = client.doRequest(nil)
+}
+
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
