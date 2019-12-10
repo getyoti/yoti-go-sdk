@@ -10,9 +10,9 @@ import (
 
 // JSONAttribute is a Yoti attribute which returns an interface as its value
 type JSONAttribute struct {
-	attribute *yotiprotoattr.Attribute // Value returns the value of a JSON attribute in the form of an interface
-	value     interface{}
-	anchors   []*anchor.Anchor
+	Details
+	// Value returns the value of a JSON attribute in the form of an interface
+	value interface{}
 }
 
 // NewJSON creates a new JSON attribute
@@ -26,12 +26,12 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &JSONAttribute{
-		attribute: &yotiprotoattr.Attribute{
-			Name:        a.Name,
-			ContentType: a.ContentType,
+		Details: Details{
+			name:        a.Name,
+			contentType: a.ContentType.String(),
+			anchors:     parsedAnchors,
 		},
-		value:   interfaceValue,
-		anchors: parsedAnchors,
+		value: interfaceValue,
 	}, nil
 }
 
@@ -50,31 +50,4 @@ func UnmarshallJSON(byteValue []byte) (result interface{}, err error) {
 // Value returns the value of the JSONAttribute as an interface.
 func (a *JSONAttribute) Value() interface{} {
 	return a.value
-}
-
-// Name returns the name as a string
-func (a *JSONAttribute) Name() string {
-	return a.attribute.Name
-}
-
-// ContentType returns the content type as a string
-func (a *JSONAttribute) ContentType() string {
-	return a.attribute.ContentType.String()
-}
-
-// Anchors are the metadata associated with an attribute. They describe
-// how an attribute has been provided to Yoti (SOURCE Anchor) and how
-// it has been verified (VERIFIER Anchor).
-func (a *JSONAttribute) Anchors() []*anchor.Anchor {
-	return a.anchors
-}
-
-// Sources returns the anchors which identify how and when an attribute value was acquired.
-func (a *JSONAttribute) Sources() []*anchor.Anchor {
-	return anchor.GetSources(a.anchors)
-}
-
-// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
-func (a *JSONAttribute) Verifiers() []*anchor.Anchor {
-	return anchor.GetVerifiers(a.anchors)
 }

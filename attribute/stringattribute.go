@@ -7,9 +7,8 @@ import (
 
 // StringAttribute is a Yoti attribute which returns a string as its value
 type StringAttribute struct {
-	attribute *yotiprotoattr.Attribute
-	value     string
-	anchors   []*anchor.Anchor
+	Details
+	value string
 }
 
 // NewString creates a new String attribute
@@ -17,43 +16,16 @@ func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &StringAttribute{
-		attribute: &yotiprotoattr.Attribute{
-			Name:        a.Name,
-			ContentType: a.ContentType,
+		Details: Details{
+			name:        a.Name,
+			contentType: a.ContentType.String(),
+			anchors:     parsedAnchors,
 		},
-		value:   string(a.Value),
-		anchors: parsedAnchors,
+		value: string(a.Value),
 	}
-}
-
-// Name returns the name of the StringAttribute as a string
-func (a *StringAttribute) Name() string {
-	return a.attribute.Name
-}
-
-// ContentType returns the content type of the StringAttribute as a string
-func (a *StringAttribute) ContentType() string {
-	return a.attribute.ContentType.String()
 }
 
 // Value returns the value of the StringAttribute as a string
 func (a *StringAttribute) Value() string {
 	return a.value
-}
-
-// Anchors are the metadata associated with an attribute. They describe
-// how an attribute has been provided to Yoti (SOURCE Anchor) and how
-// it has been verified (VERIFIER Anchor).
-func (a *StringAttribute) Anchors() []*anchor.Anchor {
-	return a.anchors
-}
-
-// Sources returns the anchors which identify how and when an attribute value was acquired.
-func (a *StringAttribute) Sources() []*anchor.Anchor {
-	return anchor.GetSources(a.anchors)
-}
-
-// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
-func (a *StringAttribute) Verifiers() []*anchor.Anchor {
-	return anchor.GetVerifiers(a.anchors)
 }

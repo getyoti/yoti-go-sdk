@@ -10,9 +10,8 @@ import (
 
 // ImageSliceAttribute is a Yoti attribute which returns a slice of images as its value
 type ImageSliceAttribute struct {
-	attribute *yotiprotoattr.Attribute
-	value     []*Image
-	anchors   []*anchor.Anchor
+	Details
+	value []*Image
 }
 
 // NewImageSlice creates a new ImageSlice attribute
@@ -33,12 +32,12 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 	}
 
 	return &ImageSliceAttribute{
-		attribute: &yotiprotoattr.Attribute{
-			Name:        a.Name,
-			ContentType: a.ContentType,
+		Details: Details{
+			name:        a.Name,
+			contentType: a.ContentType.String(),
+			anchors:     anchor.ParseAnchors(a.Anchors),
 		},
-		value:   imageSliceValue,
-		anchors: anchor.ParseAnchors(a.Anchors),
+		value: imageSliceValue,
 	}, nil
 }
 
@@ -62,31 +61,4 @@ func CreateImageSlice(items []*Item) (result []*Image) {
 // Value returns the value of the ImageSliceAttribute as a string
 func (a *ImageSliceAttribute) Value() []*Image {
 	return a.value
-}
-
-// Name returns the name as a string
-func (a *ImageSliceAttribute) Name() string {
-	return a.attribute.Name
-}
-
-// ContentType returns the content type as a string
-func (a *ImageSliceAttribute) ContentType() string {
-	return a.attribute.ContentType.String()
-}
-
-// Anchors are the metadata associated with an attribute. They describe
-// how an attribute has been provided to Yoti (SOURCE Anchor) and how
-// it has been verified (VERIFIER Anchor).
-func (a *ImageSliceAttribute) Anchors() []*anchor.Anchor {
-	return a.anchors
-}
-
-// Sources returns the anchors which identify how and when an attribute value was acquired.
-func (a *ImageSliceAttribute) Sources() []*anchor.Anchor {
-	return anchor.GetSources(a.anchors)
-}
-
-// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
-func (a *ImageSliceAttribute) Verifiers() []*anchor.Anchor {
-	return anchor.GetVerifiers(a.anchors)
 }

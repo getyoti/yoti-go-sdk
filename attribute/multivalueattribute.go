@@ -10,9 +10,8 @@ import (
 
 // MultiValueAttribute is a Yoti attribute which returns a multi-valued attribute
 type MultiValueAttribute struct {
-	attribute *yotiprotoattr.Attribute
-	items     []*Item
-	anchors   []*anchor.Anchor
+	Details
+	items []*Item
 }
 
 // NewMultiValue creates a new MultiValue attribute
@@ -24,12 +23,12 @@ func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
 	}
 
 	return &MultiValueAttribute{
-		attribute: &yotiprotoattr.Attribute{
-			Name:        a.Name,
-			ContentType: a.ContentType,
+		Details: Details{
+			name:        a.Name,
+			contentType: a.ContentType.String(),
+			anchors:     anchor.ParseAnchors(a.Anchors),
 		},
-		items:   attributeItems,
-		anchors: anchor.ParseAnchors(a.Anchors),
+		items: attributeItems,
 	}, nil
 }
 
@@ -87,31 +86,4 @@ func unmarshallMultiValue(bytes []byte) (*yotiprotoattr.MultiValue, error) {
 // Value returns the value of the MultiValueAttribute as a string
 func (a *MultiValueAttribute) Value() []*Item {
 	return a.items
-}
-
-// Name returns the name as a string
-func (a *MultiValueAttribute) Name() string {
-	return a.attribute.Name
-}
-
-// ContentType returns the content type as a string
-func (a *MultiValueAttribute) ContentType() string {
-	return a.attribute.ContentType.String()
-}
-
-// Anchors are the metadata associated with an attribute. They describe
-// how an attribute has been provided to Yoti (SOURCE Anchor) and how
-// it has been verified (VERIFIER Anchor).
-func (a *MultiValueAttribute) Anchors() []*anchor.Anchor {
-	return a.anchors
-}
-
-// Sources returns the anchors which identify how and when an attribute value was acquired.
-func (a *MultiValueAttribute) Sources() []*anchor.Anchor {
-	return anchor.GetSources(a.anchors)
-}
-
-// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
-func (a *MultiValueAttribute) Verifiers() []*anchor.Anchor {
-	return anchor.GetVerifiers(a.anchors)
 }

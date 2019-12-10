@@ -7,9 +7,8 @@ import (
 
 // ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
-	attribute *yotiprotoattr.Attribute
-	value     *Image
-	anchors   []*anchor.Anchor
+	Details
+	value *Image
 }
 
 // NewImage creates a new Image attribute
@@ -22,43 +21,16 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	}
 
 	return &ImageAttribute{
-		attribute: &yotiprotoattr.Attribute{
-			Name:        a.Name,
-			ContentType: a.ContentType,
+		Details: Details{
+			name:        a.Name,
+			contentType: a.ContentType.String(),
+			anchors:     parsedAnchors,
 		},
-		value:   imageValue,
-		anchors: parsedAnchors,
+		value: imageValue,
 	}, nil
 }
 
 // Value returns the value of the ImageAttribute as *Image
 func (a *ImageAttribute) Value() *Image {
 	return a.value
-}
-
-// Name returns the name as a string
-func (a *ImageAttribute) Name() string {
-	return a.attribute.Name
-}
-
-// ContentType returns the content type as a string
-func (a *ImageAttribute) ContentType() string {
-	return a.attribute.ContentType.String()
-}
-
-// Anchors are the metadata associated with an attribute. They describe
-// how an attribute has been provided to Yoti (SOURCE Anchor) and how
-// it has been verified (VERIFIER Anchor).
-func (a *ImageAttribute) Anchors() []*anchor.Anchor {
-	return a.anchors
-}
-
-// Sources returns the anchors which identify how and when an attribute value was acquired.
-func (a *ImageAttribute) Sources() []*anchor.Anchor {
-	return anchor.GetSources(a.anchors)
-}
-
-// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
-func (a *ImageAttribute) Verifiers() []*anchor.Anchor {
-	return anchor.GetVerifiers(a.anchors)
 }
