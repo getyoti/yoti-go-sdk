@@ -58,17 +58,13 @@ func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *Want
 }
 
 // Build generates the wanted attribute's specification
-func (builder *WantedAttributeBuilder) Build() WantedAttribute {
-	attr := builder.attr
-	return attr
+func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
+	err := notEmpty(builder.attr.name, "Wanted attribute names must not be empty")
+	return builder.attr, err
 }
 
 // MarshalJSON returns the JSON encoding
 func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
-	err := notEmpty(attr.name, "Wanted attribute names must not be empty")
-	if err != nil {
-		return nil, err
-	}
 	return json.Marshal(&struct {
 		Name               string                `json:"name,omitempty"`
 		Derivation         string                `json:"derivation,omitempty"`
