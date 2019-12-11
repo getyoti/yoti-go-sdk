@@ -38,12 +38,31 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
+func TestYotiClient_DefaultHTTPClientShouldTimeout(t *testing.T) {
+	client := Client{}
+	defer func() {
+		_ = recover()
+		assert.Assert(t, client.HTTPClient.(*http.Client).Timeout == 10*time.Second)
+	}()
+	_, _ = client.doRequest(nil)
+}
+
+func TestYotiClient_SetHTTPClientTimeout(t *testing.T) {
+	client := Client{}
+	client.HTTPClient = &http.Client{Timeout: 12 * time.Minute}
+	defer func() {
+		_ = recover()
+		assert.Assert(t, client.HTTPClient.(*http.Client).Timeout == 12*time.Minute)
+	}()
+	_, _ = client.doRequest(nil)
+}
+
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 500,
@@ -63,7 +82,7 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 500,
@@ -83,7 +102,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 404,
@@ -103,7 +122,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
@@ -126,7 +145,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(request *http.Request) (*http.Response, error) {
 				parsed, err := url.Parse(request.URL.String())
 				assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
@@ -153,7 +172,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
@@ -220,7 +239,7 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
@@ -252,7 +271,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 
 		client := Client{
 			Key: key,
-			httpClient: &mockHTTPClient{
+			HTTPClient: &mockHTTPClient{
 				do: func(*http.Request) (*http.Response, error) {
 					return &http.Response{
 						StatusCode: 200,
@@ -284,7 +303,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 
 		client := Client{
 			Key: key,
-			httpClient: &mockHTTPClient{
+			HTTPClient: &mockHTTPClient{
 				do: func(*http.Request) (*http.Response, error) {
 					return &http.Response{
 						StatusCode: 200,
@@ -306,7 +325,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
@@ -330,7 +349,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 503,
