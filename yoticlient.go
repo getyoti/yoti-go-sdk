@@ -87,7 +87,7 @@ func (client *Client) GetSdkID() string {
 // request. If the request was successful it will include the user's details,
 // otherwise an error will be returned, which will specify the reason the
 // request failed. If the function call can be reattempted with the same token
-// the error will be a temporary error.
+// the error will implement interface{ Temporary() bool }.
 func (client *Client) GetActivityDetails(token string) (ActivityDetails, error) {
 	activity, err := client.getActivityDetails(token)
 	return activity, err
