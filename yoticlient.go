@@ -113,7 +113,7 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 		endpoint,
 		nil,
 		true,
-		map[int]string{404: "Profile Not Found%[2]s"},
+		map[int]string{404: "Profile Not Found %[1]d"},
 		DefaultHTTPErrorMessages,
 	)
 	if err != nil {

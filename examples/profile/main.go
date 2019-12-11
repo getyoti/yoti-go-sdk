@@ -72,9 +72,8 @@ func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, sc
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err),
+			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err.Error()),
 		)))
-		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
 		return
 	}
 
@@ -88,7 +87,7 @@ func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, sc
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("%s", err),
+			fmt.Sprintf("%s", err.Error()),
 		)))
 		return
 	}
@@ -114,6 +113,7 @@ func errorPage(w http.ResponseWriter, r *http.Request) {
 	templateVars := map[string]interface{}{
 		"yotiError": r.Context().Value(contextKey("yotiError")).(string),
 	}
+	log.Printf("%s", templateVars["yotiError"])
 	t, err := template.ParseFiles("error.html")
 	if err != nil {
 		panic("Error parsing the template: " + err.Error())
@@ -135,9 +135,8 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		errorPage(w, r.WithContext(context.WithValue(
 			r.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err),
+			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err.Error()),
 		)))
-		log.Printf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err)
 		return
 	}
 
@@ -152,7 +151,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		errorPage(w, r.WithContext(context.WithValue(
 			r.Context(),
 			contextKey("yotiError"),
-			err,
+			err.Error(),
 		)))
 		log.Printf("Errors: %v", err)
 		return
@@ -175,9 +174,8 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		errorPage(w, r.WithContext(context.WithValue(
 			r.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Error parsing Date of Birth attribute. Error %q", err),
+			fmt.Sprintf("Error parsing Date of Birth attribute. Error %q", err.Error()),
 		)))
-		log.Printf("Error parsing Date of Birth attribute. Error %q", err)
 		return
 	}
 
