@@ -29,31 +29,13 @@ type DocumentDetails struct {
 
 // DocumentDetailsAttribute wraps a document details with anchor data
 type DocumentDetailsAttribute struct {
-	*yotiprotoattr.Attribute
-	value   DocumentDetails
-	anchors []*anchor.Anchor
+	attributeDetails
+	value DocumentDetails
 }
 
 // Value returns the document details struct attached to this attribute
 func (attr *DocumentDetailsAttribute) Value() DocumentDetails {
 	return attr.value
-}
-
-// Anchors are the metadata associated with an attribute. They describe
-// how an attribute has been provided to Yoti (SOURCE Anchor) and how
-// it has been verified (VERIFIER Anchor).
-func (attr *DocumentDetailsAttribute) Anchors() []*anchor.Anchor {
-	return attr.anchors
-}
-
-// Sources returns the anchors which identify how and when an attribute value was acquired.
-func (attr *DocumentDetailsAttribute) Sources() []*anchor.Anchor {
-	return anchor.GetSources(attr.anchors)
-}
-
-// Verifiers returns the anchors which identify how and when an attribute value was verified by another provider.
-func (attr *DocumentDetailsAttribute) Verifiers() []*anchor.Anchor {
-	return anchor.GetVerifiers(attr.anchors)
 }
 
 // NewDocumentDetails creates a DocumentDetailsAttribute which wraps a
@@ -67,12 +49,12 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 	}
 
 	return &DocumentDetailsAttribute{
-		Attribute: &yotiprotoattr.Attribute{
-			Name:        a.Name,
-			ContentType: a.ContentType,
+		attributeDetails: attributeDetails{
+			name:        a.Name,
+			contentType: a.ContentType.String(),
+			anchors:     parsedAnchors,
 		},
-		value:   details,
-		anchors: parsedAnchors,
+		value: details,
 	}, nil
 }
 
