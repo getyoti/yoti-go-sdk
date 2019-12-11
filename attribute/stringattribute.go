@@ -7,7 +7,7 @@ import (
 
 // StringAttribute is a Yoti attribute which returns a string as its value
 type StringAttribute struct {
-	Details
+	attributeDetails
 	value string
 }
 
@@ -16,7 +16,7 @@ func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &StringAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,

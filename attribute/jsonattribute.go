@@ -10,7 +10,7 @@ import (
 
 // JSONAttribute is a Yoti attribute which returns an interface as its value
 type JSONAttribute struct {
-	Details
+	attributeDetails
 	// Value returns the value of a JSON attribute in the form of an interface
 	value interface{}
 }
@@ -26,7 +26,7 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &JSONAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,

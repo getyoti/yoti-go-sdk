@@ -10,7 +10,7 @@ import (
 
 // ImageSliceAttribute is a Yoti attribute which returns a slice of images as its value
 type ImageSliceAttribute struct {
-	Details
+	attributeDetails
 	value []*Image
 }
 
@@ -32,7 +32,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 	}
 
 	return &ImageSliceAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     anchor.ParseAnchors(a.Anchors),

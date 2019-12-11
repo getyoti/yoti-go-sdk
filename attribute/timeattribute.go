@@ -10,7 +10,7 @@ import (
 
 // TimeAttribute is a Yoti attribute which returns a time as its value
 type TimeAttribute struct {
-	Details
+	attributeDetails
 	value *time.Time
 }
 
@@ -26,7 +26,7 @@ func NewTime(a *yotiprotoattr.Attribute) (*TimeAttribute, error) {
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &TimeAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,

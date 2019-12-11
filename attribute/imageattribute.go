@@ -7,7 +7,7 @@ import (
 
 // ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
-	Details
+	attributeDetails
 	value *Image
 }
 
@@ -21,7 +21,7 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	}
 
 	return &ImageAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,

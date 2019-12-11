@@ -10,7 +10,7 @@ import (
 
 // MultiValueAttribute is a Yoti attribute which returns a multi-valued attribute
 type MultiValueAttribute struct {
-	Details
+	attributeDetails
 	items []*Item
 }
 
@@ -23,7 +23,7 @@ func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
 	}
 
 	return &MultiValueAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     anchor.ParseAnchors(a.Anchors),

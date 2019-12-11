@@ -29,7 +29,7 @@ type DocumentDetails struct {
 
 // DocumentDetailsAttribute wraps a document details with anchor data
 type DocumentDetailsAttribute struct {
-	Details
+	attributeDetails
 	value DocumentDetails
 }
 
@@ -49,7 +49,7 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 	}
 
 	return &DocumentDetailsAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,

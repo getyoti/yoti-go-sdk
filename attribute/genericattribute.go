@@ -9,7 +9,7 @@ import (
 
 // GenericAttribute is a Yoti attribute which returns a generic value
 type GenericAttribute struct {
-	Details
+	attributeDetails
 	value interface{}
 }
 
@@ -25,7 +25,7 @@ func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
 	var parsedAnchors []*anchor.Anchor = anchor.ParseAnchors(a.Anchors)
 
 	return &GenericAttribute{
-		Details: Details{
+		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
