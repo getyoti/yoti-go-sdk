@@ -75,7 +75,9 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Key"))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
@@ -97,7 +99,9 @@ func TestYotiClient_InvalidToken(t *testing.T) {
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Token"))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
@@ -119,7 +123,9 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, temporary)
 	assert.Check(t, tempError.Temporary())
 }
@@ -142,7 +148,9 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Profile Not Found"))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
@@ -165,7 +173,9 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), ErrSharingFailure.Error()))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
@@ -193,7 +203,9 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, temporary && tempError.Temporary())
 }
 
@@ -389,7 +401,9 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 
 	assert.Assert(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), expectedErrString))
-	tempError, temporary := err.(interface{ Temporary() bool })
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
 	assert.Check(t, temporary && tempError.Temporary())
 }
 
