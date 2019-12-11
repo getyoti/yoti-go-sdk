@@ -483,7 +483,7 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	structuredPostalAddress, err = profile.StructuredPostalAddress()
 
 	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, structuredPostalAddress.ContentType, yotiprotoattr.ContentType_JSON, "Retrieved attribute does not have the correct type")
+	assert.Equal(t, structuredPostalAddress.ContentType(), yotiprotoattr.ContentType_JSON.String(), "Retrieved attribute does not have the correct type")
 }
 
 func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T) {
@@ -548,7 +548,7 @@ func TestProfile_GetAttribute_EmptyString(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	assert.Equal(t, att.Name, attributeName)
+	assert.Equal(t, att.Name(), attributeName)
 	assert.Equal(t, att.Value().(string), emptyString)
 }
 
@@ -561,7 +561,7 @@ func TestProfile_GetApplicationAttribute(t *testing.T) {
 
 	appProfile := createProfileWithSingleAttribute(attr)
 	attribute := appProfile.GetAttribute(attributeName)
-	assert.Equal(t, attribute.Name, attributeName)
+	assert.Equal(t, attribute.Name(), attributeName)
 }
 
 func TestProfile_GetApplicationName(t *testing.T) {
@@ -785,7 +785,7 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	assert.Equal(t, att.Name, attributeName)
+	assert.Equal(t, att.Name(), attributeName)
 	assert.Equal(t, att.Value().(string), attributeValueString)
 }
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
@@ -816,7 +816,7 @@ func TestProfile_StringAttribute(t *testing.T) {
 
 	assert.Equal(t, result.Nationality().Value(), attributeValueString)
 
-	assert.Equal(t, result.Nationality().ContentType, yotiprotoattr.ContentType_STRING)
+	assert.Equal(t, result.Nationality().ContentType(), yotiprotoattr.ContentType_STRING.String())
 }
 
 func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
@@ -833,9 +833,9 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.Equal(t, selfie.Name, attributeName)
+	assert.Equal(t, selfie.Name(), attributeName)
 	assert.DeepEqual(t, attributeValue, selfie.Value().Data)
-	assert.Equal(t, selfie.ContentType, yotiprotoattr.ContentType_PNG)
+	assert.Equal(t, selfie.ContentType(), yotiprotoattr.ContentType_PNG.String())
 }
 
 func TestAttributeImage_Image_Png(t *testing.T) {
