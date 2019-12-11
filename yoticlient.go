@@ -103,7 +103,7 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 	}
 	token, err = decryptToken(token, key)
 	if err != nil {
-		err = fmt.Errorf("Invalid Key: %s", err.Error())
+		err = fmt.Errorf("Invalid Token: %s", err.Error())
 		return
 	}
 	endpoint := getProfileEndpoint(token, client.GetSdkID())
