@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 	"os"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
@@ -52,11 +53,9 @@ func (client *Client) SetupSharingProfile(tokenRequest TokenRequest) (token stri
 		return
 	}
 
-	if client.httpClient == nil {
-		client.httpClient = &http.Client{}
-	}
-
-	response, err := (client.httpClient).Do(request)
+	response, err := (&http.Client{
+		Timeout: time.Second * 10,
+	}).Do(request)
 	if err != nil {
 		return
 	}
