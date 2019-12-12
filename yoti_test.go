@@ -86,7 +86,7 @@ func TestYotiClient_InvalidToken(t *testing.T) {
 
 	client := Client{
 		Key: key,
-		httpClient: &mockHTTPClient{
+		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 500,
