@@ -46,7 +46,7 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 
 	case yotiprotoattr.ContentType_JPEG,
 		yotiprotoattr.ContentType_PNG:
-		return byteValue, nil
+		return ParseImageValue(contentType, byteValue)
 
 	default:
 		log.Printf("Unknown type '%s', attempting to parse it as a String", contentType)
