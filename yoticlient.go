@@ -57,11 +57,12 @@ type Client struct {
 }
 
 // NewClient constructs a Client object
-func NewClient(sdkID string, key *rsa.PrivateKey) *Client {
+func NewClient(sdkID string, key []byte) (*Client, error) {
+	decodedKey, err := loadRsaKey(key)
 	return &Client{
 		SdkID: sdkID,
-		Key:   key,
-	}
+		Key:   decodedKey,
+	}, err
 }
 
 func (client *Client) doRequest(request *http.Request) (*http.Response, error) {
