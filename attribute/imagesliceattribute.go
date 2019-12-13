@@ -2,7 +2,6 @@ package attribute
 
 import (
 	"errors"
-	"log"
 
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
@@ -45,12 +44,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 func CreateImageSlice(items []*Item) (result []*Image) {
 	for _, item := range items {
 
-		imageValue, err := ParseImageValue(item.GetContentType(), item.GetValue().([]byte))
-
-		if err != nil {
-			log.Printf("error parsing image value. ContentType: %s, data: %v, error: %v", item.contentType, item.value.([]byte), err)
-			continue
-		}
+		imageValue := item.GetValue().(*Image)
 
 		result = append(result, imageValue)
 	}
