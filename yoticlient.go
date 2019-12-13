@@ -56,6 +56,14 @@ type Client struct {
 	HTTPClient httpClient // Mockable HTTP Client Interface
 }
 
+// NewClient constructs a Client object
+func NewClient(sdkID string, key *rsa.PrivateKey) *Client {
+	return &Client{
+		SdkID: sdkID,
+		Key:   key,
+	}
+}
+
 func (client *Client) doRequest(request *http.Request) (*http.Response, error) {
 	if client.HTTPClient == nil {
 		client.HTTPClient = &http.Client{
