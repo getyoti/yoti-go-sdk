@@ -794,6 +794,10 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 
 func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	attributeValue := []byte("value")
+	expected := attribute.Image{
+		Type: attribute.ImageTypeJpeg,
+		Data: attributeValue,
+	}
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
@@ -805,11 +809,15 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	assert.DeepEqual(t, att.Value().([]byte), attributeValue)
+	assert.DeepEqual(t, att.Value().(*attribute.Image), &expected)
 }
 
 func TestProfile_GetAttribute_Png(t *testing.T) {
 	attributeValue := []byte("value")
+	expected := attribute.Image{
+		Type: attribute.ImageTypePng,
+		Data: attributeValue,
+	}
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
@@ -821,7 +829,7 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	assert.DeepEqual(t, att.Value().([]byte), attributeValue)
+	assert.DeepEqual(t, att.Value().(*attribute.Image), &expected)
 }
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {
@@ -1313,10 +1321,10 @@ func TestNestedMultiValue(t *testing.T) {
 			for innerKey, item := range innerItems {
 				switch innerKey {
 				case 0:
-					assertIsExpectedImage(t, parseImage(t, item.GetValue()), "jpeg", "vWgD//2Q==")
+					assertIsExpectedImage(t, item.GetValue().(*attribute.Image), "jpeg", "vWgD//2Q==")
 
 				case 1:
-					assertIsExpectedImage(t, parseImage(t, item.GetValue()), "jpeg", "38TVEH/9k=")
+					assertIsExpectedImage(t, item.GetValue().(*attribute.Image), "jpeg", "38TVEH/9k=")
 				}
 			}
 		}
