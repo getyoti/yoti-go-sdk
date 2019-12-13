@@ -9,8 +9,8 @@ import (
 	"fmt"
 )
 
-// LoadPEM loads a PEM encoded RSA private key
-func LoadPEM(keyBytes []byte) (*rsa.PrivateKey, error) {
+// loadRsaKey loads a PEM encoded RSA private key
+func loadRsaKey(keyBytes []byte) (*rsa.PrivateKey, error) {
 	// Extract the PEM-encoded data
 	block, _ := pem.Decode(keyBytes)
 
