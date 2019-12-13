@@ -95,10 +95,8 @@ func TestYotiClient_SetHTTPClientTimeout(t *testing.T) {
 }
 
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
-	var err error
 	key, _ := ioutil.ReadFile("test-key-invalid-format.pem")
-
-	_, err = LoadPEM(key)
+	_, err := NewClient("", key)
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Key"))
 	tempError, temporary := err.(interface {
@@ -120,7 +118,7 @@ func TestYotiClient_InvalidToken(t *testing.T) {
 			},
 		},
 	}
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	_, err = client.getActivityDetails("")
@@ -146,7 +144,7 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	_, err = client.getActivityDetails(encryptedToken)
@@ -173,7 +171,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	_, err = client.getActivityDetails(encryptedToken)
@@ -200,7 +198,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	_, err = client.getActivityDetails(encryptedToken)
@@ -232,7 +230,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	_, err = client.getActivityDetails(encryptedToken)
@@ -262,7 +260,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
@@ -326,7 +324,7 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
@@ -359,7 +357,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			},
 		}
 		var err error
-		client.Key, err = LoadPEM(key)
+		client.Key, err = loadRsaKey(key)
 		assert.NilError(t, err)
 
 		activityDetails, errStrings := client.getActivityDetails(encryptedToken)
@@ -391,7 +389,6 @@ func TestShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	extraDataContent := CreateExtraDataContent(t, pemBytes, protoExtraData)
 
 	client := Client{
-		Key: pemBytes,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -403,6 +400,8 @@ func TestShouldParseAndDecryptExtraDataContent(t *testing.T) {
 			},
 		},
 	}
+	client.Key, err = loadRsaKey(pemBytes)
+	assert.NilError(t, err)
 
 	activityDetails, err := client.getActivityDetails(encryptedToken)
 	assert.NilError(t, err)
@@ -433,7 +432,6 @@ func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 	rememberMeID := "remember_me_id0123456789"
 
 	client := Client{
-		Key: pemBytes,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -445,6 +443,8 @@ func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 			},
 		},
 	}
+	client.Key, err = loadRsaKey(pemBytes)
+	assert.NilError(t, err)
 
 	activityDetails, err := client.getActivityDetails(encryptedToken)
 
@@ -477,7 +477,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 			},
 		}
 		var err error
-		client.Key, err = LoadPEM(key)
+		client.Key, err = loadRsaKey(key)
 		assert.NilError(t, err)
 
 		_, errStrings := client.getActivityDetails(encryptedToken)
@@ -500,7 +500,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	result, err := client.PerformAmlCheck(createStandardAmlProfile())
@@ -526,7 +526,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 		},
 	}
 	var err error
-	client.Key, err = LoadPEM(key)
+	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
 	_, err = client.PerformAmlCheck(createStandardAmlProfile())
@@ -1381,16 +1381,6 @@ func TestNewThirdPartyAttribute(t *testing.T) {
 
 	assert.Equal(t, stringAttribute.Verifiers()[0].Value()[0], "THIRD_PARTY")
 	assert.Equal(t, stringAttribute.Verifiers()[0].SubType(), "orgName")
-}
-
-func parseImage(t *testing.T, innerImageInterface interface{}) *attribute.Image {
-	innerImageBytes, ok := innerImageInterface.([]byte)
-	assert.Assert(t, ok)
-
-	innerImage, err := attribute.ParseImageValue(yotiprotoattr.ContentType_JPEG, innerImageBytes)
-	assert.Assert(t, is.Nil(err))
-
-	return innerImage
 }
 
 func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*attribute.Image, anchor *anchor.Anchor) {
