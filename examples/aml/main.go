@@ -26,10 +26,8 @@ func main() {
 		return
 	}
 
-	client = &yoti.Client{
-		SdkID: sdkID,
-	}
-	client.Key, err = yoti.LoadPEM(key)
+	rsaKey, err := yoti.LoadPEM(key)
+	client := yoti.NewClient(sdkID, rsaKey)
 	if err != nil {
 		log.Printf("Problem initialising client: Error: `%s`", err)
 		return
