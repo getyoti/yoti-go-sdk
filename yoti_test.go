@@ -1287,6 +1287,19 @@ func TestInvalidMultiValueNotReturned(t *testing.T) {
 	assert.Assert(t, is.Nil(profile.GetAttribute(attributeName)))
 }
 
+func TestNewGeneric_ShouldParseUnknownTypeAsString(t *testing.T) {
+	value := []byte("value")
+	parsed := attribute.NewGeneric(&yotiprotoattr.Attribute{
+		ContentType: yotiprotoattr.ContentType_UNDEFINED,
+		Value:       value,
+	})
+
+	stringValue, ok := parsed.Value().(string)
+	assert.Check(t, ok)
+
+	assert.Equal(t, stringValue, string(value))
+}
+
 func TestNestedMultiValue(t *testing.T) {
 	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "testattributemultivalue.txt").Value
 
