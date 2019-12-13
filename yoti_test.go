@@ -108,7 +108,7 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 		},
 	}
 
-	_, _, errorStrings := client.getActivityDetails(encryptedToken)
+	_, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], "Invalid Key"))
@@ -128,7 +128,7 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 
-	_, _, errorStrings := client.getActivityDetails(encryptedToken)
+	_, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], "Unknown HTTP Error"))
@@ -148,7 +148,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		},
 	}
 
-	_, _, errorStrings := client.getActivityDetails(encryptedToken)
+	_, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], "Profile Not Found"))
@@ -169,7 +169,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 
-	_, _, errorStrings := client.getActivityDetails(encryptedToken)
+	_, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()))
@@ -195,7 +195,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 		},
 	}
 
-	_, _, errorStrings := client.getActivityDetails(encryptedToken)
+	_, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, len(errorStrings) > 0)
 	assert.Check(t, strings.HasPrefix(errorStrings[0], "Unknown HTTP Error"))
@@ -219,17 +219,9 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 		},
 	}
 
-	userProfile, activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
+	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
-	assert.Equal(t, userProfile.ID, rememberMeID)
-
-	assert.Assert(t, userProfile.Selfie != nil)
-	assert.Equal(t, string(userProfile.Selfie.Data), "selfie0123456789")
-	assert.Equal(t, userProfile.MobileNumber, "phone_number0123456789")
-
-	dobUserProfile := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
-	assert.Assert(t, userProfile.DateOfBirth.Equal(dobUserProfile))
 
 	profile := activityDetails.UserProfile
 
@@ -289,7 +281,7 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 		},
 	}
 
-	_, activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
+	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
@@ -320,10 +312,9 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			},
 		}
 
-		userProfile, activityDetails, err := client.getActivityDetails(encryptedToken)
+		activityDetails, err := client.getActivityDetails(encryptedToken)
 
 		assert.Assert(t, is.Nil(err))
-		assert.Equal(t, userProfile.ID, rememberMeID)
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 		assert.Equal(t, activityDetails.Timestamp(), timestamp)
 		assert.Equal(t, activityDetails.ReceiptID(), receiptID)
@@ -363,7 +354,7 @@ func TestShouldParseAndDecryptExtraDataContent(t *testing.T) {
 		},
 	}
 
-	_, activityDetails, errList := client.getActivityDetails(encryptedToken)
+	activityDetails, errList := client.getActivityDetails(encryptedToken)
 
 	assert.Equal(t, len(errList), 0)
 
@@ -406,7 +397,7 @@ func TestShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
 		},
 	}
 
-	_, activityDetails, errList := client.getActivityDetails(encryptedToken)
+	activityDetails, errList := client.getActivityDetails(encryptedToken)
 
 	assert.Check(t, strings.HasPrefix(errList[0], "Issuance Token is invalid"))
 
@@ -437,7 +428,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 			},
 		}
 
-		_, _, err := client.getActivityDetails(encryptedToken)
+		_, err := client.getActivityDetails(encryptedToken)
 
 		assert.Assert(t, is.Nil(err))
 	}
@@ -572,16 +563,6 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	}
 	`)
 
-	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
-
-	var userProfile = UserProfile{
-		ID:                      "remember_me_id0123456789",
-		OtherAttributes:         make(map[string]AttributeValue),
-		StructuredPostalAddress: structuredAddress,
-		Address:                 ""}
-
 	var jsonAttribute = &yotiprotoattr.Attribute{
 		Name:        AttrConstStructuredPostalAddress,
 		Value:       structuredAddressBytes,
@@ -594,67 +575,13 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	profileAddress, profileErr := ensureAddressProfile(profile)
 	assert.Assert(t, is.Nil(profileErr), "Failed to add formatted address to address on Profile")
 
-	userProfileAddress, userProfileErr := ensureAddressUserProfile(userProfile)
-	assert.Assert(t, is.Nil(userProfileErr), "Failed to add formatted address to address on UserProfile")
-
 	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
 
 	assert.Equal(t, profileAddress, escapedFormattedAddressText, "Address does not equal the expected formatted address.")
-	assert.Equal(t, userProfileAddress, escapedFormattedAddressText, "Address does not equal the expected formatted address.")
 
-	var structuredPostalAddress *attribute.JSONAttribute
-	structuredPostalAddress, err = profile.StructuredPostalAddress()
-
-	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, structuredPostalAddress.ContentType(), yotiprotoattr.ContentType_JSON.String(), "Retrieved attribute does not have the correct type")
-}
-
-func TestYotiClient_PresentPostalAddress_DoesntUseFormattedAddress(t *testing.T) {
-	var addressText = `PostalAddress`
-
-	var structuredAddressBytes = []byte(`
-	{
-		"address_format": 2,
-		"building": "House No.86-A",
-		"formatted_address": "FormattedAddress"
-	}`)
-	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
-
-	var result = UserProfile{
-		ID:                      "remember_me_id0123456789",
-		OtherAttributes:         make(map[string]AttributeValue),
-		StructuredPostalAddress: structuredAddress,
-		Address:                 addressText}
-
-	newFormattedAddress, err := ensureAddressUserProfile(result)
-
-	assert.Assert(t, is.Nil(err), "Failure when getting formatted address")
-	assert.Equal(t, newFormattedAddress, "", "Address should be unchanged when it is present")
-}
-
-func TestYotiClient_MissingFormattedAddress_AddressUnchanged(t *testing.T) {
-	var structuredAddressBytes = []byte(`
-	{
-		"address_format": 2,
-		"building": "House No.86-A"
-	}`)
-
-	structuredAddress, err := attribute.UnmarshallJSON(structuredAddressBytes)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
-
-	var result = UserProfile{
-		ID:                      "remember_me_id0123456789",
-		OtherAttributes:         make(map[string]AttributeValue),
-		StructuredPostalAddress: structuredAddress,
-		Address:                 ""}
-
-	address, err := ensureAddressUserProfile(result)
-
-	assert.Assert(t, is.Nil(err), "Failed to add formatted address to address")
-	assert.Equal(t, address, "", "Formatted address missing, but address was still changed")
+	structuredPostalAddress, err := profile.StructuredPostalAddress()
+	assert.NilError(t, err)
+	assert.Equal(t, structuredPostalAddress.ContentType(), "JSON")
 }
 
 func TestProfile_GetAttribute_EmptyString(t *testing.T) {
@@ -1367,7 +1294,7 @@ func TestNewThirdPartyAttribute(t *testing.T) {
 	stringAttribute := attribute.NewString(protoAttribute)
 
 	assert.Equal(t, stringAttribute.Value(), "test-third-party-attribute-0")
-	assert.Equal(t, stringAttribute.GetName(), "com.thirdparty.id")
+	assert.Equal(t, stringAttribute.Name(), "com.thirdparty.id")
 
 	assert.Equal(t, stringAttribute.Sources()[0].Value()[0], "THIRD_PARTY")
 	assert.Equal(t, stringAttribute.Sources()[0].SubType(), "orgName")
