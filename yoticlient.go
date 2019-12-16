@@ -213,7 +213,6 @@ func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute 
 
 func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (activityDetails ActivityDetails, err error) {
 	var parsedResponse = profileDO{}
-	var errStrings []string
 
 	if err = json.Unmarshal([]byte(responseContent), &parsedResponse); err != nil {
 		return
@@ -263,17 +262,17 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 			profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
 		}
 
-		decryptedExtraData, err := parseExtraData(&parsedResponse.Receipt, key)
-		if err != nil {
+		decryptedExtraData, errTemp := parseExtraData(&parsedResponse.Receipt, key)
+		if errTemp != nil {
 			log.Printf("Unable to decrypt ExtraData from the receipt. Error: %q", err)
-			errStrings = append(errStrings, err.Error())
+			err = MultiError{This: errTemp, Next: err}
 		}
 
-		extraData, err := share.NewExtraData(decryptedExtraData)
+		extraData, errTemp := share.NewExtraData(decryptedExtraData)
 
-		if err != nil {
+		if errTemp != nil {
 			log.Printf("Unable to parse ExtraData from the receipt. Error: %q", err)
-			errStrings = append(errStrings, err.Error())
+			err = MultiError{This: errTemp, Next: err}
 		}
 
 		activityDetails = ActivityDetails{
@@ -287,9 +286,6 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 		}
 	}
 
-	if len(errStrings) > 0 && err == nil {
-		err = fmt.Errorf("%v", errStrings)
-	}
 	return activityDetails, err
 }
 
