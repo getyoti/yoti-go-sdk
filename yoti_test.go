@@ -71,10 +71,38 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 		},
 	}
 
-	_, errorStrings := client.getActivityDetails(encryptedToken)
+	_, err := client.getActivityDetails(encryptedToken)
 
-	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], "Invalid Key"))
+	assert.Check(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Key"))
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
+func TestYotiClient_InvalidToken(t *testing.T) {
+	key, _ := ioutil.ReadFile("test-key.pem")
+
+	client := Client{
+		Key: key,
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 500,
+				}, nil
+			},
+		},
+	}
+
+	_, err := client.getActivityDetails("")
+
+	assert.Check(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Token"))
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
@@ -91,10 +119,15 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 
-	_, errorStrings := client.getActivityDetails(encryptedToken)
+	_, err := client.getActivityDetails(encryptedToken)
 
-	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], "Unknown HTTP Error"))
+	assert.Check(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, temporary)
+	assert.Check(t, tempError.Temporary())
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
@@ -111,10 +144,14 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		},
 	}
 
-	_, errorStrings := client.getActivityDetails(encryptedToken)
+	_, err := client.getActivityDetails(encryptedToken)
 
-	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], "Profile Not Found"))
+	assert.Check(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), "Profile Not Found"))
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
@@ -132,10 +169,14 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 
-	_, errorStrings := client.getActivityDetails(encryptedToken)
+	_, err := client.getActivityDetails(encryptedToken)
 
-	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], ErrSharingFailure.Error()))
+	assert.Check(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), ErrSharingFailure.Error()))
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
@@ -158,10 +199,14 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 		},
 	}
 
-	_, errorStrings := client.getActivityDetails(encryptedToken)
+	_, err := client.getActivityDetails(encryptedToken)
 
-	assert.Assert(t, len(errorStrings) > 0)
-	assert.Check(t, strings.HasPrefix(errorStrings[0], "Unknown HTTP Error"))
+	assert.Check(t, err != nil)
+	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, temporary && tempError.Temporary())
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
@@ -356,7 +401,10 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 
 	assert.Assert(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), expectedErrString))
-
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, temporary && tempError.Temporary())
 }
 
 func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
