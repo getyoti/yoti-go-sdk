@@ -123,6 +123,16 @@ func (b *DynamicPolicyBuilder) WithEmail(options ...interface{}) *DynamicPolicyB
 	return b.WithWantedAttributeByName(consts.AttrEmailAddress, options...)
 }
 
+// WithDocumentImages adds the document images attribute
+func (b *DynamicPolicyBuilder) WithDocumentImages(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(consts.AttrDocumentImages, options...)
+}
+
+// WithDocumentDetails adds the document details attribute
+func (b *DynamicPolicyBuilder) WithDocumentDetails(options ...interface{}) *DynamicPolicyBuilder {
+	return b.WithWantedAttributeByName(consts.AttrDocumentDetails, options...)
+}
+
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
 // Prefer to use WithAgeOver and WithAgeUnder instead of using this directly
 func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *DynamicPolicyBuilder {
