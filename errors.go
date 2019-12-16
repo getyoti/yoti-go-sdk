@@ -1,8 +1,6 @@
 package yoti
 
-import (
-	"fmt"
-)
+import "fmt"
 
 // TemporaryError indicates that a temporary outage has occured and the
 // previous request can be reattempted without modification.
