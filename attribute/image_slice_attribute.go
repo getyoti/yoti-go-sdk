@@ -52,7 +52,7 @@ func CreateImageSlice(items []*Item) (result []*Image) {
 	return result
 }
 
-// Value returns the value of the ImageSliceAttribute as a string
+// Value returns the value of the ImageSliceAttribute
 func (a *ImageSliceAttribute) Value() []*Image {
 	return a.value
 }
