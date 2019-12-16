@@ -95,7 +95,7 @@ func TestYotiClient_InvalidToken(t *testing.T) {
 		},
 	}
 
-	_, _, err := client.getActivityDetails("")
+	_, err := client.getActivityDetails("")
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Token"))
