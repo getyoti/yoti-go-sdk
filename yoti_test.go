@@ -335,7 +335,10 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 	rememberMeID := "remember_me_id0123456789"
-	timestamp := "123456789"
+	timestamp := time.Date(1973, 11, 29, 9, 33, 9, 0, time.UTC)
+	timestampString := func(a []byte, _ error) string {
+		return string(a)
+	}(timestamp.MarshalText())
 	receiptID := "receipt_id123"
 
 	var otherPartyProfileContents = []string{
@@ -351,7 +354,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 					return &http.Response{
 						StatusCode: 200,
 						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
-							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"` + timestamp + `", "receipt_id":"` + receiptID + `"}}`)),
+							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"` + timestampString + `", "receipt_id":"` + receiptID + `"}}`)),
 					}, nil
 				},
 			},
