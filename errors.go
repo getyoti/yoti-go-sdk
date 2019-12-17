@@ -1,5 +1,9 @@
 package yoti
 
+import (
+	"fmt"
+)
+
 // TemporaryError indicates that a temporary outage has occured and the
 // previous request can be reattempted without modification.
 type TemporaryError struct {
@@ -18,4 +22,22 @@ func (e TemporaryError) Unwrap() error {
 // Temporary indicates this error is a temporary error
 func (e TemporaryError) Temporary() bool {
 	return true
+}
+
+// MultiError wraps one or more errors into a single error
+type MultiError struct {
+	This error
+	Next error
+}
+
+func (e MultiError) Error() string {
+	if e.Next != nil {
+		return fmt.Sprintf("%s, %s", e.This.Error(), e.Next.Error())
+	}
+	return e.This.Error()
+}
+
+// Unwrap the next error
+func (e MultiError) Unwrap() error {
+	return e.Next
 }

@@ -31,8 +31,14 @@ func ExampleCreateShareURL() {
 		},
 	}
 
-	policy := (&DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
-	scenario := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).Build()
+	policy, err := (&DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
+	if err != nil {
+		return
+	}
+	scenario, err := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).Build()
+	if err != nil {
+		return
+	}
 
 	share, _ := CreateShareURL(&mockYoti, &scenario)
 

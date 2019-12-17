@@ -7,6 +7,7 @@ import (
 // DynamicScenarioBuilder builds a dynamic scenario
 type DynamicScenarioBuilder struct {
 	scenario DynamicScenario
+	err      error
 }
 
 // DynamicScenario represents a dynamic scenario
@@ -18,7 +19,7 @@ type DynamicScenario struct {
 
 // New initializes the state of a DynamicScenarioBuilder before its use
 func (builder *DynamicScenarioBuilder) New() *DynamicScenarioBuilder {
-	builder.scenario.policy = (&DynamicPolicyBuilder{}).New().Build()
+	builder.scenario.policy, builder.err = (&DynamicPolicyBuilder{}).New().Build()
 	builder.scenario.extensions = make([]interface{}, 0)
 	builder.scenario.callbackEndpoint = ""
 	return builder
@@ -43,8 +44,8 @@ func (builder *DynamicScenarioBuilder) WithCallbackEndpoint(endpoint string) *Dy
 }
 
 // Build constructs the DynamicScenario
-func (builder *DynamicScenarioBuilder) Build() DynamicScenario {
-	return builder.scenario
+func (builder *DynamicScenarioBuilder) Build() (DynamicScenario, error) {
+	return builder.scenario, builder.err
 }
 
 // MarshalJSON returns the JSON encoding
