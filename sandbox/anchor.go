@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// SourceAnchor creates an anchor describing a document source
 func SourceAnchor(subtype string, timestamp time.Time, value string) Anchor {
 	return Anchor{
 		Type:      "SOURCE",
@@ -14,6 +15,7 @@ func SourceAnchor(subtype string, timestamp time.Time, value string) Anchor {
 	}
 }
 
+// VerifierAnchor creates an anchor describing a document verifier
 func VerifierAnchor(subtype string, timestamp time.Time, value string) Anchor {
 	return Anchor{
 		Type:      "VERIFIER",
@@ -31,6 +33,7 @@ type Anchor struct {
 	Timestamp time.Time
 }
 
+// MarshalJSON returns the JSON encoding
 func (anchor *Anchor) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type      string `json:"type"`

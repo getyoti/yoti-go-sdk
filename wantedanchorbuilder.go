@@ -35,8 +35,8 @@ func (b *WantedAnchorBuilder) WithSubType(subType string) *WantedAnchorBuilder {
 }
 
 // Build constructs the anchor from the builder's specification
-func (b *WantedAnchorBuilder) Build() WantedAnchor {
-	return b.wantedAnchor
+func (b *WantedAnchorBuilder) Build() (WantedAnchor, error) {
+	return b.wantedAnchor, nil
 }
 
 // MarshalJSON ...
