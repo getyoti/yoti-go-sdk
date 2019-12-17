@@ -12,7 +12,7 @@
         <div class="yoti-attribute-value-text">
           {{ if eq .Prop.Name "document_images" }}
             {{ range .Prop.Value }}
-              <img src="{{ .Base64URL }}" />
+              <img src="{{ .Base64URL | escapeURL }}" />
             {{ end }}
           {{ else if eq .Prop.Name "structured_postal_address" }}
             <table>
@@ -105,7 +105,7 @@
         {{ if .profile.StructuredPostalAddress }} {{ template "attribute" marshalAttribute "Structured Address" "yoti-icon-address" .profile.StructuredPostalAddress "" }} {{ end }}
         {{ if .profile.Gender }} {{ template "attribute" marshalAttribute "Gender" "yoti-icon-gender" .profile.Gender "" }} {{ end }}
         {{ if .profile.DocumentDetails }} {{ template "attribute" marshalAttribute "Document Details" "yoti-icon-document" .profile.DocumentDetails "" }} {{ end }}
-        {{ if .profile.DocumentImages }} {{ template "attribute" marshalAttribute "Document Images" "yoti-icon-profile" .documentImages "" }} {{ end }}
+        {{ if .profile.DocumentImages }} {{ template "attribute" marshalAttribute "Document Images" "yoti-icon-profile" .profile.DocumentImages "" }} {{ end }}
       </div>
 
     </section>
