@@ -244,6 +244,9 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	var t *template.Template
 	t, err = template.New("profile.html").
 		Funcs(template.FuncMap{
+			"escapeURL": func(s string) template.URL {
+				return template.URL(s)
+			},
 			"marshalAttribute": func(name string, icon string, property interface{}, prevalue string) interface{} {
 				return struct {
 					Name     string
