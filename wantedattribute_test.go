@@ -2,45 +2,59 @@ package yoti
 
 import (
 	"fmt"
-	"testing"
-
-	"gotest.tools/v3/assert"
 )
 
 func ExampleWantedAttributeBuilder_WithName() {
 	builder := (&WantedAttributeBuilder{}).New().WithName("TEST NAME")
-	attribute := builder.Build()
+	attribute, err := builder.Build()
+	if err != nil {
+		return
+	}
 	fmt.Println(attribute.name)
 	// Output: TEST NAME
 }
 
 func ExampleWantedAttributeBuilder_WithDerivation() {
-	attribute := (&WantedAttributeBuilder{}).New().WithDerivation("TEST DERIVATION").Build()
+	attribute, err := (&WantedAttributeBuilder{}).New().
+		WithDerivation("TEST DERIVATION").
+		WithName("TEST NAME").
+		Build()
+	if err != nil {
+		return
+	}
 	fmt.Println(attribute.derivation)
 	// Output: TEST DERIVATION
 }
 
 func ExampleWantedAttributeBuilder_WithConstraint() {
-	constraint := (&SourceConstraintBuilder{}).New().Build()
-	attribute := (&WantedAttributeBuilder{}).New().WithName("attr").WithConstraint(&constraint).Build()
+	constraint, err := (&SourceConstraintBuilder{}).New().
+		Build()
+	if err != nil {
+		return
+	}
+	attribute, err := (&WantedAttributeBuilder{}).New().
+		WithName("TEST NAME").
+		WithConstraint(&constraint).
+		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
-	// Output: {"name":"attr","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
+	// Output: {"name":"TEST NAME","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
 }
 
 func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
-	attribute := (&WantedAttributeBuilder{}).New().WithName("attr").WithAcceptSelfAsserted(true).Build()
+	attribute, err := (&WantedAttributeBuilder{}).New().
+		WithName("TEST NAME").
+		WithAcceptSelfAsserted(true).
+		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
-	// Output: {"name":"attr","accept_self_asserted":true}
-}
-
-func TestWantedAttributeBuilderShouldRejectEmptyName(t *testing.T) {
-	attribute := (&WantedAttributeBuilder{}).New().Build()
-	json, err := attribute.MarshalJSON()
-	assert.Check(t, err != nil)
-	assert.Equal(t, err.Error(), "Wanted attribute names must not be empty")
-	assert.Equal(t, len(json), 0)
+	// Output: {"name":"TEST NAME","accept_self_asserted":true}
 }

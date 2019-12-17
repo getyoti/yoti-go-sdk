@@ -32,8 +32,8 @@ func (builder *TransactionalFlowExtensionBuilder) WithContent(content interface{
 }
 
 // Build constructs a TransactionalFlowExtension
-func (builder *TransactionalFlowExtensionBuilder) Build() TransactionalFlowExtension {
-	return builder.extension
+func (builder *TransactionalFlowExtensionBuilder) Build() (TransactionalFlowExtension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding

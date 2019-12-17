@@ -5,10 +5,13 @@ import (
 )
 
 func ExampleWantedAnchorBuilder() {
-	aadhaarAnchor := (&WantedAnchorBuilder{}).New().
+	aadhaarAnchor, err := (&WantedAnchorBuilder{}).New().
 		WithValue("NATIONAL_ID").
 		WithSubType("AADHAAR").
 		Build()
+	if err != nil {
+		return
+	}
 
 	aadhaarJSON, _ := aadhaarAnchor.MarshalJSON()
 
