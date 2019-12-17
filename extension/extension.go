@@ -37,8 +37,8 @@ func (builder *ExtensionBuilder) WithContent(content interface{}) *ExtensionBuil
 }
 
 // Build constructs the Extension
-func (builder *ExtensionBuilder) Build() Extension {
-	return builder.extension
+func (builder *ExtensionBuilder) Build() (Extension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding

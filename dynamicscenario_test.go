@@ -7,15 +7,24 @@ import (
 )
 
 func ExampleDynamicScenarioBuilder() {
-	scenario := (&DynamicScenarioBuilder{}).New().Build()
+	scenario, err := (&DynamicScenarioBuilder{}).New().Build()
+	if err != nil {
+		return
+	}
 	data, _ := scenario.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"policy":{"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[],"callback_endpoint":""}
 }
 
 func ExampleDynamicScenarioBuilder_WithPolicy() {
-	policy := (&DynamicPolicyBuilder{}).New().WithEmail().WithPinAuth().Build()
-	scenario := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/foo").Build()
+	policy, err := (&DynamicPolicyBuilder{}).New().WithEmail().WithPinAuth().Build()
+	if err != nil {
+		return
+	}
+	scenario, err := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/foo").Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := scenario.MarshalJSON()
 	fmt.Println(string(data))
@@ -23,12 +32,21 @@ func ExampleDynamicScenarioBuilder_WithPolicy() {
 }
 
 func ExampleDynamicScenarioBuilder_WithExtension() {
-	policy := (&DynamicPolicyBuilder{}).New().WithFullName().Build()
-	extension := (&extension.TransactionalFlowExtensionBuilder{}).New().
+	policy, err := (&DynamicPolicyBuilder{}).New().WithFullName().Build()
+	if err != nil {
+		return
+	}
+	extension, err := (&extension.TransactionalFlowExtensionBuilder{}).New().
 		WithContent("Transactional Flow Extension").
 		Build()
+	if err != nil {
+		return
+	}
 
-	scenario := (&DynamicScenarioBuilder{}).New().WithExtension(extension).WithPolicy(policy).Build()
+	scenario, err := (&DynamicScenarioBuilder{}).New().WithExtension(extension).WithPolicy(policy).Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := scenario.MarshalJSON()
 	fmt.Println(string(data))

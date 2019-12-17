@@ -7,7 +7,10 @@ import (
 func ExampleExtension() {
 	content := "SOME CONTENT"
 	extType := "SOME_TYPE"
-	extension := (&ExtensionBuilder{}).New().WithContent(content).WithType(extType).Build()
+	extension, err := (&ExtensionBuilder{}).New().WithContent(content).WithType(extType).Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := extension.MarshalJSON()
 	fmt.Println(string(data))

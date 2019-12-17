@@ -55,8 +55,8 @@ func (builder *LocationConstraintExtensionBuilder) WithUncertainty(uncertainty f
 }
 
 // Build constructs a LocationConstraintExtension from the builder
-func (builder *LocationConstraintExtensionBuilder) Build() LocationConstraintExtension {
-	return builder.extension
+func (builder *LocationConstraintExtensionBuilder) Build() (LocationConstraintExtension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding
