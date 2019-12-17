@@ -48,18 +48,59 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 
 func sourceConstraints(w http.ResponseWriter, req *http.Request) {
-	constraint := (&yoti.SourceConstraintBuilder{}).New().WithDrivingLicence("").WithPassport("").Build()
-	scenario := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(
-		(&yoti.DynamicPolicyBuilder{}).New().WithFullName(constraint).WithStructuredPostalAddress(constraint).Build(),
-	).WithCallbackEndpoint("/profile").Build()
+	constraint, err := (&yoti.SourceConstraintBuilder{}).New().WithDrivingLicence("").WithPassport("").Build()
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Constraint Builder Error: `%s`", err),
+		)))
+		return
+	}
+
+	policy, err := (&yoti.DynamicPolicyBuilder{}).New().WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Policy Builder Error: `%s`", err),
+		)))
+		return
+	}
+
+	scenario, err := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(policy).
+		WithCallbackEndpoint("/profile").Build()
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Scenario Builder Error: `%s`", err),
+		)))
+		return
+	}
 
 	pageFromScenario(w, req, "Source Constraint example", scenario)
 }
 
 func dynamicShare(w http.ResponseWriter, req *http.Request) {
-	scenario := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(
-		(&yoti.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build(),
-	).WithCallbackEndpoint("/profile").Build()
+	policy, err := (&yoti.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build()
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Scenario Builder Error: `%s`", err),
+		)))
+		return
+	}
+	scenario, err := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/profile").Build()
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Scenario Builder Error: `%s`", err),
+		)))
+		return
+	}
 
 	pageFromScenario(w, req, "Dynamic Share example", scenario)
 }
@@ -153,7 +194,6 @@ func profile(w http.ResponseWriter, r *http.Request) {
 			contextKey("yotiError"),
 			err.Error(),
 		)))
-		log.Printf("Errors: %v", err)
 		return
 	}
 

@@ -5,11 +5,17 @@ import (
 )
 
 func ExampleSourceConstraint() {
-	drivingLicence := (&WantedAnchorBuilder{}).New().WithValue("DRIVING_LICENCE").Build()
-	sourceConstraint := (&SourceConstraintBuilder{}).New().
+	drivingLicence, err := (&WantedAnchorBuilder{}).New().WithValue("DRIVING_LICENCE").Build()
+	if err != nil {
+		return
+	}
+	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
 		WithAnchor(drivingLicence).
 		WithSoftPreference(true).
 		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := sourceConstraint.MarshalJSON()
 	fmt.Println("SourceConstraint:", string(json))
@@ -17,9 +23,12 @@ func ExampleSourceConstraint() {
 }
 
 func ExampleSourceConstraintBuilder_WithPassport() {
-	sourceConstraint := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
 		WithPassport("").
 		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := sourceConstraint.MarshalJSON()
 	fmt.Println(string(json))
@@ -27,9 +36,12 @@ func ExampleSourceConstraintBuilder_WithPassport() {
 }
 
 func ExampleSourceConstraintBuilder_WithDrivingLicence() {
-	sourceConstraint := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
 		WithDrivingLicence("").
 		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := sourceConstraint.MarshalJSON()
 	fmt.Println(string(json))
@@ -37,9 +49,12 @@ func ExampleSourceConstraintBuilder_WithDrivingLicence() {
 }
 
 func ExampleSourceConstraintBuilder_WithNationalID() {
-	sourceConstraint := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
 		WithNationalID("").
 		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := sourceConstraint.MarshalJSON()
 	fmt.Println(string(json))
@@ -47,9 +62,12 @@ func ExampleSourceConstraintBuilder_WithNationalID() {
 }
 
 func ExampleSourceConstraintBuilder_WithPasscard() {
-	sourceConstraint := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
 		WithPasscard("").
 		Build()
+	if err != nil {
+		return
+	}
 
 	json, _ := sourceConstraint.MarshalJSON()
 	fmt.Println(string(json))

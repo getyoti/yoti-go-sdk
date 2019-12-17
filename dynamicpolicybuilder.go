@@ -16,6 +16,7 @@ type DynamicPolicyBuilder struct {
 	wantedAttributes   map[string]WantedAttribute
 	wantedAuthTypes    map[int]bool
 	isWantedRememberMe bool
+	err                error
 }
 
 // DynamicPolicy represents a dynamic policy for a share
@@ -61,7 +62,10 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ..
 		}
 	}
 
-	attribute := attributeBuilder.Build()
+	attribute, err := attributeBuilder.Build()
+	if err != nil {
+		b.err = MultiError{This: err, Next: b.err}
+	}
 	b.WithWantedAttribute(attribute)
 	return b
 }
@@ -140,7 +144,11 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, option
 		}
 	}
 
-	return b.WithWantedAttribute(attributeBuilder.Build())
+	attr, err := attributeBuilder.Build()
+	if err != nil {
+		panic(fmt.Sprintf("Problem building attribute, %s", err))
+	}
+	return b.WithWantedAttribute(attr)
 }
 
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
@@ -178,13 +186,12 @@ func (b *DynamicPolicyBuilder) WithPinAuth() *DynamicPolicyBuilder {
 }
 
 // Build constructs a dynamic policy object
-func (b *DynamicPolicyBuilder) Build() DynamicPolicy {
+func (b *DynamicPolicyBuilder) Build() (DynamicPolicy, error) {
 	return DynamicPolicy{
 		attributes:   b.attributesAsList(),
 		authTypes:    b.authTypesAsList(),
 		rememberMeID: b.isWantedRememberMe,
-	}
-
+	}, b.err
 }
 
 func (b *DynamicPolicyBuilder) attributesAsList() []WantedAttribute {
