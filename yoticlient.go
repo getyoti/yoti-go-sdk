@@ -285,11 +285,16 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 			err = MultiError{This: errTemp, Next: err}
 		}
 
+		timestamp, err := time.Parse(time.RFC3339, parsedResponse.Receipt.Timestamp)
+		if err != nil {
+			log.Printf("Unable to read timestamp. Error: %q", err)
+		}
+
 		activityDetails = ActivityDetails{
 			UserProfile:        profile,
 			rememberMeID:       id,
 			parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
-			timestamp:          parsedResponse.Receipt.Timestamp,
+			timestamp:          timestamp,
 			receiptID:          parsedResponse.Receipt.ReceiptID,
 			ApplicationProfile: appProfile,
 			extraData:          extraData,

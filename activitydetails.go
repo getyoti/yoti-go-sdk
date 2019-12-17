@@ -1,13 +1,16 @@
 package yoti
 
 import "github.com/getyoti/yoti-go-sdk/v2/share"
+import (
+	"time"
+)
 
 // ActivityDetails represents the result of an activity between a user and the application.
 type ActivityDetails struct {
 	UserProfile        Profile
 	rememberMeID       string
 	parentRememberMeID string
-	timestamp          string
+	timestamp          time.Time
 	receiptID          string
 	ApplicationProfile ApplicationProfile
 	extraData          *share.ExtraData
@@ -29,7 +32,7 @@ func (a ActivityDetails) ParentRememberMeID() string {
 }
 
 // Timestamp is the Time and date of the sharing activity
-func (a ActivityDetails) Timestamp() string {
+func (a ActivityDetails) Timestamp() time.Time {
 	return a.timestamp
 }
 
