@@ -1,8 +1,9 @@
 package yoti
 
-import "github.com/getyoti/yoti-go-sdk/v2/share"
 import (
 	"time"
+
+	"github.com/getyoti/yoti-go-sdk/v2/share"
 )
 
 // ActivityDetails represents the result of an activity between a user and the application.
