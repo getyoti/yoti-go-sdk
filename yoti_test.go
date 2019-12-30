@@ -1054,7 +1054,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 func TestAnchorParser_Passport(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	anchorSlice := createAnchorSliceFromTestFile(t, "testanchorpassport.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "fixtures/test_anchor_passport.txt")
 
 	var structuredAddressBytes = []byte(`
 	{
@@ -1097,7 +1097,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 }
 
 func TestAnchorParser_DrivingLicense(t *testing.T) {
-	anchorSlice := createAnchorSliceFromTestFile(t, "testanchordrivinglicense.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "fixtures/test_anchor_driving_license.txt")
 
 	attribute := &yotiprotoattr.Attribute{
 		Name:        AttrConstGender,
@@ -1129,7 +1129,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 }
 
 func TestAnchorParser_UnknownAnchor(t *testing.T) {
-	anchorSlice := createAnchorSliceFromTestFile(t, "testanchorunknown.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "fixtures/test_anchor_unknown.txt")
 
 	attr := &yotiprotoattr.Attribute{
 		Name:        AttrConstDateOfBirth,
@@ -1157,7 +1157,7 @@ func TestAnchorParser_UnknownAnchor(t *testing.T) {
 }
 
 func TestAnchorParser_YotiAdmin(t *testing.T) {
-	anchorSlice := createAnchorSliceFromTestFile(t, "testanchoryotiadmin.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "fixtures/test_anchor_yoti_admin.txt")
 
 	attr := &yotiprotoattr.Attribute{
 		Name:        AttrConstDateOfBirth,
@@ -1203,7 +1203,7 @@ func TestAnchors_None(t *testing.T) {
 }
 
 func TestDateOfBirthAttribute(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "testattributedateofbirth.txt")
+	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_date_of_birth.txt")
 
 	dateOfBirthAttribute, err := attribute.NewTime(protoAttribute)
 
@@ -1216,7 +1216,7 @@ func TestDateOfBirthAttribute(t *testing.T) {
 }
 
 func TestNewImageSlice(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt")
 
 	documentImagesAttribute, err := attribute.NewImageSlice(protoAttribute)
 
@@ -1258,7 +1258,7 @@ func TestMultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
 }
 
 func TestNewMultiValue(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt")
 
 	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
 
@@ -1315,7 +1315,7 @@ func TestNewGeneric_ShouldParseUnknownTypeAsString(t *testing.T) {
 }
 
 func TestNestedMultiValue(t *testing.T) {
-	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "testattributemultivalue.txt").Value
+	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt").Value
 
 	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
 		ContentType: yotiprotoattr.ContentType_STRING,
@@ -1359,7 +1359,7 @@ func TestNestedMultiValue(t *testing.T) {
 }
 
 func TestMultiValueGenericGetter(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "testattributemultivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt")
 	profile := createProfileWithSingleAttribute(protoAttribute)
 
 	multiValueAttribute := profile.GetAttribute(AttrConstDocumentImages)
@@ -1372,7 +1372,7 @@ func TestMultiValueGenericGetter(t *testing.T) {
 }
 
 func TestNewThirdPartyAttribute(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "testattributethirdparty.txt")
+	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_third_party.txt")
 
 	stringAttribute := attribute.NewString(protoAttribute)
 
