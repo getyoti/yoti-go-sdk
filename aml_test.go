@@ -10,6 +10,17 @@ import (
 	is "gotest.tools/assert/cmp"
 )
 
+func createStandardAmlProfile() (result AmlProfile) {
+	var amlAddress = AmlAddress{
+		Country: "GBR"}
+
+	var amlProfile = AmlProfile{
+		GivenNames: "Edward Richard George",
+		FamilyName: "Heath",
+		Address:    amlAddress}
+
+	return amlProfile
+}
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
