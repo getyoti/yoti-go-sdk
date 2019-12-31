@@ -7,6 +7,8 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
+	"github.com/getyoti/yoti-go-sdk/v2/test"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/assert"
@@ -63,8 +65,20 @@ func createMultiValueAttribute(t *testing.T, multiValueItemSlice []*yotiprotoatt
 	return attribute.NewMultiValue(protoAttribute)
 }
 
+func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
+	attributeBytes := test.DecodeTestFile(t, filename)
+
+	attributeStruct := &yotiprotoattr.Attribute{}
+
+	err2 := proto.Unmarshal(attributeBytes, attributeStruct)
+
+	assert.Assert(t, is.Nil(err2))
+
+	return attributeStruct
+}
+
 func TestAttributeImage_Image_Png(t *testing.T) {
-	attributeName := AttrConstSelfie
+	attributeName := consts.AttrSelfie
 	byteValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -81,7 +95,7 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 }
 
 func TestAttributeImage_Image_Jpeg(t *testing.T) {
-	attributeName := AttrConstSelfie
+	attributeName := consts.AttrSelfie
 	byteValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -98,7 +112,7 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 }
 
 func TestAttributeImage_Image_Default(t *testing.T) {
-	attributeName := AttrConstSelfie
+	attributeName := consts.AttrSelfie
 	byteValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -113,7 +127,7 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	assert.DeepEqual(t, selfie.Value().Data, byteValue)
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
-	attributeName := AttrConstSelfie
+	attributeName := consts.AttrSelfie
 	imageBytes := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -135,7 +149,7 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 }
 
 func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
-	attributeName := AttrConstSelfie
+	attributeName := consts.AttrSelfie
 	imageBytes := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
@@ -155,8 +169,8 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 
 	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
-func TestAttribute_DateOeafBirth(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_date_of_birth.txt")
+func TestAttribute_DateOfBirth(t *testing.T) {
+	protoAttribute := createAttributeFromTestFile(t, "test/fixtures/test_attribute_date_of_birth.txt")
 
 	dateOfBirthAttribute, err := attribute.NewTime(protoAttribute)
 
@@ -169,7 +183,7 @@ func TestAttribute_DateOeafBirth(t *testing.T) {
 }
 
 func TestAttribute_NewImageSlice(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "test/fixtures/test_attribute_multivalue.txt")
 
 	documentImagesAttribute, err := attribute.NewImageSlice(protoAttribute)
 
@@ -211,7 +225,7 @@ func TestAttribute_MultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
 }
 
 func TestAttribute_NewMultiValue(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "test/fixtures/test_attribute_multivalue.txt")
 
 	multiValueAttribute, err := attribute.NewMultiValue(protoAttribute)
 
@@ -268,7 +282,7 @@ func TestNewGeneric_ShouldParseUnknownTypeAsString(t *testing.T) {
 }
 
 func TestAttribute_NestedMultiValue(t *testing.T) {
-	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt").Value
+	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "test/fixtures/test_attribute_multivalue.txt").Value
 
 	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
 		ContentType: yotiprotoattr.ContentType_STRING,
@@ -312,10 +326,10 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 }
 
 func TestAttribute_MultiValueGenericGetter(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_multivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "test/fixtures/test_attribute_multivalue.txt")
 	profile := createProfileWithSingleAttribute(protoAttribute)
 
-	multiValueAttribute := profile.GetAttribute(AttrConstDocumentImages)
+	multiValueAttribute := profile.GetAttribute(consts.AttrDocumentImages)
 
 	// We need to cast, since GetAttribute always returns generic attributes
 	multiValueAttributeValue := multiValueAttribute.Value().([]*attribute.Item)
@@ -324,7 +338,7 @@ func TestAttribute_MultiValueGenericGetter(t *testing.T) {
 	assertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
 }
 func TestNewThirdPartyAttribute(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "fixtures/test_attribute_third_party.txt")
+	protoAttribute := createAttributeFromTestFile(t, "test/fixtures/test_attribute_third_party.txt")
 
 	stringAttribute := attribute.NewString(protoAttribute)
 
