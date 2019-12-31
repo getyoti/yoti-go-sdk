@@ -13,6 +13,36 @@ import (
 	is "gotest.tools/assert/cmp"
 )
 
+func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
+	var attributeSlice []*yotiprotoattr.Attribute
+	attributeSlice = append(attributeSlice, attr)
+
+	return Profile{
+		baseProfile{
+			attributeSlice: attributeSlice,
+		},
+	}
+}
+
+func createAppProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) ApplicationProfile {
+	var attributeSlice []*yotiprotoattr.Attribute
+	attributeSlice = append(attributeSlice, attr)
+
+	return ApplicationProfile{
+		baseProfile{
+			attributeSlice: attributeSlice,
+		},
+	}
+}
+
+func createProfileWithMultipleAttributes(list ...*yotiprotoattr.Attribute) Profile {
+	return Profile{
+		baseProfile{
+			attributeSlice: list,
+		},
+	}
+}
+
 func TestProfile_AgeVerifications(t *testing.T) {
 	ageOver14 := &yotiprotoattr.Attribute{
 		Name:        "age_over:14",

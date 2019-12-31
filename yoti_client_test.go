@@ -16,6 +16,16 @@ import (
 	is "gotest.tools/assert/cmp"
 )
 
+type mockHTTPClient struct {
+	do func(*http.Request) (*http.Response, error)
+}
+
+func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
+	if mock.do != nil {
+		return mock.do(request)
+	}
+	return nil, nil
+}
 func TestYotiClient_DefaultHTTPClientShouldTimeout(t *testing.T) {
 	client := Client{}
 	defer func() {
