@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/test"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
@@ -520,7 +521,7 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	`)
 
 	var jsonAttribute = &yotiprotoattr.Attribute{
-		Name:        AttrConstStructuredPostalAddress,
+		Name:        consts.AttrStructuredPostalAddress,
 		Value:       structuredAddressBytes,
 		ContentType: yotiprotoattr.ContentType_JSON,
 		Anchors:     []*yotiprotoattr.Anchor{},
