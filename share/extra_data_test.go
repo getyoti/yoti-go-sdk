@@ -52,7 +52,7 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 }
 
 func TestShouldParseMultipleIssuingAttributes(t *testing.T) {
-	var base64ExtraData string = test.GetTestFileAsString(t, "testextradata.txt")
+	var base64ExtraData string = test.GetTestFileAsString(t, "../test/fixtures/test_extra_data.txt")
 	rawExtraData, err := base64.StdEncoding.DecodeString(base64ExtraData)
 	assert.NilError(t, err)
 
