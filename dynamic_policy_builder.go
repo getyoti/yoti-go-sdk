@@ -3,6 +3,7 @@ package yoti
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
 )
 
