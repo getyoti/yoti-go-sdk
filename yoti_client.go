@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
 	"github.com/getyoti/yoti-go-sdk/v2/share"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
@@ -202,7 +203,7 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, i
 
 func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
 	for _, v := range profile.attributeSlice {
-		if v.Name == AttrConstStructuredPostalAddress {
+		if v.Name == consts.AttrStructuredPostalAddress {
 			return v
 		}
 	}
@@ -249,10 +250,10 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 				return
 			}
 
-			protoStructuredPostalAddress := getProtobufAttribute(profile, AttrConstStructuredPostalAddress)
+			protoStructuredPostalAddress := getProtobufAttribute(profile, consts.AttrStructuredPostalAddress)
 
 			addressAttribute := &yotiprotoattr.Attribute{
-				Name:        AttrConstAddress,
+				Name:        consts.AttrAddress,
 				Value:       []byte(formattedAddress),
 				ContentType: yotiprotoattr.ContentType_STRING,
 				Anchors:     protoStructuredPostalAddress.Anchors,

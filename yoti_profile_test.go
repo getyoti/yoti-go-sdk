@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
@@ -210,7 +211,7 @@ func TestProfile_EmptyStringIsAllowed(t *testing.T) {
 	attributeValue := []byte(attributeValueString)
 
 	var attr = &yotiprotoattr.Attribute{
-		Name:        AttrConstGender,
+		Name:        consts.AttrGender,
 		Value:       attributeValue,
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     []*yotiprotoattr.Anchor{},
@@ -355,7 +356,7 @@ func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 }
 
 func TestProfile_StringAttribute(t *testing.T) {
-	attributeName := AttrConstNationality
+	attributeName := consts.AttrNationality
 	attributeValueString := "value"
 	attributeValueBytes := []byte(attributeValueString)
 
@@ -374,7 +375,7 @@ func TestProfile_StringAttribute(t *testing.T) {
 }
 
 func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
-	attributeName := AttrConstSelfie
+	attributeName := consts.AttrSelfie
 	attributeValue := []byte("value")
 
 	var attributeImage = &yotiprotoattr.Attribute{
