@@ -3,6 +3,7 @@ package yoti
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/getyoti/yoti-go-sdk/v2/consts"
 )
 
 const (
@@ -72,57 +73,57 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ..
 
 // WithFamilyName adds the family name attribute
 func (b *DynamicPolicyBuilder) WithFamilyName(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstFamilyName, options...)
+	return b.WithWantedAttributeByName(consts.AttrFamilyName, options...)
 }
 
 // WithGivenNames adds the given names attribute
 func (b *DynamicPolicyBuilder) WithGivenNames(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstGivenNames, options...)
+	return b.WithWantedAttributeByName(consts.AttrGivenNames, options...)
 }
 
 // WithFullName adds the full name attribute
 func (b *DynamicPolicyBuilder) WithFullName(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstFullName, options...)
+	return b.WithWantedAttributeByName(consts.AttrFullName, options...)
 }
 
 // WithDateOfBirth adds the date of birth attribute
 func (b *DynamicPolicyBuilder) WithDateOfBirth(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstDateOfBirth, options...)
+	return b.WithWantedAttributeByName(consts.AttrDateOfBirth, options...)
 }
 
 // WithGender adds the gender attribute
 func (b *DynamicPolicyBuilder) WithGender(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstGender, options...)
+	return b.WithWantedAttributeByName(consts.AttrGender, options...)
 }
 
 // WithPostalAddress adds the postal address attribute
 func (b *DynamicPolicyBuilder) WithPostalAddress(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstAddress, options...)
+	return b.WithWantedAttributeByName(consts.AttrAddress, options...)
 }
 
 // WithStructuredPostalAddress adds the structured postal address attribute
 func (b *DynamicPolicyBuilder) WithStructuredPostalAddress(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstStructuredPostalAddress, options...)
+	return b.WithWantedAttributeByName(consts.AttrStructuredPostalAddress, options...)
 }
 
 // WithNationality adds the nationality attribute
 func (b *DynamicPolicyBuilder) WithNationality(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstNationality, options...)
+	return b.WithWantedAttributeByName(consts.AttrNationality, options...)
 }
 
 // WithPhoneNumber adds the phone number attribute
 func (b *DynamicPolicyBuilder) WithPhoneNumber(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstMobileNumber, options...)
+	return b.WithWantedAttributeByName(consts.AttrMobileNumber, options...)
 }
 
 // WithSelfie adds the selfie attribute
 func (b *DynamicPolicyBuilder) WithSelfie(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstSelfie, options...)
+	return b.WithWantedAttributeByName(consts.AttrSelfie, options...)
 }
 
 // WithEmail adds the email address attribute
 func (b *DynamicPolicyBuilder) WithEmail(options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithWantedAttributeByName(AttrConstEmailAddress, options...)
+	return b.WithWantedAttributeByName(consts.AttrEmailAddress, options...)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
@@ -130,7 +131,7 @@ func (b *DynamicPolicyBuilder) WithEmail(options ...interface{}) *DynamicPolicyB
 func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *DynamicPolicyBuilder {
 	var attributeBuilder WantedAttributeBuilder
 	attributeBuilder.New().
-		WithName(AttrConstDateOfBirth).
+		WithName(consts.AttrDateOfBirth).
 		WithDerivation(derivation)
 
 	for _, option := range options {
@@ -154,13 +155,13 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, option
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeOver(age int, options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeOver, age), options...)
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeOver, age), options...)
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
 func (b *DynamicPolicyBuilder) WithAgeUnder(age int, options ...interface{}) *DynamicPolicyBuilder {
-	return b.WithAgeDerivedAttribute(fmt.Sprintf(AttrConstAgeUnder, age), options...)
+	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeUnder, age), options...)
 }
 
 // WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"
