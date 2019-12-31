@@ -1,6 +1,14 @@
 package yoti
 
 import (
+	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/pem"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -12,7 +20,9 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/test"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
+	"github.com/golang/protobuf/proto"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )
@@ -27,6 +37,38 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	}
 	return nil, nil
 }
+
+func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotiprotoshare.ExtraData, wrappedReceiptKey string) string {
+	outBytes, err := proto.Marshal(protoExtraData)
+	assert.NilError(t, err)
+
+	keyBytes, _ := pem.Decode(pemBytes)
+	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
+	assert.NilError(t, err)
+	cipherBytes, err := base64.StdEncoding.DecodeString(wrappedReceiptKey)
+	assert.NilError(t, err)
+	unwrappedKey, err := rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
+	assert.NilError(t, err)
+	cipherBlock, err := aes.NewCipher(unwrappedKey)
+	assert.NilError(t, err)
+
+	padLength := cipherBlock.BlockSize() - len(outBytes)%cipherBlock.BlockSize()
+	outBytes = append(outBytes, bytes.Repeat([]byte{byte(padLength)}, padLength)...)
+
+	iv := make([]byte, cipherBlock.BlockSize())
+	encrypter := cipher.NewCBCEncrypter(cipherBlock, iv)
+	encrypter.CryptBlocks(outBytes, outBytes)
+
+	outProto := &yotiprotocom.EncryptedData{
+		CipherText: outBytes,
+		Iv:         iv,
+	}
+	outBytes, err = proto.Marshal(outProto)
+	assert.NilError(t, err)
+
+	return base64.StdEncoding.EncodeToString(outBytes)
+}
+
 func TestYotiClient_DefaultHTTPClientShouldTimeout(t *testing.T) {
 	client := Client{}
 	defer func() {
@@ -340,7 +382,7 @@ func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 		List: dataEntries,
 	}
 
-	extraDataContent := test.CreateExtraDataContent(t, pemBytes, protoExtraData, wrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, wrappedReceiptKey)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -379,7 +421,7 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 	pemBytes, err := ioutil.ReadFile("test-key.pem")
 	assert.NilError(t, err)
 
-	extraDataContent := test.CreateExtraDataContent(t, pemBytes, protoExtraData, wrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, wrappedReceiptKey)
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 
