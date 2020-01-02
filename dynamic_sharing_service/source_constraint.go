@@ -1,7 +1,9 @@
-package yoti
+package dynamic_sharing_service
 
 import (
 	"encoding/json"
+
+	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
 )
 
 // Anchor name constants
@@ -40,7 +42,7 @@ func (b *SourceConstraintBuilder) WithAnchorByValue(value, subtype string) *Sour
 		WithSubType(subtype).
 		Build()
 	if err != nil {
-		b.err = MultiError{This: err, Next: b.err}
+		b.err = yotierror.MultiError{This: err, Next: b.err}
 	}
 
 	return b.WithAnchor(anchor)
