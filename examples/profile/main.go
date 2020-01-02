@@ -15,6 +15,7 @@ import (
 	"path"
 
 	yoti "github.com/getyoti/yoti-go-sdk/v2"
+	dynamic "github.com/getyoti/yoti-go-sdk/v2/dynamic_sharing_service"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -48,7 +49,7 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 
 func sourceConstraints(w http.ResponseWriter, req *http.Request) {
-	constraint, err := (&yoti.SourceConstraintBuilder{}).New().WithDrivingLicence("").WithPassport("").Build()
+	constraint, err := (&dynamic.SourceConstraintBuilder{}).New().WithDrivingLicence("").WithPassport("").Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -58,7 +59,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	policy, err := (&yoti.DynamicPolicyBuilder{}).New().WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
+	policy, err := (&dynamic.DynamicPolicyBuilder{}).New().WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -68,7 +69,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	scenario, err := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(policy).
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).New().WithPolicy(policy).
 		WithCallbackEndpoint("/profile").Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
@@ -83,7 +84,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 }
 
 func dynamicShare(w http.ResponseWriter, req *http.Request) {
-	policy, err := (&yoti.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build()
+	policy, err := (&dynamic.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -92,7 +93,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		)))
 		return
 	}
-	scenario, err := (&yoti.DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/profile").Build()
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/profile").Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -105,7 +106,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 	pageFromScenario(w, req, "Dynamic Share example", scenario)
 }
 
-func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, scenario yoti.DynamicScenario) {
+func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, scenario dynamic.DynamicScenario) {
 	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
