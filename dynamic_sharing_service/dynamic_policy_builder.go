@@ -1,10 +1,11 @@
-package yoti
+package dynamic_sharing_service
 
 import (
 	"encoding/json"
 	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
+	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
 )
 
 const (
@@ -66,7 +67,7 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ..
 
 	attribute, err := attributeBuilder.Build()
 	if err != nil {
-		b.err = MultiError{This: err, Next: b.err}
+		b.err = yotierror.MultiError{This: err, Next: b.err}
 	}
 	b.WithWantedAttribute(attribute)
 	return b
