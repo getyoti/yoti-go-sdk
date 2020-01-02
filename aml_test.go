@@ -22,6 +22,27 @@ func createStandardAmlProfile() (result AmlProfile) {
 	return amlProfile
 }
 
+func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
+	key, _ := ioutil.ReadFile("test-key.pem")
+
+	client := Client{
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       ioutil.NopCloser(strings.NewReader("Not a JSON document")),
+				}, nil
+			},
+		},
+	}
+	var err error
+	client.Key, err = loadRsaKey(key)
+	assert.NilError(t, err)
+
+	_, err = client.PerformAmlCheck(createStandardAmlProfile())
+	assert.Check(t, strings.Contains(err.Error(), "invalid character"))
+}
+
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
