@@ -21,6 +21,7 @@ func createStandardAmlProfile() (result AmlProfile) {
 
 	return amlProfile
 }
+
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 

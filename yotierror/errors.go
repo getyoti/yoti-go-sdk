@@ -1,4 +1,4 @@
-package yoti
+package yotierror
 
 import "fmt"
 
@@ -6,6 +6,11 @@ import "fmt"
 // previous request can be reattempted without modification.
 type TemporaryError struct {
 	Err error
+}
+
+// NewTemporary marks another error as a temporary error
+func NewTemporary(err error) TemporaryError {
+	return TemporaryError{Err: err}
 }
 
 func (e TemporaryError) Error() string {

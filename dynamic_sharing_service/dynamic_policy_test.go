@@ -1,4 +1,4 @@
-package yoti
+package dynamic_sharing_service
 
 import (
 	"fmt"
