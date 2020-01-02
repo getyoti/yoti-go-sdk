@@ -26,20 +26,6 @@ type AmlResult struct {
 	OnWatchList bool `json:"on_watch_list"`
 }
 
-//  Deprecated: Will be removed in v3.0.0, please use GetAmlResult below instead. Parses AML result from response
-func GetAmlResultFromResponse(amlResponse []byte) AmlResult {
-	var amlResult AmlResult
-
-	err := json.Unmarshal(amlResponse, &amlResult)
-
-	if err != nil {
-		log.Printf(
-			"Unable to get AML result from response. Error: %s", err)
-	}
-
-	return amlResult
-}
-
 // GetAmlResult Parses AML result from response
 func GetAmlResult(amlResponse []byte) (AmlResult, error) {
 	var amlResult AmlResult
