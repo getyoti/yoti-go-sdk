@@ -17,6 +17,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
 	"github.com/getyoti/yoti-go-sdk/v2/share"
+	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
@@ -207,7 +208,7 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, i
 	}
 	err = handleHTTPError(response, httpErrorMessages...)
 	if response.StatusCode >= 500 {
-		err = TemporaryError{err}
+		err = yotierror.NewTemporary(err)
 	}
 	return
 }
@@ -276,14 +277,14 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 		decryptedExtraData, errTemp := parseExtraData(&parsedResponse.Receipt, key)
 		if errTemp != nil {
 			log.Printf("Unable to decrypt ExtraData from the receipt. Error: %q", err)
-			err = MultiError{This: errTemp, Next: err}
+			err = yotierror.MultiError{This: errTemp, Next: err}
 		}
 
 		extraData, errTemp := share.NewExtraData(decryptedExtraData)
 
 		if errTemp != nil {
 			log.Printf("Unable to parse ExtraData from the receipt. Error: %q", err)
-			err = MultiError{This: errTemp, Next: err}
+			err = yotierror.MultiError{This: errTemp, Next: err}
 		}
 
 		timestamp, err := time.Parse(time.RFC3339, parsedResponse.Receipt.Timestamp)

@@ -2,6 +2,8 @@ package yoti
 
 import (
 	"fmt"
+
+	dynamic "github.com/getyoti/yoti-go-sdk/v2/dynamic_sharing_service"
 )
 
 type yotiClientMock struct {
@@ -31,11 +33,11 @@ func ExampleCreateShareURL() {
 		},
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
+	policy, err := (&dynamic.DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
 		return
 	}
-	scenario, err := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).Build()
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).New().WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
