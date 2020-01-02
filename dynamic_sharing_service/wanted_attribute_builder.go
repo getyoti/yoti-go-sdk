@@ -1,7 +1,9 @@
-package yoti
+package dynamic_sharing_service
 
 import (
 	"encoding/json"
+
+	"github.com/getyoti/yoti-go-sdk/v2/validate"
 )
 
 type constraintInterface interface {
@@ -59,7 +61,7 @@ func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *Want
 
 // Build generates the wanted attribute's specification
 func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
-	err := notEmpty(builder.attr.name, "Wanted attribute names must not be empty")
+	err := validate.NotEmpty(builder.attr.name, "Wanted attribute names must not be empty")
 	return builder.attr, err
 }
 
