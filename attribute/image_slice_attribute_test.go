@@ -18,6 +18,7 @@ func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expecte
 
 	assert.Equal(t, ActualBase64URLLast10Chars, expectedBase64URLLast10)
 }
+
 func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*Image, anchor *anchor.Anchor) {
 
 	assert.Equal(t, len(actualDocumentImages), 2, "This Document Images attribute should have two images")
@@ -31,6 +32,7 @@ func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages 
 	expectedSubType := "STATE_ID"
 	assert.Equal(t, anchor.SubType(), expectedSubType)
 }
+
 func TestAttribute_NewImageSlice(t *testing.T) {
 	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_multivalue.txt")
 
