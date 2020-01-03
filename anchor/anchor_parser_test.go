@@ -1,6 +1,7 @@
 package anchor
 
 import (
+	"crypto/x509/pkix"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -32,6 +33,17 @@ func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 	protoAnchors := append([]*yotiprotoattr.Anchor{}, protoAnchor)
 
 	return protoAnchors
+}
+
+func TestAnchorParser_parseExtesion_ShouldErrorForInvalidExtension(t *testing.T) {
+	invalidExt := pkix.Extension{
+		Id: sourceOID,
+	}
+
+	_, _, err := parseExtension(invalidExt)
+
+	assert.Check(t, err != nil)
+	assert.Error(t, err, "unable to unmarshal extension: asn1: syntax error: sequence truncated")
 }
 
 func TestAnchorParser_Passport(t *testing.T) {
