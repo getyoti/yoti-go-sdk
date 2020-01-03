@@ -58,6 +58,7 @@ func TestImageAttribute_Image_Default(t *testing.T) {
 
 	assert.DeepEqual(t, selfie.Value().Data, byteValue)
 }
+
 func TestImageAttribute_Base64Selfie_Png(t *testing.T) {
 	attributeName := consts.AttrSelfie
 	imageBytes := []byte("value")

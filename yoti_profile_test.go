@@ -82,6 +82,7 @@ func TestProfile_AgeVerifications(t *testing.T) {
 	assert.Equal(t, ageVerifications[2].CheckType, "age_over")
 	assert.Equal(t, ageVerifications[2].Result, false)
 }
+
 func TestProfile_GetAttribute_EmptyString(t *testing.T) {
 	emptyString := ""
 	attributeValue := []byte(emptyString)
@@ -222,6 +223,7 @@ func TestProfile_EmptyStringIsAllowed(t *testing.T) {
 
 	assert.Equal(t, att.Value(), attributeValueString)
 }
+
 func TestProfile_GetAttribute_Time(t *testing.T) {
 	dateStringValue := "1985-01-01"
 	expectedDate := time.Date(1985, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -343,6 +345,7 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 	assert.Equal(t, att.Name(), attributeName)
 	assert.Equal(t, att.Value().(string), attributeValueString)
 }
+
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 	result := Profile{
 		baseProfile{
