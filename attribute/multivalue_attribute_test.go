@@ -34,6 +34,7 @@ func createMultiValueAttribute(t *testing.T, multiValueItemSlice []*yotiprotoatt
 
 	return NewMultiValue(protoAttribute)
 }
+
 func TestAttribute_MultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
 	attributeName := "attributeName"
 	attributeValueString := "value"
@@ -95,6 +96,7 @@ func TestAttribute_InvalidMultiValueNotReturned(t *testing.T) {
 
 	assert.Assert(t, is.Nil(multiValueAttr))
 }
+
 func TestAttribute_NestedMultiValue(t *testing.T) {
 	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "../test/fixtures/test_attribute_multivalue.txt").Value
 

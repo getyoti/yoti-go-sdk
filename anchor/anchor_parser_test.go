@@ -21,6 +21,7 @@ func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 
 	assert.Equal(t, expectedSerialNoBigInt.Cmp(actualSerialNo), 0) //0 == equivalent
 }
+
 func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {
 	anchorBytes := test.DecodeTestFile(t, filename)
 
@@ -32,6 +33,7 @@ func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 
 	return protoAnchors
 }
+
 func TestAnchorParser_Passport(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
