@@ -22,7 +22,16 @@ type Client struct {
 	// Base URL to use. This is not required, and a default will be set if not provided.
 	BaseURL string
 	// Mockable HTTP Client Interface
-	httpClient yoti.HttpClient
+	HTTPClient interface {
+		Do(*http.Request) (*http.Response, error)
+	}
+}
+
+func (client *Client) do(request *http.Request) (*http.Response, error) {
+	if client.HTTPClient != nil {
+		return client.HTTPClient.Do(request)
+	}
+	return http.DefaultClient.Do(request)
 }
 
 // SetupSharingProfile creates a user profile in the sandbox instance
@@ -53,9 +62,7 @@ func (client *Client) SetupSharingProfile(tokenRequest TokenRequest) (token stri
 		return
 	}
 
-	response, err := (&http.Client{
-		Timeout: time.Second * 10,
-	}).Do(request)
+	response, err := client.do(request)
 	if err != nil {
 		return
 	}
