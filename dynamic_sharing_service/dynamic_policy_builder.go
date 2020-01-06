@@ -149,7 +149,7 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, option
 
 	attr, err := attributeBuilder.Build()
 	if err != nil {
-		panic(fmt.Sprintf("Problem building attribute, %s", err))
+		b.err = yotierror.MultiError{This: err, Next: b.err}
 	}
 	return b.WithWantedAttribute(attr)
 }
