@@ -6,16 +6,25 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	yotirequest "github.com/getyoti/yoti-go-sdk/v2/requests"
 )
 
 // Client is responsible for setting up test data in the sandbox instance
 type Client struct {
-	AppID   string
-	Key     *rsa.PrivateKey
-	BaseURL string
+	AppID      string
+	Key        *rsa.PrivateKey
+	BaseURL    string
+	HTTPClient interface {
+		Do(*http.Request) (*http.Response, error)
+	}
+}
+
+func (client *Client) do(request *http.Request) (*http.Response, error) {
+	if client.HTTPClient != nil {
+		return client.HTTPClient.Do(request)
+	}
+	return http.DefaultClient.Do(request)
 }
 
 // SetupSharingProfile creates a user profile in the sandbox instance
@@ -38,9 +47,7 @@ func (client *Client) SetupSharingProfile(profile Profile) (token string, err er
 		return
 	}
 
-	response, err := (&http.Client{
-		Timeout: time.Second * 10,
-	}).Do(request)
+	response, err := client.do(request)
 	if err != nil {
 		return
 	}
