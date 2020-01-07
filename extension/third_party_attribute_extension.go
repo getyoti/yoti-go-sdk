@@ -22,11 +22,6 @@ type ThirdPartyAttributeExtension struct {
 	definitions []attribute.AttributeDefinition
 }
 
-// New initializes the builder
-func (builder *ThirdPartyAttributeExtensionBuilder) New() *ThirdPartyAttributeExtensionBuilder {
-	return builder
-}
-
 // WithExpiryDate sets the expiry date of the extension as a UTC timestamp
 func (builder *ThirdPartyAttributeExtensionBuilder) WithExpiryDate(expiryDate *time.Time) *ThirdPartyAttributeExtensionBuilder {
 	builder.extension.expiryDate = expiryDate

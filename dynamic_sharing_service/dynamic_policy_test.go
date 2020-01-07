@@ -11,7 +11,7 @@ import (
 )
 
 func ExampleDynamicPolicyBuilder_WithFamilyName() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithFamilyName().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithFamilyName().Build()
 	if err != nil {
 		return
 	}
@@ -21,7 +21,7 @@ func ExampleDynamicPolicyBuilder_WithFamilyName() {
 }
 
 func ExampleDynamicPolicyBuilder_WithSelfie() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithSelfie().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithSelfie().Build()
 	if err != nil {
 		return
 	}
@@ -31,12 +31,12 @@ func ExampleDynamicPolicyBuilder_WithSelfie() {
 }
 
 func ExampleDynamicPolicyBuilder_WithAgeOver() {
-	constraint, err := (&SourceConstraintBuilder{}).New().WithDrivingLicence("").Build()
+	constraint, err := (&SourceConstraintBuilder{}).WithDrivingLicence("").Build()
 	if err != nil {
 		return
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).New().WithAgeOver(18, constraint).Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithAgeOver(18, constraint).Build()
 	if err != nil {
 		return
 	}
@@ -47,7 +47,7 @@ func ExampleDynamicPolicyBuilder_WithAgeOver() {
 }
 
 func ExampleDynamicPolicyBuilder_WithSelfieAuth() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithSelfieAuth().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithSelfieAuth().Build()
 	if err != nil {
 		return
 	}
@@ -57,7 +57,7 @@ func ExampleDynamicPolicyBuilder_WithSelfieAuth() {
 }
 
 func ExampleDynamicPolicyBuilder_WithWantedRememberMe() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithWantedRememberMe().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithWantedRememberMe().Build()
 	if err != nil {
 		return
 	}
@@ -67,12 +67,12 @@ func ExampleDynamicPolicyBuilder_WithWantedRememberMe() {
 }
 
 func ExampleDynamicPolicyBuilder_WithFullName() {
-	constraint, err := (&SourceConstraintBuilder{}).New().WithPassport("").Build()
+	constraint, err := (&SourceConstraintBuilder{}).WithPassport("").Build()
 	if err != nil {
 		return
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).New().WithFullName(&constraint).Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithFullName(&constraint).Build()
 	if err != nil {
 		return
 	}
@@ -83,7 +83,7 @@ func ExampleDynamicPolicyBuilder_WithFullName() {
 }
 
 func ExampleDynamicPolicyBuilder() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithFullName().
+	policy, err := (&DynamicPolicyBuilder{}).WithFullName().
 		WithPinAuth().WithWantedRememberMe().Build()
 	if err != nil {
 		return
@@ -94,7 +94,7 @@ func ExampleDynamicPolicyBuilder() {
 }
 
 func ExampleDynamicPolicyBuilder_WithAgeUnder() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithAgeUnder(18).Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithAgeUnder(18).Build()
 	if err != nil {
 		return
 	}
@@ -104,7 +104,7 @@ func ExampleDynamicPolicyBuilder_WithAgeUnder() {
 }
 
 func ExampleDynamicPolicyBuilder_WithGivenNames() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithGivenNames().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithGivenNames().Build()
 	if err != nil {
 		return
 	}
@@ -114,7 +114,7 @@ func ExampleDynamicPolicyBuilder_WithGivenNames() {
 }
 
 func ExampleDynamicPolicyBuilder_WithDateOfBirth() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithDateOfBirth().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithDateOfBirth().Build()
 	if err != nil {
 		return
 	}
@@ -124,7 +124,7 @@ func ExampleDynamicPolicyBuilder_WithDateOfBirth() {
 }
 
 func ExampleDynamicPolicyBuilder_WithGender() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithGender().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithGender().Build()
 	if err != nil {
 		return
 	}
@@ -134,7 +134,7 @@ func ExampleDynamicPolicyBuilder_WithGender() {
 }
 
 func ExampleDynamicPolicyBuilder_WithPostalAddress() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithPostalAddress().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithPostalAddress().Build()
 	if err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func ExampleDynamicPolicyBuilder_WithPostalAddress() {
 }
 
 func ExampleDynamicPolicyBuilder_WithStructuredPostalAddress() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithStructuredPostalAddress().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithStructuredPostalAddress().Build()
 	if err != nil {
 		return
 	}
@@ -154,7 +154,7 @@ func ExampleDynamicPolicyBuilder_WithStructuredPostalAddress() {
 }
 
 func ExampleDynamicPolicyBuilder_WithNationality() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithNationality().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithNationality().Build()
 	if err != nil {
 		return
 	}
@@ -164,7 +164,7 @@ func ExampleDynamicPolicyBuilder_WithNationality() {
 }
 
 func ExampleDynamicPolicyBuilder_WithPhoneNumber() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithPhoneNumber().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithPhoneNumber().Build()
 	if err != nil {
 		return
 	}
@@ -175,8 +175,8 @@ func ExampleDynamicPolicyBuilder_WithPhoneNumber() {
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *testing.T) {
 	attributeName := "attributeName"
-	builder := (&DynamicPolicyBuilder{}).New()
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().Build()
+	builder := (&DynamicPolicyBuilder{})
+	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
 
 	builder.WithWantedAttributeByName(
@@ -193,7 +193,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPanic(t *testing.T) {
 	attributeName := "attributeName"
-	builder := (&DynamicPolicyBuilder{}).New()
+	builder := (&DynamicPolicyBuilder{})
 	invalidOption := "invalidOption"
 
 	defer func() {
@@ -211,7 +211,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPani
 }
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{}).New()
+	builder := (&DynamicPolicyBuilder{})
 
 	builder.WithWantedAttributeByName("")
 	builder.WithWantedAttributeByName("")
@@ -223,8 +223,8 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t 
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{}).New()
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().Build()
+	builder := (&DynamicPolicyBuilder{})
+	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
 
 	builder.WithAgeDerivedAttribute(
@@ -240,9 +240,9 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *te
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{}).New()
+	builder := (&DynamicPolicyBuilder{})
 	var constraint constraintInterface
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().Build()
+	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	constraint = &sourceConstraint
 	assert.NilError(t, err)
 
@@ -259,7 +259,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t 
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{}).New()
+	builder := (&DynamicPolicyBuilder{})
 	invalidOption := "invalidOption"
 
 	defer func() {
