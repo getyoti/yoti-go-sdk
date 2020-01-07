@@ -33,11 +33,11 @@ func ExampleCreateShareURL() {
 		},
 	}
 
-	policy, err := (&dynamic.DynamicPolicyBuilder{}).New().WithFullName().WithWantedRememberMe().Build()
+	policy, err := (&dynamic.DynamicPolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
 		return
 	}
-	scenario, err := (&dynamic.DynamicScenarioBuilder{}).New().WithPolicy(policy).Build()
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}

@@ -21,15 +21,6 @@ type LocationConstraintExtension struct {
 	uncertainty float64
 }
 
-// New initializes the builder
-func (builder *LocationConstraintExtensionBuilder) New() *LocationConstraintExtensionBuilder {
-	builder.extension.latitude = 0
-	builder.extension.longitude = 0
-	builder.extension.radius = 0
-	builder.extension.uncertainty = 0
-	return builder
-}
-
 // WithLatitude sets the latitude of the location constraint
 func (builder *LocationConstraintExtensionBuilder) WithLatitude(latitude float64) *LocationConstraintExtensionBuilder {
 	builder.extension.latitude = latitude

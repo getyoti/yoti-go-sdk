@@ -29,16 +29,11 @@ type DynamicPolicy struct {
 	rememberMeID bool
 }
 
-// New initializes a DynamicPolicyBuilder
-func (b *DynamicPolicyBuilder) New() *DynamicPolicyBuilder {
-	b.wantedAttributes = make(map[string]WantedAttribute)
-	b.wantedAuthTypes = make(map[int]bool)
-	b.isWantedRememberMe = false
-	return b
-}
-
 // WithWantedAttribute adds an attribute from WantedAttributeBuilder to the policy
 func (b *DynamicPolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *DynamicPolicyBuilder {
+	if b.wantedAttributes == nil {
+		b.wantedAttributes = make(map[string]WantedAttribute)
+	}
 	var key string
 	if attribute.derivation != "" {
 		key = attribute.derivation
@@ -52,7 +47,7 @@ func (b *DynamicPolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *D
 // WithWantedAttributeByName adds an attribute by its name. This is not the preferred
 // way of adding an attribute - instead use the other methods below
 func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ...interface{}) *DynamicPolicyBuilder {
-	attributeBuilder := (&WantedAttributeBuilder{}).New().WithName(name)
+	attributeBuilder := (&WantedAttributeBuilder{}).WithName(name)
 
 	for _, option := range options {
 		switch value := option.(type) {
@@ -132,7 +127,7 @@ func (b *DynamicPolicyBuilder) WithEmail(options ...interface{}) *DynamicPolicyB
 // Prefer to use WithAgeOver and WithAgeUnder instead of using this directly
 func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *DynamicPolicyBuilder {
 	var attributeBuilder WantedAttributeBuilder
-	attributeBuilder.New().
+	attributeBuilder.
 		WithName(consts.AttrDateOfBirth).
 		WithDerivation(derivation)
 
@@ -174,6 +169,9 @@ func (b *DynamicPolicyBuilder) WithWantedRememberMe() *DynamicPolicyBuilder {
 
 // WithWantedAuthType sets this dynamic policy as requiring a specific authentication type
 func (b *DynamicPolicyBuilder) WithWantedAuthType(wantedAuthType int) *DynamicPolicyBuilder {
+	if b.wantedAuthTypes == nil {
+		b.wantedAuthTypes = make(map[int]bool)
+	}
 	b.wantedAuthTypes[wantedAuthType] = true
 	return b
 }

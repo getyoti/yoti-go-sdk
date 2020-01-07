@@ -16,13 +16,6 @@ type ExtensionBuilder struct {
 	extension Extension
 }
 
-// New initializes an ExtensionBuilder
-func (builder *ExtensionBuilder) New() *ExtensionBuilder {
-	builder.extension.extensionType = ""
-	builder.extension.content = nil
-	return builder
-}
-
 // WithType sets the extension type string
 func (builder *ExtensionBuilder) WithType(extensionType string) *ExtensionBuilder {
 	builder.extension.extensionType = extensionType

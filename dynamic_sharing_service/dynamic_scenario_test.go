@@ -7,7 +7,7 @@ import (
 )
 
 func ExampleDynamicScenarioBuilder() {
-	scenario, err := (&DynamicScenarioBuilder{}).New().Build()
+	scenario, err := (&DynamicScenarioBuilder{}).Build()
 	if err != nil {
 		return
 	}
@@ -17,11 +17,11 @@ func ExampleDynamicScenarioBuilder() {
 }
 
 func ExampleDynamicScenarioBuilder_WithPolicy() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithEmail().WithPinAuth().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithEmail().WithPinAuth().Build()
 	if err != nil {
 		return
 	}
-	scenario, err := (&DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/foo").Build()
+	scenario, err := (&DynamicScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint("/foo").Build()
 	if err != nil {
 		return
 	}
@@ -32,18 +32,18 @@ func ExampleDynamicScenarioBuilder_WithPolicy() {
 }
 
 func ExampleDynamicScenarioBuilder_WithExtension() {
-	policy, err := (&DynamicPolicyBuilder{}).New().WithFullName().Build()
+	policy, err := (&DynamicPolicyBuilder{}).WithFullName().Build()
 	if err != nil {
 		return
 	}
-	extension, err := (&extension.TransactionalFlowExtensionBuilder{}).New().
+	extension, err := (&extension.TransactionalFlowExtensionBuilder{}).
 		WithContent("Transactional Flow Extension").
 		Build()
 	if err != nil {
 		return
 	}
 
-	scenario, err := (&DynamicScenarioBuilder{}).New().WithExtension(extension).WithPolicy(policy).Build()
+	scenario, err := (&DynamicScenarioBuilder{}).WithExtension(extension).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
