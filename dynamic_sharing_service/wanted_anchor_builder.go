@@ -15,13 +15,6 @@ type WantedAnchorBuilder struct {
 	wantedAnchor WantedAnchor
 }
 
-// New initialises a WantedAnchorBuilder before use
-func (b *WantedAnchorBuilder) New() *WantedAnchorBuilder {
-	b.wantedAnchor.name = ""
-	b.wantedAnchor.subType = ""
-	return b
-}
-
 // WithValue sets the anchor's name
 func (b *WantedAnchorBuilder) WithValue(name string) *WantedAnchorBuilder {
 	b.wantedAnchor.name = name

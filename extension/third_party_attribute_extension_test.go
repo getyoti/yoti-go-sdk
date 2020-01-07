@@ -23,7 +23,7 @@ func ExampleThirdPartyAttributeExtension() {
 		log.Printf("Error parsing date, %v", err)
 	}
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+	extension := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinition(attributeDefinition).
 		Build()
@@ -46,7 +46,7 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+	extension := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinitions(definitionList).
 		WithDefinition(someOtherDefinition).
@@ -71,7 +71,7 @@ func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+	extension := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinition(someOtherDefinition).
 		WithDefinitions(definitionList).

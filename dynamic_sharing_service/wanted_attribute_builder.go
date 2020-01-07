@@ -25,16 +25,6 @@ type WantedAttribute struct {
 	acceptSelfAsserted bool
 }
 
-// New initialises the internal state of a WantedAttributeBuilder so that
-// it can be used
-func (builder *WantedAttributeBuilder) New() *WantedAttributeBuilder {
-	builder.attr.name = ""
-	builder.attr.derivation = ""
-	builder.attr.constraints = make([]constraintInterface, 0)
-	builder.attr.acceptSelfAsserted = false
-	return builder
-}
-
 // WithName sets the name of the wanted attribute
 func (builder *WantedAttributeBuilder) WithName(name string) *WantedAttributeBuilder {
 	builder.attr.name = name
@@ -61,6 +51,9 @@ func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *Want
 
 // Build generates the wanted attribute's specification
 func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
+	if builder.attr.constraints == nil {
+		builder.attr.constraints = make([]constraintInterface, 0)
+	}
 	err := validate.NotEmpty(builder.attr.name, "Wanted attribute names must not be empty")
 	return builder.attr, err
 }
