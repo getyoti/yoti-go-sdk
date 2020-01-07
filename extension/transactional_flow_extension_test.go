@@ -8,7 +8,7 @@ import (
 func ExampleTransactionalFlowExtension() {
 	content := "SOME CONTENT"
 
-	extension, err := (&TransactionalFlowExtensionBuilder{}).New().
+	extension, err := (&TransactionalFlowExtensionBuilder{}).
 		WithContent(content).
 		Build()
 	if err != nil {
