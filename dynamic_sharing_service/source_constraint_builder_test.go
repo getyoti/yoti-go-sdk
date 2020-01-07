@@ -5,11 +5,11 @@ import (
 )
 
 func ExampleSourceConstraint() {
-	drivingLicence, err := (&WantedAnchorBuilder{}).New().WithValue("DRIVING_LICENCE").Build()
+	drivingLicence, err := (&WantedAnchorBuilder{}).WithValue("DRIVING_LICENCE").Build()
 	if err != nil {
 		return
 	}
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).
 		WithAnchor(drivingLicence).
 		WithSoftPreference(true).
 		Build()
@@ -23,7 +23,7 @@ func ExampleSourceConstraint() {
 }
 
 func ExampleSourceConstraintBuilder_WithPassport() {
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).
 		WithPassport("").
 		Build()
 	if err != nil {
@@ -36,7 +36,7 @@ func ExampleSourceConstraintBuilder_WithPassport() {
 }
 
 func ExampleSourceConstraintBuilder_WithDrivingLicence() {
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).
 		WithDrivingLicence("").
 		Build()
 	if err != nil {
@@ -49,7 +49,7 @@ func ExampleSourceConstraintBuilder_WithDrivingLicence() {
 }
 
 func ExampleSourceConstraintBuilder_WithNationalID() {
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).
 		WithNationalID("").
 		Build()
 	if err != nil {
@@ -62,7 +62,7 @@ func ExampleSourceConstraintBuilder_WithNationalID() {
 }
 
 func ExampleSourceConstraintBuilder_WithPasscard() {
-	sourceConstraint, err := (&SourceConstraintBuilder{}).New().
+	sourceConstraint, err := (&SourceConstraintBuilder{}).
 		WithPasscard("").
 		Build()
 	if err != nil {

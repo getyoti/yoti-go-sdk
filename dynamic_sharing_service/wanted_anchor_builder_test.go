@@ -5,7 +5,7 @@ import (
 )
 
 func ExampleWantedAnchorBuilder() {
-	aadhaarAnchor, err := (&WantedAnchorBuilder{}).New().
+	aadhaarAnchor, err := (&WantedAnchorBuilder{}).
 		WithValue("NATIONAL_ID").
 		WithSubType("AADHAAR").
 		Build()
