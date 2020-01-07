@@ -215,7 +215,7 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, i
 
 func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
 	for _, v := range profile.attributeSlice {
-		if v.Name == consts.AttrStructuredPostalAddress {
+		if v.Name == key {
 			return v
 		}
 	}
@@ -253,26 +253,7 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 			},
 		}
 
-		var formattedAddress string
-		formattedAddress, err = ensureAddressProfile(profile)
-		if err != nil {
-			log.Printf("Unable to get 'Formatted Address' from 'Structured Postal Address'. Error: %q", err)
-		} else if formattedAddress != "" {
-			if _, err = profile.StructuredPostalAddress(); err != nil {
-				return
-			}
-
-			protoStructuredPostalAddress := getProtobufAttribute(profile, consts.AttrStructuredPostalAddress)
-
-			addressAttribute := &yotiprotoattr.Attribute{
-				Name:        consts.AttrAddress,
-				Value:       []byte(formattedAddress),
-				ContentType: yotiprotoattr.ContentType_STRING,
-				Anchors:     protoStructuredPostalAddress.Anchors,
-			}
-
-			profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
-		}
+		ensureAddressProfile(&profile)
 
 		decryptedExtraData, errTemp := parseExtraData(&parsedResponse.Receipt, key)
 		if errTemp != nil {
@@ -314,21 +295,31 @@ func createAttributeSlice(protoAttributeList *yotiprotoattr.AttributeList) (resu
 	return result
 }
 
-func ensureAddressProfile(profile Profile) (address string, err error) {
+func setFormattedAddress(profile *Profile, formattedAddress string) {
+	proto := getProtobufAttribute(*profile, consts.AttrStructuredPostalAddress)
+
+	addressAttribute := &yotiprotoattr.Attribute{
+		Name:        consts.AttrAddress,
+		Value:       []byte(formattedAddress),
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     proto.Anchors,
+	}
+	profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
+}
+
+func ensureAddressProfile(profile *Profile) {
 	if profile.Address() == nil {
-		var structuredPostalAddress *attribute.JSONAttribute
-		if structuredPostalAddress, err = profile.StructuredPostalAddress(); err == nil {
+		if structuredPostalAddress, err := profile.StructuredPostalAddress(); err == nil {
 			if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
 				var formattedAddress string
 				formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value())
-				if err == nil {
-					return formattedAddress, nil
+				if err == nil && formattedAddress != "" {
+					setFormattedAddress(profile, formattedAddress)
+					return
 				}
 			}
 		}
 	}
-
-	return "", err
 }
 
 func retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress interface{}) (address string, err error) {
