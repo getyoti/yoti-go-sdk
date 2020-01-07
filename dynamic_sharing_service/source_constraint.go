@@ -27,17 +27,10 @@ type SourceConstraintBuilder struct {
 	err              error
 }
 
-// New initialises a SourceConstraintBuilder
-func (b *SourceConstraintBuilder) New() *SourceConstraintBuilder {
-	b.sourceConstraint.anchors = make([]WantedAnchor, 0)
-	b.sourceConstraint.softPreference = false
-	return b
-}
-
 // WithAnchorByValue is a helper method which builds an anchor and adds it to
 // the source constraint
 func (b *SourceConstraintBuilder) WithAnchorByValue(value, subtype string) *SourceConstraintBuilder {
-	anchor, err := (&WantedAnchorBuilder{}).New().
+	anchor, err := (&WantedAnchorBuilder{}).
 		WithValue(value).
 		WithSubType(subtype).
 		Build()
@@ -83,6 +76,9 @@ func (b *SourceConstraintBuilder) WithSoftPreference(soft bool) *SourceConstrain
 
 // Build builds a SourceConstraint
 func (b *SourceConstraintBuilder) Build() (SourceConstraint, error) {
+	if b.sourceConstraint.anchors == nil {
+		b.sourceConstraint.anchors = make([]WantedAnchor, 0)
+	}
 	return b.sourceConstraint, b.err
 }
 

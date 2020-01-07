@@ -5,7 +5,7 @@ import (
 )
 
 func ExampleWantedAttributeBuilder_WithName() {
-	builder := (&WantedAttributeBuilder{}).New().WithName("TEST NAME")
+	builder := (&WantedAttributeBuilder{}).WithName("TEST NAME")
 	attribute, err := builder.Build()
 	if err != nil {
 		return
@@ -15,7 +15,7 @@ func ExampleWantedAttributeBuilder_WithName() {
 }
 
 func ExampleWantedAttributeBuilder_WithDerivation() {
-	attribute, err := (&WantedAttributeBuilder{}).New().
+	attribute, err := (&WantedAttributeBuilder{}).
 		WithDerivation("TEST DERIVATION").
 		WithName("TEST NAME").
 		Build()
@@ -27,12 +27,12 @@ func ExampleWantedAttributeBuilder_WithDerivation() {
 }
 
 func ExampleWantedAttributeBuilder_WithConstraint() {
-	constraint, err := (&SourceConstraintBuilder{}).New().
+	constraint, err := (&SourceConstraintBuilder{}).
 		Build()
 	if err != nil {
 		return
 	}
-	attribute, err := (&WantedAttributeBuilder{}).New().
+	attribute, err := (&WantedAttributeBuilder{}).
 		WithName("TEST NAME").
 		WithConstraint(&constraint).
 		Build()
@@ -46,7 +46,7 @@ func ExampleWantedAttributeBuilder_WithConstraint() {
 }
 
 func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
-	attribute, err := (&WantedAttributeBuilder{}).New().
+	attribute, err := (&WantedAttributeBuilder{}).
 		WithName("TEST NAME").
 		WithAcceptSelfAsserted(true).
 		Build()

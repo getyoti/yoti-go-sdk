@@ -49,7 +49,7 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 
 func sourceConstraints(w http.ResponseWriter, req *http.Request) {
-	constraint, err := (&dynamic.SourceConstraintBuilder{}).New().WithDrivingLicence("").WithPassport("").Build()
+	constraint, err := (&dynamic.SourceConstraintBuilder{}).WithDrivingLicence("").WithPassport("").Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -59,7 +59,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	policy, err := (&dynamic.DynamicPolicyBuilder{}).New().WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
+	policy, err := (&dynamic.DynamicPolicyBuilder{}).WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -69,7 +69,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	scenario, err := (&dynamic.DynamicScenarioBuilder{}).New().WithPolicy(policy).
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).
 		WithCallbackEndpoint("/profile").Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
@@ -84,7 +84,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 }
 
 func dynamicShare(w http.ResponseWriter, req *http.Request) {
-	policy, err := (&dynamic.DynamicPolicyBuilder{}).New().WithFullName().WithEmail().Build()
+	policy, err := (&dynamic.DynamicPolicyBuilder{}).WithFullName().WithEmail().Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -93,7 +93,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		)))
 		return
 	}
-	scenario, err := (&dynamic.DynamicScenarioBuilder{}).New().WithPolicy(policy).WithCallbackEndpoint("/profile").Build()
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint("/profile").Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
