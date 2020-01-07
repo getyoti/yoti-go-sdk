@@ -573,11 +573,11 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 
 	profile := createProfileWithSingleAttribute(jsonAttribute)
 
-	profileAddress, profileErr := ensureAddressProfile(profile)
-	assert.Assert(t, is.Nil(profileErr), "Failed to add formatted address to address on Profile")
+	ensureAddressProfile(&profile)
 
 	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
 
+	profileAddress := profile.Address().Value()
 	assert.Equal(t, profileAddress, escapedFormattedAddressText, "Address does not equal the expected formatted address.")
 
 	structuredPostalAddress, err := profile.StructuredPostalAddress()
