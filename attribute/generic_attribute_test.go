@@ -20,3 +20,20 @@ func TestNewGeneric_ShouldParseUnknownTypeAsString(t *testing.T) {
 
 	assert.Equal(t, stringValue, string(value))
 }
+
+func TestGeneric_ContentType(t *testing.T) {
+	attribute := GenericAttribute{
+		attributeDetails: attributeDetails{
+			contentType: "contentType",
+		},
+	}
+
+	assert.Equal(t, attribute.ContentType(), "contentType")
+}
+
+func TestNewGeneric_ShouldReturnNilForInvalidProtobuf(t *testing.T) {
+	invalid := NewGeneric(&yotiprotoattr.Attribute{
+		ContentType: yotiprotoattr.ContentType_JSON,
+	})
+	assert.Check(t, invalid == nil)
+}

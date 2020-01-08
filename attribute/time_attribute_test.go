@@ -32,3 +32,14 @@ func TestTimeAttribute_DateOfBirth(t *testing.T) {
 
 	assert.Assert(t, actualDateOfBirth.Equal(expectedDateOfBirth))
 }
+
+func TestNewTime_ShouldReturnErrorForInvalidDate(t *testing.T) {
+	proto := yotiprotoattr.Attribute{
+		Name:        "example",
+		Value:       []byte("2006-60-20"),
+		ContentType: yotiprotoattr.ContentType_DATE,
+	}
+	attribute, err := NewTime(&proto)
+	assert.Check(t, attribute == nil)
+	assert.ErrorContains(t, err, "month out of range")
+}
