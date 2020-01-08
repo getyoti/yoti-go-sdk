@@ -50,10 +50,10 @@ func (p Profile) EmailAddress() *attribute.StringAttribute {
 
 // DateOfBirth represents the user's date of birth. Will be nil if not provided by Yoti.
 // Has an err value which will be filled if there is an error parsing the date.
-func (p Profile) DateOfBirth() (*attribute.TimeAttribute, error) {
+func (p Profile) DateOfBirth() (*attribute.DateAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == consts.AttrDateOfBirth {
-			return attribute.NewTime(a)
+			return attribute.NewDate(a)
 		}
 	}
 	return nil, nil

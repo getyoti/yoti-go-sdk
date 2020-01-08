@@ -8,14 +8,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
-// TimeAttribute is a Yoti attribute which returns a time as its value
-type TimeAttribute struct {
+// DateAttribute is a Yoti attribute which returns a time as its value
+type DateAttribute struct {
 	attributeDetails
 	value *time.Time
 }
 
 // NewTime creates a new Time attribute
-func NewTime(a *yotiprotoattr.Attribute) (*TimeAttribute, error) {
+func NewDate(a *yotiprotoattr.Attribute) (*DateAttribute, error) {
 	parsedTime, err := time.Parse("2006-01-02", string(a.Value))
 	if err != nil {
 		log.Printf("Unable to parse time value of: %q. Error: %q", a.Value, err)
@@ -25,7 +25,7 @@ func NewTime(a *yotiprotoattr.Attribute) (*TimeAttribute, error) {
 
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
-	return &TimeAttribute{
+	return &DateAttribute{
 		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
@@ -36,6 +36,6 @@ func NewTime(a *yotiprotoattr.Attribute) (*TimeAttribute, error) {
 }
 
 // Value returns the value of the TimeAttribute as *time.Time
-func (a *TimeAttribute) Value() *time.Time {
+func (a *DateAttribute) Value() *time.Time {
 	return a.value
 }
