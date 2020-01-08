@@ -71,6 +71,28 @@ func TestRequestShouldBuildForValid(t *testing.T) {
 	assert.Check(t, signed.Header["X-Yoti-Auth-Digest"][0] != "")
 }
 
+func TestRequestShouldAddHeaders(t *testing.T) {
+	random := rand.New(rand.NewSource(25))
+	key, err := rsa.GenerateKey(random, 1024)
+
+	assert.NilError(t, err)
+	httpMethod := "GET"
+	baseURL := "example.com"
+	endpoint := "/"
+
+	request := SignedRequest{
+		Key:        key,
+		HTTPMethod: httpMethod,
+		BaseURL:    baseURL,
+		Endpoint:   endpoint,
+		Headers:    JSONHeaders(),
+	}
+	signed, err := request.Request()
+	assert.NilError(t, err)
+	assert.Check(t, signed.Header["X-Yoti-Auth-Digest"][0] != "")
+	assert.Equal(t, signed.Header["Accept"][0], "application/json")
+}
+
 func TestSignedRequest_checkMandatories_WhenErrorIsSetReturnIt(t *testing.T) {
 	msg := &SignedRequest{Error: fmt.Errorf("exampleError")}
 	assert.Error(t, msg.checkMandatories(), "exampleError")
@@ -120,4 +142,16 @@ func ExampleSignedRequest_WithPemFile() {
 -----END RSA PRIVATE KEY-----`))
 	fmt.Println(AuthKeyHeader(&msg.Key.PublicKey))
 	// Output: map[X-Yoti-Auth-Key:[MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpTiICtL+ujx8D0FquVWIaXg+ajJadN5hsTlGUXymiFAunSZjLjTsoGfSPz8PJm6pG9ax1Qb+R5UsSgTRTcpZTps2RLRWr5oPfD66bz4l38QXPSvfg5o+5kNxyCb8QANitF7Ht/DcpsGpL7anruHg/RgCLCBFRaGAodfuJCCM9zwIDAQAB]]
+}
+
+func TestSignedRequest_WithPemFile_NotPemEncodedShouldError(t *testing.T) {
+	msg := SignedRequest{}.WithPemFile([]byte("not pem encoded"))
+	assert.ErrorContains(t, msg.Error, "Not PEM-encoded")
+}
+
+func TestSignedRequest_WithPemFile_NotRSAKeyShouldError(t *testing.T) {
+	msg := SignedRequest{}.WithPemFile([]byte(`-----BEGIN RSA PUBLIC KEY-----
+` + exampleKey + `
+-----END RSA PUBLIC KEY-----`))
+	assert.ErrorContains(t, msg.Error, "Not an ESA Private Key")
 }

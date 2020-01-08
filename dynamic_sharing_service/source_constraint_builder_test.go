@@ -2,6 +2,9 @@ package dynamic_sharing_service
 
 import (
 	"fmt"
+	"testing"
+
+	"gotest.tools/assert"
 )
 
 func ExampleSourceConstraint() {
@@ -72,4 +75,9 @@ func ExampleSourceConstraintBuilder_WithPasscard() {
 	json, _ := sourceConstraint.MarshalJSON()
 	fmt.Println(string(json))
 	// Output: {"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASS_CARD","sub_type":""}],"soft_preference":false}}
+}
+
+func TestSourceConstraint_isConstraintImplemented(t *testing.T) {
+	constraint := &SourceConstraint{}
+	assert.Check(t, constraint.isConstraint())
 }
