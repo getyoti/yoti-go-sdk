@@ -10,6 +10,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/golang/protobuf/proto"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )
@@ -394,4 +395,41 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 	assert.Equal(t, selfie.Name(), attributeName)
 	assert.DeepEqual(t, attributeValue, selfie.Value().Data)
 	assert.Equal(t, selfie.ContentType(), yotiprotoattr.ContentType_PNG.String())
+}
+
+func TestProfile_DocumentDetails_RetrievesAttribute(t *testing.T) {
+	attributeName := consts.AttrDocumentDetails
+	attributeValue := []byte("PASSPORT GBR 1234567")
+
+	var proto = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     make([]*yotiprotoattr.Anchor, 0),
+	}
+
+	result := createProfileWithSingleAttribute(proto)
+	documentDetails, err := result.DocumentDetails()
+	assert.NilError(t, err)
+
+	assert.Equal(t, documentDetails.Value().DocumentType, "PASSPORT")
+}
+
+func TestProfile_DocumentImages_RetrievesAttribute(t *testing.T) {
+	attributeName := consts.AttrDocumentImages
+	attributeValue, err := proto.Marshal(&yotiprotoattr.MultiValue{})
+	assert.NilError(t, err)
+
+	proto := &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Anchors:     make([]*yotiprotoattr.Anchor, 0),
+	}
+
+	result := createProfileWithSingleAttribute(proto)
+	documentImages, err := result.DocumentImages()
+	assert.NilError(t, err)
+
+	assert.Equal(t, documentImages.Name(), consts.AttrDocumentImages)
 }
