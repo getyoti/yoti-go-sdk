@@ -34,7 +34,7 @@ type Anchor struct {
 }
 
 // MarshalJSON returns the JSON encoding
-func (anchor *Anchor) MarshalJSON() ([]byte, error) {
+func (anchor Anchor) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type      string `json:"type"`
 		Value     string `json:"value"`
