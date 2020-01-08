@@ -259,7 +259,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 	client.Key, err = loadRsaKey(key)
 	assert.NilError(t, err)
 
-	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
+	activityDetails, errorStrings := client.GetActivityDetails(encryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 
@@ -583,4 +583,11 @@ func TestYotiClient_MissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	structuredPostalAddress, err := profile.StructuredPostalAddress()
 	assert.NilError(t, err)
 	assert.Equal(t, structuredPostalAddress.ContentType(), "JSON")
+}
+
+func TestClient_OverrideAPIURL_ShouldSetAPIURL(t *testing.T) {
+	client := &Client{}
+	expectedURL := "expectedurl.com"
+	client.OverrideAPIURL(expectedURL)
+	assert.Equal(t, client.getAPIURL(), expectedURL)
 }
