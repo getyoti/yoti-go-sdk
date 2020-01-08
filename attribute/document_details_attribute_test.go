@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 	"gotest.tools/v3/assert"
 )
 
@@ -22,6 +23,24 @@ func ExampleDocumentDetails_Parse() {
 		details.ExpirationDate,
 	)
 	// Output: Document Type: PASSPORT, Issuing Country: GBR, Document Number: 1234567, Expiration Date: 2022-09-12 00:00:00 +0000 UTC
+}
+
+func ExampleNewDocumentDetails() {
+	proto := yotiprotoattr.Attribute{
+		Name:        "exampleDocumentDetails",
+		Value:       []byte("PASSPORT GBR 1234567 2022-09-12"),
+		ContentType: yotiprotoattr.ContentType_STRING,
+	}
+	attribute, err := NewDocumentDetails(&proto)
+	if err != nil {
+		return
+	}
+	fmt.Printf(
+		"Document Type: %s, With %d Anchors",
+		attribute.Value().DocumentType,
+		len(attribute.Anchors()),
+	)
+	// Output: Document Type: PASSPORT, With 0 Anchors
 }
 
 func TestDocumentDetailsShouldParseDrivingLicenceWithoutExpiry(t *testing.T) {
