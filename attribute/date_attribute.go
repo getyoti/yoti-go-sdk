@@ -8,7 +8,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
 )
 
-// DateAttribute is a Yoti attribute which returns a time as its value
+// DateAttribute is a Yoti attribute which returns a date as *time.Time for its value
 type DateAttribute struct {
 	attributeDetails
 	value *time.Time
