@@ -41,7 +41,10 @@ func (builder *DynamicScenarioBuilder) Build() (DynamicScenario, error) {
 		builder.scenario.extensions = make([]interface{}, 0)
 	}
 	if builder.scenario.policy == nil {
-		policy, _ := (&DynamicPolicyBuilder{}).Build()
+		policy, err := (&DynamicPolicyBuilder{}).Build()
+		if err != nil {
+			return builder.scenario, err
+		}
 		builder.scenario.policy = &policy
 	}
 	return builder.scenario, builder.err
