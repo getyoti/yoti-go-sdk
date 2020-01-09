@@ -39,7 +39,7 @@ func TestNewTime_ShouldReturnErrorForInvalidDate(t *testing.T) {
 		Value:       []byte("2006-60-20"),
 		ContentType: yotiprotoattr.ContentType_DATE,
 	}
-	attribute, err := NewTime(&proto)
+	attribute, err := NewDate(&proto)
 	assert.Check(t, attribute == nil)
 	assert.ErrorContains(t, err, "month out of range")
 }
