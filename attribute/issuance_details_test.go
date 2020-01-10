@@ -118,6 +118,14 @@ func TestIssuanceDetails_parseExpiryDate_ShouldParseAllRFC3339Formats(t *testing
 			Input:    "2002-10-02T10:00:00+11:00",
 			Expected: time.Date(2002, 10, 2, 10, 0, 0, 0, time.FixedZone("+1100", 11*60*60)),
 		},
+		{
+			Input:    "1920-03-13T19:50:53.999999Z",
+			Expected: time.Date(1920, 3, 13, 19, 50, 53, 999999e3, time.UTC),
+		},
+		{
+			Input:    "1920-03-13T19:50:54.000001Z",
+			Expected: time.Date(1920, 3, 13, 19, 50, 54, 1e3, time.UTC),
+		},
 	}
 
 	for _, row := range table {
