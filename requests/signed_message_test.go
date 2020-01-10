@@ -153,5 +153,5 @@ func TestSignedRequest_WithPemFile_NotRSAKeyShouldError(t *testing.T) {
 	msg := SignedRequest{}.WithPemFile([]byte(`-----BEGIN RSA PUBLIC KEY-----
 ` + exampleKey + `
 -----END RSA PUBLIC KEY-----`))
-	assert.ErrorContains(t, msg.Error, "Not an ESA Private Key")
+	assert.ErrorContains(t, msg.Error, "Not an RSA Private Key")
 }
