@@ -93,7 +93,7 @@ func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
 		return msg
 	}
 	if block.Type != "RSA PRIVATE KEY" {
-		msg.Error = errors.New("Not an ESA Private Key")
+		msg.Error = errors.New("Not an RSA Private Key")
 		return msg
 	}
 
