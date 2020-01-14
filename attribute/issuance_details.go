@@ -78,7 +78,7 @@ func parseExpiryDate(expiryDateString string) (*time.Time, error) {
 		return nil, nil
 	}
 
-	parsedTime, err := time.Parse(time.RFC3339, expiryDateString)
+	parsedTime, err := time.Parse(time.RFC3339Nano, expiryDateString)
 	if err != nil {
 		log.Printf("Unable to parse time value of: %q. Error: %q", expiryDateString, err)
 		return nil, err

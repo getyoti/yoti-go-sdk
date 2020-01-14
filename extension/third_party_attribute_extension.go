@@ -57,7 +57,7 @@ func (extension ThirdPartyAttributeExtension) MarshalJSON() ([]byte, error) {
 	}{
 		Type: thirdPartyAttributeExentionTypeConst,
 		Content: thirdPartyAttributeExtension{
-			ExpiryDate:  extension.expiryDate.Format("2006-01-02T15:04:05.999Z"),
+			ExpiryDate:  extension.expiryDate.Format(time.RFC3339Nano),
 			Definitions: extension.definitions,
 		},
 	})
