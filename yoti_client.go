@@ -268,7 +268,7 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 			err = yotierror.MultiError{This: errTemp, Next: err}
 		}
 
-		timestamp, err := time.Parse(time.RFC3339, parsedResponse.Receipt.Timestamp)
+		timestamp, err := time.Parse(time.RFC3339Nano, parsedResponse.Receipt.Timestamp)
 		if err != nil {
 			log.Printf("Unable to read timestamp. Error: %q", err)
 		}
