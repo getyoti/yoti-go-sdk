@@ -12,7 +12,7 @@ import (
 type JSONAttribute struct {
 	attributeDetails
 	// Value returns the value of a JSON attribute in the form of an interface
-	value interface{}
+	value map[string]interface{}
 }
 
 // NewJSON creates a new JSON attribute
@@ -36,8 +36,8 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 }
 
 // UnmarshallJSON unmarshalls JSON into an interface
-func UnmarshallJSON(byteValue []byte) (result interface{}, err error) {
-	var unmarshalledJSON interface{}
+func UnmarshallJSON(byteValue []byte) (result map[string]interface{}, err error) {
+	var unmarshalledJSON map[string]interface{}
 	err = json.Unmarshal(byteValue, &unmarshalledJSON)
 
 	if err != nil {
@@ -48,6 +48,6 @@ func UnmarshallJSON(byteValue []byte) (result interface{}, err error) {
 }
 
 // Value returns the value of the JSONAttribute as an interface.
-func (a *JSONAttribute) Value() interface{} {
+func (a *JSONAttribute) Value() map[string]interface{} {
 	return a.value
 }
