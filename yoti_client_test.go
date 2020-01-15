@@ -522,7 +522,7 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 		nestedValue = "NestedValue"
 	)
 
-	var structuredAddress = []byte(`[
+	var structuredAddress = []byte(`
 	{
 		"address_format": 2,
 		"building": "House No.86-A",		
@@ -539,16 +539,13 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 			}
 		}
 	}
-	]`)
+	`)
 
 	parsedStructuredAddress, err := attribute.UnmarshallJSON(structuredAddress)
 
 	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
 
-	parsedStructuredAddressInterfaceSlice := parsedStructuredAddress.([]interface{})
-
-	parsedStructuredAddressMap := parsedStructuredAddressInterfaceSlice[0].(map[string]interface{})
-	actualCountryIso := parsedStructuredAddressMap["country_iso"]
+	actualCountryIso := parsedStructuredAddress["country_iso"]
 
 	assert.Equal(t, countryIso, actualCountryIso)
 }
