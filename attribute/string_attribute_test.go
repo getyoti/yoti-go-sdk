@@ -14,9 +14,9 @@ func TestStringAttribute_NewThirdPartyAttribute(t *testing.T) {
 	assert.Equal(t, stringAttribute.Value(), "test-third-party-attribute-0")
 	assert.Equal(t, stringAttribute.Name(), "com.thirdparty.id")
 
-	assert.Equal(t, stringAttribute.Sources()[0].Value()[0], "THIRD_PARTY")
+	assert.Equal(t, stringAttribute.Sources()[0].Value(), "THIRD_PARTY")
 	assert.Equal(t, stringAttribute.Sources()[0].SubType(), "orgName")
 
-	assert.Equal(t, stringAttribute.Verifiers()[0].Value()[0], "THIRD_PARTY")
+	assert.Equal(t, stringAttribute.Verifiers()[0].Value(), "THIRD_PARTY")
 	assert.Equal(t, stringAttribute.Verifiers()[0].SubType(), "orgName")
 }

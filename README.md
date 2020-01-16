@@ -202,7 +202,7 @@ var givenNamesFirstAnchor *anchor.Anchor = givenNamesAnchors[0]
 var anchorType anchor.Type = givenNamesFirstAnchor.Type()
 var signedTimestamp *time.Time = givenNamesFirstAnchor.SignedTimestamp().Timestamp()
 var subType string = givenNamesFirstAnchor.SubType()
-var value []string = givenNamesFirstAnchor.Value()
+var value string = givenNamesFirstAnchor.Value()
 ```
 
 ## Handling Users
