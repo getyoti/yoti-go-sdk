@@ -27,7 +27,7 @@ func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages 
 	assertIsExpectedImage(t, actualDocumentImages[1], "jpeg", "38TVEH/9k=")
 
 	expectedValue := "NATIONAL_ID"
-	assert.Equal(t, anchor.Value()[0], expectedValue)
+	assert.Equal(t, anchor.Value(), expectedValue)
 
 	expectedSubType := "STATE_ID"
 	assert.Equal(t, anchor.SubType(), expectedSubType)
