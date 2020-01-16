@@ -65,7 +65,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 	assert.Equal(t, actualAnchor.SubType(), expectedSubType)
 
 	expectedValue := "PASSPORT"
-	assert.Equal(t, actualAnchor.Value()[0], expectedValue)
+	assert.Equal(t, actualAnchor.Value(), expectedValue)
 
 	actualSerialNo := actualAnchor.OriginServerCerts()[0].SerialNumber
 	assertServerCertSerialNo(t, "277870515583559162487099305254898397834", actualSerialNo)
@@ -87,7 +87,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
 
 	expectedValue := "DRIVING_LICENCE"
-	assert.Equal(t, resultAnchor.Value()[0], expectedValue)
+	assert.Equal(t, resultAnchor.Value(), expectedValue)
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	assertServerCertSerialNo(t, "46131813624213904216516051554755262812", actualSerialNo)
@@ -106,7 +106,7 @@ func TestAnchorParser_UnknownAnchor(t *testing.T) {
 	expectedType := AnchorTypeUnknown
 	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
 	assert.Equal(t, resultAnchor.Type(), expectedType)
-	assert.Equal(t, len(resultAnchor.Value()), 0)
+	assert.Equal(t, resultAnchor.Value(), "")
 }
 
 func TestAnchorParser_YotiAdmin(t *testing.T) {
@@ -124,7 +124,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
 
 	expectedValue := "YOTI_ADMIN"
-	assert.Equal(t, resultAnchor.Value()[0], expectedValue)
+	assert.Equal(t, resultAnchor.Value(), expectedValue)
 
 	actualSerialNo := resultAnchor.OriginServerCerts()[0].SerialNumber
 	assertServerCertSerialNo(t, "256616937783084706710155170893983549581", actualSerialNo)

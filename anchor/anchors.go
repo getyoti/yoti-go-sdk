@@ -16,10 +16,10 @@ type Anchor struct {
 	originServerCerts []*x509.Certificate
 	signedTimestamp   SignedTimestamp
 	subtype           string
-	value             []string
+	value             string
 }
 
-func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp yotiprotocom.SignedTimestamp, subtype string, value []string) *Anchor {
+func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp yotiprotocom.SignedTimestamp, subtype string, value string) *Anchor {
 	return &Anchor{
 		anchorType:        anchorType,
 		originServerCerts: originServerCerts,
@@ -79,9 +79,9 @@ func (a Anchor) SubType() string {
 }
 
 // Value identifies the provider that either sourced or verified the attribute value.
-// The range of possible values is not limited. For a SOURCE anchor, expect values like
-// PASSPORT, DRIVING_LICENSE. For a VERIFIER anchor expect valuues like YOTI_ADMIN.
-func (a Anchor) Value() []string {
+// The range of possible values is not limited. For a SOURCE anchor, expect a value like
+// PASSPORT, DRIVING_LICENSE. For a VERIFIER anchor, expect a value like YOTI_ADMIN.
+func (a Anchor) Value() string {
 	return a.value
 }
 
