@@ -26,11 +26,12 @@ var (
 func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 	var processedAnchors []*Anchor
 	for _, protoAnchor := range protoAnchors {
-		var extensions []string
+		var extension string
 		var (
 			anchorType  = AnchorTypeUnknown
 			parsedCerts = parseCertificates(protoAnchor.OriginServerCerts)
 		)
+	certs:
 		for _, cert := range parsedCerts {
 			for _, ext := range cert.Extensions {
 				var (
@@ -45,11 +46,12 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 					continue
 				}
 				anchorType = parsedAnchorType
-				extensions = append(extensions, value)
+				extension = value
+				break certs
 			}
 		}
 
-		processedAnchor := newAnchor(anchorType, parsedCerts, parseSignedTimestamp(protoAnchor.SignedTimeStamp), protoAnchor.SubType, extensions)
+		processedAnchor := newAnchor(anchorType, parsedCerts, parseSignedTimestamp(protoAnchor.SignedTimeStamp), protoAnchor.SubType, extension)
 
 		processedAnchors = append(processedAnchors, processedAnchor)
 	}
