@@ -26,30 +26,9 @@ var (
 func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 	var processedAnchors []*Anchor
 	for _, protoAnchor := range protoAnchors {
-		var extension string
-		var (
-			anchorType  = AnchorTypeUnknown
-			parsedCerts = parseCertificates(protoAnchor.OriginServerCerts)
-		)
-	certs:
-		for _, cert := range parsedCerts {
-			for _, ext := range cert.Extensions {
-				var (
-					value string
-					err   error
-				)
-				parsedAnchorType, value, err := parseExtension(ext)
-				if err != nil {
-					log.Printf("error parsing anchor extension, %v", err)
-					continue
-				} else if parsedAnchorType == AnchorTypeUnknown {
-					continue
-				}
-				anchorType = parsedAnchorType
-				extension = value
-				break certs
-			}
-		}
+		parsedCerts := parseCertificates(protoAnchor.OriginServerCerts)
+
+		anchorType, extension := getAnchorValuesFromCertificate(parsedCerts)
 
 		processedAnchor := newAnchor(anchorType, parsedCerts, parseSignedTimestamp(protoAnchor.SignedTimeStamp), protoAnchor.SubType, extension)
 
@@ -57,6 +36,29 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 	}
 
 	return processedAnchors
+}
+
+func getAnchorValuesFromCertificate(parsedCerts []*x509.Certificate) (anchorType Type, extension string) {
+	defaultAnchorType := AnchorTypeUnknown
+
+	for _, cert := range parsedCerts {
+		for _, ext := range cert.Extensions {
+			var (
+				value string
+				err   error
+			)
+			parsedAnchorType, value, err := parseExtension(ext)
+			if err != nil {
+				log.Printf("error parsing anchor extension, %v", err)
+				continue
+			} else if parsedAnchorType == AnchorTypeUnknown {
+				continue
+			}
+			return parsedAnchorType, value
+		}
+	}
+
+	return defaultAnchorType, ""
 }
 
 func parseExtension(ext pkix.Extension) (anchorType Type, val string, err error) {
