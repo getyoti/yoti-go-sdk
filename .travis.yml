@@ -6,7 +6,7 @@ cache:
     - $HOME/gopath/pkg/mod
     
 # Skip the installation step. Don't "go get" dependencies.
-install: false
+install: skip
 
 git:
   depth: 3
