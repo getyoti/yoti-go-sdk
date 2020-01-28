@@ -10,7 +10,15 @@
         
       <div class="yoti-attribute-value">
         <div class="yoti-attribute-value-text">
-          {{ if eq .Prop.Name "document_images" }}
+          {{ if eq .Prop.Name "document_details" }}
+            <table>
+              <tr><td>Document Type</td><td>{{ .Prop.Value.DocumentType }}</td></tr>
+              <tr><td>Issuing Country</td><td>{{ .Prop.Value.IssuingCountry }}</td></tr>
+              <tr><td>Document Number</td><td>{{ .Prop.Value.DocumentNumber }}</td></tr>
+              <tr><td>Expiration Date</td><td>{{ .Prop.Value.ExpirationDate }}</td></tr>
+              <tr><td>Issuing Authority</td><td>{{ .Prop.Value.IssuingAuthority }}</td></tr>
+            </table>
+          {{ else if eq .Prop.Name "document_images" }}
             {{ range .Prop.Value }}
               <img src="{{ .Base64URL | escapeURL }}" />
             {{ end }}
