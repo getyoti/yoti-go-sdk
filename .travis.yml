@@ -101,8 +101,8 @@ jobs:
           organization: "getyoti"
       script:
         # Execute tests and coverage
-        - go test -json > report.json
-        - go test -coverprofile=coverage.out -json > sonar-report.json
+        - go test -json ./... > report.json
+        - go test -coverprofile=coverage.out -json ./... > sonar-report.json
         # Run Sonar
         - sonar-scanner -X
 
