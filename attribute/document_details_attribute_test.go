@@ -58,6 +58,40 @@ func TestDocumentDetailsShouldParseDrivingLicenceWithoutExpiry(t *testing.T) {
 	assert.Equal(t, details.IssuingAuthority, "DVLA")
 }
 
+func TestDocumentDetailsShouldParseRedactedAadhar(t *testing.T) {
+	aadhaar := "AADHAAR IND ****1234 2016-05-01"
+	details := DocumentDetails{}
+	err := details.Parse(aadhaar)
+	if err != nil {
+		t.Fail()
+	}
+	assert.Equal(t, details.DocumentType, "AADHAAR")
+	assert.Equal(t, details.DocumentNumber, "****1234")
+	assert.Equal(t, details.ExpirationDate.Format("2006-01-02"), "2016-05-01")
+	assert.Equal(t, details.IssuingCountry, "IND")
+	assert.Equal(t, details.IssuingAuthority, "")
+}
+
+func TestDocumentDetailsShouldParseSpecialCharacters(t *testing.T) {
+	test_data := [][]string{
+		{"type country **** - authority", "****"},
+		{"type country ~!@#$%^&*()-_=+[]{}|;':,./<>? - authority", "~!@#$%^&*()-_=+[]{}|;':,./<>?"},
+		{"type country \"\" - authority", "\"\""},
+		{"type country \\ - authority", "\\"},
+		{"type country \" - authority", "\""},
+		{"type country '' - authority", "''"},
+		{"type country ' - authority", "'"},
+	}
+	for _, row := range test_data {
+		details := DocumentDetails{}
+		err := details.Parse(row[0])
+		if err != nil {
+			t.Fail()
+		}
+		assert.Equal(t, details.DocumentNumber, row[1])
+	}
+}
+
 func TestDocumentDetailsShouldParseDrivingLicenceWithExtraAttribute(t *testing.T) {
 	drivingLicenceGBR := "DRIVING_LICENCE GBR 1234abc 2016-05-01 DVLA someThirdAttribute"
 	details := DocumentDetails{}
@@ -126,20 +160,6 @@ func TestDocumentDetailsShouldErrorOnEmptyString(t *testing.T) {
 
 func TestDocumentDetailsShouldErrorIfLessThan3Words(t *testing.T) {
 	corrupt := "PASS_CARD GBR"
-	details := DocumentDetails{}
-	err := details.Parse(corrupt)
-	assert.ErrorContains(t, err, "Document Details data is invalid")
-}
-
-func TestDocumentDetailsShouldErrorForInvalidCountry(t *testing.T) {
-	corrupt := "PASSPORT 13 1234abc 2016-05-01"
-	details := DocumentDetails{}
-	err := details.Parse(corrupt)
-	assert.ErrorContains(t, err, "Document Details data is invalid")
-}
-
-func TestDocumentDetailsShouldErrorForInvalidNumber(t *testing.T) {
-	corrupt := "PASSPORT GBR $%^$%^£ 2016-05-01"
 	details := DocumentDetails{}
 	err := details.Parse(corrupt)
 	assert.ErrorContains(t, err, "Document Details data is invalid")
