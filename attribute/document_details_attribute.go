@@ -58,12 +58,7 @@ func (details *DocumentDetails) Parse(data string) (err error) {
 	dataSlice := strings.Split(data, " ")
 
 	if len(dataSlice) < 3 {
-		return fmt.Errorf("Document Details data is invalid")
-	}
-	for _, section := range dataSlice {
-		if section == "" {
-			return fmt.Errorf("Document Details data is invalid")
-		}
+		return fmt.Errorf("Document Details data is invalid, %s", data)
 	}
 
 	details.DocumentType = dataSlice[0]
