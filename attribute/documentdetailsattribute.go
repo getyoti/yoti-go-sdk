@@ -2,16 +2,11 @@ package attribute
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-)
-
-var (
-	documentDetailsValidateRegexp = regexp.MustCompile("^[A-Za-z_]* [A-Za-z]{3} [A-Za-z0-9]{1}.*$")
 )
 
 const (
@@ -78,11 +73,11 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 
 // Parse fills a DocumentDetails object from a raw string
 func (details *DocumentDetails) Parse(data string) (err error) {
-	if !documentDetailsValidateRegexp.MatchString(data) {
+	dataSlice := strings.Split(data, " ")
+
+	if len(dataSlice) < 3 {
 		return fmt.Errorf("Document Details data is invalid, %s", data)
 	}
-
-	dataSlice := strings.Split(data, " ")
 
 	details.DocumentType = dataSlice[0]
 	details.IssuingCountry = dataSlice[1]
