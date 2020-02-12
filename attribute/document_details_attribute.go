@@ -60,6 +60,11 @@ func (details *DocumentDetails) Parse(data string) (err error) {
 	if len(dataSlice) < 3 {
 		return fmt.Errorf("Document Details data is invalid, %s", data)
 	}
+	for _, section := range dataSlice {
+		if section == "" {
+			return fmt.Errorf("Document Details data is invalid %s", data)
+		}
+	}
 
 	details.DocumentType = dataSlice[0]
 	details.IssuingCountry = dataSlice[1]
