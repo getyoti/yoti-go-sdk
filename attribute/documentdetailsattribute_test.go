@@ -73,6 +73,14 @@ func TestDocumentDetailsShouldParseSpecialCharacters(t *testing.T) {
 	}
 }
 
+func TestDocumentDetailsShouldFailOnDoubleSpace(t *testing.T) {
+	data := "AADHAAR  IND ****1234"
+	details := DocumentDetails{}
+	err := details.Parse(data)
+	assert.Check(t, err != nil)
+	assert.ErrorContains(t, err, "Document Details data is invalid")
+}
+
 func TestDocumentDetailsShouldParseDrivingLicenceWithExtraAttribute(t *testing.T) {
 	drivingLicenceGBR := "DRIVING_LICENCE GBR 1234abc 2016-05-01 DVLA someThirdAttribute"
 	details := DocumentDetails{}
