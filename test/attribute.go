@@ -7,8 +7,8 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 // CreateThirdPartyAttributeDataEntry creates a data entry of type "THIRD_PARTY_ATTRIBUTE", with the specified IssuingAttribute details.

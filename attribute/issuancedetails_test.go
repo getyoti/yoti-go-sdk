@@ -9,9 +9,9 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 
-	is "gotest.tools/assert/cmp"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func TestShouldParseThirdPartyAttributeCorrectly(t *testing.T) {
