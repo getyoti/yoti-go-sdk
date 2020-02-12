@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func ExampleDocumentDetails_Parse() {
