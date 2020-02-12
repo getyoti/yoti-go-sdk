@@ -10,8 +10,8 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func TestAttributeIssuanceDetailsShouldReturnNilWhenNoDataEntries(t *testing.T) {

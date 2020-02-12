@@ -27,7 +27,7 @@ jobs:
         # needed until we stop supporting 1.9.7 & 1.10.x
         - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
           [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
-            GO111MODULE=off;
+            export GO111MODULE=off;
             go get -t -d ./...;
           fi
         - go get golang.org/x/tools/cmd/goimports
