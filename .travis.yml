@@ -21,36 +21,19 @@ jobs:
   include:
     - &test
       stage: Test
-      go: "1.9.7"
+      go: "master"
       os: "linux"
       before_script:
-        # needed until we stop supporting 1.9.7 & 1.10.x
-        - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
-          [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
-            export GO111MODULE=off;
-            go get -t -d ./...;
-          fi
         - go get golang.org/x/tools/cmd/goimports
       script:
         - ./.travis.gofmt.sh
         - diff <(goimports -d $(find . -type f -name '*.go' -not -path "./yotiprotoattr/*" -not -path "./yotiprotocom/*" -not -path "./yotiprotoshare/*")) <(printf "")
         # Check that go generate ./... produces a zero diff; clean up any changes afterwards.
-        - if [ $TRAVIS_GO_VERSION == "1.9.7" ] ||
-          [ $TRAVIS_GO_VERSION == "1.10.x" ]; then
-            go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code) 
-          else
-            go generate -x ./... && go mod tidy && git diff --exit-code; code=$?; git checkout -- .; (exit $code) 
-          fi
+        - go generate -x ./... && go mod tidy && git diff --exit-code; code=$?; git checkout -- .; (exit $code) 
         - go vet ./...
         - go test -v -race ./...
     - <<: *test
-      go: "1.9.7"
-      os: "osx"
-    - <<: *test
-      go: "1.10.x"
-      os: "linux"
-    - <<: *test
-      go: "1.10.x"
+      go: "master"
       os: "osx"
     - <<: *test
       go: "1.11.x"
@@ -69,12 +52,6 @@ jobs:
       os: "linux"
     - <<: *test
       go: "1.x"
-      os: "osx"
-    - <<: *test
-      go: "master"
-      os: "linux"
-    - <<: *test
-      go: "master"
       os: "osx"
 
     - &coveralls
