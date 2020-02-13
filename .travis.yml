@@ -48,6 +48,12 @@ jobs:
       go: "1.12.x"
       os: "osx"
     - <<: *test
+      go: "1.13.x"
+      os: "linux"
+    - <<: *test
+      go: "1.13.x"
+      os: "osx"
+    - <<: *test
       go: "1.x"
       os: "linux"
     - <<: *test
