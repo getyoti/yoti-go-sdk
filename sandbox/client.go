@@ -2,10 +2,13 @@ package sandbox
 
 import (
 	"crypto/rsa"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	yotirequest "github.com/getyoti/yoti-go-sdk/v2/requests"
 )
@@ -15,6 +18,29 @@ type Client struct {
 	AppID   string
 	Key     *rsa.PrivateKey
 	BaseURL string
+}
+
+// LoadPEMFile loads the Sandbox Client Key from a PEM file path
+func (client *Client) LoadPEMFile(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+
+	buffer, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	block, _ := pem.Decode(buffer)
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return err
+	}
+
+	client.Key = key
+
+	return nil
 }
 
 // SetupSharingProfile creates a user profile in the sandbox instance

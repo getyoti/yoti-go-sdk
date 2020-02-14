@@ -109,13 +109,9 @@ func (profile Profile) WithDocumentDetails(value string, anchors []Anchor) Profi
 	return profile.WithAttribute(yoti.AttrConstDocumentDetails, value, anchors)
 }
 
-// WithoutAttributes initialises a sandbox profile with the minimum to get
+// Deprecated WithoutAttributes initialises a sandbox profile with the minimum to get
 // a response from the sandbox server
 func (profile Profile) WithoutAttributes() Profile {
-	profile.Attributes = []Attribute{{
-		Name:    "unused",
-		Value:   "unused",
-		Anchors: make([]Anchor, 0),
-	}}
+	profile.Attributes = []Attribute{}
 	return profile
 }
