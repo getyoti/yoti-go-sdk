@@ -145,5 +145,5 @@ func ExampleProfile_WithDocumentDetails() {
 func ExampleProfile_WithoutAttributes() {
 	profile := Profile{}.WithoutAttributes()
 	fmt.Println(profile)
-	// Output: { [{unused unused   []}]}
+	// Output: { []}
 }
