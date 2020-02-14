@@ -21,7 +21,7 @@ jobs:
   include:
     - &test
       stage: Test
-      go: "master"
+      go: "1.11.x"
       os: "linux"
       before_script:
         - go get golang.org/x/tools/cmd/goimports
@@ -33,31 +33,31 @@ jobs:
         - go vet ./...
         - go test -v -race ./...
     - <<: *test
+      go: "1.11.x"
+      os: "osx"
+    - <<: *test
+      go: "1.12.x"
+      os: "linux"
+    - <<: *test
+      go: "1.12.x"
+      os: "osx"
+    - <<: *test
+      go: "1.13.x"
+      os: "linux"
+    - <<: *test
+      go: "1.13.x"
+      os: "osx"
+    - <<: *test
+      go: "1.x"
+      os: "linux"
+    - <<: *test
+      go: "1.x"
+      os: "osx"
+    - <<: *test
       go: "master"
-      os: "osx"
-    - <<: *test
-      go: "1.11.x"
       os: "linux"
     - <<: *test
-      go: "1.11.x"
-      os: "osx"
-    - <<: *test
-      go: "1.12.x"
-      os: "linux"
-    - <<: *test
-      go: "1.12.x"
-      os: "osx"
-    - <<: *test
-      go: "1.13.x"
-      os: "linux"
-    - <<: *test
-      go: "1.13.x"
-      os: "osx"
-    - <<: *test
-      go: "1.x"
-      os: "linux"
-    - <<: *test
-      go: "1.x"
+      go: "master"
       os: "osx"
 
     - &coveralls
