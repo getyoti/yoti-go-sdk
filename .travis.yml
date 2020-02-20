@@ -21,7 +21,7 @@ jobs:
   include:
     - &test
       stage: Test
-      go: "1.9.7"
+      go: "master"
       os: "linux"
       before_script:
         # needed until we stop supporting 1.9.7 & 1.10.x
@@ -44,43 +44,43 @@ jobs:
         - go vet ./...
         - go test -v -race ./...
     - <<: *test
+      go: "master"
+      os: "osx"
+    - <<: *test
+      go: "1.x"
+      os: "linux"
+    - <<: *test
+      go: "1.x"
+      os: "osx"        
+    - <<: *test
+      go: "1.13.x"
+      os: "linux"
+    - <<: *test
+      go: "1.13.x"
+      os: "osx"   
+    - <<: *test
+      go: "1.12.x"
+      os: "linux"
+    - <<: *test
+      go: "1.12.x"
+      os: "osx"
+    - <<: *test
+      go: "1.11.x"
+      os: "linux"
+    - <<: *test
+      go: "1.11.x"
+      os: "osx"
+    - <<: *test
+      go: "1.10.x"
+      os: "linux"
+    - <<: *test
+      go: "1.10.x"
+      os: "osx"
+    - <<: *test
       go: "1.9.7"
-      os: "osx"
-    - <<: *test
-      go: "1.10.x"
       os: "linux"
     - <<: *test
-      go: "1.10.x"
-      os: "osx"
-    - <<: *test
-      go: "1.11.x"
-      os: "linux"
-    - <<: *test
-      go: "1.11.x"
-      os: "osx"
-    - <<: *test
-      go: "1.12.x"
-      os: "linux"
-    - <<: *test
-      go: "1.12.x"
-      os: "osx"
-    - <<: *test
-      go: "1.13.x"
-      os: "linux"
-    - <<: *test
-      go: "1.13.x"
-      os: "osx"
-    - <<: *test
-      go: "1.x"
-      os: "linux"
-    - <<: *test
-      go: "1.x"
-      os: "osx"
-    - <<: *test
-      go: "master"
-      os: "linux"
-    - <<: *test
-      go: "master"
+      go: "1.9.7"
       os: "osx"
 
     - &coveralls
