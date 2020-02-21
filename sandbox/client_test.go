@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -30,4 +31,21 @@ func TestClient_LoadPEMFile(t *testing.T) {
 	err = client.LoadPEMFile(keyFileName)
 	assert.NilError(t, err)
 	assert.Check(t, client.Key != nil)
+}
+
+func TestClient_LoadPEMFile_ShouldFailForFileNotFound(t *testing.T) {
+	MissingFileName := "/tmp/file_not_found"
+	client := &Client{}
+	err := client.LoadPEMFile(MissingFileName)
+	assert.Check(t, err != nil)
+}
+
+func TestClient_LoadPEMFile_ShouldFailForInvalidFile(t *testing.T) {
+	InvalidFileName := "/tmp/invalid_file"
+	err := ioutil.WriteFile(InvalidFileName, []byte("Not a PEM"), 0644)
+	assert.NilError(t, err)
+
+	client := &Client{}
+	err = client.LoadPEMFile(InvalidFileName)
+	assert.Check(t, err != nil)
 }
