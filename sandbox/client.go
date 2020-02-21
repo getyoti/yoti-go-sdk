@@ -33,6 +33,9 @@ func (client *Client) LoadPEMFile(filename string) error {
 	}
 
 	block, _ := pem.Decode(buffer)
+	if block == nil {
+		return fmt.Errorf("Could not decode PEM file")
+	}
 	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
 		return err
