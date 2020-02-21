@@ -108,10 +108,3 @@ func (profile Profile) WithEmailAddress(value string, anchors []Anchor) Profile 
 func (profile Profile) WithDocumentDetails(value string, anchors []Anchor) Profile {
 	return profile.WithAttribute(yoti.AttrConstDocumentDetails, value, anchors)
 }
-
-// Deprecated WithoutAttributes initialises a sandbox profile with the minimum to get
-// a response from the sandbox server
-func (profile Profile) WithoutAttributes() Profile {
-	profile.Attributes = []Attribute{}
-	return profile
-}

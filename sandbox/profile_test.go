@@ -141,9 +141,3 @@ func ExampleProfile_WithDocumentDetails() {
 	fmt.Println(profile)
 	// Output: { [{document_details DRIVING_LICENCE - abc1234   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
 }
-
-func ExampleProfile_WithoutAttributes() {
-	profile := Profile{}.WithoutAttributes()
-	fmt.Println(profile)
-	// Output: { []}
-}
