@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func createDefinitionByName(name string) attribute.AttributeDefinition {

@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 
-	is "gotest.tools/assert/cmp"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 // GetTestFileBytes takes a filepath, decodes it from base64, and returns a byte representation of it

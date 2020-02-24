@@ -2,5 +2,5 @@ package consts
 
 const (
 	SDKIdentifier        = "Go"
-	SDKVersionIdentifier = "2.7.0"
+	SDKVersionIdentifier = "2.7.1"
 )
