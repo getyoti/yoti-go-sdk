@@ -1,51 +1,90 @@
 package sandbox
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
 	"io/ioutil"
+	"net/http"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v2/cryptoutil"
 	"gotest.tools/v3/assert"
 )
 
-func TestClient_LoadPEMFile(t *testing.T) {
-	key, err := rsa.GenerateKey(rand.Reader, 1024)
+func TestClient_SetupSharingProfileUsesConstructorBaseUrlOverEnvVariable(t *testing.T) {
+	client := createSandboxClient(t, "constuctorBaseUrl")
+	os.Setenv("API_URL", "envBaseUrl")
+
+	_, err := client.SetupSharingProfile(Profile{})
 	assert.NilError(t, err)
-	block := pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: x509.MarshalPKCS1PrivateKey(key),
+
+	assert.Equal(t, "constuctorBaseUrl", client.BaseURL)
+}
+
+func TestClient_SetupSharingProfileUsesEnvVariable(t *testing.T) {
+	client := createSandboxClient(t, "")
+
+	os.Setenv("API_URL", "envBaseUrl")
+
+	_, err := client.SetupSharingProfile(Profile{})
+	assert.NilError(t, err)
+
+	assert.Equal(t, "envBaseUrl", client.BaseURL)
+}
+
+func TestClient_SetupSharingProfileUsesDefaultUrlAsFallback(t *testing.T) {
+	os.Setenv("API_URL", "")
+
+	client := createSandboxClient(t, "")
+
+	_, err := client.SetupSharingProfile(Profile{})
+	assert.NilError(t, err)
+
+	assert.Equal(t, "https://api.yoti.com/sandbox/v1", client.BaseURL)
+}
+
+func createSandboxClient(t *testing.T, constructorBaseUrl string) (client Client) {
+	keyBytes, fileErr := ioutil.ReadFile("../test-key.pem")
+	assert.NilError(t, fileErr)
+
+	pemFile, parseErr := cryptoutil.ParseRSAKey(keyBytes)
+	assert.NilError(t, parseErr)
+
+	if constructorBaseUrl == "" {
+		return Client{
+			Key:         pemFile,
+			ClientSdkID: "ClientSDKID",
+			httpClient:  mockHttpClientCreatedResponse(),
+		}
 	}
-	keyFileName := "tmpKey.pem"
-	keyFile, err := os.Create(keyFileName)
-	assert.NilError(t, err)
-	err = pem.Encode(keyFile, &block)
-	assert.NilError(t, err)
-	err = keyFile.Close()
-	assert.NilError(t, err)
 
-	client := &Client{}
-	err = client.LoadPEMFile(keyFileName)
-	assert.NilError(t, err)
-	assert.Check(t, client.Key != nil)
+	return Client{
+		Key:         pemFile,
+		BaseURL:     constructorBaseUrl,
+		ClientSdkID: "ClientSDKID",
+		httpClient:  mockHttpClientCreatedResponse(),
+	}
+
 }
 
-func TestClient_LoadPEMFile_ShouldFailForFileNotFound(t *testing.T) {
-	MissingFileName := "/tmp/file_not_found"
-	client := &Client{}
-	err := client.LoadPEMFile(MissingFileName)
-	assert.Check(t, err != nil)
+type mockHTTPClient struct {
+	do func(*http.Request) (*http.Response, error)
 }
 
-func TestClient_LoadPEMFile_ShouldFailForInvalidFile(t *testing.T) {
-	InvalidFileName := "/tmp/invalid_file"
-	err := ioutil.WriteFile(InvalidFileName, []byte("Not a PEM"), 0644)
-	assert.NilError(t, err)
+func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
+	if mock.do != nil {
+		return mock.do(request)
+	}
+	return nil, nil
+}
 
-	client := &Client{}
-	err = client.LoadPEMFile(InvalidFileName)
-	assert.Check(t, err != nil)
+func mockHttpClientCreatedResponse() *mockHTTPClient {
+	return &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       ioutil.NopCloser(strings.NewReader(`{"token":"tokenValue"}`)),
+			}, nil
+		},
+	}
 }

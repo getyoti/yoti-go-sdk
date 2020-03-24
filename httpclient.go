@@ -4,6 +4,7 @@ import (
 	"net/http"
 )
 
-type httpClient interface {
+//HttpClient is a mockable HTTP Client Interface
+type HttpClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
