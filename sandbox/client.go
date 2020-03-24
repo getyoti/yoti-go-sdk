@@ -2,53 +2,39 @@ package sandbox
 
 import (
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 
+	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	yotirequest "github.com/getyoti/yoti-go-sdk/v2/requests"
 )
 
-// Client is responsible for setting up test data in the sandbox instance
+// Client is responsible for setting up test data in the sandbox instance. BaseURL is not required.
 type Client struct {
-	AppID   string
-	Key     *rsa.PrivateKey
+	// Client SDK ID. This can be found in the Yoti Hub after you have created and activated an application.
+	ClientSdkID string
+	// Private Key associated for your application, can be downloaded from the Yoti Hub.
+	Key *rsa.PrivateKey
+	// Base URL to use. This is not required, and a default will be set if not provided.
 	BaseURL string
-}
-
-// LoadPEMFile loads the Sandbox Client Key from a PEM file path
-func (client *Client) LoadPEMFile(filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-
-	buffer, err := ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	block, _ := pem.Decode(buffer)
-	if block == nil {
-		return fmt.Errorf("Could not decode PEM file")
-	}
-	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		return err
-	}
-
-	client.Key = key
-
-	return nil
+	// Mockable HTTP Client Interface
+	httpClient yoti.HttpClient
 }
 
 // SetupSharingProfile creates a user profile in the sandbox instance
 func (client *Client) SetupSharingProfile(profile Profile) (token string, err error) {
-	requestEndpoint := "/apps/" + client.AppID + "/tokens"
+	if client.BaseURL == "" {
+		if os.Getenv("API_URL") != "" {
+			client.BaseURL = os.Getenv("API_URL")
+		} else {
+			client.BaseURL = "https://api.yoti.com/sandbox/v1"
+		}
+	}
+
+	requestEndpoint := "/apps/" + client.ClientSdkID + "/tokens"
 	requestBody, err := json.Marshal(profile)
 	if err != nil {
 		return
@@ -66,7 +52,11 @@ func (client *Client) SetupSharingProfile(profile Profile) (token string, err er
 		return
 	}
 
-	response, err := (&http.Client{}).Do(request)
+	if client.httpClient == nil {
+		client.httpClient = &http.Client{}
+	}
+
+	response, err := (client.httpClient).Do(request)
 	if err != nil {
 		return
 	}
