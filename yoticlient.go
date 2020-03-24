@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v2/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
 	"github.com/getyoti/yoti-go-sdk/v2/share"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
@@ -107,7 +108,7 @@ func (client *Client) GetActivityDetails(token string) (ActivityDetails, []strin
 func (client *Client) getActivityDetails(token string) (userProfile UserProfile, activity ActivityDetails, errStrings []string) {
 
 	httpMethod := http.MethodGet
-	key, err := loadRsaKey(client.Key)
+	key, err := cryptoutil.ParseRSAKey(client.Key)
 	if err != nil {
 		errStrings = append(errStrings, fmt.Sprintf("Invalid Key: %s", err.Error()))
 		return
@@ -169,7 +170,7 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 }
 
 func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, includeKey bool, httpErrorMessages ...map[int]string) (responseData string, err error) {
-	key, err := loadRsaKey(client.Key)
+	key, err := cryptoutil.ParseRSAKey(client.Key)
 	if err != nil {
 		return
 	}
