@@ -13,7 +13,7 @@ import (
 
 func TestClient_SetupSharingProfileUsesConstructorBaseUrlOverEnvVariable(t *testing.T) {
 	client := createSandboxClient(t, "constuctorBaseUrl")
-	os.Setenv("API_URL", "envBaseUrl")
+	os.Setenv("YOTI_API_URL", "envBaseUrl")
 
 	_, err := client.SetupSharingProfile(TokenRequest{})
 	assert.NilError(t, err)
@@ -24,7 +24,7 @@ func TestClient_SetupSharingProfileUsesConstructorBaseUrlOverEnvVariable(t *test
 func TestClient_SetupSharingProfileUsesEnvVariable(t *testing.T) {
 	client := createSandboxClient(t, "")
 
-	os.Setenv("API_URL", "envBaseUrl")
+	os.Setenv("YOTI_API_URL", "envBaseUrl")
 
 	_, err := client.SetupSharingProfile(TokenRequest{})
 	assert.NilError(t, err)
@@ -33,7 +33,7 @@ func TestClient_SetupSharingProfileUsesEnvVariable(t *testing.T) {
 }
 
 func TestClient_SetupSharingProfileUsesDefaultUrlAsFallback(t *testing.T) {
-	os.Setenv("API_URL", "")
+	os.Setenv("YOTI_API_URL", "")
 
 	client := createSandboxClient(t, "")
 
