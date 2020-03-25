@@ -106,7 +106,7 @@ func ExampleTokenRequest_WithPostalAddress() {
 func ExampleTokenRequest_WithStructuredPostalAddress() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithStructuredPostalAddress(
-		map[string]string{
+		map[string]interface{}{
 			"FormattedAddressLine": "Value",
 		},
 		AnchorList(),
@@ -119,6 +119,16 @@ func ExampleTokenRequest_WithSelfie() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithSelfie(
 		[]byte{0xDE, 0xAD, 0xBE, 0xEF},
+		AnchorList(),
+	)
+	fmt.Println(tokenRequest)
+	// Output: { [{selfie 3q2+7w==   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+}
+
+func ExampleTokenRequest_WithBase64Selfie() {
+	time.Local = time.UTC
+	tokenRequest := TokenRequest{}.WithBase64Selfie(
+		"3q2+7w==",
 		AnchorList(),
 	)
 	fmt.Println(tokenRequest)
