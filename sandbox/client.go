@@ -25,7 +25,7 @@ type Client struct {
 }
 
 // SetupSharingProfile creates a user profile in the sandbox instance
-func (client *Client) SetupSharingProfile(profile Profile) (token string, err error) {
+func (client *Client) SetupSharingProfile(tokenRequest TokenRequest) (token string, err error) {
 	if client.BaseURL == "" {
 		if os.Getenv("API_URL") != "" {
 			client.BaseURL = os.Getenv("API_URL")
@@ -35,7 +35,7 @@ func (client *Client) SetupSharingProfile(profile Profile) (token string, err er
 	}
 
 	requestEndpoint := "/apps/" + client.ClientSdkID + "/tokens"
-	requestBody, err := json.Marshal(profile)
+	requestBody, err := json.Marshal(tokenRequest)
 	if err != nil {
 		return
 	}
