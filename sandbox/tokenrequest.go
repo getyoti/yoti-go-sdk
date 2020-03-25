@@ -91,16 +91,21 @@ func (t TokenRequest) WithPostalAddress(value string, anchors []Anchor) TokenReq
 }
 
 // WithStructuredPostalAddress adds a JSON address to the sandbox token request
-func (t TokenRequest) WithStructuredPostalAddress(value map[string]string, anchors []Anchor) TokenRequest {
+func (t TokenRequest) WithStructuredPostalAddress(value map[string]interface{}, anchors []Anchor) TokenRequest {
 	data, _ := json.Marshal(value)
 	return t.WithAttribute(yoti.AttrConstStructuredPostalAddress, string(data), anchors)
 }
 
 // WithSelfie adds a selfie image to the sandbox token request
 func (t TokenRequest) WithSelfie(value []byte, anchors []Anchor) TokenRequest {
+	return t.WithBase64Selfie(base64.StdEncoding.EncodeToString(value), anchors)
+}
+
+// WithBase64Selfie adds a base 64 selfie image to the sandbox token request
+func (t TokenRequest) WithBase64Selfie(base64Value string, anchors []Anchor) TokenRequest {
 	return t.WithAttribute(
 		yoti.AttrConstSelfie,
-		base64.StdEncoding.EncodeToString(value),
+		base64Value,
 		anchors,
 	)
 }
