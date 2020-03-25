@@ -27,8 +27,8 @@ type Client struct {
 // SetupSharingProfile creates a user profile in the sandbox instance
 func (client *Client) SetupSharingProfile(tokenRequest TokenRequest) (token string, err error) {
 	if client.BaseURL == "" {
-		if os.Getenv("API_URL") != "" {
-			client.BaseURL = os.Getenv("API_URL")
+		if os.Getenv("YOTI_API_URL") != "" {
+			client.BaseURL = os.Getenv("YOTI_API_URL")
 		} else {
 			client.BaseURL = "https://api.yoti.com/sandbox/v1"
 		}
