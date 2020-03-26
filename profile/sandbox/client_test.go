@@ -44,7 +44,7 @@ func TestClient_SetupSharingProfileUsesDefaultUrlAsFallback(t *testing.T) {
 }
 
 func createSandboxClient(t *testing.T, constructorBaseUrl string) (client Client) {
-	keyBytes, fileErr := ioutil.ReadFile("../test-key.pem")
+	keyBytes, fileErr := ioutil.ReadFile("../../test-key.pem")
 	assert.NilError(t, fileErr)
 
 	pemFile, parseErr := cryptoutil.ParseRSAKey(keyBytes)
