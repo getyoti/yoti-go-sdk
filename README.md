@@ -27,6 +27,9 @@ How to retrieve a Yoti profile using the one time use token
 1) [Handling users](#handling-users) -
 How to manage users
 
+1) [Sandbox](#sandbox) -
+How to use the Yoti sandbox service to test your application
+
 1) [AML Integration](#aml-integration) -
 How to integrate with Yoti's AML (Anti Money Laundering) service
 
@@ -217,6 +220,10 @@ Where `yourUserSearchFunction` is a piece of logic in your app that is supposed 
 No matter if the user is a new or an existing one, Yoti will always provide her/his profile, so you don't necessarily need to store it.
 
 The `profile` object provides a set of attributes corresponding to user attributes. Whether the attributes are present or not depends on the settings you have applied to your app on Yoti Hub.
+
+## Sandbox
+
+See [examples/profilesandbox](examples/profilesandbox) for information about how to use the Yoti Profile Sandbox service.
 
 ## Running the Tests
 
