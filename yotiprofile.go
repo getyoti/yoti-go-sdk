@@ -115,7 +115,8 @@ func (p Profile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 	return nil, nil
 }
 
-// DocumentDetails represents information extracted from a document provided by the user
+// DocumentDetails represents information extracted from a document provided by the user.
+// Will be nil if not provided by Yoti.
 func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) {
 	for _, a := range p.attributeSlice {
 		if a.Name == AttrConstDocumentDetails {
@@ -125,7 +126,8 @@ func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) 
 	return nil, nil
 }
 
-// AgeVerifications returns a list of shared age verifications
+// AgeVerifications returns a list of age verifications for the user.
+// Will be em empty slice if not provided by Yoti.
 func (p Profile) AgeVerifications() (out []AgeVerification, err error) {
 	ageUnderString := strings.Replace(AttrConstAgeUnder, "%d", "", -1)
 	ageOverString := strings.Replace(AttrConstAgeOver, "%d", "", -1)
