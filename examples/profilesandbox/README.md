@@ -27,7 +27,9 @@ The format of `privateKey` passed in to the client needs to be `*rsa.PrivateKey`
 
 ## Example
 
-See the [sandboxexample_test.go](sandboxexample_test.go) file for an example of how to use the Sandbox in your tests.
+See the [test_sandboxexample.go](test_sandboxexample.go) file for an example of how to use the Sandbox in your tests.
 To run the example:
 1. Copy the `.env.example` file and rename it to be `.env`.
 1. Then modify the `SANDBOX_CLIENT_SDK_ID` and `YOTI_KEY_FILE_PATH` environment variables mentioned above.
+
+To make this test runnable, the name needs to end in `_test.go`, so rename it accordingly.

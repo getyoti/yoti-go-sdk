@@ -1,7 +1,5 @@
 # Contributing
 
-The command `go get "github.com/getyoti/yoti-go-sdk/v2"` downloads the Yoti package, along with its dependencies, and installs it.
-
 ## Commit Process
 
 This repo comes with pre-commit hooks. We strongly recommend installing them with `pre-commit install`. This will lint and run unit tests automatically
