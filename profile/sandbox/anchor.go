@@ -34,7 +34,7 @@ type Anchor struct {
 	// Type of the Anchor - most likely either SOURCE or VERIFIER, but it's
 	// possible that new Anchor types will be added in future.
 	Type string
-	//	Value identifies the provider that either sourced or verified the attribute value.
+	// Value identifies the provider that either sourced or verified the attribute value.
 	// The range of possible values is not limited. For a SOURCE anchor, expect values like
 	// PASSPORT, DRIVING_LICENSE. For a VERIFIER anchor expect valuues like YOTI_ADMIN.
 	Value string
