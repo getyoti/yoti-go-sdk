@@ -25,11 +25,13 @@ Please do not open the PEM file, as this might corrupt the key, and you will nee
 
 The format of `privateKey` passed in to the client needs to be `*rsa.PrivateKey`. See the [sandboxexample_test.go](sandboxexample_test.go) to see how to easily create this struct.
 
-## Example
+## Examples
 
-See the [test_sandboxexample.go](test_sandboxexample.go) file for an example of how to use the Sandbox in your tests.
-To run the example:
+- See [test_sandboxexample.go](test_sandboxexample.go) for a general example of how to use the Sandbox in your tests.
+- See [test_sandboxanchorexample.go](test_sandboxanchorexample.go) for an example which sets up **anchor** expecations (see [source and verifiers](https://developers.yoti.com/yoti/knowledge-base-hub#source-and-verifiers)).
+
+To run the examples:
 1. Copy the `.env.example` file and rename it to be `.env`.
 1. Then modify the `SANDBOX_CLIENT_SDK_ID` and `YOTI_KEY_FILE_PATH` environment variables mentioned above.
 
-To make this test runnable, the name needs to end in `_test.go`, so rename it accordingly.
+To make these tests runnable, the name needs to end in `_test.go`, so rename them accordingly.

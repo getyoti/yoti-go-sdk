@@ -16,7 +16,19 @@ type Derivation struct {
 	value string
 }
 
-// WithAnchor adds an Anchor to a Sandbox Attribute
+// WithName sets the value of a Sandbox Attribute
+func (attr Attribute) WithName(name string) Attribute {
+	attr.Name = name
+	return attr
+}
+
+// WithAnchor sets the value of a Sandbox Attribute
+func (attr Attribute) WithValue(value string) Attribute {
+	attr.Value = value
+	return attr
+}
+
+// WithAnchor sets the Anchor of a Sandbox Attribute
 func (attr Attribute) WithAnchor(anchor Anchor) Attribute {
 	attr.Anchors = append(attr.Anchors, anchor)
 	return attr
