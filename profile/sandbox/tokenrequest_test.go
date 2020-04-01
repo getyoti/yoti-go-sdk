@@ -27,6 +27,19 @@ func ExampleTokenRequest_WithAttribute() {
 	// Output: { [{AttributeName1 Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]} {AttributeName2 Value   []}]}
 }
 
+func ExampleTokenRequest_WithAttributeStruct() {
+	attribute := Attribute{
+		Name:    "AttributeName3",
+		Value:   "Value3",
+		Anchors: AnchorList(),
+	}
+
+	time.Local = time.UTC
+	tokenRequest := TokenRequest{}.WithAttributeStruct(attribute)
+	fmt.Println(tokenRequest)
+	// Output: { [{AttributeName3 Value3   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+}
+
 func ExampleTokenRequest_WithGivenNames() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithGivenNames(

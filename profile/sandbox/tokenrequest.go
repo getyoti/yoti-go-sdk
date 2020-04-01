@@ -14,7 +14,8 @@ type TokenRequest struct {
 	Attributes   []Attribute `json:"profile_attributes"`
 }
 
-// WithRememberMeID adds the Remember Me ID to the returned ActivityDetails
+// WithRememberMeID adds the Remember Me ID to the returned ActivityDetails.
+// The value returned in ActivityDetails will be the Base64 encoded value of the string specified here.
 func (t TokenRequest) WithRememberMeID(rememberMeId string) TokenRequest {
 	t.RememberMeID = rememberMeId
 	return t
@@ -30,6 +31,12 @@ func (t TokenRequest) WithAttribute(name, value string, anchors []Anchor) TokenR
 		Value:   value,
 		Anchors: anchors,
 	}
+
+	return t.WithAttributeStruct(attribute)
+}
+
+// WithAttributeStruct adds a new attribute struct to the sandbox token request
+func (t TokenRequest) WithAttributeStruct(attribute Attribute) TokenRequest {
 	t.Attributes = append(t.Attributes, attribute)
 	return t
 }
