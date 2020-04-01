@@ -31,14 +31,8 @@ func TestAnchorExample(t *testing.T) {
 	sourceAnchor := sandbox.SourceAnchor("NFC", time.Now().UTC(), "PASSPORT")
 	verifierAnchor := sandbox.VerifierAnchor("", time.Now().UTC(), "YOTI_ADMIN")
 
-	familyNameAttributeWithAnchors := sandbox.Attribute{}.
-		WithName("family_name").
-		WithValue("Smith").
-		WithAnchor(sourceAnchor).
-		WithAnchor(verifierAnchor)
-
-	tokenRequest := (&sandbox.TokenRequest{}).
-		WithAttributeStruct(familyNameAttributeWithAnchors)
+	tokenRequest := sandbox.TokenRequest{}.
+		WithFamilyName("Smith", []sandbox.Anchor{sourceAnchor, verifierAnchor})
 
 	sandboxToken, err := sandboxClient.SetupSharingProfile(tokenRequest)
 	assert.NilError(t, err)
