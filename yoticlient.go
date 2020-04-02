@@ -88,15 +88,15 @@ func (client *Client) GetUserProfile(token string) (userProfile UserProfile, fir
 }
 
 func (client *Client) getAPIURL() string {
-	if client.apiURL == "" {
-		if os.Getenv("YOTI_API_URL") != "" {
-			return os.Getenv("YOTI_API_URL")
-		} else {
-			return apiDefaultURL
-		}
+	if client.apiURL != "" {
+		return client.apiURL
 	}
 
-	return client.apiURL
+	if value, exists := os.LookupEnv("YOTI_API_URL"); exists && value != "" {
+		return value
+	}
+
+	return apiDefaultURL
 }
 
 // GetSdkID gets the Client SDK ID attached to this client instance
