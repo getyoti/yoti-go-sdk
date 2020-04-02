@@ -32,8 +32,19 @@ func TestClient_SetupSharingProfileUsesEnvVariable(t *testing.T) {
 	assert.Equal(t, "envBaseUrl", client.BaseURL)
 }
 
-func TestClient_SetupSharingProfileUsesDefaultUrlAsFallback(t *testing.T) {
+func TestClient_SetupSharingProfileUsesDefaultUrlAsFallbackWithEmptyEnvValue(t *testing.T) {
 	os.Setenv("YOTI_API_URL", "")
+
+	client := createSandboxClient(t, "")
+
+	_, err := client.SetupSharingProfile(TokenRequest{})
+	assert.NilError(t, err)
+
+	assert.Equal(t, "https://api.yoti.com/sandbox/v1", client.BaseURL)
+}
+
+func TestClient_SetupSharingProfileUsesDefaultUrlAsFallbackWithNoEnvValue(t *testing.T) {
+	os.Unsetenv("YOTI_API_URL")
 
 	client := createSandboxClient(t, "")
 
