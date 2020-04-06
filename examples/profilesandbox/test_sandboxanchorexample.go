@@ -16,7 +16,7 @@ import (
 )
 
 func TestAnchorExample(t *testing.T) {
-	sandboxClientSdkId := os.Getenv("SANDBOX_CLIENT_SDK_ID")
+	sandboxClientSdkId := os.Getenv("YOTI_SANDBOX_CLIENT_SDK_ID")
 	pemFileBytes, err := file.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	assert.NilError(t, err)
 
