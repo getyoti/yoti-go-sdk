@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -67,8 +68,7 @@ func (client *Client) doRequest(request *http.Request) (*http.Response, error) {
 	return client.httpClient.Do(request)
 }
 
-// OverrideAPIURL overrides the default API URL for this Yoti Client to permit
-// testing
+// OverrideAPIURL overrides the default API URL for this Yoti Client
 func (client *Client) OverrideAPIURL(apiURL string) {
 	client.apiURL = apiURL
 }
@@ -91,6 +91,11 @@ func (client *Client) getAPIURL() string {
 	if client.apiURL != "" {
 		return client.apiURL
 	}
+
+	if value, exists := os.LookupEnv("YOTI_API_URL"); exists && value != "" {
+		return value
+	}
+
 	return apiDefaultURL
 }
 
@@ -108,7 +113,6 @@ func (client *Client) GetActivityDetails(token string) (ActivityDetails, []strin
 }
 
 func (client *Client) getActivityDetails(token string) (userProfile UserProfile, activity ActivityDetails, errStrings []string) {
-
 	httpMethod := http.MethodGet
 	key, err := cryptoutil.ParseRSAKey(client.Key)
 	if err != nil {
