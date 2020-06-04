@@ -8,5 +8,8 @@ examples/profile/images/YotiSelfie.jpeg
 examples/profile/yotiSelfSignedCert.pem
 examples/profile/yotiSelfSignedKey.pem
 
+# Key generated in test
+cryptoutil/tmpKey.pem
+
 # Debug files
 debug
