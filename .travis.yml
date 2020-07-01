@@ -60,21 +60,6 @@ jobs:
       go: "master"
       os: "osx"
 
-    - &coveralls
-      stage: Coverage
-      name: Coveralls
-      go: "1.12.x"
-      install:
-        - go get -t -d ./...
-        - go get golang.org/x/tools/cmd/cover
-        - go get github.com/mattn/goveralls
-      script:
-        - go test -v ./... -covermode=count -coverprofile=coverage.out
-        - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
-      if: type = pull_request OR branch = master
-      after_success:
-        - coveralls
-
     - stage: Analysis
       name: Sonarcloud
       if: type = pull_request OR branch = master
