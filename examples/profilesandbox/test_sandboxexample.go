@@ -30,6 +30,7 @@ func TestExample(t *testing.T) {
 	}
 
 	var dateOfBirthUnder18 = time.Now().AddDate(-10, 0, 0)
+	var documentImages = sandbox.DocumentImages{}.WithJpegImage([]byte("some_image_value"))
 
 	tokenRequest := (&sandbox.TokenRequest{}).
 		WithRememberMeID("remember_me_id_12345").
@@ -48,7 +49,8 @@ func TestExample(t *testing.T) {
 			}, nil).
 		WithBase64Selfie(base64.StdEncoding.EncodeToString([]byte("some_image_value")), nil).
 		WithEmailAddress("some@email", nil).
-		WithDocumentDetails("PASSPORT USA 1234abc", nil)
+		WithDocumentDetails("PASSPORT USA 1234abc", nil).
+		WithDocumentImages(documentImages, nil)
 
 	sandboxToken, err := sandboxClient.SetupSharingProfile(tokenRequest)
 	assert.NilError(t, err)
