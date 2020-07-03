@@ -1006,7 +1006,7 @@ func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 
 	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
 
-	expectedBase64Selfie := "data:image/png;base64;," + base64ImageExpectedValue
+	expectedBase64Selfie := "data:image/png;base64," + base64ImageExpectedValue
 
 	base64Selfie := result.Selfie().Value().Base64URL()
 
@@ -1028,7 +1028,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 
 	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
 
-	expectedBase64Selfie := "data:image/jpeg;base64;," + base64ImageExpectedValue
+	expectedBase64Selfie := "data:image/jpeg;base64," + base64ImageExpectedValue
 
 	base64Selfie := result.Selfie().Value().Base64URL()
 
