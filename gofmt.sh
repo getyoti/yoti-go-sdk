@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 unset dirs files
 dirs=$(go list -f {{.Dir}} ./... | grep -v /yotiprotoshare/ | grep -v /yotiprotocom/ | grep -v /yotiprotoattr/)
     for d in $dirs
