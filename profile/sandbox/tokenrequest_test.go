@@ -164,3 +164,16 @@ func ExampleTokenRequest_WithDocumentDetails() {
 	fmt.Println(tokenRequest)
 	// Output: { [{document_details DRIVING_LICENCE - abc1234   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
 }
+
+func ExampleTokenRequest_WithDocumentImages() {
+	time.Local = time.UTC
+
+	documentImages := DocumentImages{}.WithPngImage([]byte{0xDE, 0xAD, 0xBE, 0xEF}).WithJpegImage([]byte{0xDE, 0xAD, 0xBE, 0xEF})
+
+	tokenRequest := TokenRequest{}.WithDocumentImages(
+		documentImages,
+		AnchorList(),
+	)
+	fmt.Println(tokenRequest)
+	// Output: { [{document_images data:image/png;base64,3q2+7w==&data:image/jpeg;base64,3q2+7w==   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+}
