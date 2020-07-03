@@ -32,7 +32,7 @@ func (image *Image) Base64URL() string {
 	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
 	contentType := GetMIMEType(image.Type)
 
-	return "data:" + contentType + ";base64;," + base64EncodedImage
+	return "data:" + contentType + ";base64," + base64EncodedImage
 }
 
 // ParseImageValue wraps image data into an image struct
