@@ -19,6 +19,7 @@ repos:
       - id: go-vet
         exclude: "examples/"
       - id: go-build
+        args: ["./..."]
       - id: go-unit-tests
         args: ["-race", "./..."]
         
