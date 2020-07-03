@@ -2,4 +2,3 @@
 
 set -e
 go test -race ./...
-

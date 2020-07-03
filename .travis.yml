@@ -26,7 +26,7 @@ jobs:
       before_script:
         - go get golang.org/x/tools/cmd/goimports
       script:
-        - ./.travis.gofmt.sh
+        - ./gofmt.sh
         - diff <(goimports -d $(find . -type f -name '*.go' -not -path "./yotiprotoattr/*" -not -path "./yotiprotocom/*" -not -path "./yotiprotoshare/*")) <(printf "")
         # Check that go generate ./... produces a zero diff; clean up any changes afterwards.
         - go generate -x ./... && go mod tidy && git diff --exit-code; code=$?; git checkout -- .; (exit $code) 
