@@ -20,6 +20,11 @@ repos:
         exclude: "examples/"
       - id: go-build
         args: ["./..."]
+      - id: go-cyclo
+        args: [-over=29]       
+      - id: golangci-lint
+        args: ["-e", "SA1019"]
+      - id: go-mod-tidy
       - id: go-unit-tests
         args: ["-race", "./..."]
         
