@@ -5,7 +5,7 @@ dirs=$(go list -f {{.Dir}} ./... | grep -v /yotiprotoshare/ | grep -v /yotiproto
 do
     for f in $d/*.go
     do
-		files="${files} $f"
+        files="${files} $f"
     done
 done
 if [ -n "$(gofmt -d $files)" ]; then
