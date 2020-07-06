@@ -62,7 +62,7 @@ func (t TokenRequest) WithDateOfBirth(value time.Time, anchors []Anchor) TokenRe
 	return t.WithAttribute(yoti.AttrConstDateOfBirth, formattedTime, anchors)
 }
 
-// WithAgeVerification adds an age-based derivaton attribute to the sandbox token request
+// WithAgeVerification adds an age-based derivation attribute to the sandbox token request
 func (t TokenRequest) WithAgeVerification(dateOfBirth time.Time, derivation Derivation, anchors []Anchor) TokenRequest {
 	if anchors == nil {
 		anchors = []Anchor{}
@@ -125,4 +125,9 @@ func (t TokenRequest) WithEmailAddress(value string, anchors []Anchor) TokenRequ
 // WithDocumentDetails adds a document details string to the sandbox token request
 func (t TokenRequest) WithDocumentDetails(value string, anchors []Anchor) TokenRequest {
 	return t.WithAttribute(yoti.AttrConstDocumentDetails, value, anchors)
+}
+
+// WithDocumentImages adds document images to the sandbox token request
+func (t TokenRequest) WithDocumentImages(value DocumentImages, anchors []Anchor) TokenRequest {
+	return t.WithAttribute(yoti.AttrConstDocumentImages, value.getValue(), anchors)
 }
