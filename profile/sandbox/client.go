@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 	"os"
 
-	yoti "github.com/getyoti/yoti-go-sdk/v2"
 	yotirequest "github.com/getyoti/yoti-go-sdk/v2/requests"
 )
 

@@ -104,7 +104,7 @@ func TestExpiryDatesAreFormattedCorrectly(t *testing.T) {
 	attributeDefinition := attribute.NewAttributeDefinition("some_value")
 
 	for _, date := range expiryDates {
-		extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+		extension := (&ThirdPartyAttributeExtensionBuilder{}).
 			WithExpiryDate(&date.in).
 			WithDefinition(attributeDefinition).
 			Build()

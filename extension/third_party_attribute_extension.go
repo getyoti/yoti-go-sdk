@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	thirdPartyAttributeExentionTypeConst = "THIRD_PARTY_ATTRIBUTE"
+	thirdPartyAttributeExtensionTypeConst = "THIRD_PARTY_ATTRIBUTE"
 )
 
 // ThirdPartyAttributeExtensionBuilder is used to construct a ThirdPartyAttributeExtension
@@ -55,7 +55,7 @@ func (extension ThirdPartyAttributeExtension) MarshalJSON() ([]byte, error) {
 		Type    string                       `json:"type"`
 		Content thirdPartyAttributeExtension `json:"content"`
 	}{
-		Type: thirdPartyAttributeExentionTypeConst,
+		Type: thirdPartyAttributeExtensionTypeConst,
 		Content: thirdPartyAttributeExtension{
 			ExpiryDate:  extension.expiryDate.UTC().Format("2006-01-02T15:04:05.000Z"),
 			Definitions: extension.definitions,

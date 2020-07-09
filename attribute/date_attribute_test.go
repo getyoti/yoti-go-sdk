@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func TestTimeAttribute_NewDate_DateOnly(t *testing.T) {
