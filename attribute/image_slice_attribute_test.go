@@ -5,8 +5,8 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/anchor"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expectedBase64URLLast10 string) {

@@ -3,7 +3,7 @@ package attribute
 import (
 	"testing"
 
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestStringAttribute_NewThirdPartyAttribute(t *testing.T) {

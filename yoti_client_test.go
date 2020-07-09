@@ -23,8 +23,8 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 type mockHTTPClient struct {
@@ -99,20 +99,11 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func TestYotiClient_InvalidToken(t *testing.T) {
+func TestNewYotiClient_InvalidToken(t *testing.T) {
 	var err error
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	client := Client{
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 500,
-				}, nil
-			},
-		},
-	}
-	client.Key, err = loadRsaKey(key)
+	client, err := NewClient("sdkId", key)
 	assert.NilError(t, err)
 
 	_, err = client.getActivityDetails("")
@@ -210,7 +201,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 	key, _ := ioutil.ReadFile("test-key.pem")
 
-	expectedAbsoluteURL := "/api/v1/profile/" + token
+	expectedAbsoluteURL := "/api/v1/profile/" + encryptedToken
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{

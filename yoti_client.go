@@ -3,6 +3,7 @@ package yoti
 import (
 	"crypto/rsa"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -14,7 +15,6 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/attribute"
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
-	"github.com/getyoti/yoti-go-sdk/v2/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v2/requests"
 	"github.com/getyoti/yoti-go-sdk/v2/share"
 	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
@@ -55,12 +55,17 @@ type Client struct {
 	Key *rsa.PrivateKey
 
 	apiURL     string
-	HTTPClient httpClient // Mockable HTTP Client Interface
+	HTTPClient HttpClient // Mockable HTTP Client Interface
 }
 
 // NewClient constructs a Client object
 func NewClient(sdkID string, key []byte) (*Client, error) {
 	decodedKey, err := loadRsaKey(key)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
 		SdkID: sdkID,
 		Key:   decodedKey,
@@ -110,13 +115,11 @@ func (client *Client) GetActivityDetails(token string) (ActivityDetails, error) 
 }
 
 func (client *Client) getActivityDetails(token string) (activity ActivityDetails, err error) {
+	if len(token) < 1 {
+		return activity, errors.New("Invalid Token")
+	}
 
 	httpMethod := http.MethodGet
-	key, err := cryptoutil.ParseRSAKey(client.Key)
-	if err != nil {
-		err = fmt.Errorf("Invalid Token: %s", err.Error())
-		return
-	}
 	endpoint := getProfileEndpoint(token, client.GetSdkID())
 
 	response, err := client.makeRequest(
@@ -168,14 +171,9 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 }
 
 func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, includeKey bool, httpErrorMessages ...map[int]string) (responseData string, err error) {
-	key, err := cryptoutil.ParseRSAKey(&client.Key.PublicKey)
-	if err != nil {
-		return
-	}
-
 	var headers map[string][]string
 	if includeKey {
-		headers = requests.AuthKeyHeader(key)
+		headers = requests.AuthKeyHeader(&client.Key.PublicKey)
 	}
 
 	request, err := requests.SignedRequest{
