@@ -6,7 +6,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestImageAttribute_Image_Png(t *testing.T) {
@@ -75,7 +75,7 @@ func TestImageAttribute_Base64Selfie_Png(t *testing.T) {
 
 	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
 
-	expectedBase64Selfie := "data:image/png;base64;," + base64ImageExpectedValue
+	expectedBase64Selfie := "data:image/png;base64," + base64ImageExpectedValue
 
 	base64Selfie := selfie.Value().Base64URL()
 
@@ -98,7 +98,7 @@ func TestImageAttribute_Base64URL_Jpeg(t *testing.T) {
 
 	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
 
-	expectedBase64Selfie := "data:image/jpeg;base64;," + base64ImageExpectedValue
+	expectedBase64Selfie := "data:image/jpeg;base64," + base64ImageExpectedValue
 
 	base64Selfie := selfie.Value().Base64URL()
 

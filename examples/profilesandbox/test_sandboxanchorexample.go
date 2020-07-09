@@ -1,7 +1,6 @@
 package profilesandbox
 
 import (
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -37,16 +36,13 @@ func TestAnchorExample(t *testing.T) {
 	sandboxToken, err := sandboxClient.SetupSharingProfile(tokenRequest)
 	assert.NilError(t, err)
 
-	yotiClient := yoti.Client{
-		Key:   pemFileBytes,
-		SdkID: sandboxClientSdkId,
-	}
+	yotiClient, err := yoti.NewClient(sandboxClientSdkId, pemFileBytes)
+	assert.NilError(t, err)
+
 	yotiClient.OverrideAPIURL("https://api.yoti.com/sandbox/v1")
 
-	activityDetails, errStrings := yotiClient.GetActivityDetails(sandboxToken)
-	if len(errStrings) > 0 {
-		log.Fatalf("%v", errStrings)
-	}
+	activityDetails, err := yotiClient.GetActivityDetails(sandboxToken)
+	assert.NilError(t, err)
 
 	// Test your application's logic here
 	assert.Equal(t, "NFC", activityDetails.UserProfile.FamilyName().Sources()[0].SubType())

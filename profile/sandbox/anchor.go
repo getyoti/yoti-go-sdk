@@ -36,7 +36,7 @@ type Anchor struct {
 	Type string
 	// Value identifies the provider that either sourced or verified the attribute value.
 	// The range of possible values is not limited. For a SOURCE anchor, expect values like
-	// PASSPORT, DRIVING_LICENSE. For a VERIFIER anchor expect valuues like YOTI_ADMIN.
+	// PASSPORT, DRIVING_LICENSE. For a VERIFIER anchor expect values like YOTI_ADMIN.
 	Value string
 	// SubType is an indicator of any specific processing method, or subcategory,
 	// pertaining to an artifact. For example, for a passport, this would be
@@ -46,6 +46,7 @@ type Anchor struct {
 	Timestamp time.Time
 }
 
+// MarshalJSON returns the JSON encoding
 func (anchor *Anchor) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type      string `json:"type"`
