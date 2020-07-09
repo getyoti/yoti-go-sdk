@@ -7,7 +7,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v2/consts"
 	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func ExampleDynamicPolicyBuilder_WithFamilyName() {

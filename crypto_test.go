@@ -4,7 +4,7 @@ import (
 	"crypto/aes"
 	"testing"
 
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestCrypto_loadRsaKey_PublicKeyShouldFail(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"testing"
 
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 // DecodeTestFile reads a test fixture file

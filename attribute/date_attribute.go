@@ -14,12 +14,11 @@ type DateAttribute struct {
 	value *time.Time
 }
 
-// NewTime creates a new Time attribute
+// NewDate creates a new Date attribute
 func NewDate(a *yotiprotoattr.Attribute) (*DateAttribute, error) {
 	parsedTime, err := time.Parse("2006-01-02", string(a.Value))
 	if err != nil {
 		log.Printf("Unable to parse time value of: %q. Error: %q", a.Value, err)
-		parsedTime = time.Time{}
 		return nil, err
 	}
 

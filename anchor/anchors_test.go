@@ -3,7 +3,7 @@ package anchor
 import (
 	"testing"
 
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestFilterAnchors_FilterSources(t *testing.T) {
