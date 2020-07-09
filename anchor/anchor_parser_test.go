@@ -35,7 +35,7 @@ func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 	return protoAnchors
 }
 
-func TestAnchorParser_parseExtesion_ShouldErrorForInvalidExtension(t *testing.T) {
+func TestAnchorParser_parseExtension_ShouldErrorForInvalidExtension(t *testing.T) {
 	invalidExt := pkix.Extension{
 		Id: sourceOID,
 	}
