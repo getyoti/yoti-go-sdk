@@ -6,5 +6,3 @@ for FILE in $@; do
 		goimports -w $FILE
 	fi
 done
-
-go mod tidy
