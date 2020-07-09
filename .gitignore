@@ -13,3 +13,7 @@ cryptoutil/tmpKey.pem
 
 # Debug files
 debug
+
+# Report files
+sonar-report.json
+coverage.out
