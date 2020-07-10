@@ -22,12 +22,16 @@ import (
 type contextKey string
 
 var (
-	sdkID              string
-	key                []byte
-	client             *yoti.Client
-	selfSignedCertName = "yotiSelfSignedCert.pem"
-	selfSignedKeyName  = "yotiSelfSignedKey.pem"
-	portNumber         = "8080"
+	sdkID                        string
+	key                          []byte
+	client                       *yoti.Client
+	selfSignedCertName           = "yotiSelfSignedCert.pem"
+	selfSignedKeyName            = "yotiSelfSignedKey.pem"
+	portNumber                   = "8080"
+	errApplyingTheParsedTemplate = "Error applying the parsed template: "
+	errParsingTheTemplate        = "Error parsing the template: "
+	profileEndpoint              = "/profile"
+	ScenarioBuilderErr           = "Scenario Builder Error: `%s`"
 )
 
 func home(w http.ResponseWriter, req *http.Request) {
@@ -38,13 +42,13 @@ func home(w http.ResponseWriter, req *http.Request) {
 	t, err := template.ParseFiles("login.html")
 
 	if err != nil {
-		panic("Error parsing the template: " + err.Error())
+		panic(errParsingTheTemplate + err.Error())
 	}
 
 	err = t.Execute(w, templateVars)
 
 	if err != nil {
-		panic("Error applying the parsed template: " + err.Error())
+		panic(errApplyingTheParsedTemplate + err.Error())
 	}
 }
 
@@ -70,12 +74,12 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 	}
 
 	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).
-		WithCallbackEndpoint("/profile").Build()
+		WithCallbackEndpoint(profileEndpoint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Scenario Builder Error: `%s`", err),
+			fmt.Sprintf(ScenarioBuilderErr, err),
 		)))
 		return
 	}
@@ -89,16 +93,16 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Scenario Builder Error: `%s`", err),
+			fmt.Sprintf(ScenarioBuilderErr, err),
 		)))
 		return
 	}
-	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint("/profile").Build()
+	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint(profileEndpoint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Scenario Builder Error: `%s`", err),
+			fmt.Sprintf(ScenarioBuilderErr, err),
 		)))
 		return
 	}
@@ -162,12 +166,12 @@ func errorPage(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s", templateVars["yotiError"])
 	t, err := template.ParseFiles("error.html")
 	if err != nil {
-		panic("Error parsing the template: " + err.Error())
+		panic(errParsingTheTemplate + err.Error())
 	}
 
 	err = t.Execute(w, templateVars)
 	if err != nil {
-		panic("Error applying the parsed template: " + err.Error())
+		panic(errApplyingTheParsedTemplate + err.Error())
 	}
 
 }
@@ -286,7 +290,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", home)
-	http.HandleFunc("/profile", profile)
+	http.HandleFunc(profileEndpoint, profile)
 	http.HandleFunc("/dynamic-share", dynamicShare)
 	http.HandleFunc("/source-constraints", sourceConstraints)
 
