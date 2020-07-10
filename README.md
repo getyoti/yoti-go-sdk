@@ -81,15 +81,15 @@ import "github.com/getyoti/yoti-go-sdk/v2"
 The YotiClient is the SDK entry point. To initialise it you need include the following snippet inside your endpoint initialisation section:
 
 ```Go
-sdkID := "your-sdk-id";
+clientSdkID := "your-client-sdk-id"
 key, err := ioutil.ReadFile("path/to/your-application-pem-file.pem")
 if err != nil {
     // handle key load error
 }
 
-client := yoti.Client{
-    SdkID: sdkID,
-    Key: key}
+client, err := yoti.NewClient(
+    clientSdkID,
+    key)
 ```
 
 Where:
