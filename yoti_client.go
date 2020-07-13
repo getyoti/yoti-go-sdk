@@ -120,7 +120,14 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 	}
 
 	httpMethod := http.MethodGet
-	endpoint := getProfileEndpoint(token, client.GetSdkID())
+
+	decryptedToken, err := decryptToken(token, client.Key)
+
+	if err != nil {
+		return activity, errors.New("Unable to decrypt token")
+	}
+
+	endpoint := getProfileEndpoint(decryptedToken, client.GetSdkID())
 
 	response, err := client.makeRequest(
 		httpMethod,
