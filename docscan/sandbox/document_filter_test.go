@@ -8,7 +8,7 @@ import (
 )
 
 func Test_documentFilterBuilder_WithCountryCode(t *testing.T) {
-	filter := NewDocumentFilterBuilder().
+	filter, _ := NewDocumentFilterBuilder().
 		WithDocumentType("some_type").
 		Build()
 
@@ -16,7 +16,7 @@ func Test_documentFilterBuilder_WithCountryCode(t *testing.T) {
 }
 
 func Test_documentFilterBuilder_WithDocumentType(t *testing.T) {
-	filter := NewDocumentFilterBuilder().
+	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		Build()
 
@@ -24,7 +24,7 @@ func Test_documentFilterBuilder_WithDocumentType(t *testing.T) {
 }
 
 func Example_documentFilterBuilder_WithDocumentType_WithCountryCode() {
-	filter := NewDocumentFilterBuilder().
+	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		WithDocumentType("some_type").
 		Build()
@@ -35,7 +35,7 @@ func Example_documentFilterBuilder_WithDocumentType_WithCountryCode() {
 }
 
 func Example_documentFilterBuilder_WithDocumentType_WithCountryCode_Multiple() {
-	filter := NewDocumentFilterBuilder().
+	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		WithCountryCode("some_other_country").
 		WithDocumentType("some_type").
