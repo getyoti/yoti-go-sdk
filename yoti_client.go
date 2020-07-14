@@ -9,12 +9,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"strconv"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v3/attribute"
-	"github.com/getyoti/yoti-go-sdk/v3/consts"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	"github.com/getyoti/yoti-go-sdk/v3/share"
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
@@ -218,16 +215,6 @@ func (client *Client) makeRequest(httpMethod, endpoint string, payload []byte, i
 	return
 }
 
-func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
-	for _, v := range profile.attributeSlice {
-		if v.Name == key {
-			return v
-		}
-	}
-
-	return nil
-}
-
 func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (activityDetails ActivityDetails, err error) {
 	var parsedResponse = profileDO{}
 
@@ -298,41 +285,6 @@ func createAttributeSlice(protoAttributeList *yotiprotoattr.AttributeList) (resu
 	}
 
 	return result
-}
-
-func setFormattedAddress(profile *Profile, formattedAddress string) {
-	proto := getProtobufAttribute(*profile, consts.AttrStructuredPostalAddress)
-
-	addressAttribute := &yotiprotoattr.Attribute{
-		Name:        consts.AttrAddress,
-		Value:       []byte(formattedAddress),
-		ContentType: yotiprotoattr.ContentType_STRING,
-		Anchors:     proto.Anchors,
-	}
-	profile.attributeSlice = append(profile.attributeSlice, addressAttribute)
-}
-
-func ensureAddressProfile(profile *Profile) {
-	if profile.Address() == nil {
-		if structuredPostalAddress, err := profile.StructuredPostalAddress(); err == nil {
-			if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
-				var formattedAddress string
-				formattedAddress, err = retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress.Value())
-				if err == nil && formattedAddress != "" {
-					setFormattedAddress(profile, formattedAddress)
-					return
-				}
-			}
-		}
-	}
-}
-
-func retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress interface{}) (address string, err error) {
-	parsedStructuredAddressMap := structuredPostalAddress.(map[string]interface{})
-	if formattedAddress, ok := parsedStructuredAddressMap["formatted_address"]; ok {
-		return formattedAddress.(string), nil
-	}
-	return
 }
 
 func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
