@@ -27,7 +27,10 @@ func TestBreakdown_WithDetail(t *testing.T) {
 }
 
 func ExampleBreakdown() {
-	breakdown := Breakdown{}.WithSubCheck("some_sub_check").WithResult("some_result").WithDetail("some_name", "some_value")
+	breakdown := Breakdown{}.
+		WithSubCheck("some_sub_check").
+		WithResult("some_result").
+		WithDetail("some_name", "some_value")
 
 	data, _ := json.Marshal(breakdown)
 	fmt.Println(string(data))
