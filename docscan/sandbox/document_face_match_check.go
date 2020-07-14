@@ -8,6 +8,7 @@ type documentFaceMatchCheck struct {
 type documentFaceMatchCheckBuilder struct {
 	checkBuilder
 	documentCheckBuilder
+	err error
 }
 
 func NewDocumentFaceMatchCheckBuilder() *documentFaceMatchCheckBuilder {
@@ -30,19 +31,20 @@ func (b *documentFaceMatchCheckBuilder) WithDocumentFilter(filter documentFilter
 }
 
 func (b *documentFaceMatchCheckBuilder) Build() (documentFaceMatchCheck, error) {
-	report := checkReport{
-		Recommendation: b.recommendation,
-		Breakdown:      b.breakdowns,
+	documentAuthenticityCheck := documentFaceMatchCheck{}
+
+	check, err := b.checkBuilder.build()
+	if err != nil {
+		return documentAuthenticityCheck, err
 	}
-	result := checkResult{
-		Report: report,
+
+	documentCheck, err := b.documentCheckBuilder.build()
+	if err != nil {
+		return documentAuthenticityCheck, err
 	}
-	return documentFaceMatchCheck{
-		check{
-			Result: result,
-		},
-		documentCheck{
-			DocumentFilter: b.documentFilter,
-		},
-	}, nil
+
+	documentAuthenticityCheck.check = check
+	documentAuthenticityCheck.documentCheck = documentCheck
+
+	return documentAuthenticityCheck, b.err
 }
