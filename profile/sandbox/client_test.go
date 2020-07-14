@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v2/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"gotest.tools/v3/assert"
 )
 

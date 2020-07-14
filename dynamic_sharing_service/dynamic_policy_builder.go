@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v2/consts"
-	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
+	"github.com/getyoti/yoti-go-sdk/v3/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
 const (

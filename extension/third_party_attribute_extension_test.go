@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/attribute"
 	"gotest.tools/v3/assert"
 )
 

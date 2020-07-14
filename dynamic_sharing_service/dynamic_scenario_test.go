@@ -3,7 +3,7 @@ package dynamic_sharing_service
 import (
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v2/extension"
+	"github.com/getyoti/yoti-go-sdk/v3/extension"
 )
 
 func ExampleDynamicScenarioBuilder() {

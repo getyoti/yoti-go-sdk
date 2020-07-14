@@ -1,7 +1,7 @@
 package yoti
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/attribute"
 )
 
 // Attribute names for application attributes

@@ -13,12 +13,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/attribute"
-	"github.com/getyoti/yoti-go-sdk/v2/consts"
-	"github.com/getyoti/yoti-go-sdk/v2/requests"
-	"github.com/getyoti/yoti-go-sdk/v2/share"
-	"github.com/getyoti/yoti-go-sdk/v2/yotierror"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v3/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/requests"
+	"github.com/getyoti/yoti-go-sdk/v3/share"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
 const (

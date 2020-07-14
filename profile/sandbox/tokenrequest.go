@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/consts"
 )
 
 // TokenRequest describes a sandbox token request
