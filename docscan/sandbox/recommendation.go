@@ -35,10 +35,10 @@ func (b *recommendationBuilder) WithRecoverySuggestion(recoverySuggestion string
 	return b
 }
 
-func (b *recommendationBuilder) Build() recommendation {
+func (b *recommendationBuilder) Build() (recommendation, error) {
 	return recommendation{
 		Value:              b.value,
 		Reason:             b.reason,
 		RecoverySuggestion: b.recoverySuggestion,
-	}
+	}, nil
 }

@@ -6,11 +6,11 @@ import (
 )
 
 func Example_documentAuthenticityCheckBuilder() {
-	breakdown := NewBreakdownBuilder().Build()
-	recommendation := NewRecommendationBuilder().Build()
-	filter := NewDocumentFilterBuilder().Build()
+	breakdown, _ := NewBreakdownBuilder().Build()
+	recommendation, _ := NewRecommendationBuilder().Build()
+	filter, _ := NewDocumentFilterBuilder().Build()
 
-	check := NewDocumentAuthenticityCheckBuilder().
+	check, _ := NewDocumentAuthenticityCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		WithDocumentFilter(filter).

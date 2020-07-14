@@ -44,10 +44,10 @@ func (b *breakdownBuilder) WithDetail(name string, value string) *breakdownBuild
 	return b
 }
 
-func (b *breakdownBuilder) Build() breakdown {
+func (b *breakdownBuilder) Build() (breakdown, error) {
 	return breakdown{
 		SubCheck: b.subCheck,
 		Result:   b.result,
 		Details:  b.details,
-	}
+	}, nil
 }
