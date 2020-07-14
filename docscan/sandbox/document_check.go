@@ -1,10 +1,12 @@
 package sandbox
 
 type documentCheck struct {
+	check
 	DocumentFilter documentFilter `json:"document_filter"`
 }
 
 type documentCheckBuilder struct {
+	checkBuilder
 	documentFilter documentFilter
 	err            error
 }
@@ -14,7 +16,15 @@ func (b *documentCheckBuilder) withDocumentFilter(filter documentFilter) {
 }
 
 func (b *documentCheckBuilder) build() (documentCheck, error) {
-	return documentCheck{
-		DocumentFilter: b.documentFilter,
-	}, b.err
+	documentCheck := documentCheck{}
+
+	check, err := b.checkBuilder.build()
+	if err != nil {
+		return documentCheck, err
+	}
+
+	documentCheck.check = check
+	documentCheck.DocumentFilter = b.documentFilter
+
+	return documentCheck, b.err
 }
