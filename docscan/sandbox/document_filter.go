@@ -24,9 +24,9 @@ func (b *documentFilterBuilder) WithDocumentType(documentType string) *documentF
 	return b
 }
 
-func (b *documentFilterBuilder) Build() documentFilter {
+func (b *documentFilterBuilder) Build() (documentFilter, error) {
 	return documentFilter{
 		DocumentTypes: b.documentTypes,
 		CountryCodes:  b.countryCodes,
-	}
+	}, nil
 }

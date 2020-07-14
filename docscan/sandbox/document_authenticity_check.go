@@ -29,7 +29,7 @@ func (b *documentAuthenticityCheckBuilder) WithDocumentFilter(filter documentFil
 	return b
 }
 
-func (b *documentAuthenticityCheckBuilder) Build() documentAuthenticityCheck {
+func (b *documentAuthenticityCheckBuilder) Build() (documentAuthenticityCheck, error) {
 	report := checkReport{
 		Recommendation: b.recommendation,
 		Breakdown:      b.breakdowns,
@@ -44,5 +44,5 @@ func (b *documentAuthenticityCheckBuilder) Build() documentAuthenticityCheck {
 		documentCheck{
 			DocumentFilter: b.documentFilter,
 		},
-	}
+	}, nil
 }
