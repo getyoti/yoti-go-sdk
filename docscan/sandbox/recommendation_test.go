@@ -8,7 +8,7 @@ import (
 )
 
 func Test_recommendationBuilder_WithReason(t *testing.T) {
-	recommendation := NewRecommendationBuilder().
+	recommendation, _ := NewRecommendationBuilder().
 		WithReason("some_reason").
 		Build()
 
@@ -16,7 +16,7 @@ func Test_recommendationBuilder_WithReason(t *testing.T) {
 }
 
 func Test_recommendationBuilder_WithValue(t *testing.T) {
-	recommendation := NewRecommendationBuilder().
+	recommendation, _ := NewRecommendationBuilder().
 		WithValue("some_value").
 		Build()
 
@@ -24,7 +24,7 @@ func Test_recommendationBuilder_WithValue(t *testing.T) {
 }
 
 func Test_recommendationBuilder_WithRecoverySuggestion(t *testing.T) {
-	recommendation := NewRecommendationBuilder().
+	recommendation, _ := NewRecommendationBuilder().
 		WithRecoverySuggestion("some_suggestion").
 		Build()
 
@@ -32,7 +32,7 @@ func Test_recommendationBuilder_WithRecoverySuggestion(t *testing.T) {
 }
 
 func Example_recommendationBuilder() {
-	recommendation := NewRecommendationBuilder().
+	recommendation, _ := NewRecommendationBuilder().
 		WithReason("some_reason").
 		WithValue("some_value").
 		WithRecoverySuggestion("some_suggestion").
