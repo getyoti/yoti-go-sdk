@@ -2,10 +2,12 @@ package sandbox
 
 type documentAuthenticityCheck struct {
 	check
+	documentCheck
 }
 
 type documentAuthenticityCheckBuilder struct {
 	checkBuilder
+	documentCheckBuilder
 }
 
 func NewDocumentAuthenticityCheckBuilder() *documentAuthenticityCheckBuilder {
@@ -13,24 +15,34 @@ func NewDocumentAuthenticityCheckBuilder() *documentAuthenticityCheckBuilder {
 }
 
 func (b *documentAuthenticityCheckBuilder) WithRecommendation(recommendation recommendation) *documentAuthenticityCheckBuilder {
-	b.checkBuilder.WithRecommendation(recommendation)
+	b.checkBuilder.withRecommendation(recommendation)
 	return b
 }
 
 func (b *documentAuthenticityCheckBuilder) WithBreakdown(breakdown breakdown) *documentAuthenticityCheckBuilder {
-	b.checkBuilder.WithBreakdown(breakdown)
+	b.checkBuilder.withBreakdown(breakdown)
+	return b
+}
+
+func (b *documentAuthenticityCheckBuilder) WithDocumentFilter(filter documentFilter) *documentAuthenticityCheckBuilder {
+	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
 
 func (b *documentAuthenticityCheckBuilder) Build() documentAuthenticityCheck {
 	report := checkReport{
-		Recommendation: b.Recommendation,
-		Breakdown:      b.Breakdowns,
+		Recommendation: b.recommendation,
+		Breakdown:      b.breakdowns,
 	}
 	result := checkResult{
 		Report: report,
 	}
-	return documentAuthenticityCheck{check{
-		Result: result,
-	}}
+	return documentAuthenticityCheck{
+		check{
+			Result: result,
+		},
+		documentCheck{
+			DocumentFilter: b.documentFilter,
+		},
+	}
 }

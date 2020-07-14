@@ -7,21 +7,21 @@ import (
 	"testing"
 )
 
-func TestBreakdownBuilder_WithSubCheck(t *testing.T) {
+func Test_breakdownBuilder_WithSubCheck(t *testing.T) {
 	breakdown := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").Build()
 
 	assert.Equal(t, breakdown.SubCheck, "some_sub_check")
 }
 
-func TestBreakdownBuilder_WithResult(t *testing.T) {
+func Test_breakdownBuilder_WithResult(t *testing.T) {
 	breakdown := NewBreakdownBuilder().
 		WithResult("some_result").Build()
 
 	assert.Equal(t, breakdown.Result, "some_result")
 }
 
-func TestBreakdownBuilder_WithDetail(t *testing.T) {
+func Test_breakdownBuilder_WithDetail(t *testing.T) {
 	breakdown := NewBreakdownBuilder().
 		WithDetail("some_name", "some_value").
 		Build()
@@ -30,7 +30,7 @@ func TestBreakdownBuilder_WithDetail(t *testing.T) {
 	assert.Equal(t, breakdown.Details[0].Value, "some_value")
 }
 
-func ExampleNewBreakdownBuilder() {
+func Example_breakdownBuilder() {
 	breakdown := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		WithResult("some_result").

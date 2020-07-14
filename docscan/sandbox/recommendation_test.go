@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestRecommendationBuilder_WithReason(t *testing.T) {
+func Test_recommendationBuilder_WithReason(t *testing.T) {
 	recommendation := NewRecommendationBuilder().
 		WithReason("some_reason").
 		Build()
@@ -15,7 +15,7 @@ func TestRecommendationBuilder_WithReason(t *testing.T) {
 	assert.Equal(t, recommendation.Reason, "some_reason")
 }
 
-func TestRecommendationBuilder_WithValue(t *testing.T) {
+func Test_recommendationBuilder_WithValue(t *testing.T) {
 	recommendation := NewRecommendationBuilder().
 		WithValue("some_value").
 		Build()
@@ -23,7 +23,7 @@ func TestRecommendationBuilder_WithValue(t *testing.T) {
 	assert.Equal(t, recommendation.Value, "some_value")
 }
 
-func TestRecommendationBuilder_WithRecoverySuggestion(t *testing.T) {
+func Test_recommendationBuilder_WithRecoverySuggestion(t *testing.T) {
 	recommendation := NewRecommendationBuilder().
 		WithRecoverySuggestion("some_suggestion").
 		Build()
@@ -31,7 +31,7 @@ func TestRecommendationBuilder_WithRecoverySuggestion(t *testing.T) {
 	assert.Equal(t, recommendation.RecoverySuggestion, "some_suggestion")
 }
 
-func ExampleNewRecommendationBuilder() {
+func Example_recommendationBuilder() {
 	recommendation := NewRecommendationBuilder().
 		WithReason("some_reason").
 		WithValue("some_value").
