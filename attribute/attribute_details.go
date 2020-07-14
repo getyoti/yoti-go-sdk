@@ -1,7 +1,7 @@
 package attribute
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v2/anchor"
+	"github.com/getyoti/yoti-go-sdk/v3/anchor"
 )
 
 // attributeDetails is embedded in each attribute for fields common to all

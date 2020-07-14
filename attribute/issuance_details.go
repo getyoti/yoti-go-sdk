@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoshare"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
 )
 

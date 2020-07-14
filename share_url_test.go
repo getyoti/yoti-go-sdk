@@ -3,7 +3,7 @@ package yoti
 import (
 	"fmt"
 
-	dynamic "github.com/getyoti/yoti-go-sdk/v2/dynamic_sharing_service"
+	dynamic "github.com/getyoti/yoti-go-sdk/v3/dynamic_sharing_service"
 )
 
 type yotiClientMock struct {

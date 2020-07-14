@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/consts"
 )
 
 // MergeHeaders merges two or more header prototypes together from left to right

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
 )
 
