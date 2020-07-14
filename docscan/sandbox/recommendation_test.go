@@ -26,7 +26,10 @@ func TestRecommendation_WithRecoverySuggestion(t *testing.T) {
 }
 
 func ExampleRecommendation() {
-	recommendation := Recommendation{}.WithReason("some_reason").WithValue("some_value").WithRecoverySuggestion("some_suggestion")
+	recommendation := Recommendation{}.
+		WithReason("some_reason").
+		WithValue("some_value").
+		WithRecoverySuggestion("some_suggestion")
 
 	data, _ := json.Marshal(recommendation)
 	fmt.Println(string(data))
