@@ -433,3 +433,23 @@ func TestProfile_DocumentImages_RetrievesAttribute(t *testing.T) {
 
 	assert.Equal(t, documentImages.Name(), consts.AttrDocumentImages)
 }
+
+func TestProfile_AttributesReturnsNilWhenNotPresent(t *testing.T) {
+	attributeName := consts.AttrDocumentImages
+	attributeValue, err := proto.Marshal(&yotiprotoattr.MultiValue{})
+	assert.NilError(t, err)
+
+	proto := &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Anchors:     make([]*yotiprotoattr.Anchor, 0),
+	}
+
+	result := createProfileWithSingleAttribute(proto)
+
+	DoB, err := result.DateOfBirth()
+	assert.Check(t, DoB == nil)
+	assert.Check(t, err == nil)
+	assert.Check(t, result.Address() == nil)
+}
