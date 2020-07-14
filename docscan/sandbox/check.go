@@ -7,6 +7,7 @@ type check struct {
 type checkBuilder struct {
 	recommendation recommendation
 	breakdowns     []breakdown
+	err            error
 }
 
 type checkResult struct {
@@ -24,4 +25,17 @@ func (b *checkBuilder) withRecommendation(recommendation recommendation) {
 
 func (b *checkBuilder) withBreakdown(breakdown breakdown) {
 	b.breakdowns = append(b.breakdowns, breakdown)
+}
+
+func (b *checkBuilder) build() (check, error) {
+	report := checkReport{
+		Recommendation: b.recommendation,
+		Breakdown:      b.breakdowns,
+	}
+	result := checkResult{
+		Report: report,
+	}
+	return check{
+		Result: result,
+	}, b.err
 }
