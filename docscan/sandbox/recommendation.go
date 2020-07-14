@@ -11,6 +11,7 @@ type recommendationBuilder struct {
 	value              string
 	reason             string
 	recoverySuggestion string
+	err                error
 }
 
 func NewRecommendationBuilder() *recommendationBuilder {
@@ -40,5 +41,5 @@ func (b *recommendationBuilder) Build() (recommendation, error) {
 		Value:              b.value,
 		Reason:             b.reason,
 		RecoverySuggestion: b.recoverySuggestion,
-	}, nil
+	}, b.err
 }

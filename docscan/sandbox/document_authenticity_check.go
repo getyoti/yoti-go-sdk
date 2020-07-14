@@ -8,6 +8,7 @@ type documentAuthenticityCheck struct {
 type documentAuthenticityCheckBuilder struct {
 	checkBuilder
 	documentCheckBuilder
+	err error
 }
 
 func NewDocumentAuthenticityCheckBuilder() *documentAuthenticityCheckBuilder {
@@ -30,19 +31,20 @@ func (b *documentAuthenticityCheckBuilder) WithDocumentFilter(filter documentFil
 }
 
 func (b *documentAuthenticityCheckBuilder) Build() (documentAuthenticityCheck, error) {
-	report := checkReport{
-		Recommendation: b.recommendation,
-		Breakdown:      b.breakdowns,
+	documentAuthenticityCheck := documentAuthenticityCheck{}
+
+	check, err := b.checkBuilder.build()
+	if err != nil {
+		return documentAuthenticityCheck, err
 	}
-	result := checkResult{
-		Report: report,
+
+	documentCheck, err := b.documentCheckBuilder.build()
+	if err != nil {
+		return documentAuthenticityCheck, err
 	}
-	return documentAuthenticityCheck{
-		check{
-			Result: result,
-		},
-		documentCheck{
-			DocumentFilter: b.documentFilter,
-		},
-	}, nil
+
+	documentAuthenticityCheck.check = check
+	documentAuthenticityCheck.documentCheck = documentCheck
+
+	return documentAuthenticityCheck, b.err
 }
