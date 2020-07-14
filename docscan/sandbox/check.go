@@ -5,8 +5,8 @@ type check struct {
 }
 
 type checkBuilder struct {
-	Recommendation recommendation
-	Breakdowns     []breakdown
+	recommendation recommendation
+	breakdowns     []breakdown
 }
 
 type checkResult struct {
@@ -18,12 +18,10 @@ type checkReport struct {
 	Breakdown      []breakdown    `json:"breakdown"`
 }
 
-func (b *checkBuilder) WithRecommendation(recommendation recommendation) *checkBuilder {
-	b.Recommendation = recommendation
-	return b
+func (b *checkBuilder) withRecommendation(recommendation recommendation) {
+	b.recommendation = recommendation
 }
 
-func (b *checkBuilder) WithBreakdown(breakdown breakdown) *checkBuilder {
-	b.Breakdowns = append(b.Breakdowns, breakdown)
-	return b
+func (b *checkBuilder) withBreakdown(breakdown breakdown) {
+	b.breakdowns = append(b.breakdowns, breakdown)
 }
