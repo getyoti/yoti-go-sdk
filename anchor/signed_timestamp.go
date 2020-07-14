@@ -3,7 +3,7 @@ package anchor
 import (
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
 )
 
 // SignedTimestamp is the object which contains a timestamp

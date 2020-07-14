@@ -1,4 +1,4 @@
-module github.com/getyoti/yoti-go-sdk/v2
+module github.com/getyoti/yoti-go-sdk/v3
 
 require (
 	github.com/golang/protobuf v1.4.2

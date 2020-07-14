@@ -3,8 +3,8 @@ package attribute
 import (
 	"errors"
 
-	"github.com/getyoti/yoti-go-sdk/v2/anchor"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v3/anchor"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
 // ImageSliceAttribute is a Yoti attribute which returns a slice of images as its value

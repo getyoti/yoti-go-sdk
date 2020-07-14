@@ -3,8 +3,8 @@ package attribute
 import (
 	"log"
 
-	"github.com/getyoti/yoti-go-sdk/v2/anchor"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v3/anchor"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
 // GenericAttribute is a Yoti attribute which returns a generic value

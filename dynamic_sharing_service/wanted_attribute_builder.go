@@ -3,7 +3,7 @@ package dynamic_sharing_service
 import (
 	"encoding/json"
 
-	"github.com/getyoti/yoti-go-sdk/v2/validate"
+	"github.com/getyoti/yoti-go-sdk/v3/validate"
 )
 
 type constraintInterface interface {
