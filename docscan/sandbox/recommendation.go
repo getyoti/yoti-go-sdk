@@ -1,26 +1,44 @@
 package sandbox
 
 // Recommendation describes a recommendation on check
-type Recommendation struct {
+type recommendation struct {
 	Value              string `json:"value"`
 	Reason             string `json:"reason"`
 	RecoverySuggestion string `json:"recovery_suggestion"`
 }
 
+type recommendationBuilder struct {
+	value              string
+	reason             string
+	recoverySuggestion string
+}
+
+func NewRecommendationBuilder() *recommendationBuilder {
+	return &recommendationBuilder{}
+}
+
 // WithReason sets the reason of a Recommendation
-func (recommendation Recommendation) WithReason(reason string) Recommendation {
-	recommendation.Reason = reason
-	return recommendation
+func (b *recommendationBuilder) WithReason(reason string) *recommendationBuilder {
+	b.reason = reason
+	return b
 }
 
 // WithValue sets the value of a Recommendation
-func (recommendation Recommendation) WithValue(value string) Recommendation {
-	recommendation.Value = value
-	return recommendation
+func (b *recommendationBuilder) WithValue(value string) *recommendationBuilder {
+	b.value = value
+	return b
 }
 
 // WithRecoverySuggestion sets the recovery suggestion of a Recommendation
-func (recommendation Recommendation) WithRecoverySuggestion(recoverySuggestion string) Recommendation {
-	recommendation.RecoverySuggestion = recoverySuggestion
-	return recommendation
+func (b *recommendationBuilder) WithRecoverySuggestion(recoverySuggestion string) *recommendationBuilder {
+	b.recoverySuggestion = recoverySuggestion
+	return b
+}
+
+func (b *recommendationBuilder) Build() recommendation {
+	return recommendation{
+		Value:              b.value,
+		Reason:             b.reason,
+		RecoverySuggestion: b.recoverySuggestion,
+	}
 }
