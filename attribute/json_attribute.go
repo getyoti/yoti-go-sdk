@@ -1,6 +1,7 @@
 package attribute
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -17,7 +18,10 @@ type JSONAttribute struct {
 
 // NewJSON creates a new JSON attribute
 func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
-	interfaceValue, err := UnmarshallJSON(a.Value)
+	var interfaceValue map[string]interface{}
+	decoder := json.NewDecoder(bytes.NewReader(a.Value))
+	decoder.UseNumber()
+	err := decoder.Decode(&interfaceValue)
 	if err != nil {
 		err = fmt.Errorf("Unable to parse JSON value: %q. Error: %q", a.Value, err)
 		return nil, err
