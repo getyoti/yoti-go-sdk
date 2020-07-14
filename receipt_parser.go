@@ -3,8 +3,8 @@ package yoti
 import (
 	"crypto/rsa"
 
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotoattr"
-	"github.com/getyoti/yoti-go-sdk/v2/yotiprotocom"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
 	"github.com/golang/protobuf/proto"
 )
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	yotirequest "github.com/getyoti/yoti-go-sdk/v2/requests"
+	yotirequest "github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
 // Client is responsible for setting up test data in the sandbox instance. BaseURL is not required.

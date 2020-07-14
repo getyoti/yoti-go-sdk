@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v2/file"
+	"github.com/getyoti/yoti-go-sdk/v3/file"
 	"gotest.tools/v3/assert"
 )
 
