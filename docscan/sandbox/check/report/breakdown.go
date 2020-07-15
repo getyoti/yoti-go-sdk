@@ -2,7 +2,6 @@ package report
 
 import (
 	"github.com/getyoti/yoti-go-sdk/v3/validate"
-	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
 // Breakdown describes a breakdown on check
@@ -33,20 +32,12 @@ func NewBreakdownBuilder() *breakdownBuilder {
 
 // WithSubCheck sets the sub check of a Breakdown
 func (b *breakdownBuilder) WithSubCheck(subCheck string) *breakdownBuilder {
-	err := validate.NotEmpty(subCheck, "sub check cannot be empty")
-	if err != nil {
-		b.err = yotierror.MultiError{This: err, Next: b.err}
-	}
 	b.subCheck = subCheck
 	return b
 }
 
 // WithResult sets the result of a Breakdown
 func (b *breakdownBuilder) WithResult(result string) *breakdownBuilder {
-	err := validate.NotEmpty(result, "result cannot be empty")
-	if err != nil {
-		b.err = yotierror.MultiError{This: err, Next: b.err}
-	}
 	b.result = result
 	return b
 }
@@ -61,9 +52,21 @@ func (b *breakdownBuilder) WithDetail(name string, value string) *breakdownBuild
 }
 
 func (b *breakdownBuilder) Build() (Breakdown, error) {
-	return Breakdown{
+	breakdown := Breakdown{
 		SubCheck: b.subCheck,
 		Result:   b.result,
 		Details:  b.details,
-	}, b.err
+	}
+
+	subCheckErr := validate.NotEmpty(breakdown.SubCheck, "Sub Check cannot be empty")
+	if subCheckErr != nil {
+		return breakdown, subCheckErr
+	}
+
+	resultErr := validate.NotEmpty(breakdown.Result, "Result cannot be empty")
+	if resultErr != nil {
+		return breakdown, resultErr
+	}
+
+	return breakdown, b.err
 }

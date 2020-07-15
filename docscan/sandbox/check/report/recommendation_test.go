@@ -7,33 +7,23 @@ import (
 	"testing"
 )
 
-func Test_recommendationBuilder_WithReason(t *testing.T) {
+func Test_recommendationBuilder(t *testing.T) {
 	recommendation, err := NewRecommendationBuilder().
 		WithValue("some_value").
 		WithReason("some_reason").
-		Build()
-
-	assert.NilError(t, err)
-	assert.Equal(t, recommendation.Reason, "some_reason")
-}
-
-func Test_recommendationBuilder_WithValue(t *testing.T) {
-	recommendation, err := NewRecommendationBuilder().
-		WithValue("some_value").
-		Build()
-
-	assert.NilError(t, err)
-	assert.Equal(t, recommendation.Value, "some_value")
-}
-
-func Test_recommendationBuilder_WithRecoverySuggestion(t *testing.T) {
-	recommendation, err := NewRecommendationBuilder().
-		WithValue("some_value").
 		WithRecoverySuggestion("some_suggestion").
 		Build()
 
 	assert.NilError(t, err)
+	assert.Equal(t, recommendation.Reason, "some_reason")
+	assert.Equal(t, recommendation.Value, "some_value")
 	assert.Equal(t, recommendation.RecoverySuggestion, "some_suggestion")
+}
+
+func Test_recommendationBuilder_ShouldRequireValue(t *testing.T) {
+	_, err := NewRecommendationBuilder().Build()
+
+	assert.Error(t, err, "Value cannot be empty")
 }
 
 func Example_recommendationBuilder() {

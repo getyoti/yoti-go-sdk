@@ -7,30 +7,34 @@ import (
 	"testing"
 )
 
-func Test_breakdownBuilder_WithSubCheck(t *testing.T) {
+func Test_breakdownBuilder(t *testing.T) {
 	breakdown, err := NewBreakdownBuilder().
-		WithSubCheck("some_sub_check").Build()
-
-	assert.NilError(t, err)
-	assert.Equal(t, breakdown.SubCheck, "some_sub_check")
-}
-
-func Test_breakdownBuilder_WithResult(t *testing.T) {
-	breakdown, err := NewBreakdownBuilder().
-		WithResult("some_result").Build()
-
-	assert.NilError(t, err)
-	assert.Equal(t, breakdown.Result, "some_result")
-}
-
-func Test_breakdownBuilder_WithDetail(t *testing.T) {
-	breakdown, err := NewBreakdownBuilder().
+		WithSubCheck("some_sub_check").
+		WithResult("some_result").
 		WithDetail("some_name", "some_value").
 		Build()
 
 	assert.NilError(t, err)
+	assert.Equal(t, breakdown.SubCheck, "some_sub_check")
+	assert.Equal(t, breakdown.Result, "some_result")
 	assert.Equal(t, breakdown.Details[0].Name, "some_name")
 	assert.Equal(t, breakdown.Details[0].Value, "some_value")
+}
+
+func Test_breakdownBuilder_ShouldRequireSubCheck(t *testing.T) {
+	_, err := NewBreakdownBuilder().
+		WithResult("some_result").
+		Build()
+
+	assert.Error(t, err, "Sub Check cannot be empty")
+}
+
+func Test_breakdownBuilder_ShouldRequireResult(t *testing.T) {
+	_, err := NewBreakdownBuilder().
+		WithSubCheck("some_sub_check").
+		Build()
+
+	assert.Error(t, err, "Result cannot be empty")
 }
 
 func Example_breakdownBuilder() {
