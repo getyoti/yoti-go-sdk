@@ -1,21 +1,21 @@
 package check
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
 type documentCheck struct {
 	check
-	DocumentFilter sandbox.DocumentFilter `json:"document_filter"`
+	DocumentFilter filter.DocumentFilter `json:"document_filter"`
 }
 
 type documentCheckBuilder struct {
 	checkBuilder
-	documentFilter sandbox.DocumentFilter
+	documentFilter filter.DocumentFilter
 	err            error
 }
 
-func (b *documentCheckBuilder) withDocumentFilter(filter sandbox.DocumentFilter) {
+func (b *documentCheckBuilder) withDocumentFilter(filter filter.DocumentFilter) {
 	b.documentFilter = filter
 }
 

@@ -1,19 +1,19 @@
 package task
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
 type documentTask struct {
-	DocumentFilter sandbox.DocumentFilter `json:"document_filter"`
+	DocumentFilter filter.DocumentFilter `json:"document_filter"`
 }
 
 type documentTaskBuilder struct {
-	documentFilter sandbox.DocumentFilter
+	documentFilter filter.DocumentFilter
 	err            error
 }
 
-func (b *documentTaskBuilder) withDocumentFilter(filter sandbox.DocumentFilter) {
+func (b *documentTaskBuilder) withDocumentFilter(filter filter.DocumentFilter) {
 	b.documentFilter = filter
 }
 
