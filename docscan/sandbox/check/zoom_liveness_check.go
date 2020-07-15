@@ -8,8 +8,8 @@ const (
 	zoom = "ZOOM"
 )
 
-type zoomLivenessCheck struct {
-	livenessCheck
+type ZoomLivenessCheck struct {
+	LivenessCheck
 }
 
 type zoomLivenessCheckBuilder struct {
@@ -31,16 +31,11 @@ func (b *zoomLivenessCheckBuilder) WithBreakdown(breakdown report.Breakdown) *zo
 	return b
 }
 
-func (b *zoomLivenessCheckBuilder) Build() (zoomLivenessCheck, error) {
-	zoomLivenessCheck := zoomLivenessCheck{}
-
-	livenessCheck, err := b.livenessCheckBuilder.build()
+func (b *zoomLivenessCheckBuilder) Build() (LivenessCheck, error) {
+	livenessCheck, err := b.livenessCheckBuilder.withLivenessType(zoom).build()
 	if err != nil {
-		return zoomLivenessCheck, err
+		return livenessCheck, err
 	}
 
-	zoomLivenessCheck.livenessCheck = livenessCheck
-	zoomLivenessCheck.LivenessType = zoom
-
-	return zoomLivenessCheck, b.err
+	return livenessCheck, b.err
 }

@@ -1,7 +1,7 @@
 package task
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
 type documentTextDataExtractionTask struct {
@@ -23,7 +23,7 @@ func NewDocumentTextDataExtractionTaskBuilder() *documentTextDataExtractionTaskB
 	return &documentTextDataExtractionTaskBuilder{}
 }
 
-func (b *documentTextDataExtractionTaskBuilder) WithDocumentFilter(filter sandbox.DocumentFilter) *documentTextDataExtractionTaskBuilder {
+func (b *documentTextDataExtractionTaskBuilder) WithDocumentFilter(filter filter.DocumentFilter) *documentTextDataExtractionTaskBuilder {
 	b.documentTaskBuilder.withDocumentFilter(filter)
 	return b
 }

@@ -1,17 +1,25 @@
 package check
 
-type livenessCheck struct {
+type LivenessCheck struct {
 	check
 	LivenessType string `json:"liveness_type"`
 }
 
 type livenessCheckBuilder struct {
 	checkBuilder
-	err error
+	livenessType string
+	err          error
 }
 
-func (b *livenessCheckBuilder) build() (livenessCheck, error) {
-	livenessCheck := livenessCheck{}
+func (b *livenessCheckBuilder) withLivenessType(livenessType string) *livenessCheckBuilder {
+	b.livenessType = livenessType
+	return b
+}
+
+func (b *livenessCheckBuilder) build() (LivenessCheck, error) {
+	livenessCheck := LivenessCheck{
+		LivenessType: b.livenessType,
+	}
 
 	check, err := b.checkBuilder.build()
 	if err != nil {
