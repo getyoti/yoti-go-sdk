@@ -18,7 +18,6 @@ type checkReportsBuilder struct {
 	documentFaceMatchChecks    []check.DocumentFaceMatchCheck
 	livenessChecks             []check.LivenessCheck
 	asyncReportDelay           uint32
-	err                        error
 }
 
 func NewCheckReportsBuilder() *checkReportsBuilder {
@@ -62,5 +61,5 @@ func (b *checkReportsBuilder) Build() (CheckReports, error) {
 		DocumentFaceMatchChecks:    b.documentFaceMatchChecks,
 		LivenessChecks:             b.livenessChecks,
 		AsyncReportDelay:           b.asyncReportDelay,
-	}, b.err
+	}, nil
 }

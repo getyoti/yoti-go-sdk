@@ -15,7 +15,6 @@ type breakdownBuilder struct {
 	subCheck string
 	result   string
 	details  []detail
-	err      error
 }
 
 // Detail is an individual breakdown detail
@@ -68,5 +67,5 @@ func (b *breakdownBuilder) Build() (Breakdown, error) {
 		return breakdown, resultErr
 	}
 
-	return breakdown, b.err
+	return breakdown, nil
 }
