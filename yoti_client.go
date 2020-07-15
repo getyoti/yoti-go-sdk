@@ -121,7 +121,7 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 		return activity, errors.New("Unable to decrypt token")
 	}
 
-	endpoint := web.GetProfileEndpoint(decryptedToken, client.GetSdkID())
+	endpoint := profile.GetProfileEndpoint(decryptedToken, client.GetSdkID())
 
 	response, err := client.makeRequest(
 		httpMethod,
@@ -285,7 +285,7 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
 func (client *Client) PerformAmlCheck(amlProfile aml.AmlProfile) (amlResult aml.AmlResult, err error) {
 	var httpMethod = http.MethodPost
-	endpoint := web.GetAMLEndpoint(client.GetSdkID())
+	endpoint := aml.GetAMLEndpoint(client.GetSdkID())
 	content, err := json.Marshal(amlProfile)
 	if err != nil {
 		return
