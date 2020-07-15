@@ -8,7 +8,6 @@ type ResponseConfig struct {
 type responseConfigBuilder struct {
 	taskResults  *TaskResults
 	checkReports *CheckReports
-	err          error
 }
 
 func NewResponseConfigBuilder() *responseConfigBuilder {
@@ -34,5 +33,5 @@ func (b *responseConfigBuilder) Build() (ResponseConfig, error) {
 		responseConfig.TaskResults = b.taskResults
 	}
 
-	return responseConfig, b.err
+	return responseConfig, nil
 }

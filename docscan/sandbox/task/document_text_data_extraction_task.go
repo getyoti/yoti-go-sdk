@@ -12,7 +12,6 @@ type DocumentTextDataExtractionTask struct {
 type documentTextDataExtractionTaskBuilder struct {
 	documentTaskBuilder
 	documentFields map[string]string
-	err            error
 }
 
 type documentTextDataExtractionTaskResult struct {
@@ -49,5 +48,5 @@ func (b *documentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtract
 		DocumentFields: b.documentFields,
 	}
 
-	return documentTextDataExtractionTask, b.err
+	return documentTextDataExtractionTask, nil
 }

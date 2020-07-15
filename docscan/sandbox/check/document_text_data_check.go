@@ -13,7 +13,6 @@ type DocumentTextDataCheck struct {
 type documentTextDataCheckBuilder struct {
 	documentCheckBuilder
 	documentFields map[string]string
-	err            error
 }
 
 type documentTextDataCheckResult struct {
@@ -62,5 +61,5 @@ func (b *documentTextDataCheckBuilder) Build() (DocumentTextDataCheck, error) {
 		DocumentFields: b.documentFields,
 	}
 
-	return documentTextDataCheck, b.err
+	return documentTextDataCheck, nil
 }

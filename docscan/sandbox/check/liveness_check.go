@@ -8,7 +8,6 @@ type LivenessCheck struct {
 type livenessCheckBuilder struct {
 	checkBuilder
 	livenessType string
-	err          error
 }
 
 func (b *livenessCheckBuilder) withLivenessType(livenessType string) *livenessCheckBuilder {
@@ -28,5 +27,5 @@ func (b *livenessCheckBuilder) build() (LivenessCheck, error) {
 
 	livenessCheck.check = check
 
-	return livenessCheck, b.err
+	return livenessCheck, nil
 }
