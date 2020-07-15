@@ -23,5 +23,5 @@ func Example_documentTextDataExtractionTaskBuilder() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"document_filter":{"document_types":null,"country_codes":null},"result":{"document_fields":{"some":"field"}}}
+	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some":"field"}}}
 }

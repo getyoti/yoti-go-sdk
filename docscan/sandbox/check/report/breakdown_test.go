@@ -47,3 +47,17 @@ func Example_breakdownBuilder() {
 	fmt.Println(string(data))
 	// Output: {"sub_check":"some_sub_check","result":"some_result","details":[{"name":"some_name","value":"some_value"}]}
 }
+
+func Example_breakdownBuilder_Minimal() {
+	breakdown, err := NewBreakdownBuilder().
+		WithSubCheck("some_sub_check").
+		WithResult("some_result").
+		Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(breakdown)
+	fmt.Println(string(data))
+	// Output: {"sub_check":"some_sub_check","result":"some_result","details":[]}
+}
