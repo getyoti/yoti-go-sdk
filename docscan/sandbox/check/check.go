@@ -1,12 +1,16 @@
-package sandbox
+package check
+
+import (
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+)
 
 type check struct {
 	Result checkResult `json:"result"`
 }
 
 type checkBuilder struct {
-	recommendation recommendation
-	breakdowns     []breakdown
+	recommendation report.Recommendation
+	breakdowns     []report.Breakdown
 	err            error
 }
 
@@ -15,15 +19,15 @@ type checkResult struct {
 }
 
 type checkReport struct {
-	Recommendation recommendation `json:"recommendation"`
-	Breakdown      []breakdown    `json:"breakdown"`
+	Recommendation report.Recommendation `json:"recommendation"`
+	Breakdown      []report.Breakdown    `json:"breakdown"`
 }
 
-func (b *checkBuilder) withRecommendation(recommendation recommendation) {
+func (b *checkBuilder) withRecommendation(recommendation report.Recommendation) {
 	b.recommendation = recommendation
 }
 
-func (b *checkBuilder) withBreakdown(breakdown breakdown) {
+func (b *checkBuilder) withBreakdown(breakdown report.Breakdown) {
 	b.breakdowns = append(b.breakdowns, breakdown)
 }
 
