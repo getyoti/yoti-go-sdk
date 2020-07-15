@@ -9,12 +9,17 @@ import (
 )
 
 func Example_checkReportsBuilder() {
-	breakdown, err := report.NewBreakdownBuilder().Build()
+	breakdown, err := report.NewBreakdownBuilder().
+		WithResult("some_result").
+		WithSubCheck("some_check").
+		Build()
 	if err != nil {
 		return
 	}
 
-	recommendation, err := report.NewRecommendationBuilder().Build()
+	recommendation, err := report.NewRecommendationBuilder().
+		WithValue("some_value").
+		Build()
 	if err != nil {
 		return
 	}
@@ -61,7 +66,7 @@ func Example_checkReportsBuilder() {
 
 	data, _ := json.Marshal(checkReports)
 	fmt.Println(string(data))
-	// Output: {"ID_DOCUMENT_AUTHENTICITY":[{"result":{"report":{"recommendation":{"value":"","reason":"","recovery_suggestion":""},"breakdown":[{"sub_check":"","result":"","details":null}]}},"document_filter":{"document_types":null,"country_codes":null}}],"ID_DOCUMENT_TEXT_DATA_CHECK":[{"result":{"report":{"recommendation":{"value":"","reason":"","recovery_suggestion":""},"breakdown":[{"sub_check":"","result":"","details":null}]},"document_fields":null},"document_filter":{"document_types":null,"country_codes":null}}],"ID_DOCUMENT_FACE_MATCH_CHECK":[{"result":{"report":{"recommendation":{"value":"","reason":"","recovery_suggestion":""},"breakdown":[{"sub_check":"","result":"","details":null}]}},"document_filter":{"document_types":null,"country_codes":null}}],"LIVENESS":[{"result":{"report":{"recommendation":{"value":"","reason":"","recovery_suggestion":""},"breakdown":null}},"liveness_type":"ZOOM"}],"async_report_delay":10}
+	// Output: {"ID_DOCUMENT_AUTHENTICITY":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"ID_DOCUMENT_TEXT_DATA_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":null}}],"ID_DOCUMENT_FACE_MATCH_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"LIVENESS":[{"result":{"report":{"recommendation":{"value":""}}},"liveness_type":"ZOOM"}],"async_report_delay":10}
 }
 
 func Example_checkReportsBuilderMinimal() {
