@@ -1,4 +1,8 @@
-package sandbox
+package check
+
+import (
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+)
 
 const (
 	zoom = "ZOOM"
@@ -17,12 +21,12 @@ func NewZoomLivenessCheckBuilder() *zoomLivenessCheckBuilder {
 	return &zoomLivenessCheckBuilder{}
 }
 
-func (b *zoomLivenessCheckBuilder) WithRecommendation(recommendation recommendation) *zoomLivenessCheckBuilder {
+func (b *zoomLivenessCheckBuilder) WithRecommendation(recommendation report.Recommendation) *zoomLivenessCheckBuilder {
 	b.livenessCheckBuilder.withRecommendation(recommendation)
 	return b
 }
 
-func (b *zoomLivenessCheckBuilder) WithBreakdown(breakdown breakdown) *zoomLivenessCheckBuilder {
+func (b *zoomLivenessCheckBuilder) WithBreakdown(breakdown report.Breakdown) *zoomLivenessCheckBuilder {
 	b.livenessCheckBuilder.withBreakdown(breakdown)
 	return b
 }
