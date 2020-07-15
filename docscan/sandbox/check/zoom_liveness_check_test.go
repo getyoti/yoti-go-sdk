@@ -8,13 +8,23 @@ import (
 )
 
 func Example_zoomLivenessCheckBuilder() {
-	breakdown, _ := report.NewBreakdownBuilder().Build()
-	recommendation, _ := report.NewRecommendationBuilder().Build()
+	breakdown, err := report.NewBreakdownBuilder().Build()
+	if err != nil {
+		return
+	}
 
-	check, _ := NewZoomLivenessCheckBuilder().
+	recommendation, err := report.NewRecommendationBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	check, err := NewZoomLivenessCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))

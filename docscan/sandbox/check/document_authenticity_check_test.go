@@ -9,15 +9,29 @@ import (
 )
 
 func Example_documentAuthenticityCheckBuilder() {
-	breakdown, _ := report.NewBreakdownBuilder().Build()
-	recommendation, _ := report.NewRecommendationBuilder().Build()
-	filter, _ := sandbox.NewDocumentFilterBuilder().Build()
+	breakdown, err := report.NewBreakdownBuilder().Build()
+	if err != nil {
+		return
+	}
 
-	check, _ := NewDocumentAuthenticityCheckBuilder().
+	recommendation, err := report.NewRecommendationBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	filter, err := sandbox.NewDocumentFilterBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	check, err := NewDocumentAuthenticityCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		WithDocumentFilter(filter).
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
