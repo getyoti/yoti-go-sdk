@@ -5,7 +5,25 @@ import (
 	"fmt"
 )
 
-func Example_responseConfigBuilder() {
+func Example_responseConfigBuilder_WithCheckReports() {
+	checkReports, err := NewCheckReportsBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	responseConfig, err := NewResponseConfigBuilder().
+		WithCheckReports(checkReports).
+		Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(responseConfig)
+	fmt.Println(string(data))
+	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[],"async_report_delay":0}}
+}
+
+func Example_responseConfigBuilder_WithCheckReports_WithTaskResults() {
 	taskResults, err := NewTaskResultsBuilder().Build()
 	if err != nil {
 		return
@@ -26,5 +44,5 @@ func Example_responseConfigBuilder() {
 
 	data, _ := json.Marshal(responseConfig)
 	fmt.Println(string(data))
-	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":null},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":null,"ID_DOCUMENT_TEXT_DATA_CHECK":null,"ID_DOCUMENT_FACE_MATCH_CHECK":null,"LIVENESS":null,"async_report_delay":0}}
+	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":null},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[],"async_report_delay":0}}
 }
