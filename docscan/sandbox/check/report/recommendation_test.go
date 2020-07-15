@@ -9,6 +9,7 @@ import (
 
 func Test_recommendationBuilder_WithReason(t *testing.T) {
 	recommendation, err := NewRecommendationBuilder().
+		WithValue("some_value").
 		WithReason("some_reason").
 		Build()
 
@@ -27,6 +28,7 @@ func Test_recommendationBuilder_WithValue(t *testing.T) {
 
 func Test_recommendationBuilder_WithRecoverySuggestion(t *testing.T) {
 	recommendation, err := NewRecommendationBuilder().
+		WithValue("some_value").
 		WithRecoverySuggestion("some_suggestion").
 		Build()
 
@@ -47,4 +49,17 @@ func Example_recommendationBuilder() {
 	data, _ := json.Marshal(recommendation)
 	fmt.Println(string(data))
 	// Output: {"value":"some_value","reason":"some_reason","recovery_suggestion":"some_suggestion"}
+}
+
+func Example_recommendationBuilder_Minimal() {
+	recommendation, err := NewRecommendationBuilder().
+		WithValue("some_value").
+		Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(recommendation)
+	fmt.Println(string(data))
+	// Output: {"value":"some_value"}
 }

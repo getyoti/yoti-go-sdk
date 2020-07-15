@@ -8,12 +8,17 @@ import (
 )
 
 func Example_zoomLivenessCheckBuilder() {
-	breakdown, err := report.NewBreakdownBuilder().Build()
+	breakdown, err := report.NewBreakdownBuilder().
+		WithResult("some_result").
+		WithSubCheck("some_check").
+		Build()
 	if err != nil {
 		return
 	}
 
-	recommendation, err := report.NewRecommendationBuilder().Build()
+	recommendation, err := report.NewRecommendationBuilder().
+		WithValue("some_value").
+		Build()
 	if err != nil {
 		return
 	}
@@ -28,5 +33,5 @@ func Example_zoomLivenessCheckBuilder() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"result":{"report":{"recommendation":{"value":"","reason":"","recovery_suggestion":""},"breakdown":[{"sub_check":"","result":"","details":null}]}},"liveness_type":"ZOOM"}
+	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}},"liveness_type":"ZOOM"}
 }
