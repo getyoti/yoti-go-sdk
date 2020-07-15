@@ -3,6 +3,8 @@ package yoti
 import (
 	"crypto/rsa"
 
+	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/util"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
 	"github.com/golang/protobuf/proto"
@@ -10,7 +12,7 @@ import (
 
 func parseApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
 	var unwrappedKey []byte
-	if unwrappedKey, err = unwrapKey(receipt.WrappedReceiptKey, key); err != nil {
+	if unwrappedKey, err = cryptoutil.UnwrapKey(receipt.WrappedReceiptKey, key); err != nil {
 		return
 	}
 
@@ -19,7 +21,7 @@ func parseApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *y
 	}
 
 	var profileContentBytes []byte
-	if profileContentBytes, err = base64ToBytes(receipt.ProfileContent); err != nil {
+	if profileContentBytes, err = util.Base64ToBytes(receipt.ProfileContent); err != nil {
 		return
 	}
 
@@ -29,7 +31,7 @@ func parseApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *y
 	}
 
 	var decipheredBytes []byte
-	if decipheredBytes, err = decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
+	if decipheredBytes, err = cryptoutil.DecipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
 		return nil, err
 	}
 
@@ -61,11 +63,11 @@ func parseExtraData(receipt *receiptDO, key *rsa.PrivateKey) (result []byte, err
 }
 
 func parseEncryptedProto(receipt *receiptDO, encryptedBase64 string, key *rsa.PrivateKey) (result []byte, err error) {
-	unwrappedKey, err := unwrapKey(receipt.WrappedReceiptKey, key)
+	unwrappedKey, err := cryptoutil.UnwrapKey(receipt.WrappedReceiptKey, key)
 	if err != nil {
 		return
 	}
-	encryptedBytes, err := base64ToBytes(encryptedBase64)
+	encryptedBytes, err := util.Base64ToBytes(encryptedBase64)
 	if err != nil || len(encryptedBytes) == 0 {
 		return
 	}
@@ -74,5 +76,5 @@ func parseEncryptedProto(receipt *receiptDO, encryptedBase64 string, key *rsa.Pr
 		return
 	}
 
-	return decipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText)
+	return cryptoutil.DecipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText)
 }

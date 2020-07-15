@@ -1,9 +1,10 @@
-package yoti
+package profile
 
 import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -14,6 +15,8 @@ import (
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 )
+
+const attributeName = "test_attribute_name"
 
 func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
 	var attributeSlice []*yotiprotoattr.Attribute
@@ -452,4 +455,36 @@ func TestProfile_AttributesReturnsNilWhenNotPresent(t *testing.T) {
 	assert.Check(t, DoB == nil)
 	assert.Check(t, err == nil)
 	assert.Check(t, result.Address() == nil)
+}
+
+func TestMissingPostalAddress_UsesFormattedAddress(t *testing.T) {
+	var formattedAddressText = `House No.86-A\nRajgura Nagar\nLudhina\nPunjab\n141012\nIndia`
+
+	var structuredAddressBytes = []byte(`
+	{
+		"address_format": 2,
+		"building": "House No.86-A",
+		"formatted_address": "` + formattedAddressText + `"
+	}
+	`)
+
+	var jsonAttribute = &yotiprotoattr.Attribute{
+		Name:        consts.AttrStructuredPostalAddress,
+		Value:       structuredAddressBytes,
+		ContentType: yotiprotoattr.ContentType_JSON,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	profile := createProfileWithSingleAttribute(jsonAttribute)
+
+	ensureAddressProfile(&profile)
+
+	escapedFormattedAddressText := strings.Replace(formattedAddressText, `\n`, "\n", -1)
+
+	profileAddress := profile.Address().Value()
+	assert.Equal(t, profileAddress, escapedFormattedAddressText, "Address does not equal the expected formatted address.")
+
+	structuredPostalAddress, err := profile.StructuredPostalAddress()
+	assert.NilError(t, err)
+	assert.Equal(t, structuredPostalAddress.ContentType(), "JSON")
 }

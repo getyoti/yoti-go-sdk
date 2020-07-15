@@ -3,17 +3,18 @@ package yoti
 import (
 	"time"
 
+	"github.com/getyoti/yoti-go-sdk/v3/profile"
 	"github.com/getyoti/yoti-go-sdk/v3/share"
 )
 
 // ActivityDetails represents the result of an activity between a user and the application.
 type ActivityDetails struct {
-	UserProfile        Profile
+	UserProfile        profile.Profile
 	rememberMeID       string
 	parentRememberMeID string
 	timestamp          time.Time
 	receiptID          string
-	ApplicationProfile ApplicationProfile
+	ApplicationProfile profile.ApplicationProfile
 	extraData          *share.ExtraData
 }
 

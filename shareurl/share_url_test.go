@@ -1,4 +1,4 @@
-package yoti
+package shareurl
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func (mock *yotiClientMock) GetSdkID() string {
 	panic("Mock undefined")
 }
 
-func (mock *yotiClientMock) makeRequest(httpMethod, endpoint string, payload []byte, includePubKey bool, httpErrorMessages ...map[int]string) (string, error) {
+func (mock *yotiClientMock) MakeRequest(httpMethod, endpoint string, payload []byte, includePubKey bool, httpErrorMessages ...map[int]string) (string, error) {
 	if mock.mockMakeRequest != nil {
 		return mock.mockMakeRequest(httpMethod, endpoint, payload, includePubKey, httpErrorMessages...)
 	}
