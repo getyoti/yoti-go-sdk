@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
 func Example_documentTextDataExtractionTaskBuilder() {
