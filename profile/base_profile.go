@@ -1,4 +1,4 @@
-package yoti
+package profile
 
 import (
 	"github.com/getyoti/yoti-go-sdk/v3/attribute"

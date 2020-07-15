@@ -12,8 +12,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/getyoti/yoti-go-sdk/v3/aml"
+	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/profile"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	"github.com/getyoti/yoti-go-sdk/v3/share"
+	"github.com/getyoti/yoti-go-sdk/v3/web"
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -33,13 +37,6 @@ var (
 	}
 )
 
-// ClientInterface defines the interface required to Mock the YotiClient for
-// testing
-type clientInterface interface {
-	makeRequest(string, string, []byte, bool, ...map[int]string) (string, error)
-	GetSdkID() string
-}
-
 // Client represents a client that can communicate with yoti and return information about Yoti users.
 type Client struct {
 	// SdkID represents the SDK ID and NOT the App ID. This can be found in the integration section of your
@@ -52,12 +49,12 @@ type Client struct {
 	Key *rsa.PrivateKey
 
 	apiURL     string
-	HTTPClient HttpClient // Mockable HTTP Client Interface
+	HTTPClient web.HttpClient // Mockable HTTP Client Interface
 }
 
 // NewClient constructs a Client object
 func NewClient(sdkID string, key []byte) (*Client, error) {
-	decodedKey, err := loadRsaKey(key)
+	decodedKey, err := cryptoutil.ParseRSAKey(key)
 
 	if err != nil {
 		return nil, err
@@ -118,13 +115,13 @@ func (client *Client) getActivityDetails(token string) (activity ActivityDetails
 
 	httpMethod := http.MethodGet
 
-	decryptedToken, err := decryptToken(token, client.Key)
+	decryptedToken, err := cryptoutil.DecryptToken(token, client.Key)
 
 	if err != nil {
 		return activity, errors.New("Unable to decrypt token")
 	}
 
-	endpoint := getProfileEndpoint(decryptedToken, client.GetSdkID())
+	endpoint := web.GetProfileEndpoint(decryptedToken, client.GetSdkID())
 
 	response, err := client.makeRequest(
 		httpMethod,
@@ -234,18 +231,8 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 		}
 		id := parsedResponse.Receipt.RememberMeID
 
-		profile := Profile{
-			baseProfile{
-				attributeSlice: createAttributeSlice(userAttributeList),
-			},
-		}
-		appProfile := ApplicationProfile{
-			baseProfile{
-				attributeSlice: createAttributeSlice(applicationAttributeList),
-			},
-		}
-
-		ensureAddressProfile(&profile)
+		userProfile := profile.NewUserProfile(userAttributeList)
+		applicationProfile := profile.NewApplicationProfile(applicationAttributeList)
 
 		decryptedExtraData, errTemp := parseExtraData(&parsedResponse.Receipt, key)
 		if errTemp != nil {
@@ -266,25 +253,17 @@ func handleSuccessfulResponse(responseContent string, key *rsa.PrivateKey) (acti
 		}
 
 		activityDetails = ActivityDetails{
-			UserProfile:        profile,
+			UserProfile:        userProfile,
 			rememberMeID:       id,
 			parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
 			timestamp:          timestamp,
 			receiptID:          parsedResponse.Receipt.ReceiptID,
-			ApplicationProfile: appProfile,
+			ApplicationProfile: applicationProfile,
 			extraData:          extraData,
 		}
 	}
 
 	return activityDetails, err
-}
-
-func createAttributeSlice(protoAttributeList *yotiprotoattr.AttributeList) (result []*yotiprotoattr.Attribute) {
-	if protoAttributeList != nil {
-		result = append(result, protoAttributeList.Attributes...)
-	}
-
-	return result
 }
 
 func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
@@ -304,9 +283,9 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
-func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResult, err error) {
+func (client *Client) PerformAmlCheck(amlProfile aml.AmlProfile) (amlResult aml.AmlResult, err error) {
 	var httpMethod = http.MethodPost
-	endpoint := getAMLEndpoint(client.GetSdkID())
+	endpoint := web.GetAMLEndpoint(client.GetSdkID())
 	content, err := json.Marshal(amlProfile)
 	if err != nil {
 		return
@@ -319,6 +298,6 @@ func (client *Client) PerformAmlCheck(amlProfile AmlProfile) (amlResult AmlResul
 		return
 	}
 
-	amlResult, err = GetAmlResult([]byte(response))
+	amlResult, err = aml.GetAmlResult([]byte(response))
 	return
 }
