@@ -9,15 +9,29 @@ import (
 )
 
 func Example_documentFaceMatchCheckBuilder() {
-	breakdown, _ := report.NewBreakdownBuilder().Build()
-	recommendation, _ := report.NewRecommendationBuilder().Build()
-	filter, _ := sandbox.NewDocumentFilterBuilder().Build()
+	breakdown, err := report.NewBreakdownBuilder().Build()
+	if err != nil {
+		return
+	}
 
-	check, _ := NewDocumentFaceMatchCheckBuilder().
+	recommendation, err := report.NewRecommendationBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	filter, err := sandbox.NewDocumentFilterBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	check, err := NewDocumentFaceMatchCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		WithDocumentFilter(filter).
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
