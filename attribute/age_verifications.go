@@ -1,4 +1,4 @@
-package yoti
+package attribute
 
 import (
 	"strconv"

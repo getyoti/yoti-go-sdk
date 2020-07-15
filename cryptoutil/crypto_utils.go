@@ -1,4 +1,4 @@
-package yoti
+package cryptoutil
 
 import (
 	"crypto/aes"
@@ -9,10 +9,12 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/v3/util"
 )
 
-// loadRsaKey loads a PEM encoded RSA private key
-func loadRsaKey(keyBytes []byte) (*rsa.PrivateKey, error) {
+// ParseRSAKey parses a PKCS1 private key from bytes
+func ParseRSAKey(keyBytes []byte) (*rsa.PrivateKey, error) {
 	// Extract the PEM-encoded data
 	block, _ := pem.Decode(keyBytes)
 
@@ -36,7 +38,8 @@ func decryptRsa(cipherBytes []byte, key *rsa.PrivateKey) ([]byte, error) {
 	return rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
 }
 
-func decipherAes(key, iv, cipherBytes []byte) ([]byte, error) {
+// DecipherAes deciphers AES-encrypted bytes
+func DecipherAes(key, iv, cipherBytes []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return []byte{}, err
@@ -87,10 +90,11 @@ func pkcs7Unpad(ciphertext []byte, blocksize int) (result []byte, err error) {
 	return ciphertext[:len(ciphertext)-n], nil
 }
 
-func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result string, err error) {
+// DecryptToken decrypts an RSA-encrypted token, using the specified RSA private key
+func DecryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result string, err error) {
 	// token was encoded as a urlsafe base64 so it can be transferred in a url
 	var cipherBytes []byte
-	if cipherBytes, err = urlSafeBase64ToBytes(encryptedConnectToken); err != nil {
+	if cipherBytes, err = util.UrlSafeBase64ToBytes(encryptedConnectToken); err != nil {
 		return "", err
 	}
 
@@ -99,12 +103,13 @@ func decryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result str
 		return "", err
 	}
 
-	return bytesToUtf8(decipheredBytes), nil
+	return util.BytesToUtf8(decipheredBytes), nil
 }
 
-func unwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error) {
+// UnwrapKey unwraps an RSA private key
+func UnwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error) {
 	var cipherBytes []byte
-	if cipherBytes, err = base64ToBytes(wrappedKey); err != nil {
+	if cipherBytes, err = util.Base64ToBytes(wrappedKey); err != nil {
 		return nil, err
 	}
 	return decryptRsa(cipherBytes, key)
