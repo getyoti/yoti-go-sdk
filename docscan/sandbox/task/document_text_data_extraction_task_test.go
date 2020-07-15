@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
 func Example_documentTextDataExtractionTaskBuilder() {
-	filter, err := sandbox.NewDocumentFilterBuilder().Build()
+	filter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
 		return
 	}

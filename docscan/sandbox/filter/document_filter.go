@@ -1,4 +1,4 @@
-package sandbox
+package filter
 
 type DocumentFilter struct {
 	DocumentTypes []string `json:"document_types"`

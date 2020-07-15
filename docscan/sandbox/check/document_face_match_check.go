@@ -1,11 +1,11 @@
 package check
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
-type documentFaceMatchCheck struct {
+type DocumentFaceMatchCheck struct {
 	documentCheck
 }
 
@@ -28,13 +28,13 @@ func (b *documentFaceMatchCheckBuilder) WithBreakdown(breakdown report.Breakdown
 	return b
 }
 
-func (b *documentFaceMatchCheckBuilder) WithDocumentFilter(filter sandbox.DocumentFilter) *documentFaceMatchCheckBuilder {
+func (b *documentFaceMatchCheckBuilder) WithDocumentFilter(filter filter.DocumentFilter) *documentFaceMatchCheckBuilder {
 	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
 
-func (b *documentFaceMatchCheckBuilder) Build() (documentFaceMatchCheck, error) {
-	documentFaceMatchCheck := documentFaceMatchCheck{}
+func (b *documentFaceMatchCheckBuilder) Build() (DocumentFaceMatchCheck, error) {
+	documentFaceMatchCheck := DocumentFaceMatchCheck{}
 
 	documentCheck, err := b.documentCheckBuilder.build()
 	if err != nil {
