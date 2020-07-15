@@ -4,7 +4,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
-type documentTextDataExtractionTask struct {
+type DocumentTextDataExtractionTask struct {
 	documentTask
 	Result documentTextDataExtractionTaskResult `json:"result"`
 }
@@ -36,8 +36,8 @@ func (b *documentTextDataExtractionTaskBuilder) WithDocumentField(key string, va
 	return b
 }
 
-func (b *documentTextDataExtractionTaskBuilder) Build() (documentTextDataExtractionTask, error) {
-	documentTextDataExtractionTask := documentTextDataExtractionTask{}
+func (b *documentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtractionTask, error) {
+	documentTextDataExtractionTask := DocumentTextDataExtractionTask{}
 
 	documentTask, err := b.documentTaskBuilder.build()
 	if err != nil {
