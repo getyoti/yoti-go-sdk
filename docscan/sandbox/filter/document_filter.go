@@ -12,7 +12,10 @@ type documentFilterBuilder struct {
 }
 
 func NewDocumentFilterBuilder() *documentFilterBuilder {
-	return &documentFilterBuilder{}
+	return &documentFilterBuilder{
+		documentTypes: []string{},
+		countryCodes:  []string{},
+	}
 }
 
 func (b *documentFilterBuilder) WithCountryCode(countryCode string) *documentFilterBuilder {

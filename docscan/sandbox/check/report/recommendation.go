@@ -1,10 +1,14 @@
 package report
 
+import (
+	"github.com/getyoti/yoti-go-sdk/v3/validate"
+)
+
 // Recommendation describes a recommendation on check
 type Recommendation struct {
 	Value              string `json:"value"`
-	Reason             string `json:"reason"`
-	RecoverySuggestion string `json:"recovery_suggestion"`
+	Reason             string `json:"reason,omitempty"`
+	RecoverySuggestion string `json:"recovery_suggestion,omitempty"`
 }
 
 type recommendationBuilder struct {
@@ -37,9 +41,16 @@ func (b *recommendationBuilder) WithRecoverySuggestion(recoverySuggestion string
 }
 
 func (b *recommendationBuilder) Build() (Recommendation, error) {
-	return Recommendation{
+	recommendation := Recommendation{
 		Value:              b.value,
 		Reason:             b.reason,
 		RecoverySuggestion: b.recoverySuggestion,
-	}, b.err
+	}
+
+	valueErr := validate.NotEmpty(recommendation.Value, "Value cannot be empty")
+	if valueErr != nil {
+		return recommendation, valueErr
+	}
+
+	return recommendation, b.err
 }

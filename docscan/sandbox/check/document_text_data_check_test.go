@@ -9,12 +9,17 @@ import (
 )
 
 func Example_documentTextDataCheckBuilder() {
-	breakdown, err := report.NewBreakdownBuilder().Build()
+	breakdown, err := report.NewBreakdownBuilder().
+		WithResult("some_result").
+		WithSubCheck("some_check").
+		Build()
 	if err != nil {
 		return
 	}
 
-	recommendation, err := report.NewRecommendationBuilder().Build()
+	recommendation, err := report.NewRecommendationBuilder().
+		WithValue("some_value").
+		Build()
 	if err != nil {
 		return
 	}
@@ -36,5 +41,5 @@ func Example_documentTextDataCheckBuilder() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"result":{"report":{"recommendation":{"value":"","reason":"","recovery_suggestion":""},"breakdown":[{"sub_check":"","result":"","details":null}]},"document_fields":{"some":"field"}},"document_filter":{"document_types":null,"country_codes":null}}
+	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":{"some":"field"}},"document_filter":{"document_types":[],"country_codes":[]}}
 }
