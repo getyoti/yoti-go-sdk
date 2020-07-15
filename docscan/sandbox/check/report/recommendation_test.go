@@ -1,4 +1,4 @@
-package sandbox
+package report
 
 import (
 	"encoding/json"

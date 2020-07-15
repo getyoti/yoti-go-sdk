@@ -1,7 +1,7 @@
-package sandbox
+package report
 
 // Breakdown describes a breakdown on check
-type breakdown struct {
+type Breakdown struct {
 	SubCheck string   `json:"sub_check"`
 	Result   string   `json:"result"`
 	Details  []detail `json:"details"`
@@ -44,8 +44,8 @@ func (b *breakdownBuilder) WithDetail(name string, value string) *breakdownBuild
 	return b
 }
 
-func (b *breakdownBuilder) Build() (breakdown, error) {
-	return breakdown{
+func (b *breakdownBuilder) Build() (Breakdown, error) {
+	return Breakdown{
 		SubCheck: b.subCheck,
 		Result:   b.result,
 		Details:  b.details,
