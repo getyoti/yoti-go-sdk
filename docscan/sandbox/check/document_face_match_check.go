@@ -11,7 +11,6 @@ type DocumentFaceMatchCheck struct {
 
 type documentFaceMatchCheckBuilder struct {
 	documentCheckBuilder
-	err error
 }
 
 func NewDocumentFaceMatchCheckBuilder() *documentFaceMatchCheckBuilder {
@@ -43,5 +42,5 @@ func (b *documentFaceMatchCheckBuilder) Build() (DocumentFaceMatchCheck, error) 
 
 	documentFaceMatchCheck.documentCheck = documentCheck
 
-	return documentFaceMatchCheck, b.err
+	return documentFaceMatchCheck, nil
 }

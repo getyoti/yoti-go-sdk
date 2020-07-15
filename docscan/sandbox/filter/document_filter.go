@@ -8,7 +8,6 @@ type DocumentFilter struct {
 type documentFilterBuilder struct {
 	documentTypes []string
 	countryCodes  []string
-	err           error
 }
 
 func NewDocumentFilterBuilder() *documentFilterBuilder {
@@ -32,5 +31,5 @@ func (b *documentFilterBuilder) Build() (DocumentFilter, error) {
 	return DocumentFilter{
 		DocumentTypes: b.documentTypes,
 		CountryCodes:  b.countryCodes,
-	}, b.err
+	}, nil
 }
