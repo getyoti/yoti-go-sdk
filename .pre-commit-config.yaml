@@ -21,7 +21,7 @@ repos:
         - id: go-build
           args: ["./..."]
         - id: go-cyclo
-          args: [-over=29]       
+          args: [-over=15]       
         - id: golangci-lint
           args: ["-e", "SA1019"]
         - id: go-mod-tidy
