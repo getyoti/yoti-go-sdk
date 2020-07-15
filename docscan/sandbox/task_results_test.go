@@ -23,5 +23,5 @@ func Example_taskResultsBuilder() {
 
 	data, _ := json.Marshal(taskResults)
 	fmt.Println(string(data))
-	// Output: {"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[{"document_filter":{"document_types":null,"country_codes":null},"result":{"document_fields":null}}]}
+	// Output: {"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[{"result":{}}]}
 }

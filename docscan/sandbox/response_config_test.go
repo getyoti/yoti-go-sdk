@@ -20,7 +20,7 @@ func Example_responseConfigBuilder_WithCheckReports() {
 
 	data, _ := json.Marshal(responseConfig)
 	fmt.Println(string(data))
-	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[],"async_report_delay":0}}
+	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
 }
 
 func Example_responseConfigBuilder_WithCheckReports_WithTaskResults() {
@@ -44,5 +44,5 @@ func Example_responseConfigBuilder_WithCheckReports_WithTaskResults() {
 
 	data, _ := json.Marshal(responseConfig)
 	fmt.Println(string(data))
-	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":null},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[],"async_report_delay":0}}
+	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[]},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
 }
