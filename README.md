@@ -60,7 +60,7 @@ Supported Go Versions:
 
 ## Installing the SDK
 
-_As of version **2.4.0**, [modules](https://github.com/golang/go/wiki/Modules) are used. This means it's not necessary to get a copy or fetch all dependencies as instructed below, as the Go toolchain will fetch them as necessary. You can simply add a `require github.com/getyoti/yoti-go-sdk/v3` to go.mod._
+_As of version **2.4.0**, [modules](https://github.com/golang/go/wiki/Modules) are used. This means it's not necessary to get a copy or fetch all dependencies, as the Go toolchain will fetch them as necessary. You can simply add a `require github.com/getyoti/yoti-go-sdk/v3` to go.mod._
 
 ## SDK Project import
 
