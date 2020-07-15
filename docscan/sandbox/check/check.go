@@ -11,7 +11,6 @@ type check struct {
 type checkBuilder struct {
 	recommendation report.Recommendation
 	breakdowns     []report.Breakdown
-	err            error
 }
 
 type checkResult struct {
@@ -41,5 +40,5 @@ func (b *checkBuilder) build() (check, error) {
 	}
 	return check{
 		Result: result,
-	}, b.err
+	}, nil
 }

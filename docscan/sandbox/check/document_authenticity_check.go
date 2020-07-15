@@ -11,7 +11,6 @@ type DocumentAuthenticityCheck struct {
 
 type documentAuthenticityCheckBuilder struct {
 	documentCheckBuilder
-	err error
 }
 
 func NewDocumentAuthenticityCheckBuilder() *documentAuthenticityCheckBuilder {
@@ -43,5 +42,5 @@ func (b *documentAuthenticityCheckBuilder) Build() (DocumentAuthenticityCheck, e
 
 	documentAuthenticityCheck.documentCheck = documentCheck
 
-	return documentAuthenticityCheck, b.err
+	return documentAuthenticityCheck, nil
 }
