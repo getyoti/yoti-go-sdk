@@ -1,7 +1,8 @@
-package yoti
+package profile
 
 import (
 	"github.com/getyoti/yoti-go-sdk/v3/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
 // Attribute names for application attributes
@@ -16,6 +17,15 @@ const (
 // to access well-known attributes.
 type ApplicationProfile struct {
 	baseProfile
+}
+
+// Creates a new Profile struct
+func NewApplicationProfile(attributes *yotiprotoattr.AttributeList) ApplicationProfile {
+	return ApplicationProfile{
+		baseProfile{
+			attributeSlice: createAttributeSlice(attributes),
+		},
+	}
 }
 
 // ApplicationName is the name of the application

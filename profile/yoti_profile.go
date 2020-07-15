@@ -1,10 +1,11 @@
-package yoti
+package profile
 
 import (
 	"strings"
 
 	"github.com/getyoti/yoti-go-sdk/v3/attribute"
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
 // Profile represents the details retrieved for a particular user. Consists of
@@ -12,6 +13,23 @@ import (
 // photo of the user or the user's date of birth.
 type Profile struct {
 	baseProfile
+}
+
+// Creates a new Profile struct
+func NewUserProfile(attributes *yotiprotoattr.AttributeList) Profile {
+	return Profile{
+		baseProfile{
+			attributeSlice: createAttributeSlice(attributes),
+		},
+	}
+}
+
+func createAttributeSlice(protoAttributeList *yotiprotoattr.AttributeList) (result []*yotiprotoattr.Attribute) {
+	if protoAttributeList != nil {
+		result = append(result, protoAttributeList.Attributes...)
+	}
+
+	return result
 }
 
 // Selfie is a photograph of the user. Will be nil if not provided by Yoti.
@@ -115,14 +133,14 @@ func (p Profile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) 
 
 // AgeVerifications returns a list of age verifications for the user.
 // Will be em empty slice if not provided by Yoti.
-func (p Profile) AgeVerifications() (out []AgeVerification, err error) {
+func (p Profile) AgeVerifications() (out []attribute.AgeVerification, err error) {
 	ageUnderString := strings.Replace(consts.AttrAgeUnder, "%d", "", -1)
 	ageOverString := strings.Replace(consts.AttrAgeOver, "%d", "", -1)
 
 	for _, a := range p.attributeSlice {
 		if strings.HasPrefix(a.Name, ageUnderString) ||
 			strings.HasPrefix(a.Name, ageOverString) {
-			verification, err := AgeVerification{}.New(a)
+			verification, err := attribute.AgeVerification{}.New(a)
 			if err != nil {
 				return nil, err
 			}
@@ -130,4 +148,15 @@ func (p Profile) AgeVerifications() (out []AgeVerification, err error) {
 		}
 	}
 	return out, err
+}
+
+// GetProtobufAnchors gets the anchors associated with an attribute
+func GetProtobufAnchors(profile Profile, attributeName string) []*yotiprotoattr.Anchor {
+	for _, v := range profile.attributeSlice {
+		if v.Name == attributeName {
+			return v.Anchors
+		}
+	}
+
+	return nil
 }

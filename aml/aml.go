@@ -1,4 +1,4 @@
-package yoti
+package aml
 
 import (
 	"encoding/json"
