@@ -16,7 +16,7 @@ type documentTextDataExtractionTaskBuilder struct {
 }
 
 type documentTextDataExtractionTaskResult struct {
-	DocumentFields map[string]string `json:"document_fields"`
+	DocumentFields map[string]string `json:"document_fields,omitempty"`
 }
 
 func NewDocumentTextDataExtractionTaskBuilder() *documentTextDataExtractionTaskBuilder {

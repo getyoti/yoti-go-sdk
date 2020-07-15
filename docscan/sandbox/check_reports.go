@@ -9,7 +9,7 @@ type CheckReports struct {
 	DocumentTextDataChecks     []check.DocumentTextDataCheck     `json:"ID_DOCUMENT_TEXT_DATA_CHECK"`
 	DocumentFaceMatchChecks    []check.DocumentFaceMatchCheck    `json:"ID_DOCUMENT_FACE_MATCH_CHECK"`
 	LivenessChecks             []check.LivenessCheck             `json:"LIVENESS"`
-	AsyncReportDelay           uint32                            `json:"async_report_delay"`
+	AsyncReportDelay           uint32                            `json:"async_report_delay,omitempty"`
 }
 
 type checkReportsBuilder struct {
