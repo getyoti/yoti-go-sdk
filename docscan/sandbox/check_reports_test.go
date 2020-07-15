@@ -72,5 +72,5 @@ func Example_checkReportsBuilderMinimal() {
 
 	data, _ := json.Marshal(checkReports)
 	fmt.Println(string(data))
-	// Output: {"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[],"async_report_delay":0}
+	// Output: {"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}
 }
