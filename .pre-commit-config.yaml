@@ -3,13 +3,13 @@ repos:
     hooks:
       - id: local-go-fmt
         name: 'go fmt'
-        entry: gofmt.sh
+        entry: sh/gofmt.sh
         language: 'script'
         description: "Go Format"
         
       - id: local-tidy
         name: 'tidy imports'
-        entry: tidy.sh
+        entry: sh/tidy.sh
         language: 'script'
         description: "Tidy imports"
   
