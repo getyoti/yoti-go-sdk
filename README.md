@@ -63,20 +63,14 @@ Supported Go Versions:
 
 ## Installing the SDK
 
-_As of version **2.4.0**, [modules](https://github.com/golang/go/wiki/Modules) are used. This means it's not necessary to get a copy or fetch all dependencies as instructed below, as the Go toolchain will fetch them as necessary. You can simply add a `require github.com/getyoti/yoti-go-sdk/v2` to go.mod._
-
-To download and install the Yoti SDK and its dependencies, run the following command from your terminal:
-
-```Go
-go get "github.com/getyoti/yoti-go-sdk/v2"
-```
+_As of version **2.4.0**, [modules](https://github.com/golang/go/wiki/Modules) are used. This means it's not necessary to get a copy or fetch all dependencies as instructed below, as the Go toolchain will fetch them as necessary. You can simply add a `require github.com/getyoti/yoti-go-sdk/v3` to go.mod._
 
 ## SDK Project import
 
 You can reference the project URL by adding the following import:
 
 ```Go
-import "github.com/getyoti/yoti-go-sdk/v2"
+import "github.com/getyoti/yoti-go-sdk/v3"
 ```
 
 ## Configuration
