@@ -1,4 +1,4 @@
-package sandbox
+package request
 
 type ResponseConfig struct {
 	TaskResults  *TaskResults  `json:"task_results,omitempty"`
