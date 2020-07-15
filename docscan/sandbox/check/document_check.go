@@ -12,7 +12,6 @@ type documentCheck struct {
 type documentCheckBuilder struct {
 	checkBuilder
 	documentFilter *filter.DocumentFilter
-	err            error
 }
 
 func (b *documentCheckBuilder) withDocumentFilter(filter filter.DocumentFilter) {
@@ -32,5 +31,5 @@ func (b *documentCheckBuilder) build() (documentCheck, error) {
 		documentCheck.DocumentFilter = b.documentFilter
 	}
 
-	return documentCheck, b.err
+	return documentCheck, nil
 }
