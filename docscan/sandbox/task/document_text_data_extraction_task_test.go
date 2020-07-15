@@ -3,16 +3,23 @@ package task
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
 )
 
 func Example_documentTextDataExtractionTaskBuilder() {
-	filter, _ := sandbox.NewDocumentFilterBuilder().Build()
+	filter, err := sandbox.NewDocumentFilterBuilder().Build()
+	if err != nil {
+		return
+	}
 
-	check, _ := NewDocumentTextDataExtractionTaskBuilder().
+	check, err := NewDocumentTextDataExtractionTaskBuilder().
 		WithDocumentFilter(filter).
 		WithDocumentField("some", "field").
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
