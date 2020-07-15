@@ -1,11 +1,11 @@
-package sandbox
+package request
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
 )
 
 func Example_checkReportsBuilder() {
