@@ -1,11 +1,11 @@
 package check
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
-type documentTextDataCheck struct {
+type DocumentTextDataCheck struct {
 	Result documentTextDataCheckResult `json:"result"`
 	documentCheck
 }
@@ -35,7 +35,7 @@ func (b *documentTextDataCheckBuilder) WithBreakdown(breakdown report.Breakdown)
 	return b
 }
 
-func (b *documentTextDataCheckBuilder) WithDocumentFilter(filter sandbox.DocumentFilter) *documentTextDataCheckBuilder {
+func (b *documentTextDataCheckBuilder) WithDocumentFilter(filter filter.DocumentFilter) *documentTextDataCheckBuilder {
 	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
@@ -48,8 +48,8 @@ func (b *documentTextDataCheckBuilder) WithDocumentField(key string, value strin
 	return b
 }
 
-func (b *documentTextDataCheckBuilder) Build() (documentTextDataCheck, error) {
-	documentTextDataCheck := documentTextDataCheck{}
+func (b *documentTextDataCheckBuilder) Build() (DocumentTextDataCheck, error) {
+	documentTextDataCheck := DocumentTextDataCheck{}
 
 	documentCheck, err := b.documentCheckBuilder.build()
 	if err != nil {

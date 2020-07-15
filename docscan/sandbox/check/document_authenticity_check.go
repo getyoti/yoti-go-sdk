@@ -1,11 +1,11 @@
 package check
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
 )
 
-type documentAuthenticityCheck struct {
+type DocumentAuthenticityCheck struct {
 	documentCheck
 }
 
@@ -28,13 +28,13 @@ func (b *documentAuthenticityCheckBuilder) WithBreakdown(breakdown report.Breakd
 	return b
 }
 
-func (b *documentAuthenticityCheckBuilder) WithDocumentFilter(filter sandbox.DocumentFilter) *documentAuthenticityCheckBuilder {
+func (b *documentAuthenticityCheckBuilder) WithDocumentFilter(filter filter.DocumentFilter) *documentAuthenticityCheckBuilder {
 	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
 
-func (b *documentAuthenticityCheckBuilder) Build() (documentAuthenticityCheck, error) {
-	documentAuthenticityCheck := documentAuthenticityCheck{}
+func (b *documentAuthenticityCheckBuilder) Build() (DocumentAuthenticityCheck, error) {
+	documentAuthenticityCheck := DocumentAuthenticityCheck{}
 
 	documentCheck, err := b.documentCheckBuilder.build()
 	if err != nil {

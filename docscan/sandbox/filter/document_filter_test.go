@@ -1,4 +1,4 @@
-package sandbox
+package filter
 
 import (
 	"encoding/json"
