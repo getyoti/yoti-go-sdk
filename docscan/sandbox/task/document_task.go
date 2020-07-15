@@ -10,7 +10,6 @@ type documentTask struct {
 
 type documentTaskBuilder struct {
 	documentFilter *filter.DocumentFilter
-	err            error
 }
 
 func (b *documentTaskBuilder) withDocumentFilter(filter filter.DocumentFilter) {
@@ -24,5 +23,5 @@ func (b *documentTaskBuilder) build() (documentTask, error) {
 		documentTask.DocumentFilter = b.documentFilter
 	}
 
-	return documentTask, b.err
+	return documentTask, nil
 }

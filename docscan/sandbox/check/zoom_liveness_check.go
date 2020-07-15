@@ -14,7 +14,6 @@ type ZoomLivenessCheck struct {
 
 type zoomLivenessCheckBuilder struct {
 	livenessCheckBuilder
-	err error
 }
 
 func NewZoomLivenessCheckBuilder() *zoomLivenessCheckBuilder {
@@ -37,5 +36,5 @@ func (b *zoomLivenessCheckBuilder) Build() (LivenessCheck, error) {
 		return livenessCheck, err
 	}
 
-	return livenessCheck, b.err
+	return livenessCheck, nil
 }
