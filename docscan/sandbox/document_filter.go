@@ -1,6 +1,6 @@
 package sandbox
 
-type documentFilter struct {
+type DocumentFilter struct {
 	DocumentTypes []string `json:"document_types"`
 	CountryCodes  []string `json:"country_codes"`
 }
@@ -25,8 +25,8 @@ func (b *documentFilterBuilder) WithDocumentType(documentType string) *documentF
 	return b
 }
 
-func (b *documentFilterBuilder) Build() (documentFilter, error) {
-	return documentFilter{
+func (b *documentFilterBuilder) Build() (DocumentFilter, error) {
+	return DocumentFilter{
 		DocumentTypes: b.documentTypes,
 		CountryCodes:  b.countryCodes,
 	}, b.err

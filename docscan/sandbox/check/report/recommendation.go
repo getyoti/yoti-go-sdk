@@ -1,7 +1,7 @@
-package sandbox
+package report
 
 // Recommendation describes a recommendation on check
-type recommendation struct {
+type Recommendation struct {
 	Value              string `json:"value"`
 	Reason             string `json:"reason"`
 	RecoverySuggestion string `json:"recovery_suggestion"`
@@ -36,8 +36,8 @@ func (b *recommendationBuilder) WithRecoverySuggestion(recoverySuggestion string
 	return b
 }
 
-func (b *recommendationBuilder) Build() (recommendation, error) {
-	return recommendation{
+func (b *recommendationBuilder) Build() (Recommendation, error) {
+	return Recommendation{
 		Value:              b.value,
 		Reason:             b.reason,
 		RecoverySuggestion: b.recoverySuggestion,

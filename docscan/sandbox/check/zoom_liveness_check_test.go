@@ -1,13 +1,15 @@
-package sandbox
+package check
 
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
 )
 
 func Example_zoomLivenessCheckBuilder() {
-	breakdown, _ := NewBreakdownBuilder().Build()
-	recommendation, _ := NewRecommendationBuilder().Build()
+	breakdown, _ := report.NewBreakdownBuilder().Build()
+	recommendation, _ := report.NewRecommendationBuilder().Build()
 
 	check, _ := NewZoomLivenessCheckBuilder().
 		WithBreakdown(breakdown).
