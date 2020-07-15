@@ -14,7 +14,9 @@ type taskResultsBuilder struct {
 }
 
 func NewTaskResultsBuilder() *taskResultsBuilder {
-	return &taskResultsBuilder{}
+	return &taskResultsBuilder{
+		documentTextDataExtractionTasks: []task.DocumentTextDataExtractionTask{},
+	}
 }
 
 func (b *taskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextDataExtractionTasks task.DocumentTextDataExtractionTask) *taskResultsBuilder {

@@ -5,22 +5,24 @@ import (
 )
 
 type documentTask struct {
-	DocumentFilter filter.DocumentFilter `json:"document_filter"`
+	DocumentFilter *filter.DocumentFilter `json:"document_filter,omitempty"`
 }
 
 type documentTaskBuilder struct {
-	documentFilter filter.DocumentFilter
+	documentFilter *filter.DocumentFilter
 	err            error
 }
 
 func (b *documentTaskBuilder) withDocumentFilter(filter filter.DocumentFilter) {
-	b.documentFilter = filter
+	b.documentFilter = &filter
 }
 
 func (b *documentTaskBuilder) build() (documentTask, error) {
 	documentTask := documentTask{}
 
-	documentTask.DocumentFilter = b.documentFilter
+	if b.documentFilter != nil {
+		documentTask.DocumentFilter = b.documentFilter
+	}
 
 	return documentTask, b.err
 }
