@@ -8,35 +8,41 @@ import (
 )
 
 func Test_recommendationBuilder_WithReason(t *testing.T) {
-	recommendation, _ := NewRecommendationBuilder().
+	recommendation, err := NewRecommendationBuilder().
 		WithReason("some_reason").
 		Build()
 
+	assert.NilError(t, err)
 	assert.Equal(t, recommendation.Reason, "some_reason")
 }
 
 func Test_recommendationBuilder_WithValue(t *testing.T) {
-	recommendation, _ := NewRecommendationBuilder().
+	recommendation, err := NewRecommendationBuilder().
 		WithValue("some_value").
 		Build()
 
+	assert.NilError(t, err)
 	assert.Equal(t, recommendation.Value, "some_value")
 }
 
 func Test_recommendationBuilder_WithRecoverySuggestion(t *testing.T) {
-	recommendation, _ := NewRecommendationBuilder().
+	recommendation, err := NewRecommendationBuilder().
 		WithRecoverySuggestion("some_suggestion").
 		Build()
 
+	assert.NilError(t, err)
 	assert.Equal(t, recommendation.RecoverySuggestion, "some_suggestion")
 }
 
 func Example_recommendationBuilder() {
-	recommendation, _ := NewRecommendationBuilder().
+	recommendation, err := NewRecommendationBuilder().
 		WithReason("some_reason").
 		WithValue("some_value").
 		WithRecoverySuggestion("some_suggestion").
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := json.Marshal(recommendation)
 	fmt.Println(string(data))
