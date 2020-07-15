@@ -1,8 +1,8 @@
 package check
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
 type DocumentFaceMatchCheck struct {

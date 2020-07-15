@@ -1,7 +1,7 @@
-package sandbox
+package request
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/task"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/task"
 )
 
 type TaskResults struct {

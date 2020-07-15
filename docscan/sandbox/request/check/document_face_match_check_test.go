@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
-func Example_documentAuthenticityCheckBuilder() {
+func Example_documentFaceMatchCheckBuilder() {
 	breakdown, err := report.NewBreakdownBuilder().
 		WithResult("some_result").
 		WithSubCheck("some_check").
@@ -29,7 +29,7 @@ func Example_documentAuthenticityCheckBuilder() {
 		return
 	}
 
-	check, err := NewDocumentAuthenticityCheckBuilder().
+	check, err := NewDocumentFaceMatchCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		WithDocumentFilter(filter).
