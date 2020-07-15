@@ -22,7 +22,12 @@ type checkReportsBuilder struct {
 }
 
 func NewCheckReportsBuilder() *checkReportsBuilder {
-	return &checkReportsBuilder{}
+	return &checkReportsBuilder{
+		documentAuthenticityChecks: []check.DocumentAuthenticityCheck{},
+		documentTextDataChecks:     []check.DocumentTextDataCheck{},
+		documentFaceMatchChecks:    []check.DocumentFaceMatchCheck{},
+		livenessChecks:             []check.LivenessCheck{},
+	}
 }
 
 func (b *checkReportsBuilder) WithDocumentAuthenticityCheck(documentAuthenticityCheck check.DocumentAuthenticityCheck) *checkReportsBuilder {
