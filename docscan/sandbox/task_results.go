@@ -10,7 +10,6 @@ type TaskResults struct {
 
 type taskResultsBuilder struct {
 	documentTextDataExtractionTasks []task.DocumentTextDataExtractionTask
-	err                             error
 }
 
 func NewTaskResultsBuilder() *taskResultsBuilder {
@@ -27,5 +26,5 @@ func (b *taskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextData
 func (b *taskResultsBuilder) Build() (TaskResults, error) {
 	return TaskResults{
 		DocumentTextDataExtractionTasks: b.documentTextDataExtractionTasks,
-	}, b.err
+	}, nil
 }
