@@ -1,4 +1,4 @@
-package sandbox
+package check
 
 type livenessCheck struct {
 	check
