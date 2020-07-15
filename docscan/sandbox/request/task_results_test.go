@@ -1,10 +1,10 @@
-package sandbox
+package request
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/task"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/task"
 )
 
 func Example_taskResultsBuilder() {

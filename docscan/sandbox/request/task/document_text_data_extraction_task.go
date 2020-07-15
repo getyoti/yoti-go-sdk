@@ -1,7 +1,7 @@
 package task
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/filter"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
 type DocumentTextDataExtractionTask struct {
