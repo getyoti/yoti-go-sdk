@@ -19,8 +19,8 @@ type checkResult struct {
 }
 
 type checkReport struct {
-	Recommendation report.Recommendation `json:"recommendation"`
-	Breakdown      []report.Breakdown    `json:"breakdown"`
+	Recommendation report.Recommendation `json:"recommendation,omitempty"`
+	Breakdown      []report.Breakdown    `json:"breakdown,omitempty"`
 }
 
 func (b *checkBuilder) withRecommendation(recommendation report.Recommendation) {
