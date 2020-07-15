@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2"
-	"github.com/getyoti/yoti-go-sdk/v2/cryptoutil"
-	"github.com/getyoti/yoti-go-sdk/v2/file"
-	"github.com/getyoti/yoti-go-sdk/v2/profile/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3"
+	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/file"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/sandbox"
 
 	_ "github.com/joho/godotenv/autoload"
 	"gotest.tools/v3/assert"

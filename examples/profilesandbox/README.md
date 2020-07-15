@@ -7,7 +7,7 @@ This module contains the tools you need to test your Go back-end integration wit
 You can reference the sandbox by adding the following import:
 
 ```Go
-import "github.com/getyoti/yoti-go-sdk/v2/profile/sandbox"
+import "github.com/getyoti/yoti-go-sdk/v3/profile/sandbox"
 ```
 
 ## Configuration
