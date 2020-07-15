@@ -1,4 +1,9 @@
-package sandbox
+package check
+
+import (
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
+)
 
 type documentTextDataCheck struct {
 	Result documentTextDataCheckResult `json:"result"`
@@ -20,17 +25,17 @@ func NewDocumentTextDataCheckBuilder() *documentTextDataCheckBuilder {
 	return &documentTextDataCheckBuilder{}
 }
 
-func (b *documentTextDataCheckBuilder) WithRecommendation(recommendation recommendation) *documentTextDataCheckBuilder {
+func (b *documentTextDataCheckBuilder) WithRecommendation(recommendation report.Recommendation) *documentTextDataCheckBuilder {
 	b.documentCheckBuilder.withRecommendation(recommendation)
 	return b
 }
 
-func (b *documentTextDataCheckBuilder) WithBreakdown(breakdown breakdown) *documentTextDataCheckBuilder {
+func (b *documentTextDataCheckBuilder) WithBreakdown(breakdown report.Breakdown) *documentTextDataCheckBuilder {
 	b.documentCheckBuilder.withBreakdown(breakdown)
 	return b
 }
 
-func (b *documentTextDataCheckBuilder) WithDocumentFilter(filter documentFilter) *documentTextDataCheckBuilder {
+func (b *documentTextDataCheckBuilder) WithDocumentFilter(filter sandbox.DocumentFilter) *documentTextDataCheckBuilder {
 	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
