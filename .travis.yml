@@ -26,7 +26,7 @@ jobs:
       before_script:
         - go get golang.org/x/tools/cmd/goimports
       script:
-        - ./gofmt.sh
+        - ./sh/gofmt.sh
         - go vet ./...
         - go test -v -race ./...
     - <<: *test
