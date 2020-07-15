@@ -1,8 +1,12 @@
-package sandbox
+package task
+
+import (
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+)
 
 type documentTextDataExtractionTask struct {
-	Result documentTextDataExtractionTaskResult `json:"result"`
 	documentTask
+	Result documentTextDataExtractionTaskResult `json:"result"`
 }
 
 type documentTextDataExtractionTaskBuilder struct {
@@ -12,7 +16,6 @@ type documentTextDataExtractionTaskBuilder struct {
 }
 
 type documentTextDataExtractionTaskResult struct {
-	taskResult
 	DocumentFields map[string]string `json:"document_fields"`
 }
 
@@ -20,17 +23,7 @@ func NewDocumentTextDataExtractionTaskBuilder() *documentTextDataExtractionTaskB
 	return &documentTextDataExtractionTaskBuilder{}
 }
 
-func (b *documentTextDataExtractionTaskBuilder) WithRecommendation(recommendation recommendation) *documentTextDataExtractionTaskBuilder {
-	b.documentTaskBuilder.withRecommendation(recommendation)
-	return b
-}
-
-func (b *documentTextDataExtractionTaskBuilder) WithBreakdown(breakdown breakdown) *documentTextDataExtractionTaskBuilder {
-	b.documentTaskBuilder.withBreakdown(breakdown)
-	return b
-}
-
-func (b *documentTextDataExtractionTaskBuilder) WithDocumentFilter(filter documentFilter) *documentTextDataExtractionTaskBuilder {
+func (b *documentTextDataExtractionTaskBuilder) WithDocumentFilter(filter sandbox.DocumentFilter) *documentTextDataExtractionTaskBuilder {
 	b.documentTaskBuilder.withDocumentFilter(filter)
 	return b
 }
@@ -53,7 +46,6 @@ func (b *documentTextDataExtractionTaskBuilder) Build() (documentTextDataExtract
 
 	documentTextDataExtractionTask.documentTask = documentTask
 	documentTextDataExtractionTask.Result = documentTextDataExtractionTaskResult{
-		taskResult:     documentTask.Result,
 		DocumentFields: b.documentFields,
 	}
 

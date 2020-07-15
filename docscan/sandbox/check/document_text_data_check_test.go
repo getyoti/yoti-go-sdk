@@ -1,16 +1,19 @@
-package sandbox
+package check
 
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/check/report"
 )
 
-func Example_documentTextDataExtractionTaskBuilder() {
-	breakdown, _ := NewBreakdownBuilder().Build()
-	recommendation, _ := NewRecommendationBuilder().Build()
-	filter, _ := NewDocumentFilterBuilder().Build()
+func Example_documentTextDataCheckBuilder() {
+	breakdown, _ := report.NewBreakdownBuilder().Build()
+	recommendation, _ := report.NewRecommendationBuilder().Build()
+	filter, _ := sandbox.NewDocumentFilterBuilder().Build()
 
-	check, _ := NewDocumentTextDataExtractionTaskBuilder().
+	check, _ := NewDocumentTextDataCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		WithDocumentFilter(filter).
