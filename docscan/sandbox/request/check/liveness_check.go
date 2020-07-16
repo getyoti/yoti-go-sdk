@@ -16,11 +16,9 @@ func (b *livenessCheckBuilder) withLivenessType(livenessType string) *livenessCh
 	return b
 }
 
-func (b *livenessCheckBuilder) build() (LivenessCheck, error) {
-	livenessCheck := LivenessCheck{
+func (b *livenessCheckBuilder) build() LivenessCheck {
+	return LivenessCheck{
 		LivenessType: b.livenessType,
 		check:        b.checkBuilder.build(),
 	}
-
-	return livenessCheck, nil
 }
