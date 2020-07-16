@@ -7,7 +7,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/task"
 )
 
-func Example_taskResultsBuilder() {
+func ExampleNewTaskResultsBuilder() {
 	textDataExtractionTask, err := task.NewDocumentTextDataExtractionTaskBuilder().
 		Build()
 	if err != nil {
