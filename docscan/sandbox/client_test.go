@@ -17,7 +17,7 @@ import (
 
 func TestClient_httpClient_ShouldReturnDefaultClient(t *testing.T) {
 	client := Client{}
-	assert.Check(t, client.httpClient() != nil)
+	assert.Check(t, client.getHTTPClient() != nil)
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
@@ -42,6 +42,18 @@ func TestClient_ConfigureSessionResponse_ShouldReturnMissingKeyError(t *testing.
 	client := Client{}
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.ErrorContains(t, err, "Missing Private Key")
+}
+
+func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
+	client := Client{
+		jsonMarshaler: &mockJSONMarshaler{
+			marshal: func(v interface{}) ([]byte, error) {
+				return []byte{}, errors.New("some json error")
+			},
+		},
+	}
+	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	assert.ErrorContains(t, err, "some json error")
 }
 
 func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
@@ -98,6 +110,18 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnMissingKeyError(t *test
 	client := Client{}
 	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
 	assert.ErrorContains(t, err, "Missing Private Key")
+}
+
+func TestClient_ConfigureApplicationResponse_ShouldReturnJsonError(t *testing.T) {
+	client := Client{
+		jsonMarshaler: &mockJSONMarshaler{
+			marshal: func(v interface{}) ([]byte, error) {
+				return []byte{}, errors.New("some json error")
+			},
+		},
+	}
+	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	assert.ErrorContains(t, err, "some json error")
 }
 
 func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
@@ -218,4 +242,15 @@ func mockHTTPClientCreatedResponse() *mockHTTPClient {
 			}, nil
 		},
 	}
+}
+
+type mockJSONMarshaler struct {
+	marshal func(v interface{}) ([]byte, error)
+}
+
+func (mock *mockJSONMarshaler) Marshal(v interface{}) ([]byte, error) {
+	if mock.marshal != nil {
+		return mock.marshal(v)
+	}
+	return nil, nil
 }
