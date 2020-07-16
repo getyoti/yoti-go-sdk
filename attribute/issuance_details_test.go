@@ -2,7 +2,6 @@ package attribute
 
 import (
 	"encoding/base64"
-	"strings"
 	"testing"
 	"time"
 
@@ -142,5 +141,5 @@ func TestInvalidProtobufThrowsError(t *testing.T) {
 
 	assert.Assert(t, is.Nil(result))
 
-	assert.Check(t, strings.HasPrefix(err.Error(), "Unable to parse ThirdPartyAttribute value"))
+	assert.ErrorContains(t, err, "Unable to parse ThirdPartyAttribute value")
 }

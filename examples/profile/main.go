@@ -132,7 +132,7 @@ func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, sc
 		)))
 	}
 
-	share, err := yoti.CreateShareURL(client, &scenario)
+	share, err := client.CreateShareURL(&scenario)
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),

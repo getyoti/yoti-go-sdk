@@ -3,13 +3,13 @@ package yoti
 import (
 	"crypto/rsa"
 	"errors"
+	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/dynamic_sharing_service"
 	"github.com/getyoti/yoti-go-sdk/v3/profile"
-	"github.com/getyoti/yoti-go-sdk/v3/web"
 )
 
 const apiDefaultURL = "https://api.yoti.com/api/v1"
@@ -26,7 +26,7 @@ type Client struct {
 	Key *rsa.PrivateKey
 
 	apiURL     string
-	HTTPClient web.HttpClient // Mockable HTTP Client Interface
+	HTTPClient requests.HttpClient // Mockable HTTP Client Interface
 }
 
 // NewClient constructs a Client object

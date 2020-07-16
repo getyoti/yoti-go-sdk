@@ -4,10 +4,10 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
-	"github.com/getyoti/yoti-go-sdk/v3/web"
 )
 
 func getAMLEndpoint(sdkID string) string {
@@ -16,7 +16,7 @@ func getAMLEndpoint(sdkID string) string {
 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
-func PerformAmlCheck(httpClient web.HttpClient, amlProfile AmlProfile, clientSdkId, apiUrl string, key *rsa.PrivateKey) (amlResult AmlResult, err error) {
+func PerformAmlCheck(httpClient requests.HttpClient, amlProfile AmlProfile, clientSdkId, apiUrl string, key *rsa.PrivateKey) (amlResult AmlResult, err error) {
 	payload, err := json.Marshal(amlProfile)
 	if err != nil {
 		return
@@ -38,11 +38,16 @@ func PerformAmlCheck(httpClient web.HttpClient, amlProfile AmlProfile, clientSdk
 	amlErrorMessages := make(map[int]string)
 	amlErrorMessages[-1] = "AML Check was unsuccessful, status code: '%[1]d', content '%[2]s'"
 
-	response, err := web.MakeRequest(httpClient, request, amlErrorMessages)
+	response, err := requests.Execute(httpClient, request, amlErrorMessages)
 	if err != nil {
 		return
 	}
 
-	amlResult, err = GetAmlResult([]byte(response))
+	responseBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+
+	amlResult, err = GetAmlResult(responseBytes)
 	return
 }
