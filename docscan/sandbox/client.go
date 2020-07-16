@@ -16,6 +16,10 @@ type httpClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
+type jsonMarshaler interface {
+	Marshal(v interface{}) ([]byte, error)
+}
+
 // Client is responsible for setting up test data in the sandbox instance. BaseURL is not required.
 type Client struct {
 	// Client SDK ID. This can be found in the Yoti Hub after you have created and activated an application.
@@ -26,13 +30,22 @@ type Client struct {
 	BaseURL string
 	// Mockable HTTP Client Interface
 	HTTPClient httpClient
+	// Mockable JSON marshaler
+	jsonMarshaler jsonMarshaler
 }
 
-func (client *Client) httpClient() httpClient {
+func (client *Client) getHTTPClient() httpClient {
 	if client.HTTPClient != nil {
 		return client.HTTPClient
 	}
 	return http.DefaultClient
+}
+
+func (client *Client) marshal(v interface{}) ([]byte, error) {
+	if client.jsonMarshaler != nil {
+		return client.jsonMarshaler.Marshal(v)
+	}
+	return json.Marshal(v)
 }
 
 func (client *Client) baseURL() string {
@@ -47,7 +60,7 @@ func (client *Client) baseURL() string {
 }
 
 func (client *Client) makeConfigureResponseRequest(request *http.Request) (err error) {
-	response, err := client.httpClient().Do(request)
+	response, err := client.getHTTPClient().Do(request)
 	if err != nil {
 		return err
 	}
@@ -62,7 +75,7 @@ func (client *Client) makeConfigureResponseRequest(request *http.Request) (err e
 // ConfigureSessionResponse configures the response for the session
 func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig request.ResponseConfig) (err error) {
 	requestEndpoint := "/sessions/" + sessionID + "/response-config"
-	requestBody, err := json.Marshal(responseConfig)
+	requestBody, err := client.marshal(responseConfig)
 	if err != nil {
 		return err
 	}
@@ -86,7 +99,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 // ConfigureApplicationResponse configures the response for the application
 func (client *Client) ConfigureApplicationResponse(responseConfig request.ResponseConfig) (err error) {
 	requestEndpoint := "/apps/" + client.ClientSdkID + "/response-config"
-	requestBody, err := json.Marshal(responseConfig)
+	requestBody, err := client.marshal(responseConfig)
 	if err != nil {
 		return err
 	}
