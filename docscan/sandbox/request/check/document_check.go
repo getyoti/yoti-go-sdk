@@ -19,12 +19,8 @@ func (b *documentCheckBuilder) withDocumentFilter(filter filter.DocumentFilter) 
 }
 
 func (b *documentCheckBuilder) build() (documentCheck, error) {
-	documentCheck := documentCheck{}
-
-	check, err := b.checkBuilder.build()
-	documentCheck.check = check
-	if err != nil {
-		return documentCheck, err
+	documentCheck := documentCheck{
+		check: b.checkBuilder.build(),
 	}
 
 	if b.documentFilter != nil {
