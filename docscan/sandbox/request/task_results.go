@@ -4,26 +4,31 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/task"
 )
 
+// TaskResults represents task results
 type TaskResults struct {
 	DocumentTextDataExtractionTasks []task.DocumentTextDataExtractionTask `json:"ID_DOCUMENT_TEXT_DATA_EXTRACTION"`
 }
 
-type taskResultsBuilder struct {
+// TaskResultsBuilder builds TaskResults
+type TaskResultsBuilder struct {
 	documentTextDataExtractionTasks []task.DocumentTextDataExtractionTask
 }
 
-func NewTaskResultsBuilder() *taskResultsBuilder {
-	return &taskResultsBuilder{
+// NewTaskResultsBuilder creates a new TaskResultsBuilder
+func NewTaskResultsBuilder() *TaskResultsBuilder {
+	return &TaskResultsBuilder{
 		documentTextDataExtractionTasks: []task.DocumentTextDataExtractionTask{},
 	}
 }
 
-func (b *taskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextDataExtractionTasks task.DocumentTextDataExtractionTask) *taskResultsBuilder {
+// WithDocumentTextDataExtractionTask adds a document text data extraction task
+func (b *TaskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextDataExtractionTasks task.DocumentTextDataExtractionTask) *TaskResultsBuilder {
 	b.documentTextDataExtractionTasks = append(b.documentTextDataExtractionTasks, documentTextDataExtractionTasks)
 	return b
 }
 
-func (b *taskResultsBuilder) Build() (TaskResults, error) {
+// Build creates TaskResults
+func (b *TaskResultsBuilder) Build() (TaskResults, error) {
 	return TaskResults{
 		DocumentTextDataExtractionTasks: b.documentTextDataExtractionTasks,
 	}, nil
