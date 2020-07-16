@@ -4,12 +4,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
+// DocumentTextDataExtractionTask represents a document text data extraction task
 type DocumentTextDataExtractionTask struct {
 	documentTask
 	Result documentTextDataExtractionTaskResult `json:"result"`
 }
 
-type documentTextDataExtractionTaskBuilder struct {
+// DocumentTextDataExtractionTaskBuilder builds a DocumentTextDataExtractionTask
+type DocumentTextDataExtractionTaskBuilder struct {
 	documentTaskBuilder
 	documentFields map[string]string
 }
@@ -18,16 +20,19 @@ type documentTextDataExtractionTaskResult struct {
 	DocumentFields map[string]string `json:"document_fields,omitempty"`
 }
 
-func NewDocumentTextDataExtractionTaskBuilder() *documentTextDataExtractionTaskBuilder {
-	return &documentTextDataExtractionTaskBuilder{}
+// NewDocumentTextDataExtractionTaskBuilder creates a new DocumentTextDataExtractionTaskBuilder
+func NewDocumentTextDataExtractionTaskBuilder() *DocumentTextDataExtractionTaskBuilder {
+	return &DocumentTextDataExtractionTaskBuilder{}
 }
 
-func (b *documentTextDataExtractionTaskBuilder) WithDocumentFilter(filter filter.DocumentFilter) *documentTextDataExtractionTaskBuilder {
+// WithDocumentFilter adds a document filter to the task
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFilter(filter filter.DocumentFilter) *DocumentTextDataExtractionTaskBuilder {
 	b.documentTaskBuilder.withDocumentFilter(filter)
 	return b
 }
 
-func (b *documentTextDataExtractionTaskBuilder) WithDocumentField(key string, value string) *documentTextDataExtractionTaskBuilder {
+// WithDocumentField adds a document field to the task
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentField(key string, value string) *DocumentTextDataExtractionTaskBuilder {
 	if b.documentFields == nil {
 		b.documentFields = make(map[string]string)
 	}
@@ -35,7 +40,8 @@ func (b *documentTextDataExtractionTaskBuilder) WithDocumentField(key string, va
 	return b
 }
 
-func (b *documentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtractionTask, error) {
+// Build creates a new DocumentTextDataExtractionTask
+func (b *DocumentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtractionTask, error) {
 	documentTextDataExtractionTask := DocumentTextDataExtractionTask{}
 
 	documentTask, err := b.documentTaskBuilder.build()
