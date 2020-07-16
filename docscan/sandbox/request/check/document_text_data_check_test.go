@@ -8,7 +8,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
-func Example_documentTextDataCheckBuilder() {
+func ExampleNewDocumentTextDataCheckBuilder() {
 	breakdown, err := report.NewBreakdownBuilder().
 		WithResult("some_result").
 		WithSubCheck("some_check").

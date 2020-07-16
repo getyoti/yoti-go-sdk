@@ -3,11 +3,12 @@ package report
 import (
 	"encoding/json"
 	"fmt"
-	"gotest.tools/v3/assert"
 	"testing"
+
+	"gotest.tools/v3/assert"
 )
 
-func Test_recommendationBuilder(t *testing.T) {
+func TestRecommendationBuilder(t *testing.T) {
 	recommendation, err := NewRecommendationBuilder().
 		WithValue("some_value").
 		WithReason("some_reason").
@@ -20,13 +21,13 @@ func Test_recommendationBuilder(t *testing.T) {
 	assert.Equal(t, recommendation.RecoverySuggestion, "some_suggestion")
 }
 
-func Test_recommendationBuilder_ShouldRequireValue(t *testing.T) {
+func TestRecommendationBuilder_ShouldRequireValue(t *testing.T) {
 	_, err := NewRecommendationBuilder().Build()
 
 	assert.Error(t, err, "Value cannot be empty")
 }
 
-func Example_recommendationBuilder() {
+func ExampleNewRecommendationBuilder() {
 	recommendation, err := NewRecommendationBuilder().
 		WithReason("some_reason").
 		WithValue("some_value").
@@ -41,7 +42,7 @@ func Example_recommendationBuilder() {
 	// Output: {"value":"some_value","reason":"some_reason","recovery_suggestion":"some_suggestion"}
 }
 
-func Example_recommendationBuilder_Minimal() {
+func ExampleNewRecommendationBuilder_minimal() {
 	recommendation, err := NewRecommendationBuilder().
 		WithValue("some_value").
 		Build()
