@@ -723,7 +723,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
 
-func ExampleCreateShareURL() {
+func ExampleClient_CreateShareURL() {
 	key, _ := getValidKey()
 
 	client := Client{
