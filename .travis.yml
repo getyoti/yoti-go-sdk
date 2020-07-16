@@ -23,8 +23,6 @@ jobs:
       stage: Test
       go: "1.11.x"
       os: "linux"
-      before_script:
-        - go get golang.org/x/tools/cmd/goimports
       script:
         - ./sh/gofmt.sh
         - go vet ./...
