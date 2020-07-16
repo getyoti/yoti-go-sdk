@@ -8,7 +8,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
-func getFormattedAddress(profile *Profile, formattedAddress string) *yotiprotoattr.Attribute {
+func getFormattedAddress(profile *UserProfile, formattedAddress string) *yotiprotoattr.Attribute {
 	proto := getProtobufAttribute(*profile, consts.AttrStructuredPostalAddress)
 
 	return &yotiprotoattr.Attribute{
@@ -19,7 +19,7 @@ func getFormattedAddress(profile *Profile, formattedAddress string) *yotiprotoat
 	}
 }
 
-func ensureAddressProfile(p *Profile) *attribute.StringAttribute {
+func ensureAddressProfile(p *UserProfile) *attribute.StringAttribute {
 	if structuredPostalAddress, err := p.StructuredPostalAddress(); err == nil {
 		if (structuredPostalAddress != nil && !reflect.DeepEqual(structuredPostalAddress, attribute.JSONAttribute{})) {
 			var formattedAddress string
@@ -41,7 +41,7 @@ func retrieveFormattedAddressFromStructuredPostalAddress(structuredPostalAddress
 	return
 }
 
-func getProtobufAttribute(profile Profile, key string) *yotiprotoattr.Attribute {
+func getProtobufAttribute(profile UserProfile, key string) *yotiprotoattr.Attribute {
 	for _, v := range profile.attributeSlice {
 		if v.Name == key {
 			return v

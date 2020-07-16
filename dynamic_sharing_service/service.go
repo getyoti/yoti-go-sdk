@@ -4,10 +4,10 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
-	"github.com/getyoti/yoti-go-sdk/v3/web"
 )
 
 func getDynamicShareEndpoint(clientSdkId string) string {
@@ -18,7 +18,7 @@ func getDynamicShareEndpoint(clientSdkId string) string {
 }
 
 // CreateShareURL creates a QR code for a dynamic scenario
-func CreateShareURL(httpClient web.HttpClient, scenario *DynamicScenario, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
+func CreateShareURL(httpClient requests.HttpClient, scenario *DynamicScenario, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
 	endpoint := getDynamicShareEndpoint(clientSdkId)
 
 	payload, err := scenario.MarshalJSON()
@@ -38,12 +38,17 @@ func CreateShareURL(httpClient web.HttpClient, scenario *DynamicScenario, client
 		return
 	}
 
-	response, err := web.MakeRequest(httpClient, request, ShareURLHTTPErrorMessages, web.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, requests.DefaultHTTPErrorMessages)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(response), &share)
+	responseBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(responseBytes, &share)
 
 	return
 }

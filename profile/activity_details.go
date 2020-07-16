@@ -8,7 +8,7 @@ import (
 
 // ActivityDetails represents the result of an activity between a user and the application.
 type ActivityDetails struct {
-	UserProfile        Profile
+	UserProfile        UserProfile
 	rememberMeID       string
 	parentRememberMeID string
 	timestamp          time.Time
