@@ -1,4 +1,4 @@
-package web
+package requests
 
 import (
 	"fmt"
@@ -9,26 +9,19 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
-// MakeRequest makes a request to the specified endpoint, with an optional payload
-func MakeRequest(httpClient HttpClient, request *http.Request, httpErrorMessages ...map[int]string) (responseData string, err error) {
-	var response *http.Response
+// Execute makes a request to the specified endpoint, with an optional payload
+func Execute(httpClient HttpClient, request *http.Request, httpErrorMessages ...map[int]string) (response *http.Response, err error) {
 	if response, err = doRequest(request, httpClient); err != nil {
 		return
 	}
 
-	if response.StatusCode < 300 && response.StatusCode >= 200 {
-		var tmp []byte
-		if response.Body != nil {
-			tmp, err = ioutil.ReadAll(response.Body)
-		} else {
-			tmp = make([]byte, 0)
+	 statusCodeIsFailure := response.StatusCode >= 300 || response.StatusCode < 200
+
+	if statusCodeIsFailure {
+		err = handleHTTPError(response, httpErrorMessages...)
+		if response.StatusCode >= 500 {
+			err = yotierror.NewTemporary(err)
 		}
-		responseData = string(tmp)
-		return
-	}
-	err = handleHTTPError(response, httpErrorMessages...)
-	if response.StatusCode >= 500 {
-		err = yotierror.NewTemporary(err)
 	}
 
 	return
@@ -77,7 +70,7 @@ func handleHTTPError(response *http.Response, errorMessages ...map[int]string) e
 
 	}
 	return fmt.Errorf(
-		DefaultUnknownErrorMessageConst,
+		defaultUnknownErrorMessageConst,
 		response.StatusCode,
 		body,
 	)

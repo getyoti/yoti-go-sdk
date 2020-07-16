@@ -18,11 +18,11 @@ import (
 
 const attributeName = "test_attribute_name"
 
-func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Profile {
+func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) UserProfile {
 	var attributeSlice []*yotiprotoattr.Attribute
 	attributeSlice = append(attributeSlice, attr)
 
-	return Profile{
+	return UserProfile{
 		baseProfile{
 			attributeSlice: attributeSlice,
 		},
@@ -40,8 +40,8 @@ func createAppProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) Applicat
 	}
 }
 
-func createProfileWithMultipleAttributes(list ...*yotiprotoattr.Attribute) Profile {
-	return Profile{
+func createProfileWithMultipleAttributes(list ...*yotiprotoattr.Attribute) UserProfile {
+	return UserProfile{
 		baseProfile{
 			attributeSlice: list,
 		},
@@ -351,7 +351,7 @@ func TestProfile_GetAttribute_Undefined(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
-	result := Profile{
+	result := UserProfile{
 		baseProfile{
 			attributeSlice: []*yotiprotoattr.Attribute{},
 		},
