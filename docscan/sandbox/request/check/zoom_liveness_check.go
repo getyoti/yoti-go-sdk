@@ -8,6 +8,7 @@ const (
 	zoom = "ZOOM"
 )
 
+// ZoomLivenessCheckBuilder builds a "ZOOM" LivenessCheck
 type ZoomLivenessCheckBuilder struct {
 	livenessCheckBuilder
 }
