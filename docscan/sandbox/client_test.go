@@ -15,6 +15,11 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func TestClient_httpClient_ShouldReturnDefaultClient(t *testing.T) {
+	client := Client{}
+	assert.Check(t, client.httpClient() != nil)
+}
+
 func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
