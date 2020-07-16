@@ -11,35 +11,38 @@ type Recommendation struct {
 	RecoverySuggestion string `json:"recovery_suggestion,omitempty"`
 }
 
-type recommendationBuilder struct {
+// RecommendationBuilder builds a Recommendation
+type RecommendationBuilder struct {
 	value              string
 	reason             string
 	recoverySuggestion string
 }
 
-func NewRecommendationBuilder() *recommendationBuilder {
-	return &recommendationBuilder{}
+// NewRecommendationBuilder creates a new RecommendationBuilder
+func NewRecommendationBuilder() *RecommendationBuilder {
+	return &RecommendationBuilder{}
 }
 
 // WithReason sets the reason of a Recommendation
-func (b *recommendationBuilder) WithReason(reason string) *recommendationBuilder {
+func (b *RecommendationBuilder) WithReason(reason string) *RecommendationBuilder {
 	b.reason = reason
 	return b
 }
 
 // WithValue sets the value of a Recommendation
-func (b *recommendationBuilder) WithValue(value string) *recommendationBuilder {
+func (b *RecommendationBuilder) WithValue(value string) *RecommendationBuilder {
 	b.value = value
 	return b
 }
 
 // WithRecoverySuggestion sets the recovery suggestion of a Recommendation
-func (b *recommendationBuilder) WithRecoverySuggestion(recoverySuggestion string) *recommendationBuilder {
+func (b *RecommendationBuilder) WithRecoverySuggestion(recoverySuggestion string) *RecommendationBuilder {
 	b.recoverySuggestion = recoverySuggestion
 	return b
 }
 
-func (b *recommendationBuilder) Build() (Recommendation, error) {
+// Build creates a new Recommendation
+func (b *RecommendationBuilder) Build() (Recommendation, error) {
 	recommendation := Recommendation{
 		Value:              b.value,
 		Reason:             b.reason,

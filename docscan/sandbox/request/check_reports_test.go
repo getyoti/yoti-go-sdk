@@ -8,7 +8,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
 )
 
-func ExampleNewCheckReportsBuilder() {
+func ExampleCheckReportsBuilder() {
 	breakdown, err := report.NewBreakdownBuilder().
 		WithResult("some_result").
 		WithSubCheck("some_check").
@@ -69,7 +69,7 @@ func ExampleNewCheckReportsBuilder() {
 	// Output: {"ID_DOCUMENT_AUTHENTICITY":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"ID_DOCUMENT_TEXT_DATA_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":null}}],"ID_DOCUMENT_FACE_MATCH_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"LIVENESS":[{"result":{"report":{"recommendation":{"value":""}}},"liveness_type":"ZOOM"}],"async_report_delay":10}
 }
 
-func ExampleNewCheckReportsBuilder_minimal() {
+func ExampleCheckReportsBuilder_minimal() {
 	checkReports, err := NewCheckReportsBuilder().Build()
 	if err != nil {
 		return

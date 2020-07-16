@@ -1,5 +1,6 @@
 package check
 
+// LivenessCheck represents a liveness check
 type LivenessCheck struct {
 	check
 	LivenessType string `json:"liveness_type"`

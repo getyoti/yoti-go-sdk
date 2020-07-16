@@ -1,30 +1,36 @@
 package request
 
+// ResponseConfig represents the response config
 type ResponseConfig struct {
 	TaskResults  *TaskResults  `json:"task_results,omitempty"`
 	CheckReports *CheckReports `json:"check_reports"`
 }
 
-type responseConfigBuilder struct {
+// ResponseConfigBuilder builds ResponseConfig
+type ResponseConfigBuilder struct {
 	taskResults  *TaskResults
 	checkReports *CheckReports
 }
 
-func NewResponseConfigBuilder() *responseConfigBuilder {
-	return &responseConfigBuilder{}
+// NewResponseConfigBuilder creates a new ResponseConfigBuilder
+func NewResponseConfigBuilder() *ResponseConfigBuilder {
+	return &ResponseConfigBuilder{}
 }
 
-func (b *responseConfigBuilder) WithTaskResults(taskResults TaskResults) *responseConfigBuilder {
+// WithTaskResults adds task results to the response configuration
+func (b *ResponseConfigBuilder) WithTaskResults(taskResults TaskResults) *ResponseConfigBuilder {
 	b.taskResults = &taskResults
 	return b
 }
 
-func (b *responseConfigBuilder) WithCheckReports(checkReports CheckReports) *responseConfigBuilder {
+// WithCheckReports adds check reports to the response configuration
+func (b *ResponseConfigBuilder) WithCheckReports(checkReports CheckReports) *ResponseConfigBuilder {
 	b.checkReports = &checkReports
 	return b
 }
 
-func (b *responseConfigBuilder) Build() (ResponseConfig, error) {
+// Build creates ResponseConfig
+func (b *ResponseConfigBuilder) Build() (ResponseConfig, error) {
 	responseConfig := ResponseConfig{}
 
 	responseConfig.CheckReports = b.checkReports
