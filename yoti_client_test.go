@@ -49,7 +49,7 @@ func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotip
 	key, err := getValidKey()
 	assert.NilError(t, err)
 
-	cipherBytes, err := base64.StdEncoding.DecodeString(wrappedReceiptKey)
+	cipherBytes, err := base64.StdEncoding.DecodeString(test.WrappedReceiptKey)
 	assert.NilError(t, err)
 	unwrappedKey, err := rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
 	assert.NilError(t, err)
@@ -116,7 +116,7 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.ErrorContains(t, err, "Unknown HTTP Error")
@@ -144,7 +144,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Profile Not Found"))
@@ -170,7 +170,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), profile.ErrSharingFailure.Error()))
@@ -184,7 +184,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 	key, err := getValidKey()
 	assert.NilError(t, err)
 
-	expectedAbsoluteURL := "/api/v1/profile/" + token
+	expectedAbsoluteURL := "/api/v1/profile/" + test.Token
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -201,7 +201,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
@@ -223,14 +223,14 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
-					Body:       ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+					Body:       ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
 				}, nil
 			},
 		},
 		Key: key,
 	}
 
-	activityDetails, errorStrings := client.GetActivityDetails(encryptedToken)
+	activityDetails, errorStrings := client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 
@@ -285,7 +285,7 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
-					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey +
+					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey +
 						`","other_party_profile_content": "` + otherPartyProfileContent +
 						`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
 				}, nil
@@ -294,7 +294,7 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 		Key: key,
 	}
 
-	activityDetails, errorStrings := client.GetActivityDetails(encryptedToken)
+	activityDetails, errorStrings := client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
@@ -322,7 +322,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 				do: func(*http.Request) (*http.Response, error) {
 					return &http.Response{
 						StatusCode: 200,
-						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
 							otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"` + timestampString + `", "receipt_id":"` + receiptID + `"}}`)),
 					}, nil
 				},
@@ -330,7 +330,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 			Key: key,
 		}
 
-		activityDetails, errStrings := client.GetActivityDetails(encryptedToken)
+		activityDetails, errStrings := client.GetActivityDetails(test.EncryptedToken)
 
 		assert.Assert(t, is.Nil(errStrings))
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
@@ -356,7 +356,7 @@ func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 		List: dataEntries,
 	}
 
-	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, wrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, test.WrappedReceiptKey)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -364,7 +364,7 @@ func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 				return &http.Response{
 					StatusCode: 200,
 					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
-						wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
+						test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
 						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
 				}, nil
 			},
@@ -373,7 +373,7 @@ func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	client.Key, err = cryptoutil.ParseRSAKey(pemBytes)
 	assert.NilError(t, err)
 
-	activityDetails, err := client.GetActivityDetails(encryptedToken)
+	activityDetails, err := client.GetActivityDetails(test.EncryptedToken)
 	assert.NilError(t, err)
 
 	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
@@ -395,7 +395,7 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 	pemBytes, err := ioutil.ReadFile("test/test-key.pem")
 	assert.NilError(t, err)
 
-	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, wrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, test.WrappedReceiptKey)
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 
@@ -407,7 +407,7 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 				return &http.Response{
 					StatusCode: 200,
 					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
-						wrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
+						test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
 						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
 				}, nil
 			},
@@ -416,7 +416,7 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 	client.Key, err = cryptoutil.ParseRSAKey(pemBytes)
 	assert.NilError(t, err)
 
-	activityDetails, err := client.GetActivityDetails(encryptedToken)
+	activityDetails, err := client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.Contains(err.Error(), "Issuance Token is invalid"))
@@ -440,7 +440,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 				do: func(*http.Request) (*http.Response, error) {
 					return &http.Response{
 						StatusCode: 200,
-						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + wrappedReceiptKey + `",` +
+						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
 							otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`)),
 					}, nil
 				},
@@ -448,7 +448,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 			Key: key,
 		}
 
-		_, errStrings := client.GetActivityDetails(encryptedToken)
+		_, errStrings := client.GetActivityDetails(test.EncryptedToken)
 
 		assert.Assert(t, is.Nil(errStrings))
 	}
