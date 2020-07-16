@@ -15,7 +15,7 @@ func Execute(httpClient HttpClient, request *http.Request, httpErrorMessages ...
 		return
 	}
 
-	 statusCodeIsFailure := response.StatusCode >= 300 || response.StatusCode < 200
+	statusCodeIsFailure := response.StatusCode >= 300 || response.StatusCode < 200
 
 	if statusCodeIsFailure {
 		err = handleHTTPError(response, httpErrorMessages...)
