@@ -27,7 +27,7 @@ func TestRecommendationBuilder_ShouldRequireValue(t *testing.T) {
 	assert.Error(t, err, "Value cannot be empty")
 }
 
-func ExampleNewRecommendationBuilder() {
+func ExampleRecommendationBuilder() {
 	recommendation, err := NewRecommendationBuilder().
 		WithReason("some_reason").
 		WithValue("some_value").
@@ -42,7 +42,7 @@ func ExampleNewRecommendationBuilder() {
 	// Output: {"value":"some_value","reason":"some_reason","recovery_suggestion":"some_suggestion"}
 }
 
-func ExampleNewRecommendationBuilder_minimal() {
+func ExampleRecommendationBuilder_minimal() {
 	recommendation, err := NewRecommendationBuilder().
 		WithValue("some_value").
 		Build()

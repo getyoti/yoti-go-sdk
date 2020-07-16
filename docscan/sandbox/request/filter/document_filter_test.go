@@ -8,7 +8,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func Test_documentFilterBuilder_WithCountryCode(t *testing.T) {
+func TestDocumentFilterBuilder_WithCountryCode(t *testing.T) {
 	filter, _ := NewDocumentFilterBuilder().
 		WithDocumentType("some_type").
 		Build()
@@ -16,7 +16,7 @@ func Test_documentFilterBuilder_WithCountryCode(t *testing.T) {
 	assert.Equal(t, filter.DocumentTypes[0], "some_type")
 }
 
-func Test_documentFilterBuilder_WithDocumentType(t *testing.T) {
+func TestDocumentFilterBuilder_WithDocumentType(t *testing.T) {
 	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		Build()
@@ -24,7 +24,7 @@ func Test_documentFilterBuilder_WithDocumentType(t *testing.T) {
 	assert.Equal(t, filter.CountryCodes[0], "some_country")
 }
 
-func ExampleNewDocumentFilterBuilder() {
+func ExampleDocumentFilterBuilder() {
 	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		WithDocumentType("some_type").
@@ -35,7 +35,7 @@ func ExampleNewDocumentFilterBuilder() {
 	// Output: {"document_types":["some_type"],"country_codes":["some_country"]}
 }
 
-func ExampleNewDocumentFilterBuilder_multipleCountriesAndDocumentTypes() {
+func ExampleDocumentFilterBuilder_multipleCountriesAndDocumentTypes() {
 	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		WithCountryCode("some_other_country").
