@@ -17,3 +17,8 @@ debug
 # Report files
 sonar-report.json
 coverage.out
+
+# idea files
+.idea/yoti-go-sdk.iml
+.idea/vcs.xml
+.idea/modules.xml
