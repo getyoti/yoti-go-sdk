@@ -62,7 +62,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 	requestEndpoint := "/sessions/" + sessionID + "/response-config"
 	requestBody, err := json.Marshal(responseConfig)
 	if err != nil {
-		return
+		return err
 	}
 
 	request, err := (&yotirequest.SignedRequest{
@@ -75,7 +75,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 		Params:     map[string]string{"sdkId": client.ClientSdkID},
 	}).Request()
 	if err != nil {
-		return
+		return err
 	}
 
 	return client.makeConfigureResponseRequest(request)
@@ -86,7 +86,7 @@ func (client *Client) ConfigureApplicationResponse(responseConfig request.Respon
 	requestEndpoint := "/apps/" + client.ClientSdkID + "/response-config"
 	requestBody, err := json.Marshal(responseConfig)
 	if err != nil {
-		return
+		return err
 	}
 
 	request, err := (&yotirequest.SignedRequest{
@@ -98,7 +98,7 @@ func (client *Client) ConfigureApplicationResponse(responseConfig request.Respon
 		Body:       requestBody,
 	}).Request()
 	if err != nil {
-		return
+		return err
 	}
 
 	return client.makeConfigureResponseRequest(request)
