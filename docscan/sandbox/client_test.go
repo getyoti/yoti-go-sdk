@@ -172,7 +172,6 @@ func mockHTTPClientCreatedResponse() *mockHTTPClient {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"token":"tokenValue"}`)),
 			}, nil
 		},
 	}

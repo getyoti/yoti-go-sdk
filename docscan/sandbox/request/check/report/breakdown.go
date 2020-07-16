@@ -11,7 +11,8 @@ type Breakdown struct {
 	Details  []detail `json:"details"`
 }
 
-type breakdownBuilder struct {
+// BreakdownBuilder builds a Breakdown
+type BreakdownBuilder struct {
 	subCheck string
 	result   string
 	details  []detail
@@ -23,26 +24,27 @@ type detail struct {
 	Value string `json:"value"`
 }
 
-func NewBreakdownBuilder() *breakdownBuilder {
-	return &breakdownBuilder{
+// NewBreakdownBuilder creates a new BreakdownBuilder
+func NewBreakdownBuilder() *BreakdownBuilder {
+	return &BreakdownBuilder{
 		details: []detail{},
 	}
 }
 
 // WithSubCheck sets the sub check of a Breakdown
-func (b *breakdownBuilder) WithSubCheck(subCheck string) *breakdownBuilder {
+func (b *BreakdownBuilder) WithSubCheck(subCheck string) *BreakdownBuilder {
 	b.subCheck = subCheck
 	return b
 }
 
 // WithResult sets the result of a Breakdown
-func (b *breakdownBuilder) WithResult(result string) *breakdownBuilder {
+func (b *BreakdownBuilder) WithResult(result string) *BreakdownBuilder {
 	b.result = result
 	return b
 }
 
 // WithDetail sets the Detail of a Breakdown
-func (b *breakdownBuilder) WithDetail(name string, value string) *breakdownBuilder {
+func (b *BreakdownBuilder) WithDetail(name string, value string) *BreakdownBuilder {
 	b.details = append(b.details, detail{
 		Name:  name,
 		Value: value,
@@ -50,7 +52,8 @@ func (b *breakdownBuilder) WithDetail(name string, value string) *breakdownBuild
 	return b
 }
 
-func (b *breakdownBuilder) Build() (Breakdown, error) {
+// Build creates a new Breakdown
+func (b *BreakdownBuilder) Build() (Breakdown, error) {
 	breakdown := Breakdown{
 		SubCheck: b.subCheck,
 		Result:   b.result,
