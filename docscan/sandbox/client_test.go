@@ -38,6 +38,12 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 	assert.ErrorContains(t, err, "Response config not created")
 }
 
+func TestClient_ConfigureSessionResponse_ShouldReturnMissingKeyError(t *testing.T) {
+	client := Client{}
+	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	assert.ErrorContains(t, err, "Missing Private Key")
+}
+
 func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
@@ -86,6 +92,12 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 	}
 	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
 	assert.ErrorContains(t, err, "Response config not created")
+}
+
+func TestClient_ConfigureApplicationResponse_ShouldReturnMissingKeyError(t *testing.T) {
+	client := Client{}
+	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	assert.ErrorContains(t, err, "Missing Private Key")
 }
 
 func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
