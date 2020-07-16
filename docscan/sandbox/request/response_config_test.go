@@ -5,25 +5,7 @@ import (
 	"fmt"
 )
 
-func Example_responseConfigBuilder_WithCheckReports() {
-	checkReports, err := NewCheckReportsBuilder().Build()
-	if err != nil {
-		return
-	}
-
-	responseConfig, err := NewResponseConfigBuilder().
-		WithCheckReports(checkReports).
-		Build()
-	if err != nil {
-		return
-	}
-
-	data, _ := json.Marshal(responseConfig)
-	fmt.Println(string(data))
-	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
-}
-
-func Example_responseConfigBuilder_WithCheckReports_WithTaskResults() {
+func ExampleNewResponseConfigBuilder() {
 	taskResults, err := NewTaskResultsBuilder().Build()
 	if err != nil {
 		return
@@ -45,4 +27,22 @@ func Example_responseConfigBuilder_WithCheckReports_WithTaskResults() {
 	data, _ := json.Marshal(responseConfig)
 	fmt.Println(string(data))
 	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[]},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
+}
+
+func ExampleNewResponseConfigBuilder_minimal() {
+	checkReports, err := NewCheckReportsBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	responseConfig, err := NewResponseConfigBuilder().
+		WithCheckReports(checkReports).
+		Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(responseConfig)
+	fmt.Println(string(data))
+	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
 }
