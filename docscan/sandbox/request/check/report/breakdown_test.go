@@ -3,8 +3,9 @@ package report
 import (
 	"encoding/json"
 	"fmt"
-	"gotest.tools/v3/assert"
 	"testing"
+
+	"gotest.tools/v3/assert"
 )
 
 func Test_breakdownBuilder(t *testing.T) {
@@ -37,7 +38,7 @@ func Test_breakdownBuilder_ShouldRequireResult(t *testing.T) {
 	assert.Error(t, err, "Result cannot be empty")
 }
 
-func Example_breakdownBuilder() {
+func ExampleNewBreakdownBuilder() {
 	breakdown, err := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		WithResult("some_result").
@@ -52,7 +53,7 @@ func Example_breakdownBuilder() {
 	// Output: {"sub_check":"some_sub_check","result":"some_result","details":[{"name":"some_name","value":"some_value"}]}
 }
 
-func Example_breakdownBuilder_Minimal() {
+func ExampleNewBreakdownBuilder_minimal() {
 	breakdown, err := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		WithResult("some_result").
