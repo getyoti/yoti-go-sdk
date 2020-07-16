@@ -12,6 +12,10 @@ import (
 	yotirequest "github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
+type httpClient interface {
+	Do(*http.Request) (*http.Response, error)
+}
+
 // Client is responsible for setting up test data in the sandbox instance. BaseURL is not required.
 type Client struct {
 	// Client SDK ID. This can be found in the Yoti Hub after you have created and activated an application.
@@ -21,16 +25,14 @@ type Client struct {
 	// Base URL to use. This is not required, and a default will be set if not provided.
 	BaseURL string
 	// Mockable HTTP Client Interface
-	HTTPClient interface {
-		Do(*http.Request) (*http.Response, error)
-	}
+	HTTPClient httpClient
 }
 
-func (client *Client) do(request *http.Request) (*http.Response, error) {
+func (client *Client) httpClient() httpClient {
 	if client.HTTPClient != nil {
-		return client.HTTPClient.Do(request)
+		return client.HTTPClient
 	}
-	return http.DefaultClient.Do(request)
+	return http.DefaultClient
 }
 
 func (client *Client) baseURL() string {
@@ -45,7 +47,7 @@ func (client *Client) baseURL() string {
 }
 
 func (client *Client) makeConfigureResponseRequest(request *http.Request) (err error) {
-	response, err := client.do(request)
+	response, err := client.httpClient().Do(request)
 	if err != nil {
 		return err
 	}
