@@ -1,4 +1,4 @@
-package yoti
+package profile
 
 import (
 	"crypto/rsa"

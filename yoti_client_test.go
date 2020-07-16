@@ -6,9 +6,8 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/base64"
-	"encoding/pem"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -21,6 +20,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/attribute"
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/dynamic_sharing_service"
 	"github.com/getyoti/yoti-go-sdk/v3/profile"
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
@@ -46,9 +46,9 @@ func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotip
 	outBytes, err := proto.Marshal(protoExtraData)
 	assert.NilError(t, err)
 
-	keyBytes, _ := pem.Decode(pemBytes)
-	key, err := x509.ParsePKCS1PrivateKey(keyBytes.Bytes)
+	key, err := getValidKey()
 	assert.NilError(t, err)
+
 	cipherBytes, err := base64.StdEncoding.DecodeString(wrappedReceiptKey)
 	assert.NilError(t, err)
 	unwrappedKey, err := rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
@@ -73,25 +73,6 @@ func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotip
 	return base64.StdEncoding.EncodeToString(outBytes)
 }
 
-func TestYotiClient_DefaultHTTPClientShouldTimeout(t *testing.T) {
-	client := Client{}
-	defer func() {
-		_ = recover()
-		assert.Assert(t, client.HTTPClient.(*http.Client).Timeout == 10*time.Second)
-	}()
-	_, _ = client.doRequest(nil)
-}
-
-func TestYotiClient_SetHTTPClientTimeout(t *testing.T) {
-	client := Client{}
-	client.HTTPClient = &http.Client{Timeout: 12 * time.Minute}
-	defer func() {
-		_ = recover()
-		assert.Assert(t, client.HTTPClient.(*http.Client).Timeout == 12*time.Minute)
-	}()
-	_, _ = client.doRequest(nil)
-}
-
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test/test-key-invalid-format.pem")
 	_, err := NewClient("", key)
@@ -110,7 +91,7 @@ func TestNewYotiClient_InvalidToken(t *testing.T) {
 	client, err := NewClient("sdkId", key)
 	assert.NilError(t, err)
 
-	_, err = client.getActivityDetails("")
+	_, err = client.GetActivityDetails("")
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Token"))
@@ -121,7 +102,8 @@ func TestNewYotiClient_InvalidToken(t *testing.T) {
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -131,12 +113,10 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
-	_, err = client.getActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.ErrorContains(t, err, "Unknown HTTP Error")
@@ -150,7 +130,8 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -160,12 +141,10 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
-	_, err = client.getActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Profile Not Found"))
@@ -176,7 +155,8 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -187,15 +167,13 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
-	_, err = client.getActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), ErrSharingFailure.Error()))
+	assert.Check(t, strings.HasPrefix(err.Error(), profile.ErrSharingFailure.Error()))
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -203,7 +181,8 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 }
 
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	expectedAbsoluteURL := "/api/v1/profile/" + token
 
@@ -219,12 +198,10 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
-	_, err = client.getActivityDetails(encryptedToken)
+	_, err = client.GetActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
@@ -235,7 +212,8 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	rememberMeID := "remember_me_id0123456789"
@@ -249,10 +227,8 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
 	activityDetails, errorStrings := client.GetActivityDetails(encryptedToken)
 
@@ -298,7 +274,9 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 }
 
 func TestYotiClient_ParentRememberMeID(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
+
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	parentRememberMeID := "parent_remember_me_id0123456789"
 
@@ -313,18 +291,18 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
-	activityDetails, errorStrings := client.getActivityDetails(encryptedToken)
+	activityDetails, errorStrings := client.GetActivityDetails(encryptedToken)
 
 	assert.Assert(t, is.Nil(errorStrings))
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
 }
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
+
 	rememberMeID := "remember_me_id0123456789"
 	timestamp := time.Date(1973, 11, 29, 9, 33, 9, 0, time.UTC)
 	timestampString := func(a []byte, _ error) string {
@@ -349,12 +327,10 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 					}, nil
 				},
 			},
+			Key: key,
 		}
-		var err error
-		client.Key, err = cryptoutil.ParseRSAKey(key)
-		assert.NilError(t, err)
 
-		activityDetails, errStrings := client.getActivityDetails(encryptedToken)
+		activityDetails, errStrings := client.GetActivityDetails(encryptedToken)
 
 		assert.Assert(t, is.Nil(errStrings))
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
@@ -362,6 +338,7 @@ func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
 		assert.Equal(t, activityDetails.ReceiptID(), receiptID)
 	}
 }
+
 func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	rememberMeID := "remember_me_id0123456789"
@@ -396,7 +373,7 @@ func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	client.Key, err = cryptoutil.ParseRSAKey(pemBytes)
 	assert.NilError(t, err)
 
-	activityDetails, err := client.getActivityDetails(encryptedToken)
+	activityDetails, err := client.GetActivityDetails(encryptedToken)
 	assert.NilError(t, err)
 
 	assert.Equal(t, rememberMeID, activityDetails.RememberMeID())
@@ -439,7 +416,7 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 	client.Key, err = cryptoutil.ParseRSAKey(pemBytes)
 	assert.NilError(t, err)
 
-	activityDetails, err := client.getActivityDetails(encryptedToken)
+	activityDetails, err := client.GetActivityDetails(encryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.Check(t, strings.Contains(err.Error(), "Issuance Token is invalid"))
@@ -449,7 +426,8 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 	assert.Equal(t, activityDetails.UserProfile.MobileNumber().Value(), "phone_number0123456789")
 }
 func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	var otherPartyProfileContents = []string{
 		`"other_party_profile_content": null,`,
@@ -467,42 +445,15 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 					}, nil
 				},
 			},
+			Key: key,
 		}
-		var err error
-		client.Key, err = cryptoutil.ParseRSAKey(key)
-		assert.NilError(t, err)
 
-		_, errStrings := client.getActivityDetails(encryptedToken)
+		_, errStrings := client.GetActivityDetails(encryptedToken)
 
 		assert.Assert(t, is.Nil(errStrings))
 	}
 }
 
-func TestYotiClient_ParseIsAgeVerifiedValue_True(t *testing.T) {
-	trueValue := []byte("true")
-
-	isAgeVerified, err := parseIsAgeVerifiedValue(trueValue)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse IsAgeVerified value")
-	assert.Check(t, *isAgeVerified)
-}
-
-func TestYotiClient_ParseIsAgeVerifiedValue_False(t *testing.T) {
-	falseValue := []byte("false")
-
-	isAgeVerified, err := parseIsAgeVerifiedValue(falseValue)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse IsAgeVerified value")
-	assert.Check(t, !*isAgeVerified)
-
-}
-func TestYotiClient_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testing.T) {
-	invalidValue := []byte("invalidBool")
-
-	_, err := parseIsAgeVerifiedValue(invalidValue)
-
-	assert.Assert(t, err != nil)
-}
 func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
 	invalidStructuredAddress := []byte("invalidBool")
 
@@ -606,7 +557,8 @@ func createStandardAmlProfile() (result aml.AmlProfile) {
 }
 
 func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -617,17 +569,16 @@ func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
 	_, err = client.PerformAmlCheck(createStandardAmlProfile())
 	assert.Check(t, strings.Contains(err.Error(), "invalid character"))
 }
 
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -638,10 +589,8 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
 	result, err := client.PerformAmlCheck(createStandardAmlProfile())
 
@@ -654,7 +603,9 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 }
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key.pem")
+	key, err := getValidKey()
+	assert.NilError(t, err)
+
 	client := Client{
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
@@ -664,10 +615,8 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 				}, nil
 			},
 		},
+		Key: key,
 	}
-	var err error
-	client.Key, err = cryptoutil.ParseRSAKey(key)
-	assert.NilError(t, err)
 
 	_, err = client.PerformAmlCheck(createStandardAmlProfile())
 
@@ -774,6 +723,39 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
 
+func ExampleCreateShareURL() {
+	key, _ := getValidKey()
+
+	client := Client{
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 201,
+					Body:       ioutil.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC","ref_id":"0"}`)),
+				}, nil
+			},
+		},
+		SdkID: "someSdkId",
+		Key:   key,
+	}
+
+	policy, err := (&dynamic_sharing_service.DynamicPolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	if err != nil {
+		return
+	}
+	scenario, err := (&dynamic_sharing_service.DynamicScenarioBuilder{}).WithPolicy(policy).Build()
+	if err != nil {
+		return
+	}
+
+	result, err := client.CreateShareUrl(&scenario)
+	if err != nil {
+		return
+	}
+	fmt.Printf("QR code: %s", result.ShareURL)
+	// Output: QR code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
+}
+
 func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) profile.Profile {
 	var attributeSlice []*yotiprotoattr.Attribute
 	attributeSlice = append(attributeSlice, attr)
@@ -783,4 +765,13 @@ func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) profile.Pro
 	}
 
 	return profile.NewUserProfile(attributeList)
+}
+
+func getValidKey() (*rsa.PrivateKey, error) {
+	keyBytes, err := ioutil.ReadFile("test/test-key.pem")
+	if err != nil {
+		return nil, err
+	}
+
+	return cryptoutil.ParseRSAKey(keyBytes)
 }
