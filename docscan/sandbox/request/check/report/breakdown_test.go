@@ -8,7 +8,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func Test_breakdownBuilder(t *testing.T) {
+func Test_BreakdownBuilder(t *testing.T) {
 	breakdown, err := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		WithResult("some_result").
@@ -22,7 +22,7 @@ func Test_breakdownBuilder(t *testing.T) {
 	assert.Equal(t, breakdown.Details[0].Value, "some_value")
 }
 
-func Test_breakdownBuilder_ShouldRequireSubCheck(t *testing.T) {
+func Test_BreakdownBuilder_ShouldRequireSubCheck(t *testing.T) {
 	_, err := NewBreakdownBuilder().
 		WithResult("some_result").
 		Build()
@@ -30,7 +30,7 @@ func Test_breakdownBuilder_ShouldRequireSubCheck(t *testing.T) {
 	assert.Error(t, err, "Sub Check cannot be empty")
 }
 
-func Test_breakdownBuilder_ShouldRequireResult(t *testing.T) {
+func Test_BreakdownBuilder_ShouldRequireResult(t *testing.T) {
 	_, err := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		Build()
@@ -38,7 +38,7 @@ func Test_breakdownBuilder_ShouldRequireResult(t *testing.T) {
 	assert.Error(t, err, "Result cannot be empty")
 }
 
-func ExampleNewBreakdownBuilder() {
+func ExampleBreakdownBuilder() {
 	breakdown, err := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		WithResult("some_result").
@@ -53,7 +53,7 @@ func ExampleNewBreakdownBuilder() {
 	// Output: {"sub_check":"some_sub_check","result":"some_result","details":[{"name":"some_name","value":"some_value"}]}
 }
 
-func ExampleNewBreakdownBuilder_minimal() {
+func ExampleBreakdownBuilder_minimal() {
 	breakdown, err := NewBreakdownBuilder().
 		WithSubCheck("some_sub_check").
 		WithResult("some_result").

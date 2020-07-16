@@ -8,25 +8,29 @@ const (
 	zoom = "ZOOM"
 )
 
-type zoomLivenessCheckBuilder struct {
+type ZoomLivenessCheckBuilder struct {
 	livenessCheckBuilder
 }
 
-func NewZoomLivenessCheckBuilder() *zoomLivenessCheckBuilder {
-	return &zoomLivenessCheckBuilder{}
+// NewZoomLivenessCheckBuilder creates a new ZoomLivenessCheckBuilder
+func NewZoomLivenessCheckBuilder() *ZoomLivenessCheckBuilder {
+	return &ZoomLivenessCheckBuilder{}
 }
 
-func (b *zoomLivenessCheckBuilder) WithRecommendation(recommendation report.Recommendation) *zoomLivenessCheckBuilder {
+// WithRecommendation sets the recommendation on the check
+func (b *ZoomLivenessCheckBuilder) WithRecommendation(recommendation report.Recommendation) *ZoomLivenessCheckBuilder {
 	b.livenessCheckBuilder.withRecommendation(recommendation)
 	return b
 }
 
-func (b *zoomLivenessCheckBuilder) WithBreakdown(breakdown report.Breakdown) *zoomLivenessCheckBuilder {
+// WithBreakdown adds a breakdown item to the check
+func (b *ZoomLivenessCheckBuilder) WithBreakdown(breakdown report.Breakdown) *ZoomLivenessCheckBuilder {
 	b.livenessCheckBuilder.withBreakdown(breakdown)
 	return b
 }
 
-func (b *zoomLivenessCheckBuilder) Build() (LivenessCheck, error) {
+// Build creates a new LivenessCheck
+func (b *ZoomLivenessCheckBuilder) Build() (LivenessCheck, error) {
 	livenessCheck, err := b.livenessCheckBuilder.withLivenessType(zoom).build()
 	if err != nil {
 		return livenessCheck, err
