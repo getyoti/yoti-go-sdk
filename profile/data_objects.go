@@ -1,4 +1,4 @@
-package yoti
+package profile
 
 type receiptDO struct {
 	ReceiptID                  string `json:"receipt_id"`
