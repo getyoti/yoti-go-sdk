@@ -34,7 +34,6 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 }
 
 func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
-	expectedToken := "shareToken"
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
 		Key:     key,
@@ -43,7 +42,6 @@ func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 201,
-					Body:       ioutil.NopCloser(strings.NewReader(`{"token":"` + expectedToken + `"}`)),
 				}, nil
 			},
 		},
@@ -71,7 +69,6 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 }
 
 func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
-	expectedToken := "shareToken"
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
 		Key:     key,
@@ -80,7 +77,6 @@ func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 201,
-					Body:       ioutil.NopCloser(strings.NewReader(`{"token":"` + expectedToken + `"}`)),
 				}, nil
 			},
 		},
