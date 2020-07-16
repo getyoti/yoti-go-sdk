@@ -3,7 +3,16 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
+
+	"gotest.tools/v3/assert"
 )
+
+func TestResponseConfigBuilder_Build_ShouldRequireCheckReports(t *testing.T) {
+	_, err := NewResponseConfigBuilder().Build()
+
+	assert.Error(t, err, "Check Reports must be provided")
+}
 
 func ExampleResponseConfigBuilder() {
 	taskResults, err := NewTaskResultsBuilder().Build()
