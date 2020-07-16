@@ -30,7 +30,7 @@ func (b *checkBuilder) withBreakdown(breakdown report.Breakdown) {
 	b.breakdowns = append(b.breakdowns, breakdown)
 }
 
-func (b *checkBuilder) build() (check, error) {
+func (b *checkBuilder) build() check {
 	report := checkReport{
 		Recommendation: b.recommendation,
 		Breakdown:      b.breakdowns,
@@ -40,5 +40,5 @@ func (b *checkBuilder) build() (check, error) {
 	}
 	return check{
 		Result: result,
-	}, nil
+	}
 }
