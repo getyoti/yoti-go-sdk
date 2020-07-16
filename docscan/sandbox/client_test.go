@@ -3,6 +3,7 @@ package sandbox
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -54,6 +55,21 @@ func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 	assert.NilError(t, err)
 }
 
+func TestClient_ConfigureSessionResponse_ShouldReturnHttpClientError(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	client := Client{
+		Key:     key,
+		BaseURL: "example.com",
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{}, errors.New("some error")
+			},
+		},
+	}
+	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	assert.ErrorContains(t, err, "some error")
+}
+
 func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
@@ -87,6 +103,21 @@ func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
 	}
 	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
 	assert.NilError(t, err)
+}
+
+func TestClient_ConfigureApplicationResponse_ShouldReturnHttpClientError(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	client := Client{
+		Key:     key,
+		BaseURL: "example.com",
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{}, errors.New("some error")
+			},
+		},
+	}
+	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	assert.ErrorContains(t, err, "some error")
 }
 
 func TestClient_ConfigureSessionResponseUsesConstructorBaseUrlOverEnvVariable(t *testing.T) {
