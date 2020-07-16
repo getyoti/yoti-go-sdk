@@ -16,12 +16,12 @@ func (b *documentTaskBuilder) withDocumentFilter(filter filter.DocumentFilter) {
 	b.documentFilter = &filter
 }
 
-func (b *documentTaskBuilder) build() (documentTask, error) {
+func (b *documentTaskBuilder) build() documentTask {
 	documentTask := documentTask{}
 
 	if b.documentFilter != nil {
 		documentTask.DocumentFilter = b.documentFilter
 	}
 
-	return documentTask, nil
+	return documentTask
 }
