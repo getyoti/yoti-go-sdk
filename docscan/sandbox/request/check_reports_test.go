@@ -66,7 +66,7 @@ func ExampleCheckReportsBuilder() {
 
 	data, _ := json.Marshal(checkReports)
 	fmt.Println(string(data))
-	// Output: {"ID_DOCUMENT_AUTHENTICITY":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"ID_DOCUMENT_TEXT_DATA_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":null}}],"ID_DOCUMENT_FACE_MATCH_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"LIVENESS":[{"result":{"report":{"recommendation":{"value":""}}},"liveness_type":"ZOOM"}],"async_report_delay":10}
+	// Output: {"ID_DOCUMENT_AUTHENTICITY":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"ID_DOCUMENT_TEXT_DATA_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"ID_DOCUMENT_FACE_MATCH_CHECK":[{"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]}}}],"LIVENESS":[{"result":{"report":{}},"liveness_type":"ZOOM"}],"async_report_delay":10}
 }
 
 func ExampleCheckReportsBuilder_minimal() {
