@@ -9,7 +9,7 @@ type check struct {
 }
 
 type checkBuilder struct {
-	recommendation report.Recommendation
+	recommendation *report.Recommendation
 	breakdowns     []report.Breakdown
 }
 
@@ -18,12 +18,12 @@ type checkResult struct {
 }
 
 type checkReport struct {
-	Recommendation report.Recommendation `json:"recommendation,omitempty"`
-	Breakdown      []report.Breakdown    `json:"breakdown,omitempty"`
+	Recommendation *report.Recommendation `json:"recommendation,omitempty"`
+	Breakdown      []report.Breakdown     `json:"breakdown,omitempty"`
 }
 
 func (b *checkBuilder) withRecommendation(recommendation report.Recommendation) {
-	b.recommendation = recommendation
+	b.recommendation = &recommendation
 }
 
 func (b *checkBuilder) withBreakdown(breakdown report.Breakdown) {
@@ -31,14 +31,12 @@ func (b *checkBuilder) withBreakdown(breakdown report.Breakdown) {
 }
 
 func (b *checkBuilder) build() check {
-	report := checkReport{
-		Recommendation: b.recommendation,
-		Breakdown:      b.breakdowns,
-	}
-	result := checkResult{
-		Report: report,
-	}
 	return check{
-		Result: result,
+		Result: checkResult{
+			Report: checkReport{
+				Recommendation: b.recommendation,
+				Breakdown:      b.breakdowns,
+			},
+		},
 	}
 }
