@@ -17,11 +17,7 @@ func (b *documentTaskBuilder) withDocumentFilter(filter filter.DocumentFilter) {
 }
 
 func (b *documentTaskBuilder) build() documentTask {
-	documentTask := documentTask{}
-
-	if b.documentFilter != nil {
-		documentTask.DocumentFilter = b.documentFilter
+	return documentTask{
+		DocumentFilter: b.documentFilter,
 	}
-
-	return documentTask
 }

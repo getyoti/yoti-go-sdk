@@ -40,14 +40,7 @@ func (b *DocumentFaceMatchCheckBuilder) WithDocumentFilter(filter filter.Documen
 
 // Build creates a new DocumentFaceMatchCheck
 func (b *DocumentFaceMatchCheckBuilder) Build() (DocumentFaceMatchCheck, error) {
-	documentFaceMatchCheck := DocumentFaceMatchCheck{}
-
-	documentCheck, err := b.documentCheckBuilder.build()
-	if err != nil {
-		return documentFaceMatchCheck, err
-	}
-
-	documentFaceMatchCheck.documentCheck = documentCheck
-
-	return documentFaceMatchCheck, nil
+	return DocumentFaceMatchCheck{
+		documentCheck: b.documentCheckBuilder.build(),
+	}, nil
 }

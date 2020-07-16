@@ -42,13 +42,10 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentField(key string, va
 
 // Build creates a new DocumentTextDataExtractionTask
 func (b *DocumentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtractionTask, error) {
-	documentTextDataExtractionTask := DocumentTextDataExtractionTask{
+	return DocumentTextDataExtractionTask{
 		documentTask: b.documentTaskBuilder.build(),
-	}
-
-	documentTextDataExtractionTask.Result = documentTextDataExtractionTaskResult{
-		DocumentFields: b.documentFields,
-	}
-
-	return documentTextDataExtractionTask, nil
+		Result: documentTextDataExtractionTaskResult{
+			DocumentFields: b.documentFields,
+		},
+	}, nil
 }
