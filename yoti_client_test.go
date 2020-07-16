@@ -748,7 +748,7 @@ func ExampleCreateShareURL() {
 		return
 	}
 
-	result, err := client.CreateShareUrl(&scenario)
+	result, err := client.CreateShareURL(&scenario)
 	if err != nil {
 		return
 	}
