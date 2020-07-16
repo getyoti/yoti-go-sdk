@@ -44,7 +44,7 @@ func (client *Client) baseURL() string {
 	return client.BaseURL
 }
 
-func (client *Client) makeConfigureSessionResponseRequest(request *http.Request) (err error) {
+func (client *Client) makeConfigureResponseRequest(request *http.Request) (err error) {
 	response, err := client.do(request)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 		return
 	}
 
-	return client.makeConfigureSessionResponseRequest(request)
+	return client.makeConfigureResponseRequest(request)
 }
 
 // ConfigureApplicationResponse configures the response for the application
@@ -101,5 +101,5 @@ func (client *Client) ConfigureApplicationResponse(responseConfig request.Respon
 		return
 	}
 
-	return client.makeConfigureSessionResponseRequest(request)
+	return client.makeConfigureResponseRequest(request)
 }
