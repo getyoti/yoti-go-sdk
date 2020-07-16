@@ -40,14 +40,7 @@ func (b *DocumentAuthenticityCheckBuilder) WithDocumentFilter(filter filter.Docu
 
 // Build creates a new DocumentAuthenticityCheck
 func (b *DocumentAuthenticityCheckBuilder) Build() (DocumentAuthenticityCheck, error) {
-	documentAuthenticityCheck := DocumentAuthenticityCheck{}
-
-	documentCheck, err := b.documentCheckBuilder.build()
-	if err != nil {
-		return documentAuthenticityCheck, err
-	}
-
-	documentAuthenticityCheck.documentCheck = documentCheck
-
-	return documentAuthenticityCheck, nil
+	return DocumentAuthenticityCheck{
+		documentCheck: b.documentCheckBuilder.build(),
+	}, nil
 }
