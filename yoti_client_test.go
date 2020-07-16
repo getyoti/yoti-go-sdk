@@ -76,8 +76,9 @@ func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotip
 func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test/test-key-invalid-format.pem")
 	_, err := NewClient("", key)
-	assert.Check(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Key: not PEM-encoded"))
+
+	assert.ErrorContains(t, err, "Invalid Key: not PEM-encoded")
+
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -92,9 +93,8 @@ func TestNewYotiClient_InvalidToken(t *testing.T) {
 	assert.NilError(t, err)
 
 	_, err = client.GetActivityDetails("")
+	assert.ErrorContains(t, err, "Invalid Token")
 
-	assert.Check(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), "Invalid Token"))
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -146,8 +146,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 
 	_, err = client.GetActivityDetails(test.EncryptedToken)
 
-	assert.Check(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), "Profile Not Found"))
+	assert.ErrorContains(t, err, "Profile Not Found")
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -171,9 +170,8 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 	}
 
 	_, err = client.GetActivityDetails(test.EncryptedToken)
+	assert.ErrorContains(t, err, profile.ErrSharingFailure.Error())
 
-	assert.Check(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), profile.ErrSharingFailure.Error()))
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -202,9 +200,8 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 	}
 
 	_, err = client.GetActivityDetails(test.EncryptedToken)
+	assert.ErrorContains(t, err, "Unknown HTTP Error")
 
-	assert.Check(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), "Unknown HTTP Error"))
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -223,7 +220,7 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
-					Body:       ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+					Body:       ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 				}, nil
 			},
 		},
@@ -287,7 +284,8 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 					StatusCode: 200,
 					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey +
 						`","other_party_profile_content": "` + otherPartyProfileContent +
-						`","parent_remember_me_id":"` + parentRememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+						`","parent_remember_me_id":"` + parentRememberMeID +
+						`", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 				}, nil
 			},
 		},
@@ -365,7 +363,7 @@ func TestYotiClient_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 					StatusCode: 200,
 					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
 						test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
-						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
+						extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 				}, nil
 			},
 		},
@@ -441,7 +439,7 @@ func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
 					return &http.Response{
 						StatusCode: 200,
 						Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
-							otherPartyProfileContent + `"sharing_outcome":"SUCCESS"}}`)),
+							otherPartyProfileContent + `"sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 					}, nil
 				},
 			},
@@ -619,11 +617,8 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	}
 
 	_, err = client.PerformAmlCheck(createStandardAmlProfile())
+	assert.ErrorContains(t, err, "AML Check was unsuccessful")
 
-	var expectedErrString = "AML Check was unsuccessful"
-
-	assert.Assert(t, err != nil)
-	assert.Check(t, strings.HasPrefix(err.Error(), expectedErrString))
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
@@ -756,7 +751,7 @@ func ExampleClient_CreateShareURL() {
 	// Output: QR code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
 }
 
-func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) profile.Profile {
+func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) profile.UserProfile {
 	var attributeSlice []*yotiprotoattr.Attribute
 	attributeSlice = append(attributeSlice, attr)
 

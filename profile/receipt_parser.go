@@ -57,7 +57,7 @@ func parseUserProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprot
 	return attributeList, nil
 }
 
-func parseExtraData(receipt *receiptDO, key *rsa.PrivateKey) (result []byte, err error) {
+func decryptExtraData(receipt *receiptDO, key *rsa.PrivateKey) (result []byte, err error) {
 	bytes, err := parseEncryptedProto(receipt, receipt.ExtraDataContent, key)
 	return bytes, err
 }
