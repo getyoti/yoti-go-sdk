@@ -32,10 +32,9 @@ func (b *ZoomLivenessCheckBuilder) WithBreakdown(breakdown report.Breakdown) *Zo
 
 // Build creates a new LivenessCheck
 func (b *ZoomLivenessCheckBuilder) Build() (LivenessCheck, error) {
-	livenessCheck, err := b.livenessCheckBuilder.withLivenessType(zoom).build()
-	if err != nil {
-		return livenessCheck, err
-	}
+	livenessCheck := b.livenessCheckBuilder.
+		withLivenessType(zoom).
+		build()
 
 	return livenessCheck, nil
 }

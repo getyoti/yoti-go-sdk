@@ -20,7 +20,7 @@ type DocumentTextDataCheckBuilder struct {
 // DocumentTextDataCheckResult represent a document text data check result
 type DocumentTextDataCheckResult struct {
 	checkResult
-	DocumentFields map[string]string `json:"document_fields"`
+	DocumentFields map[string]string `json:"document_fields,omitempty"`
 }
 
 // NewDocumentTextDataCheckBuilder builds a new DocumentTextDataCheckResult
@@ -57,18 +57,13 @@ func (b *DocumentTextDataCheckBuilder) WithDocumentField(key string, value strin
 
 // Build creates a new DocumentTextDataCheck
 func (b *DocumentTextDataCheckBuilder) Build() (DocumentTextDataCheck, error) {
-	documentTextDataCheck := DocumentTextDataCheck{}
+	documentCheck := b.documentCheckBuilder.build()
 
-	documentCheck, err := b.documentCheckBuilder.build()
-	if err != nil {
-		return documentTextDataCheck, err
-	}
-
-	documentTextDataCheck.documentCheck = documentCheck
-	documentTextDataCheck.Result = DocumentTextDataCheckResult{
-		checkResult:    documentCheck.Result,
-		DocumentFields: b.documentFields,
-	}
-
-	return documentTextDataCheck, nil
+	return DocumentTextDataCheck{
+		documentCheck: documentCheck,
+		Result: DocumentTextDataCheckResult{
+			checkResult:    documentCheck.Result,
+			DocumentFields: b.documentFields,
+		},
+	}, nil
 }
