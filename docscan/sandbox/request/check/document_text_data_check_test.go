@@ -43,3 +43,14 @@ func ExampleDocumentTextDataCheckBuilder() {
 	fmt.Println(string(data))
 	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":{"some":"field"}},"document_filter":{"document_types":[],"country_codes":[]}}
 }
+
+func ExampleDocumentTextDataCheckBuilder_minimal() {
+	check, err := NewDocumentTextDataCheckBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(check)
+	fmt.Println(string(data))
+	// Output: {"result":{"report":{}}}
+}
