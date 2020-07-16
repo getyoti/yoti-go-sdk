@@ -3,8 +3,9 @@ package filter
 import (
 	"encoding/json"
 	"fmt"
-	"gotest.tools/v3/assert"
 	"testing"
+
+	"gotest.tools/v3/assert"
 )
 
 func Test_documentFilterBuilder_WithCountryCode(t *testing.T) {
@@ -23,7 +24,7 @@ func Test_documentFilterBuilder_WithDocumentType(t *testing.T) {
 	assert.Equal(t, filter.CountryCodes[0], "some_country")
 }
 
-func Example_documentFilterBuilder_WithDocumentType_WithCountryCode() {
+func ExampleNewDocumentFilterBuilder() {
 	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		WithDocumentType("some_type").
@@ -34,7 +35,7 @@ func Example_documentFilterBuilder_WithDocumentType_WithCountryCode() {
 	// Output: {"document_types":["some_type"],"country_codes":["some_country"]}
 }
 
-func Example_documentFilterBuilder_WithDocumentType_WithCountryCode_Multiple() {
+func ExampleNewDocumentFilterBuilder_multipleCountriesAndDocumentTypes() {
 	filter, _ := NewDocumentFilterBuilder().
 		WithCountryCode("some_country").
 		WithCountryCode("some_other_country").

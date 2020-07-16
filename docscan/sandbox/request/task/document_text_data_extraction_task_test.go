@@ -7,7 +7,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
-func Example_documentTextDataExtractionTaskBuilder() {
+func ExampleNewDocumentTextDataExtractionTaskBuilder() {
 	filter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
 		return
