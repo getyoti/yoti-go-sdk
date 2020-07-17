@@ -7,7 +7,7 @@ import (
 )
 
 func TestStringAttribute_NewThirdPartyAttribute(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_third_party.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_third_party.txt")
 
 	stringAttribute := NewString(protoAttribute)
 
