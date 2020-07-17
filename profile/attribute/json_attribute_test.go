@@ -50,7 +50,7 @@ func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
 	var structuredAddress = []byte(`
 	{
 		"address_format": 2,
-		"building": "House No.86-A",		
+		"building": "House No.86-A",
 		"state": "Punjab",
 		"postal_code": "141012",
 		"country_iso": "` + countryIso + `",
