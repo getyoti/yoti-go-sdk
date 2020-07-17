@@ -6,53 +6,53 @@ import (
 
 // CheckReports represents check reports
 type CheckReports struct {
-	DocumentAuthenticityChecks []check.DocumentAuthenticityCheck `json:"ID_DOCUMENT_AUTHENTICITY"`
-	DocumentTextDataChecks     []check.DocumentTextDataCheck     `json:"ID_DOCUMENT_TEXT_DATA_CHECK"`
-	DocumentFaceMatchChecks    []check.DocumentFaceMatchCheck    `json:"ID_DOCUMENT_FACE_MATCH_CHECK"`
-	LivenessChecks             []check.LivenessCheck             `json:"LIVENESS"`
-	AsyncReportDelay           uint32                            `json:"async_report_delay,omitempty"`
+	DocumentAuthenticityChecks []*check.DocumentAuthenticityCheck `json:"ID_DOCUMENT_AUTHENTICITY"`
+	DocumentTextDataChecks     []*check.DocumentTextDataCheck     `json:"ID_DOCUMENT_TEXT_DATA_CHECK"`
+	DocumentFaceMatchChecks    []*check.DocumentFaceMatchCheck    `json:"ID_DOCUMENT_FACE_MATCH_CHECK"`
+	LivenessChecks             []*check.LivenessCheck             `json:"LIVENESS"`
+	AsyncReportDelay           uint32                             `json:"async_report_delay,omitempty"`
 }
 
 // CheckReportsBuilder builds CheckReports
 type CheckReportsBuilder struct {
-	documentAuthenticityChecks []check.DocumentAuthenticityCheck
-	documentTextDataChecks     []check.DocumentTextDataCheck
-	documentFaceMatchChecks    []check.DocumentFaceMatchCheck
-	livenessChecks             []check.LivenessCheck
+	documentAuthenticityChecks []*check.DocumentAuthenticityCheck
+	documentTextDataChecks     []*check.DocumentTextDataCheck
+	documentFaceMatchChecks    []*check.DocumentFaceMatchCheck
+	livenessChecks             []*check.LivenessCheck
 	asyncReportDelay           uint32
 }
 
 // NewCheckReportsBuilder creates a new CheckReportsBuilder
 func NewCheckReportsBuilder() *CheckReportsBuilder {
 	return &CheckReportsBuilder{
-		documentAuthenticityChecks: []check.DocumentAuthenticityCheck{},
-		documentTextDataChecks:     []check.DocumentTextDataCheck{},
-		documentFaceMatchChecks:    []check.DocumentFaceMatchCheck{},
-		livenessChecks:             []check.LivenessCheck{},
+		documentAuthenticityChecks: []*check.DocumentAuthenticityCheck{},
+		documentTextDataChecks:     []*check.DocumentTextDataCheck{},
+		documentFaceMatchChecks:    []*check.DocumentFaceMatchCheck{},
+		livenessChecks:             []*check.LivenessCheck{},
 	}
 }
 
 // WithDocumentAuthenticityCheck adds a document authenticity check
 func (b *CheckReportsBuilder) WithDocumentAuthenticityCheck(documentAuthenticityCheck check.DocumentAuthenticityCheck) *CheckReportsBuilder {
-	b.documentAuthenticityChecks = append(b.documentAuthenticityChecks, documentAuthenticityCheck)
+	b.documentAuthenticityChecks = append(b.documentAuthenticityChecks, &documentAuthenticityCheck)
 	return b
 }
 
 // WithDocumentTextDataCheck adds a document text data check
 func (b *CheckReportsBuilder) WithDocumentTextDataCheck(documentTextDataCheck check.DocumentTextDataCheck) *CheckReportsBuilder {
-	b.documentTextDataChecks = append(b.documentTextDataChecks, documentTextDataCheck)
+	b.documentTextDataChecks = append(b.documentTextDataChecks, &documentTextDataCheck)
 	return b
 }
 
 // WithDocumentFaceMatchCheck adds a document face match check
 func (b *CheckReportsBuilder) WithDocumentFaceMatchCheck(documentFaceMatchCheck check.DocumentFaceMatchCheck) *CheckReportsBuilder {
-	b.documentFaceMatchChecks = append(b.documentFaceMatchChecks, documentFaceMatchCheck)
+	b.documentFaceMatchChecks = append(b.documentFaceMatchChecks, &documentFaceMatchCheck)
 	return b
 }
 
 // WithLivenessCheck adds a liveness check
 func (b *CheckReportsBuilder) WithLivenessCheck(livenessCheck check.LivenessCheck) *CheckReportsBuilder {
-	b.livenessChecks = append(b.livenessChecks, livenessCheck)
+	b.livenessChecks = append(b.livenessChecks, &livenessCheck)
 	return b
 }
 
