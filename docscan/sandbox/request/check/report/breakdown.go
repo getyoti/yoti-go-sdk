@@ -6,16 +6,16 @@ import (
 
 // Breakdown describes a breakdown on check
 type Breakdown struct {
-	SubCheck string   `json:"sub_check"`
-	Result   string   `json:"result"`
-	Details  []detail `json:"details"`
+	SubCheck string    `json:"sub_check"`
+	Result   string    `json:"result"`
+	Details  []*detail `json:"details"`
 }
 
 // BreakdownBuilder builds a Breakdown
 type BreakdownBuilder struct {
 	subCheck string
 	result   string
-	details  []detail
+	details  []*detail
 }
 
 // Detail is an individual breakdown detail
@@ -27,7 +27,7 @@ type detail struct {
 // NewBreakdownBuilder creates a new BreakdownBuilder
 func NewBreakdownBuilder() *BreakdownBuilder {
 	return &BreakdownBuilder{
-		details: []detail{},
+		details: []*detail{},
 	}
 }
 
@@ -45,7 +45,7 @@ func (b *BreakdownBuilder) WithResult(result string) *BreakdownBuilder {
 
 // WithDetail sets the Detail of a Breakdown
 func (b *BreakdownBuilder) WithDetail(name string, value string) *BreakdownBuilder {
-	b.details = append(b.details, detail{
+	b.details = append(b.details, &detail{
 		Name:  name,
 		Value: value,
 	})
