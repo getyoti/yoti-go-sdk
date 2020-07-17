@@ -2,20 +2,13 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"encoding/base64"
-	"github.com/getyoti/yoti-go-sdk/v3/aml"
-	"github.com/getyoti/yoti-go-sdk/v3/attribute"
-	"github.com/getyoti/yoti-go-sdk/v3/consts"
-	"github.com/getyoti/yoti-go-sdk/v3/profile"
-	"github.com/getyoti/yoti-go-sdk/v3/test"
-	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
-	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 	"testing"
+
+	"github.com/getyoti/yoti-go-sdk/v3/test"
+	"gotest.tools/v3/assert"
 )
 
 type mockHTTPClient struct {
@@ -91,48 +84,6 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
-	invalidStructuredAddress := []byte("invalidBool")
-
-	_, err := attribute.UnmarshallJSON(invalidStructuredAddress)
-
-	assert.Assert(t, err != nil)
-}
-
-func TestYotiClient_UnmarshallJSONValue_ValidValue(t *testing.T) {
-	const (
-		countryIso  = "IND"
-		nestedValue = "NestedValue"
-	)
-
-	var structuredAddress = []byte(`
-	{
-		"address_format": 2,
-		"building": "House No.86-A",		
-		"state": "Punjab",
-		"postal_code": "141012",
-		"country_iso": "` + countryIso + `",
-		"country": "India",
-		"formatted_address": "House No.86-A\nRajgura Nagar\nLudhina\nPunjab\n141012\nIndia",
-		"1":
-		{
-			"1-1":
-			{
-			  "1-1-1": "` + nestedValue + `"
-			}
-		}
-	}
-	`)
-
-	parsedStructuredAddress, err := attribute.UnmarshallJSON(structuredAddress)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse structured address")
-
-	actualCountryIso := parsedStructuredAddress["country_iso"]
-
-	assert.Equal(t, countryIso, actualCountryIso)
-}
-
 func TestClient_OverrideAPIURL_ShouldSetAPIURL(t *testing.T) {
 	client := &Client{}
 	expectedURL := "expectedurl.com"
@@ -179,190 +130,6 @@ func TestYotiClient_GetAPIURLUsesDefaultUrlAsFallbackWithNoEnvValue(t *testing.T
 	result := client.getAPIURL()
 
 	assert.Equal(t, "https://api.yoti.com/api/v1", result)
-}
-
-func createStandardAmlProfile() (result aml.AmlProfile) {
-	var amlAddress = aml.AmlAddress{
-		Country: "GBR"}
-
-	var amlProfile = aml.AmlProfile{
-		GivenNames: "Edward Richard George",
-		FamilyName: "Heath",
-		Address:    amlAddress}
-
-	return amlProfile
-}
-
-func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
-	key := getValidKey()
-
-	client := Client{
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 200,
-					Body:       ioutil.NopCloser(strings.NewReader("Not a JSON document")),
-				}, nil
-			},
-		},
-		Key: key,
-	}
-
-	_, err := client.PerformAmlCheck(createStandardAmlProfile())
-	assert.Check(t, strings.Contains(err.Error(), "invalid character"))
-}
-
-func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
-	key := getValidKey()
-
-	client := Client{
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 200,
-					Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`)),
-				}, nil
-			},
-		},
-		Key: key,
-	}
-
-	result, err := client.PerformAmlCheck(createStandardAmlProfile())
-
-	assert.Assert(t, is.Nil(err))
-
-	assert.Check(t, result.OnFraudList)
-	assert.Check(t, result.OnPEPList)
-	assert.Check(t, result.OnWatchList)
-
-}
-
-func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
-	key := getValidKey()
-
-	client := Client{
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 503,
-					Body:       ioutil.NopCloser(strings.NewReader(`SERVICE UNAVAILABLE - Unable to reach the Integrity Service`)),
-				}, nil
-			},
-		},
-		Key: key,
-	}
-
-	_, err := client.PerformAmlCheck(createStandardAmlProfile())
-	assert.ErrorContains(t, err, "AML Check was unsuccessful")
-
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, temporary && tempError.Temporary())
-}
-
-func TestAttributeImage_Image_Png(t *testing.T) {
-	attributeName := consts.AttrSelfie
-	byteValue := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        attributeName,
-		Value:       byteValue,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
-
-	result := createProfileWithSingleAttribute(attributeImage)
-	selfie := result.Selfie()
-
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
-}
-
-func TestAttributeImage_Image_Jpeg(t *testing.T) {
-	attributeName := consts.AttrSelfie
-	byteValue := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        attributeName,
-		Value:       byteValue,
-		ContentType: yotiprotoattr.ContentType_JPEG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
-
-	result := createProfileWithSingleAttribute(attributeImage)
-	selfie := result.Selfie()
-
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
-}
-
-func TestAttributeImage_Image_Default(t *testing.T) {
-	attributeName := consts.AttrSelfie
-	byteValue := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        attributeName,
-		Value:       byteValue,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
-	result := createProfileWithSingleAttribute(attributeImage)
-	selfie := result.Selfie()
-
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
-}
-func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
-	attributeName := consts.AttrSelfie
-	imageBytes := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        attributeName,
-		Value:       imageBytes,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
-
-	result := createProfileWithSingleAttribute(attributeImage)
-
-	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
-
-	expectedBase64Selfie := "data:image/png;base64," + base64ImageExpectedValue
-
-	base64Selfie := result.Selfie().Value().Base64URL()
-
-	assert.Equal(t, base64Selfie, expectedBase64Selfie)
-}
-
-func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
-	attributeName := consts.AttrSelfie
-	imageBytes := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        attributeName,
-		Value:       imageBytes,
-		ContentType: yotiprotoattr.ContentType_JPEG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
-
-	result := createProfileWithSingleAttribute(attributeImage)
-
-	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
-
-	expectedBase64Selfie := "data:image/jpeg;base64," + base64ImageExpectedValue
-
-	base64Selfie := result.Selfie().Value().Base64URL()
-
-	assert.Equal(t, base64Selfie, expectedBase64Selfie)
-}
-
-func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) profile.UserProfile {
-	var attributeSlice []*yotiprotoattr.Attribute
-	attributeSlice = append(attributeSlice, attr)
-
-	attributeList := &yotiprotoattr.AttributeList{
-		Attributes: attributeSlice,
-	}
-
-	return profile.NewUserProfile(attributeList)
 }
 
 func getValidKey() *rsa.PrivateKey {

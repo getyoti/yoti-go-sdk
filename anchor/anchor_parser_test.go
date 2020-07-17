@@ -12,7 +12,6 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 )
 
 func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSerialNo *big.Int) {
@@ -28,7 +27,7 @@ func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoat
 
 	protoAnchor := &yotiprotoattr.Anchor{}
 	err2 := proto.Unmarshal(anchorBytes, protoAnchor)
-	assert.Assert(t, is.Nil(err2))
+	assert.NilError(t, err2)
 
 	protoAnchors := append([]*yotiprotoattr.Anchor{}, protoAnchor)
 

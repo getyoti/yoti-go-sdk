@@ -6,8 +6,6 @@ import (
 	"testing"
 
 	"gotest.tools/v3/assert"
-
-	is "gotest.tools/v3/assert/cmp"
 )
 
 // GetTestFileBytes takes a filepath, decodes it from base64, and returns a byte representation of it
@@ -16,7 +14,7 @@ func GetTestFileBytes(t *testing.T, filename string) (result []byte) {
 	base64String := string(base64Bytes)
 	filebytes, err := base64.StdEncoding.DecodeString(base64String)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	return filebytes
 }
@@ -29,7 +27,7 @@ func GetTestFileAsString(t *testing.T, filename string) string {
 
 func readTestFile(t *testing.T, filename string) (result []byte) {
 	b, err := ioutil.ReadFile(filename)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	return b
 }

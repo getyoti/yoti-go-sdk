@@ -39,8 +39,8 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 	}, nil
 }
 
-// UnmarshallJSON unmarshalls JSON into an interface
-func UnmarshallJSON(byteValue []byte) (result map[string]interface{}, err error) {
+// unmarshallJSON unmarshalls JSON into an interface
+func unmarshallJSON(byteValue []byte) (result map[string]interface{}, err error) {
 	var unmarshalledJSON map[string]interface{}
 	err = json.Unmarshal(byteValue, &unmarshalledJSON)
 

@@ -8,7 +8,6 @@ import (
 	"github.com/golang/protobuf/proto"
 
 	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 )
 
 // CreateThirdPartyAttributeDataEntry creates a data entry of type "THIRD_PARTY_ATTRIBUTE", with the specified IssuingAttribute details.
@@ -33,7 +32,7 @@ func CreateThirdPartyAttributeDataEntry(t *testing.T, expiryDate *time.Time, str
 
 	marshalledThirdPartyAttribute, err := proto.Marshal(thirdPartyAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	return yotiprotoshare.DataEntry{
 		Type:  yotiprotoshare.DataEntry_THIRD_PARTY_ATTRIBUTE,

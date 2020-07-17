@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 )
 
 func TestNewThirdPartyAttribute(t *testing.T) {
@@ -28,7 +27,7 @@ func TestAttribute_DateOfBirth(t *testing.T) {
 
 	dateOfBirthAttribute, err := NewDate(protoAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	expectedDateOfBirth := time.Date(1970, time.December, 01, 0, 0, 0, 0, time.UTC)
 	actualDateOfBirth := dateOfBirthAttribute.Value()

@@ -21,7 +21,7 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 		return nil, fmt.Errorf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
 
 	case yotiprotoattr.ContentType_JSON:
-		unmarshalledJSON, err := UnmarshallJSON(byteValue)
+		unmarshalledJSON, err := unmarshallJSON(byteValue)
 
 		if err == nil {
 			return unmarshalledJSON, nil

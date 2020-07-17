@@ -7,7 +7,6 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 )
 
 func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.Attribute {
@@ -16,8 +15,7 @@ func createAttributeFromTestFile(t *testing.T, filename string) *yotiprotoattr.A
 	attributeStruct := &yotiprotoattr.Attribute{}
 
 	err2 := proto.Unmarshal(attributeBytes, attributeStruct)
-
-	assert.Assert(t, is.Nil(err2))
+	assert.NilError(t, err2)
 
 	return attributeStruct
 }
