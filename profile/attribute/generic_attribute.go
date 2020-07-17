@@ -22,7 +22,7 @@ func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
 		return nil
 	}
 
-	var parsedAnchors []*anchor.Anchor = anchor.ParseAnchors(a.Anchors)
+	var parsedAnchors = anchor.ParseAnchors(a.Anchors)
 
 	return &GenericAttribute{
 		attributeDetails: attributeDetails{

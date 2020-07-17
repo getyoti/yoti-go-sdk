@@ -42,12 +42,12 @@ func ParseIssuanceDetails(thirdPartyAttributeBytes []byte) (*IssuanceDetails, er
 		return nil, fmt.Errorf("Unable to parse ThirdPartyAttribute value: %q. Error: %q", string(thirdPartyAttributeBytes), err)
 	}
 
-	var issuingAttributesProto *yotiprotoshare.IssuingAttributes = thirdPartyAttributeStruct.GetIssuingAttributes()
-	var issuingAttributeDefinitions []AttributeDefinition = parseIssuingAttributeDefinitions(issuingAttributesProto.GetDefinitions())
+	var issuingAttributesProto = thirdPartyAttributeStruct.GetIssuingAttributes()
+	var issuingAttributeDefinitions = parseIssuingAttributeDefinitions(issuingAttributesProto.GetDefinitions())
 
 	expiryDate, dateParseErr := parseExpiryDate(issuingAttributesProto.ExpiryDate)
 
-	var issuanceTokenBytes []byte = thirdPartyAttributeStruct.GetIssuanceToken()
+	var issuanceTokenBytes = thirdPartyAttributeStruct.GetIssuanceToken()
 
 	if len(issuanceTokenBytes) == 0 {
 		return nil, errors.New("Issuance Token is invalid")
