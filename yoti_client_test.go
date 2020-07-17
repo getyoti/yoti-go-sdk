@@ -46,7 +46,7 @@ func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotip
 	outBytes, err := proto.Marshal(protoExtraData)
 	assert.NilError(t, err)
 
-	key, err := getValidKey()
+	key := getValidKey()
 	assert.NilError(t, err)
 
 	cipherBytes, err := base64.StdEncoding.DecodeString(test.WrappedReceiptKey)
@@ -102,8 +102,8 @@ func TestNewYotiClient_InvalidToken(t *testing.T) {
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -116,7 +116,7 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(test.EncryptedToken)
+	_, err := client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
 	assert.ErrorContains(t, err, "Unknown HTTP Error")
@@ -130,8 +130,8 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -144,7 +144,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(test.EncryptedToken)
+	_, err := client.GetActivityDetails(test.EncryptedToken)
 
 	assert.ErrorContains(t, err, "Profile Not Found")
 	tempError, temporary := err.(interface {
@@ -154,8 +154,8 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 }
 
 func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -169,7 +169,7 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(test.EncryptedToken)
+	_, err := client.GetActivityDetails(test.EncryptedToken)
 	assert.ErrorContains(t, err, profile.ErrSharingFailure.Error())
 
 	tempError, temporary := err.(interface {
@@ -179,8 +179,8 @@ func TestYotiClient_SharingFailure_ReturnsFailure(t *testing.T) {
 }
 
 func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	expectedAbsoluteURL := "/api/v1/profile/" + test.Token
 
@@ -199,7 +199,7 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.GetActivityDetails(test.EncryptedToken)
+	_, err := client.GetActivityDetails(test.EncryptedToken)
 	assert.ErrorContains(t, err, "Unknown HTTP Error")
 
 	tempError, temporary := err.(interface {
@@ -209,8 +209,8 @@ func TestYotiClient_TokenDecodedSuccessfully(t *testing.T) {
 }
 
 func TestYotiClient_ParseProfile_Success(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	rememberMeID := "remember_me_id0123456789"
@@ -271,8 +271,8 @@ func TestYotiClient_ParseProfile_Success(t *testing.T) {
 }
 
 func TestYotiClient_ParentRememberMeID(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	parentRememberMeID := "parent_remember_me_id0123456789"
@@ -298,8 +298,8 @@ func TestYotiClient_ParentRememberMeID(t *testing.T) {
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
 }
 func TestYotiClient_ParseWithoutProfile_Success(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	rememberMeID := "remember_me_id0123456789"
 	timestamp := time.Date(1973, 11, 29, 9, 33, 9, 0, time.UTC)
@@ -424,8 +424,7 @@ func TestYotiClient_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testin
 	assert.Equal(t, activityDetails.UserProfile.MobileNumber().Value(), "phone_number0123456789")
 }
 func TestYotiClient_ParseWithoutRememberMeID_Success(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
 
 	var otherPartyProfileContents = []string{
 		`"other_party_profile_content": null,`,
@@ -555,8 +554,7 @@ func createStandardAmlProfile() (result aml.AmlProfile) {
 }
 
 func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -570,13 +568,13 @@ func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.PerformAmlCheck(createStandardAmlProfile())
+	_, err := client.PerformAmlCheck(createStandardAmlProfile())
 	assert.Check(t, strings.Contains(err.Error(), "invalid character"))
 }
 
 func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
+
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -601,8 +599,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 }
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
-	key, err := getValidKey()
-	assert.NilError(t, err)
+	key := getValidKey()
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -616,7 +613,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 		Key: key,
 	}
 
-	_, err = client.PerformAmlCheck(createStandardAmlProfile())
+	_, err := client.PerformAmlCheck(createStandardAmlProfile())
 	assert.ErrorContains(t, err, "AML Check was unsuccessful")
 
 	tempError, temporary := err.(interface {
@@ -719,7 +716,7 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 }
 
 func ExampleClient_CreateShareURL() {
-	key, _ := getValidKey()
+	key := getValidKey()
 
 	client := Client{
 		HTTPClient: &mockHTTPClient{
@@ -762,11 +759,6 @@ func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) profile.Use
 	return profile.NewUserProfile(attributeList)
 }
 
-func getValidKey() (*rsa.PrivateKey, error) {
-	keyBytes, err := ioutil.ReadFile("test/test-key.pem")
-	if err != nil {
-		return nil, err
-	}
-
-	return cryptoutil.ParseRSAKey(keyBytes)
+func getValidKey() (*rsa.PrivateKey) {
+	return test.GetValidKey("test/test-key.pem")
 }
