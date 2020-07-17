@@ -23,6 +23,7 @@ repos:
     rev: master
     hooks:
       - id: go-vet
+        exclude: _examples
       - id: go-build
         args: ["./..."]
       - id: go-cyclo

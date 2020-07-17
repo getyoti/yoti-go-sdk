@@ -27,8 +27,8 @@ The format of `privateKey` passed in to the client needs to be `*rsa.PrivateKey`
 
 ## Examples
 
-- See [test_sandboxexample.go](test_sandboxexample.go) for a general example of how to use the Sandbox in your tests.
-- See [test_sandboxanchorexample.go](test_sandboxanchorexample.go) for an example which sets up **anchor** expecations (see [source and verifiers](https://developers.yoti.com/yoti/knowledge-base-hub#source-and-verifiers)).
+- See [sandboxexample_test.go](sandboxexample_test.go) for a general example of how to use the Sandbox in your tests.
+- See [sandboxanchorexample_test.go](sandboxanchorexample_test.go) for an example which sets up **anchor** expecations (see [source and verifiers](https://developers.yoti.com/yoti/knowledge-base-hub#source-and-verifiers)).
 
 To run the examples:
 1. Copy the `.env.example` file and rename it to be `.env`.
