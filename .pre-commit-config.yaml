@@ -1,4 +1,10 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.1.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-yaml
+
   - repo: local
     hooks:
       - id: local-go-fmt
@@ -6,24 +12,24 @@ repos:
         entry: sh/gofmt.sh
         language: 'script'
         description: "Go Format"
-        
+
       - id: local-tidy
         name: 'tidy imports'
         entry: sh/tidy.sh
         language: 'script'
         description: "Tidy imports"
-  
+
   - repo: git://github.com/dnephin/pre-commit-golang
     rev: master
     hooks:
-        - id: go-vet
-          exclude: "examples/"
-        - id: go-build
-          args: ["./..."]
-        - id: go-cyclo
-          args: [-over=15]       
-        - id: golangci-lint
-          args: ["-e", "SA1019"]
-        - id: go-mod-tidy
-        - id: go-unit-tests
-          args: ["-race", "./..."]
+      - id: go-vet
+        exclude: "examples/"
+      - id: go-build
+        args: ["./..."]
+      - id: go-cyclo
+        args: [-over=15]
+      - id: golangci-lint
+        args: ["-e", "SA1019"]
+      - id: go-mod-tidy
+      - id: go-unit-tests
+        args: ["-race", "./..."]
