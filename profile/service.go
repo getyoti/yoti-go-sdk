@@ -80,7 +80,7 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 		}
 		id := parsedResponse.Receipt.RememberMeID
 
-		userProfile := NewUserProfile(userAttributeList)
+		userProfile := newUserProfile(userAttributeList)
 		applicationProfile := NewApplicationProfile(applicationAttributeList)
 
 		var extraData *share.ExtraData

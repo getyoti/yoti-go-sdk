@@ -18,7 +18,7 @@ func TestShouldParseThirdPartyAttributeCorrectly(t *testing.T) {
 	var thirdPartyAttributeBytes []byte = test.GetTestFileBytes(t, "../test/fixtures/test_third_party_issuance_details.txt")
 	issuanceDetails, err := ParseIssuanceDetails(thirdPartyAttributeBytes)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 	assert.Equal(t, issuanceDetails.Attributes()[0].Name(), "com.thirdparty.id")
 	assert.Equal(t, issuanceDetails.Token(), "c29tZUlzc3VhbmNlVG9rZW4=")
 	assert.Equal(t,
@@ -37,7 +37,7 @@ func TestShouldLogWarningIfErrorInParsingExpiryDate(t *testing.T) {
 
 	marshalled, err := proto.Marshal(thirdPartyAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	var tokenBytes []byte = []byte(tokenValue)
 	var expectedBase64Token string = base64.StdEncoding.EncodeToString(tokenBytes)

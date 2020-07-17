@@ -16,7 +16,7 @@ type UserProfile struct {
 }
 
 // Creates a new Profile struct
-func NewUserProfile(attributes *yotiprotoattr.AttributeList) UserProfile {
+func newUserProfile(attributes *yotiprotoattr.AttributeList) UserProfile {
 	return UserProfile{
 		baseProfile{
 			attributeSlice: createAttributeSlice(attributes),
