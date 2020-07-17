@@ -1,4 +1,4 @@
-module github.com/getyoti/yoti-go-sdk/v3/examples/docscansandbox
+module docscansandbox
 
 go 1.12
 
