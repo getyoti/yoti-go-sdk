@@ -7,7 +7,7 @@
           <span class="yoti-attribute-name-cell-text">{{ .Name }}</span>
         </div>
       </div>
-        
+
       <div class="yoti-attribute-value">
         <div class="yoti-attribute-value-text">
           {{ if eq .Prop.Name "document_details" }}
@@ -52,7 +52,7 @@
           <div class="yoti-attribute-anchors -subtype">{{ .SubType }}</div>
         {{ end }}
       </div>
-    </div> 
+    </div>
   {{ end }}
 {{end}}
 
@@ -80,7 +80,7 @@
         <i class="yoti-profile-picture-verified-icon"></i>
       </div>
       {{ end }}
-      
+
       <div class="yoti-profile-name">
         {{ .profile.FullName.Value }}
       </div>
