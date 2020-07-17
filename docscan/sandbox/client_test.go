@@ -23,8 +23,7 @@ func TestClient_httpClient_ShouldReturnDefaultClient(t *testing.T) {
 func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
-		Key:     key,
-		BaseURL: "example.com",
+		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -56,11 +55,39 @@ func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
 	assert.ErrorContains(t, err, "some json error")
 }
 
+func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
+	key, _ := ioutil.ReadFile("../../test/test-key.pem")
+	client, clientErr := NewClient("ClientSDKID", key)
+	assert.NilError(t, clientErr)
+
+	client.HTTPClient = &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+			}, nil
+		},
+	}
+
+	responseErr := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	assert.NilError(t, responseErr)
+}
+
+func TestNewClient_KeyLoad_Failure(t *testing.T) {
+	key, _ := ioutil.ReadFile("../../test/test-key-invalid-format.pem")
+	_, err := NewClient("", key)
+
+	assert.ErrorContains(t, err, "Invalid Key: not PEM-encoded")
+
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
 func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
-		Key:     key,
-		BaseURL: "example.com",
+		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -76,8 +103,7 @@ func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 func TestClient_ConfigureSessionResponse_ShouldReturnHttpClientError(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
-		Key:     key,
-		BaseURL: "example.com",
+		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{}, errors.New("some error")
@@ -91,8 +117,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnHttpClientError(t *testing.
 func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
-		Key:     key,
-		BaseURL: "example.com",
+		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -127,8 +152,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnJsonError(t *testing.T)
 func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
-		Key:     key,
-		BaseURL: "example.com",
+		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
@@ -144,8 +168,7 @@ func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
 func TestClient_ConfigureApplicationResponse_ShouldReturnHttpClientError(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 	client := Client{
-		Key:     key,
-		BaseURL: "example.com",
+		Key: key,
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{}, errors.New("some error")
@@ -156,25 +179,25 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnHttpClientError(t *test
 	assert.ErrorContains(t, err, "some error")
 }
 
-func TestClient_ConfigureSessionResponseUsesConstructorBaseUrlOverEnvVariable(t *testing.T) {
-	client := createSandboxClient(t, "constuctorBaseUrl")
+func TestClient_ConfigureSessionResponseUsesConstructorApiUrlOverEnvVariable(t *testing.T) {
+	client := createSandboxClient(t, "constuctorApiURL")
 	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")
 
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "constuctorBaseUrl", client.BaseURL)
+	assert.Equal(t, "constuctorApiURL", client.apiURL)
 }
 
 func TestClient_ConfigureSessionResponseUsesEnvVariable(t *testing.T) {
 	client := createSandboxClient(t, "")
 
-	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")
+	os.Setenv("YOTI_DOC_SCAN_API_URL", "envApiURL")
 
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "envBaseUrl", client.BaseURL)
+	assert.Equal(t, "envApiURL", client.apiURL)
 }
 
 func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithEmptyEnvValue(t *testing.T) {
@@ -185,7 +208,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithEmptyEnvValu
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.BaseURL)
+	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.apiURL)
 }
 
 func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t *testing.T) {
@@ -196,29 +219,29 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.BaseURL)
+	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.apiURL)
 }
 
-func createSandboxClient(t *testing.T, constructorBaseURL string) (client Client) {
+func createSandboxClient(t *testing.T, constructorApiURL string) (client Client) {
 	keyBytes, fileErr := ioutil.ReadFile("../../test/test-key.pem")
 	assert.NilError(t, fileErr)
 
 	pemFile, parseErr := cryptoutil.ParseRSAKey(keyBytes)
 	assert.NilError(t, parseErr)
 
-	if constructorBaseURL == "" {
+	if constructorApiURL == "" {
 		return Client{
-			Key:         pemFile,
-			ClientSdkID: "ClientSDKID",
-			HTTPClient:  mockHTTPClientCreatedResponse(),
+			Key:        pemFile,
+			SdkID:      "ClientSDKID",
+			HTTPClient: mockHTTPClientCreatedResponse(),
 		}
 	}
 
 	return Client{
-		Key:         pemFile,
-		BaseURL:     constructorBaseURL,
-		ClientSdkID: "ClientSDKID",
-		HTTPClient:  mockHTTPClientCreatedResponse(),
+		Key:        pemFile,
+		SdkID:      "ClientSDKID",
+		HTTPClient: mockHTTPClientCreatedResponse(),
+		apiURL:     constructorApiURL,
 	}
 
 }
