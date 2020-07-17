@@ -6,24 +6,24 @@ import (
 
 // TaskResults represents task results
 type TaskResults struct {
-	DocumentTextDataExtractionTasks []task.DocumentTextDataExtractionTask `json:"ID_DOCUMENT_TEXT_DATA_EXTRACTION"`
+	DocumentTextDataExtractionTasks []*task.DocumentTextDataExtractionTask `json:"ID_DOCUMENT_TEXT_DATA_EXTRACTION"`
 }
 
 // TaskResultsBuilder builds TaskResults
 type TaskResultsBuilder struct {
-	documentTextDataExtractionTasks []task.DocumentTextDataExtractionTask
+	documentTextDataExtractionTasks []*task.DocumentTextDataExtractionTask
 }
 
 // NewTaskResultsBuilder creates a new TaskResultsBuilder
 func NewTaskResultsBuilder() *TaskResultsBuilder {
 	return &TaskResultsBuilder{
-		documentTextDataExtractionTasks: []task.DocumentTextDataExtractionTask{},
+		documentTextDataExtractionTasks: []*task.DocumentTextDataExtractionTask{},
 	}
 }
 
 // WithDocumentTextDataExtractionTask adds a document text data extraction task
 func (b *TaskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextDataExtractionTasks task.DocumentTextDataExtractionTask) *TaskResultsBuilder {
-	b.documentTextDataExtractionTasks = append(b.documentTextDataExtractionTasks, documentTextDataExtractionTasks)
+	b.documentTextDataExtractionTasks = append(b.documentTextDataExtractionTasks, &documentTextDataExtractionTasks)
 	return b
 }
 

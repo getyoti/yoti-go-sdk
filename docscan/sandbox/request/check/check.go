@@ -10,7 +10,7 @@ type check struct {
 
 type checkBuilder struct {
 	recommendation *report.Recommendation
-	breakdowns     []report.Breakdown
+	breakdowns     []*report.Breakdown
 }
 
 type checkResult struct {
@@ -19,7 +19,7 @@ type checkResult struct {
 
 type checkReport struct {
 	Recommendation *report.Recommendation `json:"recommendation,omitempty"`
-	Breakdown      []report.Breakdown     `json:"breakdown,omitempty"`
+	Breakdown      []*report.Breakdown    `json:"breakdown,omitempty"`
 }
 
 func (b *checkBuilder) withRecommendation(recommendation report.Recommendation) {
@@ -27,7 +27,7 @@ func (b *checkBuilder) withRecommendation(recommendation report.Recommendation) 
 }
 
 func (b *checkBuilder) withBreakdown(breakdown report.Breakdown) {
-	b.breakdowns = append(b.breakdowns, breakdown)
+	b.breakdowns = append(b.breakdowns, &breakdown)
 }
 
 func (b *checkBuilder) build() check {
