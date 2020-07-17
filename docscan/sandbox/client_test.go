@@ -200,7 +200,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t
 }
 
 func createSandboxClient(t *testing.T, constructorBaseURL string) (client Client) {
-	keyBytes, fileErr := ioutil.ReadFile("../../test-key.pem")
+	keyBytes, fileErr := ioutil.ReadFile("../../test/test-key.pem")
 	assert.NilError(t, fileErr)
 
 	pemFile, parseErr := cryptoutil.ParseRSAKey(keyBytes)
