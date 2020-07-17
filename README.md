@@ -267,10 +267,10 @@ Given a YotiClient initialised with your SDK ID and KeyPair (see [Client Initial
 givenNames := "Edward Richard George"
 familyName := "Heath"
 
-amlAddress := yoti.AmlAddress{
+amlAddress := aml.AmlAddress{
     Country: "GBR"}
 
-amlProfile := yoti.AmlProfile{
+amlProfile := aml.AmlProfile{
     GivenNames: givenNames,
     FamilyName: familyName,
     Address:    amlAddress}
