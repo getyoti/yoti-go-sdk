@@ -2,8 +2,9 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	"os"
+
+	"github.com/getyoti/yoti-go-sdk/v3/requests"
 
 	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"

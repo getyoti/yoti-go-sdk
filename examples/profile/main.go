@@ -1,7 +1,7 @@
 package main
 
 import (
-	bytes "bytes"
+	"bytes"
 	"context"
 	"fmt"
 	"html/template"
@@ -14,7 +14,7 @@ import (
 	"os"
 	"path"
 
-	yoti "github.com/getyoti/yoti-go-sdk/v3"
+	"github.com/getyoti/yoti-go-sdk/v3"
 	dynamic "github.com/getyoti/yoti-go-sdk/v3/dynamic_sharing_service"
 	_ "github.com/joho/godotenv/autoload"
 )
