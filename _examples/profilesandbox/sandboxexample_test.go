@@ -2,7 +2,6 @@ package profilesandbox
 
 import (
 	"encoding/base64"
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -55,16 +54,15 @@ func TestExample(t *testing.T) {
 	sandboxToken, err := sandboxClient.SetupSharingProfile(tokenRequest)
 	assert.NilError(t, err)
 
-	yotiClient := yoti.Client{
-		Key:   pemFileBytes,
-		SdkID: sandboxClientSdkId,
-	}
+	yotiClient, err := yoti.NewClient(
+		sandboxClientSdkId,
+		pemFileBytes,
+	)
+	assert.NilError(t, err)
 	yotiClient.OverrideAPIURL("https://api.yoti.com/sandbox/v1")
 
 	activityDetails, err := yotiClient.GetActivityDetails(sandboxToken)
-	if len(err) > 0 {
-		log.Fatalf("%v", err)
-	}
+	assert.NilError(t, err)
 
 	// Test your application's logic here
 	assert.Equal(t, "some@email", activityDetails.UserProfile.EmailAddress().Value())
