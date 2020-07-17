@@ -20,7 +20,7 @@ For developing in VS Code, use the following `launch.json` file (placed inside a
         "type": "go",
         "request": "launch",
         "mode": "debug",
-        "program": "${workspaceFolder}/examples/aml/main.go"
+        "program": "${workspaceFolder}/_examples/aml/main.go"
     },
     {
         "name": "Example",
@@ -29,7 +29,7 @@ For developing in VS Code, use the following `launch.json` file (placed inside a
         "mode": "debug",
         "remotePath": "",
         "host": "127.0.0.1",
-        "program": "${workspaceFolder}/examples/profile/main.go",
+        "program": "${workspaceFolder}/_examples/profile/main.go",
         "env": {},
         "args": ["certificatehelper.go"],
         "showLog": true
