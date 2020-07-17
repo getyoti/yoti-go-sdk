@@ -53,7 +53,7 @@ func TestAttribute_MultiValueNotCreatedWithNonMultiValueType(t *testing.T) {
 }
 
 func TestAttribute_NewMultiValue(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_multivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_multivalue.txt")
 
 	multiValueAttribute, err := NewMultiValue(protoAttribute)
 
@@ -98,7 +98,7 @@ func TestAttribute_InvalidMultiValueNotReturned(t *testing.T) {
 }
 
 func TestAttribute_NestedMultiValue(t *testing.T) {
-	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "../test/fixtures/test_attribute_multivalue.txt").Value
+	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_multivalue.txt").Value
 
 	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
 		ContentType: yotiprotoattr.ContentType_STRING,
@@ -142,7 +142,7 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 }
 
 func TestAttribute_MultiValueGenericGetter(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_multivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_multivalue.txt")
 	multiValueAttribute, err := NewMultiValue(protoAttribute)
 	assert.NilError(t, err)
 

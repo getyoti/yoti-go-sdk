@@ -33,7 +33,7 @@ func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages 
 }
 
 func TestAttribute_NewImageSlice(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_multivalue.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_multivalue.txt")
 
 	documentImagesAttribute, err := NewImageSlice(protoAttribute)
 
