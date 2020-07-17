@@ -6,7 +6,6 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 )
 
 func TestTimeAttribute_NewDate_DateOnly(t *testing.T) {
@@ -25,7 +24,7 @@ func TestTimeAttribute_DateOfBirth(t *testing.T) {
 
 	dateOfBirthAttribute, err := NewDate(protoAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	expectedDateOfBirth := time.Date(1970, time.December, 01, 0, 0, 0, 0, time.UTC)
 	actualDateOfBirth := dateOfBirthAttribute.Value()

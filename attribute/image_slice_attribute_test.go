@@ -6,7 +6,6 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
-	is "gotest.tools/v3/assert/cmp"
 )
 
 func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expectedBase64URLLast10 string) {
@@ -38,7 +37,7 @@ func TestAttribute_NewImageSlice(t *testing.T) {
 
 	documentImagesAttribute, err := NewImageSlice(protoAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttribute.Value(), documentImagesAttribute.Anchors()[0])
 }
