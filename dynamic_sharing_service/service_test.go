@@ -2,10 +2,11 @@ package dynamic_sharing_service
 
 import (
 	"fmt"
-	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/getyoti/yoti-go-sdk/v3/test"
 )
 
 type mockHTTPClient struct {

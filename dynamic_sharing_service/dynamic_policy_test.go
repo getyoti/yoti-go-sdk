@@ -175,7 +175,7 @@ func ExampleDynamicPolicyBuilder_WithPhoneNumber() {
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *testing.T) {
 	attributeName := "attributeName"
-	builder := (&DynamicPolicyBuilder{})
+	builder := &DynamicPolicyBuilder{}
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
 
@@ -193,7 +193,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPanic(t *testing.T) {
 	attributeName := "attributeName"
-	builder := (&DynamicPolicyBuilder{})
+	builder := &DynamicPolicyBuilder{}
 	invalidOption := "invalidOption"
 
 	defer func() {
@@ -211,7 +211,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPani
 }
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{})
+	builder := &DynamicPolicyBuilder{}
 
 	builder.WithWantedAttributeByName("")
 	builder.WithWantedAttributeByName("")
@@ -223,7 +223,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t 
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{})
+	builder := &DynamicPolicyBuilder{}
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
 
@@ -240,7 +240,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *te
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{})
+	builder := &DynamicPolicyBuilder{}
 	var constraint constraintInterface
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	constraint = &sourceConstraint
@@ -259,7 +259,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t 
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(t *testing.T) {
-	builder := (&DynamicPolicyBuilder{})
+	builder := &DynamicPolicyBuilder{}
 	invalidOption := "invalidOption"
 
 	defer func() {

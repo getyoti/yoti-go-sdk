@@ -22,7 +22,7 @@ func DefaultExtraData() (extraData *ExtraData) {
 // NewExtraData takes a base64 encoded string and parses it into ExtraData
 func NewExtraData(extraDataBytes []byte) (*ExtraData, error) {
 	var err error
-	var extraData *ExtraData = DefaultExtraData()
+	var extraData = DefaultExtraData()
 
 	extraDataProto := &yotiprotoshare.ExtraData{}
 	if err = proto.Unmarshal(extraDataBytes, extraDataProto); err != nil {

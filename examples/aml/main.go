@@ -6,7 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	yoti "github.com/getyoti/yoti-go-sdk/v3"
+	"github.com/getyoti/yoti-go-sdk/v3"
+	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -35,10 +36,10 @@ func main() {
 	givenNames := "Edward Richard George"
 	familyName := "Heath"
 
-	amlAddress := yoti.AmlAddress{
+	amlAddress := aml.AmlAddress{
 		Country: "GBR"}
 
-	amlProfile := yoti.AmlProfile{
+	amlProfile := aml.AmlProfile{
 		GivenNames: givenNames,
 		FamilyName: familyName,
 		Address:    amlAddress}

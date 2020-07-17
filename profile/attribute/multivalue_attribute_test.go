@@ -59,7 +59,7 @@ func TestAttribute_NewMultiValue(t *testing.T) {
 
 	assert.NilError(t, err)
 
-	var documentImagesAttributeItems []*Image = CreateImageSlice(multiValueAttribute.Value())
+	var documentImagesAttributeItems = CreateImageSlice(multiValueAttribute.Value())
 
 	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttributeItems, multiValueAttribute.Anchors()[0])
 }
@@ -98,7 +98,7 @@ func TestAttribute_InvalidMultiValueNotReturned(t *testing.T) {
 }
 
 func TestAttribute_NestedMultiValue(t *testing.T) {
-	var innerMultiValueProtoValue []byte = createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_multivalue.txt").Value
+	var innerMultiValueProtoValue = createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_multivalue.txt").Value
 
 	var stringMultiValueItem = &yotiprotoattr.MultiValue_Value{
 		ContentType: yotiprotoattr.ContentType_STRING,

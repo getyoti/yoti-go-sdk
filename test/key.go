@@ -2,8 +2,9 @@ package test
 
 import (
 	"crypto/rsa"
-	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"io/ioutil"
+
+	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 )
 
 // GetValidKey returns a parsed RSA Private Key from a test key

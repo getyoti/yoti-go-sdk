@@ -156,19 +156,19 @@
 }
 
 .yoti-store-buttons-section {
-  margin-top: 40px;
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: 1fr;
+    margin-top: 40px;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr;
 }
 
 @media (min-width: 600px) {
-  .yoti-store-buttons-section {
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 25px;
-  }
+    .yoti-store-buttons-section {
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 25px;
+    }
 }
 
 .yoti-app-button-link {
-  text-decoration: none;
+    text-decoration: none;
 }
