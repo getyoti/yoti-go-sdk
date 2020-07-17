@@ -61,9 +61,9 @@ func TestExample(t *testing.T) {
 	}
 	yotiClient.OverrideAPIURL("https://api.yoti.com/sandbox/v1")
 
-	activityDetails, errStrings := yotiClient.GetActivityDetails(sandboxToken)
-	if len(errStrings) > 0 {
-		log.Fatalf("%v", errStrings)
+	activityDetails, err := yotiClient.GetActivityDetails(sandboxToken)
+	if len(err) > 0 {
+		log.Fatalf("%v", err)
 	}
 
 	// Test your application's logic here

@@ -2,7 +2,6 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"errors"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	"os"
 
@@ -72,10 +71,6 @@ func (client *Client) GetSdkID() string {
 // request failed. If the function call can be reattempted with the same token
 // the error will implement interface{ Temporary() bool }.
 func (client *Client) GetActivityDetails(token string) (activity profile.ActivityDetails, err error) {
-	if len(token) < 1 {
-		return activity, errors.New("Invalid Token")
-	}
-
 	return profile.GetActivityDetails(client.HTTPClient, token, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
