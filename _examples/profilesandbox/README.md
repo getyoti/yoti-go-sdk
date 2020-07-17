@@ -33,5 +33,3 @@ The format of `privateKey` passed in to the client needs to be `*rsa.PrivateKey`
 To run the examples:
 1. Copy the `.env.example` file and rename it to be `.env`.
 1. Then modify the `YOTI_SANDBOX_CLIENT_SDK_ID` and `YOTI_KEY_FILE_PATH` environment variables mentioned above.
-
-To make these tests runnable, the name needs to end in `_test.go`, so rename them accordingly.
