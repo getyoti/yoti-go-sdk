@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewThirdPartyAttribute(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_third_party.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_third_party.txt")
 
 	stringAttribute := NewString(protoAttribute)
 
@@ -23,7 +23,7 @@ func TestNewThirdPartyAttribute(t *testing.T) {
 }
 
 func TestAttribute_DateOfBirth(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_date_of_birth.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_date_of_birth.txt")
 
 	dateOfBirthAttribute, err := NewDate(protoAttribute)
 

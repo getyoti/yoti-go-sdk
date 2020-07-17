@@ -20,7 +20,7 @@ func TestTimeAttribute_NewDate_DateOnly(t *testing.T) {
 }
 
 func TestTimeAttribute_DateOfBirth(t *testing.T) {
-	protoAttribute := createAttributeFromTestFile(t, "../test/fixtures/test_attribute_date_of_birth.txt")
+	protoAttribute := createAttributeFromTestFile(t, "../../test/fixtures/test_attribute_date_of_birth.txt")
 
 	dateOfBirthAttribute, err := NewDate(protoAttribute)
 

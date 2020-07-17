@@ -15,7 +15,7 @@ import (
 )
 
 func TestShouldParseThirdPartyAttributeCorrectly(t *testing.T) {
-	var thirdPartyAttributeBytes []byte = test.GetTestFileBytes(t, "../test/fixtures/test_third_party_issuance_details.txt")
+	var thirdPartyAttributeBytes []byte = test.GetTestFileBytes(t, "../../test/fixtures/test_third_party_issuance_details.txt")
 	issuanceDetails, err := ParseIssuanceDetails(thirdPartyAttributeBytes)
 
 	assert.NilError(t, err)
