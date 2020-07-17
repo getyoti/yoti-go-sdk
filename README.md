@@ -230,7 +230,7 @@ The `profile` object provides a set of attributes corresponding to user attribut
 
 ## Sandbox
 
-See [examples/profilesandbox](examples/profilesandbox) for information about how to use the Yoti Profile Sandbox service.
+See [_examples/profilesandbox](_examples/profilesandbox) for information about how to use the Yoti Profile Sandbox service.
 
 ## AML Integration
 
@@ -293,22 +293,22 @@ log.Printf(
 }
 ```
 
-Additionally, an [example AML application](/examples/aml/main.go) is provided in the examples folder.
+Additionally, an [example AML application](/_examples/aml/main.go) is provided in the `_examples` folder.
 
-* Rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
-* Change directory to the aml example folder: `cd examples/aml`
+* Rename the [.env.example](_examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
+* Change directory to the aml example folder: `cd _examples/aml`
 * Install the dependencies with `go get`
 * Start the example with `go run main.go`
 
 ## Running the Profile Example
 
-The profile retrieval example can be found in the [examples folder](examples).
+The profile retrieval example can be found in the [_examples folder](_examples).
 
-* Change directory to the profile example folder: `cd examples/profile`
+* Change directory to the profile example folder: `cd _examples/profile`
 * On the [Yoti Hub](https://hub.yoti.com/):
   * Set the application domain of your app to `localhost:8080`
   * Set the scenario callback URL to `/profile`
-* Rename the [.env.example](examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
+* Rename the [.env.example](_examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
 * Install the dependencies with `go get`
 * Start the server with `go run main.go certificatehelper.go`
 
