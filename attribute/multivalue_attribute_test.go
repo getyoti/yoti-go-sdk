@@ -12,7 +12,7 @@ import (
 func marshallMultiValue(t *testing.T, multiValue *yotiprotoattr.MultiValue) []byte {
 	marshalled, err := proto.Marshal(multiValue)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	return marshalled
 }
@@ -57,7 +57,7 @@ func TestAttribute_NewMultiValue(t *testing.T) {
 
 	multiValueAttribute, err := NewMultiValue(protoAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	var documentImagesAttributeItems []*Image = CreateImageSlice(multiValueAttribute.Value())
 
@@ -114,7 +114,7 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 
 	multiValueAttribute, err := createMultiValueAttribute(t, multiValueItemSlice)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	for key, value := range multiValueAttribute.Value() {
 		switch key {

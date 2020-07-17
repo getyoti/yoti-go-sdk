@@ -1,6 +1,7 @@
 package profile
 
 import (
+	"encoding/base64"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -303,7 +304,7 @@ func TestProfile_GetAttribute_Bool(t *testing.T) {
 
 	boolValue, err := strconv.ParseBool(att.Value().(string))
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 	assert.Equal(t, initialBoolValue, boolValue)
 }
 
@@ -487,4 +488,97 @@ func TestMissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 	structuredPostalAddress, err := profile.StructuredPostalAddress()
 	assert.NilError(t, err)
 	assert.Equal(t, structuredPostalAddress.ContentType(), "JSON")
+}
+
+func TestAttributeImage_Image_Png(t *testing.T) {
+	attributeName := consts.AttrSelfie
+	byteValue := []byte("value")
+
+	var attributeImage = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       byteValue,
+		ContentType: yotiprotoattr.ContentType_PNG,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+}
+
+func TestAttributeImage_Image_Jpeg(t *testing.T) {
+	attributeName := consts.AttrSelfie
+	byteValue := []byte("value")
+
+	var attributeImage = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       byteValue,
+		ContentType: yotiprotoattr.ContentType_JPEG,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+}
+
+func TestAttributeImage_Image_Default(t *testing.T) {
+	attributeName := consts.AttrSelfie
+	byteValue := []byte("value")
+
+	var attributeImage = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       byteValue,
+		ContentType: yotiprotoattr.ContentType_PNG,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+	result := createProfileWithSingleAttribute(attributeImage)
+	selfie := result.Selfie()
+
+	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+}
+func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
+	attributeName := consts.AttrSelfie
+	imageBytes := []byte("value")
+
+	var attributeImage = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       imageBytes,
+		ContentType: yotiprotoattr.ContentType_PNG,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+
+	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
+
+	expectedBase64Selfie := "data:image/png;base64," + base64ImageExpectedValue
+
+	base64Selfie := result.Selfie().Value().Base64URL()
+
+	assert.Equal(t, base64Selfie, expectedBase64Selfie)
+}
+
+func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
+	attributeName := consts.AttrSelfie
+	imageBytes := []byte("value")
+
+	var attributeImage = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       imageBytes,
+		ContentType: yotiprotoattr.ContentType_JPEG,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attributeImage)
+
+	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
+
+	expectedBase64Selfie := "data:image/jpeg;base64," + base64ImageExpectedValue
+
+	base64Selfie := result.Selfie().Value().Base64URL()
+
+	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }

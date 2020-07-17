@@ -7,16 +7,17 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
-	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
-	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
-	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
-	"github.com/golang/protobuf/proto"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
+	"github.com/golang/protobuf/proto"
 
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 
@@ -39,8 +40,7 @@ func TestProfileService_ParseIsAgeVerifiedValue_True(t *testing.T) {
 	trueValue := []byte("true")
 
 	isAgeVerified, err := parseIsAgeVerifiedValue(trueValue)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse IsAgeVerified value")
+	assert.NilError(t, err, "Failed to parse IsAgeVerified value")
 	assert.Check(t, *isAgeVerified)
 }
 
@@ -48,8 +48,7 @@ func TestProfileService_ParseIsAgeVerifiedValue_False(t *testing.T) {
 	falseValue := []byte("false")
 
 	isAgeVerified, err := parseIsAgeVerifiedValue(falseValue)
-
-	assert.Assert(t, is.Nil(err), "Failed to parse IsAgeVerified value")
+	assert.NilError(t, err, "Failed to parse IsAgeVerified value")
 	assert.Check(t, !*isAgeVerified)
 
 }
@@ -115,7 +114,7 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 	}
 
 	activityDetails, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	profile := activityDetails.UserProfile
 
@@ -149,7 +148,7 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	actualDoB, err := profile.DateOfBirth()
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	assert.Assert(t, actualDoB != nil)
 	assert.DeepEqual(t, actualDoB.Value(), &expectedDoB)
@@ -183,7 +182,7 @@ func TestProfileService_TokenDecodedSuccessfully(t *testing.T) {
 	client := &mockHTTPClient{
 		do: func(request *http.Request) (*http.Response, error) {
 			parsed, err := url.Parse(request.URL.String())
-			assert.Assert(t, is.Nil(err), "Yoti API did not generate a valid URI.")
+			assert.NilError(t, err, "Yoti API did not generate a valid URI.")
 			assert.Equal(t, parsed.Path, expectedPath, "Yoti API did not generate a valid URL path.")
 
 			return &http.Response{
@@ -221,7 +220,7 @@ func TestProfileService_ParentRememberMeID(t *testing.T) {
 
 	activityDetails, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 	assert.Equal(t, activityDetails.ParentRememberMeID(), parentRememberMeID)
 }
 func TestProfileService_ParseWithoutProfile_Success(t *testing.T) {
@@ -253,7 +252,7 @@ func TestProfileService_ParseWithoutProfile_Success(t *testing.T) {
 
 		activityDetails, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
 
-		assert.Assert(t, is.Nil(err))
+		assert.NilError(t, err)
 		assert.Equal(t, activityDetails.RememberMeID(), rememberMeID)
 		assert.Equal(t, activityDetails.Timestamp(), timestamp)
 		assert.Equal(t, activityDetails.ReceiptID(), receiptID)
@@ -361,7 +360,7 @@ func TestProfileService_ParseWithoutRememberMeID_Success(t *testing.T) {
 		}
 		_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", getValidKey())
 
-		assert.Assert(t, is.Nil(err))
+		assert.NilError(t, err)
 	}
 }
 

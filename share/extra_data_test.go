@@ -37,7 +37,7 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 	}
 
 	parsedExtraData, err := parseProtoExtraData(t, protoExtraData)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	result := parsedExtraData.AttributeIssuanceDetails()
 
@@ -57,7 +57,7 @@ func TestShouldParseMultipleIssuingAttributes(t *testing.T) {
 	assert.NilError(t, err)
 
 	extraData, err := NewExtraData(rawExtraData)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	result := extraData.AttributeIssuanceDetails()
 
@@ -83,7 +83,7 @@ func TestShouldHandleNoExpiryDate(t *testing.T) {
 	}
 
 	marshalledThirdPartyAttribute, err := proto.Marshal(thirdPartyAttribute)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	result, _ := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
@@ -98,11 +98,11 @@ func TestShouldHandleNoIssuingAttributes(t *testing.T) {
 	}
 
 	marshalledThirdPartyAttribute, err := proto.Marshal(thirdPartyAttribute)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 	assert.Equal(t, base64.StdEncoding.EncodeToString(tokenValueBytes), result.Token())
 }
 
@@ -118,11 +118,11 @@ func TestShouldHandleNoIssuingAttributeDefinitions(t *testing.T) {
 	}
 
 	marshalledThirdPartyAttribute, err := proto.Marshal(thirdPartyAttribute)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 	assert.Equal(t, base64.StdEncoding.EncodeToString(tokenValueBytes), result.Token())
 }
 
@@ -146,7 +146,7 @@ func processThirdPartyAttribute(t *testing.T, marshalledThirdPartyAttribute []by
 
 func parseProtoExtraData(t *testing.T, protoExtraData *yotiprotoshare.ExtraData) (*ExtraData, error) {
 	extraDataMarshalled, err := proto.Marshal(protoExtraData)
-	assert.Assert(t, is.Nil(err))
+	assert.NilError(t, err)
 
 	return NewExtraData(extraDataMarshalled)
 }
