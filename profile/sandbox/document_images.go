@@ -3,7 +3,7 @@ package sandbox
 import (
 	"strings"
 
-	"github.com/getyoti/yoti-go-sdk/v3/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 )
 
 // Attribute describes an attribute on a sandbox profile

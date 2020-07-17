@@ -3,8 +3,8 @@ package profile
 import (
 	"reflect"
 
-	"github.com/getyoti/yoti-go-sdk/v3/attribute"
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
