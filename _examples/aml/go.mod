@@ -1,4 +1,4 @@
-module github.com/getyoti/yoti-go-sdk/v3/examples
+module aml
 
 go 1.12
 
@@ -8,4 +8,4 @@ require (
 	gotest.tools/v3 v3.0.2
 )
 
-replace github.com/getyoti/yoti-go-sdk/v3 => ../
+replace github.com/getyoti/yoti-go-sdk/v3 => ../../
