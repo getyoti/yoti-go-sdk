@@ -9,12 +9,9 @@ import (
 	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
+	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	yotirequest "github.com/getyoti/yoti-go-sdk/v3/requests"
 )
-
-type httpClient interface {
-	Do(*http.Request) (*http.Response, error)
-}
 
 type jsonMarshaler interface {
 	Marshal(v interface{}) ([]byte, error)
@@ -29,26 +26,26 @@ type Client struct {
 	// Base URL to use. This is not required, and a default will be set if not provided.
 	BaseURL string
 	// Mockable HTTP Client Interface
-	HTTPClient httpClient
+	HTTPClient requests.HttpClient
 	// Mockable JSON marshaler
 	jsonMarshaler jsonMarshaler
 }
 
-func (client *Client) getHTTPClient() httpClient {
+func (client *Client) getHTTPClient() requests.HttpClient {
 	if client.HTTPClient != nil {
 		return client.HTTPClient
 	}
 	return http.DefaultClient
 }
 
-func (client *Client) marshal(v interface{}) ([]byte, error) {
+func (client *Client) marshalJSON(v interface{}) ([]byte, error) {
 	if client.jsonMarshaler != nil {
 		return client.jsonMarshaler.Marshal(v)
 	}
 	return json.Marshal(v)
 }
 
-func (client *Client) baseURL() string {
+func (client *Client) getAPIURL() string {
 	if client.BaseURL == "" {
 		if value, exists := os.LookupEnv("YOTI_DOC_SCAN_API_URL"); exists && value != "" {
 			client.BaseURL = value
@@ -75,7 +72,7 @@ func (client *Client) makeConfigureResponseRequest(request *http.Request) (err e
 // ConfigureSessionResponse configures the response for the session
 func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig request.ResponseConfig) (err error) {
 	requestEndpoint := "/sessions/" + sessionID + "/response-config"
-	requestBody, err := client.marshal(responseConfig)
+	requestBody, err := client.marshalJSON(responseConfig)
 	if err != nil {
 		return err
 	}
@@ -83,7 +80,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 	request, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
 		HTTPMethod: "PUT",
-		BaseURL:    client.baseURL(),
+		BaseURL:    client.getAPIURL(),
 		Endpoint:   requestEndpoint,
 		Headers:    yotirequest.JSONHeaders(),
 		Body:       requestBody,
@@ -99,7 +96,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 // ConfigureApplicationResponse configures the response for the application
 func (client *Client) ConfigureApplicationResponse(responseConfig request.ResponseConfig) (err error) {
 	requestEndpoint := "/apps/" + client.ClientSdkID + "/response-config"
-	requestBody, err := client.marshal(responseConfig)
+	requestBody, err := client.marshalJSON(responseConfig)
 	if err != nil {
 		return err
 	}
@@ -107,7 +104,7 @@ func (client *Client) ConfigureApplicationResponse(responseConfig request.Respon
 	request, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
 		HTTPMethod: "PUT",
-		BaseURL:    client.baseURL(),
+		BaseURL:    client.getAPIURL(),
 		Endpoint:   requestEndpoint,
 		Headers:    yotirequest.JSONHeaders(),
 		Body:       requestBody,
