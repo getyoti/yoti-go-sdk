@@ -15,7 +15,7 @@ import (
 	"path"
 
 	"github.com/getyoti/yoti-go-sdk/v3"
-	dynamic "github.com/getyoti/yoti-go-sdk/v3/dynamic_sharing_service"
+	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
 	_ "github.com/joho/godotenv/autoload"
 )
 

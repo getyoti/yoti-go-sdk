@@ -1,4 +1,4 @@
-package dynamic_sharing_service
+package dynamic
 
 import (
 	"encoding/json"

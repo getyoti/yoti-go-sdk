@@ -1,4 +1,4 @@
-package dynamic_sharing_service
+package dynamic
 
 var (
 	// ShareURLHTTPErrorMessages specifies the HTTP error status codes used

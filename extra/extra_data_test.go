@@ -1,4 +1,4 @@
-package share
+package extra
 
 import (
 	"encoding/base64"
