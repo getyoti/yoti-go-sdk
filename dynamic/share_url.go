@@ -4,8 +4,8 @@ var (
 	// ShareURLHTTPErrorMessages specifies the HTTP error status codes used
 	// by the Share URL API
 	ShareURLHTTPErrorMessages = map[int]string{
-		400: "JSON is incorrect, contains invalid data: %[2]s",
-		404: "Application was not found: %[2]s",
+		400: "JSON is incorrect, contains invalid data",
+		404: "Application was not found",
 	}
 )
 

@@ -2,13 +2,13 @@ package aml
 
 import (
 	"crypto/rsa"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/test"
-
 	"gotest.tools/v3/assert"
 )
 
@@ -61,18 +61,19 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	key := getValidKey()
+	responseBody := "SERVICE UNAVAILABLE - Unable to reach the Integrity Service"
 
 	client := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 503,
-				Body:       ioutil.NopCloser(strings.NewReader(`SERVICE UNAVAILABLE - Unable to reach the Integrity Service`)),
+				Body:       ioutil.NopCloser(strings.NewReader(responseBody)),
 			}, nil
 		},
 	}
 
 	_, err := PerformAmlCheck(client, createStandardAmlProfile(), "clientSdkId", "https://apiUrl", key)
-	assert.ErrorContains(t, err, "AML Check was unsuccessful")
+	assert.ErrorContains(t, err, fmt.Sprintf("%d: AML Check was unsuccessful: %s", 503, responseBody))
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
