@@ -48,7 +48,7 @@ func GetActivityDetails(httpClient requests.HttpClient, token, clientSdkId, apiU
 		return
 	}
 
-	response, err := requests.Execute(httpClient, request, map[int]string{404: "%[1]d: Profile Not Found"}, requests.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, map[int]string{404: "Profile Not Found"}, requests.DefaultHTTPErrorMessages)
 	if err != nil {
 		return
 	}
