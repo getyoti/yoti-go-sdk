@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v3/anchor"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
