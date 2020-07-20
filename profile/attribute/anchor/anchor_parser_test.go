@@ -19,7 +19,7 @@ func assertServerCertSerialNo(t *testing.T, expectedSerialNo string, actualSeria
 	expectedSerialNoBigInt, ok := expectedSerialNoBigInt.SetString(expectedSerialNo, 10)
 	assert.Assert(t, ok, "Unexpected error when setting string as big int")
 
-	assert.Equal(t, expectedSerialNoBigInt.Cmp(actualSerialNo), 0) //0 == equivalent
+	assert.Equal(t, expectedSerialNoBigInt.Cmp(actualSerialNo), 0) // 0 == equivalent
 }
 
 func createAnchorSliceFromTestFile(t *testing.T, filename string) []*yotiprotoattr.Anchor {

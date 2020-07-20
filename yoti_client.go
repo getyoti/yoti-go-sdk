@@ -8,7 +8,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
-	"github.com/getyoti/yoti-go-sdk/v3/dynamic_sharing_service"
+	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
 	"github.com/getyoti/yoti-go-sdk/v3/profile"
 )
 
@@ -82,6 +82,6 @@ func (client *Client) PerformAmlCheck(amlProfile aml.AmlProfile) (amlResult aml.
 }
 
 // CreateShareURL creates a QR code for a specified dynamic scenario
-func (client *Client) CreateShareURL(scenario *dynamic_sharing_service.DynamicScenario) (share dynamic_sharing_service.ShareURL, err error) {
-	return dynamic_sharing_service.CreateShareURL(client.HTTPClient, scenario, client.GetSdkID(), client.getAPIURL(), client.Key)
+func (client *Client) CreateShareURL(scenario *dynamic.DynamicScenario) (share dynamic.ShareURL, err error) {
+	return dynamic.CreateShareURL(client.HTTPClient, scenario, client.GetSdkID(), client.getAPIURL(), client.Key)
 }

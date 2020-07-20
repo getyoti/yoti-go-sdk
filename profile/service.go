@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/extra"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
-	"github.com/getyoti/yoti-go-sdk/v3/share"
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -83,7 +83,7 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 		userProfile := newUserProfile(userAttributeList)
 		applicationProfile := NewApplicationProfile(applicationAttributeList)
 
-		var extraData *share.ExtraData
+		var extraData *extra.ExtraData
 		extraData, err = parseExtraData(&parsedResponse.Receipt, key, err)
 
 		timestamp, timestampErr := time.Parse(time.RFC3339Nano, parsedResponse.Receipt.Timestamp)
@@ -105,13 +105,13 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 	return activityDetails, err
 }
 
-func parseExtraData(receipt *receiptDO, key *rsa.PrivateKey, err error) (*share.ExtraData, error) {
+func parseExtraData(receipt *receiptDO, key *rsa.PrivateKey, err error) (*extra.ExtraData, error) {
 	decryptedExtraData, decryptErr := decryptExtraData(receipt, key)
 	if decryptErr != nil {
 		err = yotierror.MultiError{This: errors.New("Unable to decrypt ExtraData from the receipt. Error: " + decryptErr.Error()), Next: err}
 	}
 
-	extraData, parseErr := share.NewExtraData(decryptedExtraData)
+	extraData, parseErr := extra.NewExtraData(decryptedExtraData)
 	if parseErr != nil {
 		err = yotierror.MultiError{This: errors.New("Unable to parse ExtraData from the receipt. Error: " + parseErr.Error()), Next: err}
 	}
