@@ -224,6 +224,17 @@ func TestClient_ConfigureSessionResponseUsesConstructorApiUrlOverEnvVariable(t *
 	assert.Equal(t, "constuctorApiURL", client.apiURL)
 }
 
+func TestClient_ConfigureSessionResponseUsesOverrideApiUrlOverEnvVariable(t *testing.T) {
+	client := createSandboxClient(t, "")
+	client.OverrideAPIURL("overrideApiURL")
+	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")
+
+	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	assert.NilError(t, err)
+
+	assert.Equal(t, "overrideApiURL", client.apiURL)
+}
+
 func TestClient_ConfigureSessionResponseUsesEnvVariable(t *testing.T) {
 	client := createSandboxClient(t, "")
 
