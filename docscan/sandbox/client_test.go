@@ -1,14 +1,18 @@
 package sandbox
 
 import (
+	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
@@ -27,14 +31,45 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
-					StatusCode: 401,
+					StatusCode: 400,
 					Body:       ioutil.NopCloser(strings.NewReader("")),
 				}, nil
 			},
 		},
 	}
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
-	assert.ErrorContains(t, err, "Response config not created")
+	assert.ErrorContains(t, err, "400: unknown HTTP error")
+}
+
+func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	jsonBytes, _ := json.Marshal(docscan.ErrorDO{
+		Code:    "SOME_CODE",
+		Message: "some message",
+	})
+	response := &http.Response{
+		StatusCode: 400,
+		Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
+	}
+
+	client := Client{
+		Key: key,
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return response, nil
+			},
+		},
+	}
+	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	assert.ErrorContains(t, err, "400: SOME_CODE - some message")
+
+	errorResponse := err.(*docscan.Error).Response
+	assert.Equal(t, response, errorResponse)
+
+	body, _ := ioutil.ReadAll(errorResponse.Body)
+	assert.Equal(t, string(body), string(jsonBytes))
+
+	assert.ErrorContains(t, err.(*docscan.Error).Unwrap(), "400: unknown HTTP error")
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnMissingKeyError(t *testing.T) {
@@ -128,7 +163,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 		},
 	}
 	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
-	assert.ErrorContains(t, err, "Response config not created")
+	assert.ErrorContains(t, err, "401: unknown HTTP error")
 }
 
 func TestClient_ConfigureApplicationResponse_ShouldReturnMissingKeyError(t *testing.T) {
