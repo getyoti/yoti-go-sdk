@@ -35,10 +35,10 @@ func PerformAmlCheck(httpClient requests.HttpClient, amlProfile AmlProfile, clie
 		return
 	}
 
-	amlErrorMessages := make(map[int]string)
-	amlErrorMessages[-1] = "AML Check was unsuccessful, status code: '%[1]d', content '%[2]s'"
+	httpErrorMessages := make(map[int]string)
+	httpErrorMessages[-1] = "AML Check was unsuccessful"
 
-	response, err := requests.Execute(httpClient, request, amlErrorMessages)
+	response, err := requests.Execute(httpClient, request, httpErrorMessages)
 	if err != nil {
 		return
 	}
