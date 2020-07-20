@@ -48,7 +48,7 @@ func TestAnchorParser_parseExtension_ShouldErrorForInvalidExtension(t *testing.T
 func TestAnchorParser_Passport(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	anchorSlice := createAnchorSliceFromTestFile(t, "../test/fixtures/test_anchor_passport.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "../../../test/fixtures/test_anchor_passport.txt")
 
 	parsedAnchors := ParseAnchors(anchorSlice)
 
@@ -71,7 +71,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 }
 
 func TestAnchorParser_DrivingLicense(t *testing.T) {
-	anchorSlice := createAnchorSliceFromTestFile(t, "../test/fixtures/test_anchor_driving_license.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "../../../test/fixtures/test_anchor_driving_license.txt")
 
 	parsedAnchors := ParseAnchors(anchorSlice)
 	resultAnchor := parsedAnchors[0]
@@ -93,7 +93,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 }
 
 func TestAnchorParser_UnknownAnchor(t *testing.T) {
-	anchorSlice := createAnchorSliceFromTestFile(t, "../test/fixtures/test_anchor_unknown.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "../../../test/fixtures/test_anchor_unknown.txt")
 
 	resultAnchor := ParseAnchors(anchorSlice)[0]
 
@@ -109,7 +109,7 @@ func TestAnchorParser_UnknownAnchor(t *testing.T) {
 }
 
 func TestAnchorParser_YotiAdmin(t *testing.T) {
-	anchorSlice := createAnchorSliceFromTestFile(t, "../test/fixtures/test_anchor_yoti_admin.txt")
+	anchorSlice := createAnchorSliceFromTestFile(t, "../../../test/fixtures/test_anchor_yoti_admin.txt")
 
 	resultAnchor := ParseAnchors(anchorSlice)[0]
 
