@@ -221,7 +221,7 @@ func TestClient_ConfigureSessionResponseUsesConstructorApiUrlOverEnvVariable(t *
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "constuctorApiURL", client.apiURL)
+	assert.Equal(t, "constuctorApiURL", client.getAPIURL())
 }
 
 func TestClient_ConfigureSessionResponseUsesOverrideApiUrlOverEnvVariable(t *testing.T) {
@@ -232,7 +232,7 @@ func TestClient_ConfigureSessionResponseUsesOverrideApiUrlOverEnvVariable(t *tes
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "overrideApiURL", client.apiURL)
+	assert.Equal(t, "overrideApiURL", client.getAPIURL())
 }
 
 func TestClient_ConfigureSessionResponseUsesEnvVariable(t *testing.T) {
@@ -243,7 +243,7 @@ func TestClient_ConfigureSessionResponseUsesEnvVariable(t *testing.T) {
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "envApiURL", client.apiURL)
+	assert.Equal(t, "envApiURL", client.getAPIURL())
 }
 
 func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithEmptyEnvValue(t *testing.T) {
@@ -254,7 +254,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithEmptyEnvValu
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.apiURL)
+	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.getAPIURL())
 }
 
 func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t *testing.T) {
@@ -265,7 +265,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.NilError(t, err)
 
-	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.apiURL)
+	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.getAPIURL())
 }
 
 func createSandboxClient(t *testing.T, constructorApiURL string) (client Client) {
