@@ -3,12 +3,11 @@ package sandbox
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	yotirequest "github.com/getyoti/yoti-go-sdk/v3/requests"
@@ -77,13 +76,10 @@ func (client *Client) marshalJSON(v interface{}) ([]byte, error) {
 }
 
 func (client *Client) makeConfigureResponseRequest(request *http.Request) (err error) {
-	response, err := client.getHTTPClient().Do(request)
+	response, err := requests.Execute(client.getHTTPClient(), request)
+
 	if err != nil {
-		return err
-	}
-	if response.StatusCode != http.StatusCreated {
-		body, _ := ioutil.ReadAll(response.Body)
-		return fmt.Errorf("Response config not created (HTTP %d) %s", response.StatusCode, string(body))
+		return docscan.NewError(err, response)
 	}
 
 	return nil
