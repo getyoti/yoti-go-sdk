@@ -16,6 +16,28 @@ func ExampleDocumentTextDataExtractionTaskBuilder() {
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
 		WithDocumentFilter(filter).
 		WithDocumentField("some", "field").
+		WithDocumentField("other", "field").
+		Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(check)
+	fmt.Println(string(data))
+	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"other":"field","some":"field"}}}
+}
+
+func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
+	filter, err := filter.NewDocumentFilterBuilder().Build()
+	if err != nil {
+		return
+	}
+
+	check, err := NewDocumentTextDataExtractionTaskBuilder().
+		WithDocumentFilter(filter).
+		WithDocumentFields(map[string]string{
+			"some": "field",
+		}).
 		Build()
 	if err != nil {
 		return
