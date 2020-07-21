@@ -34,6 +34,7 @@ func ExampleDocumentTextDataCheckBuilder() {
 		WithRecommendation(recommendation).
 		WithDocumentFilter(filter).
 		WithDocumentField("some", "field").
+		WithDocumentField("other", "field").
 		Build()
 	if err != nil {
 		return
@@ -41,7 +42,22 @@ func ExampleDocumentTextDataCheckBuilder() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":{"some":"field"}},"document_filter":{"document_types":[],"country_codes":[]}}
+	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":{"other":"field","some":"field"}},"document_filter":{"document_types":[],"country_codes":[]}}
+}
+
+func ExampleDocumentTextDataCheckBuilder_WithDocumentFields() {
+	check, err := NewDocumentTextDataCheckBuilder().
+		WithDocumentFields(map[string]string{
+			"some": "field",
+		}).
+		Build()
+	if err != nil {
+		return
+	}
+
+	data, _ := json.Marshal(check)
+	fmt.Println(string(data))
+	// Output: {"result":{"report":{},"document_fields":{"some":"field"}}}
 }
 
 func ExampleDocumentTextDataCheckBuilder_minimal() {
