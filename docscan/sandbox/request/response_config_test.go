@@ -35,7 +35,7 @@ func ExampleResponseConfigBuilder() {
 
 	data, _ := json.Marshal(responseConfig)
 	fmt.Println(string(data))
-	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[]},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
+	// Output: {"task_results":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[]},"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH":[],"LIVENESS":[]}}
 }
 
 func ExampleResponseConfigBuilder_minimal() {
@@ -53,5 +53,5 @@ func ExampleResponseConfigBuilder_minimal() {
 
 	data, _ := json.Marshal(responseConfig)
 	fmt.Println(string(data))
-	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH_CHECK":[],"LIVENESS":[]}}
+	// Output: {"check_reports":{"ID_DOCUMENT_AUTHENTICITY":[],"ID_DOCUMENT_TEXT_DATA_CHECK":[],"ID_DOCUMENT_FACE_MATCH":[],"LIVENESS":[]}}
 }

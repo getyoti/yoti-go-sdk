@@ -55,6 +55,12 @@ func (b *DocumentTextDataCheckBuilder) WithDocumentField(key string, value strin
 	return b
 }
 
+// WithDocumentFields sets document fields
+func (b *DocumentTextDataCheckBuilder) WithDocumentFields(documentFields map[string]string) *DocumentTextDataCheckBuilder {
+	b.documentFields = documentFields
+	return b
+}
+
 // Build creates a new DocumentTextDataCheck
 func (b *DocumentTextDataCheckBuilder) Build() (DocumentTextDataCheck, error) {
 	documentCheck := b.documentCheckBuilder.build()
