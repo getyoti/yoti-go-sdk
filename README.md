@@ -230,7 +230,8 @@ The `profile` object provides a set of attributes corresponding to user attribut
 
 ## Sandbox
 
-See [_examples/profilesandbox](_examples/profilesandbox) for information about how to use the Yoti Profile Sandbox service.
+- [Yoti Profile Sandbox](_docs/PROFILE_SANDBOX.md)
+- [Doc Scan Sandbox](_docs/DOC_SCAN_SANDBOX.md)
 
 ## AML Integration
 
