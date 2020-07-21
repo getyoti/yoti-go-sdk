@@ -236,6 +236,7 @@ The `profile` object provides a set of attributes corresponding to user attribut
 ## Sandbox
 
 - [Yoti Profile Sandbox](_docs/PROFILE_SANDBOX.md)
+- [Doc Scan Sandbox](_docs/DOC_SCAN_SANDBOX.md)
 
 ## Running the Profile Example
 
