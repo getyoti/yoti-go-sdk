@@ -40,6 +40,12 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentField(key string, va
 	return b
 }
 
+// WithDocumentFields sets document fields
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFields(documentFields map[string]string) *DocumentTextDataExtractionTaskBuilder {
+	b.documentFields = documentFields
+	return b
+}
+
 // Build creates a new DocumentTextDataExtractionTask
 func (b *DocumentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtractionTask, error) {
 	return DocumentTextDataExtractionTask{
