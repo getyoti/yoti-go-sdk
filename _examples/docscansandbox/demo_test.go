@@ -17,6 +17,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/task"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/tebeka/selenium"
@@ -103,6 +104,13 @@ func (c *webContext) getIFrameSessionID() string {
 }
 
 func (c *webContext) iConfigureTheSessionResponse() error {
+	documentFilter, err := filter.NewDocumentFilterBuilder().
+		WithDocumentType("PASSPORT").
+		Build()
+	if err != nil {
+		return err
+	}
+
 	authenticityBreakdown, err := report.NewBreakdownBuilder().
 		WithSubCheck("security_features").
 		WithResult("NOT_AVAILABLE").
@@ -124,6 +132,7 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 	documentAuthenticityCheck, err := check.NewDocumentAuthenticityCheckBuilder().
 		WithBreakdown(authenticityBreakdown).
 		WithRecommendation(authenticityRecommendation).
+		WithDocumentFilter(documentFilter).
 		Build()
 	if err != nil {
 		return err
@@ -150,6 +159,7 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 			"date_of_birth":   "1986-06-01",
 			"document_number": "123456789",
 		}).
+		WithDocumentFilter(documentFilter).
 		Build()
 	if err != nil {
 		return err
