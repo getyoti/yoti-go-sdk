@@ -53,7 +53,7 @@ func ParseIssuanceDetails(thirdPartyAttributeBytes []byte) (*IssuanceDetails, er
 		return nil, errors.New("Issuance Token is invalid")
 	}
 
-	base64EncodedToken := base64.StdEncoding.EncodeToString(issuanceTokenBytes)
+	base64EncodedToken := base64.RawURLEncoding.EncodeToString(issuanceTokenBytes)
 
 	return &IssuanceDetails{
 		token:      base64EncodedToken,

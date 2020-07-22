@@ -20,10 +20,19 @@ func TestShouldParseThirdPartyAttributeCorrectly(t *testing.T) {
 
 	assert.Assert(t, is.Nil(err))
 	assert.Equal(t, issuanceDetails.Attributes()[0].Name(), "com.thirdparty.id")
-	assert.Equal(t, issuanceDetails.Token(), "c29tZUlzc3VhbmNlVG9rZW4=")
+	assert.Equal(t, issuanceDetails.Token(), "c29tZUlzc3VhbmNlVG9rZW4")
 	assert.Equal(t,
 		issuanceDetails.ExpiryDate().Format("2006-01-02T15:04:05.000Z"),
 		"2019-10-15T22:04:05.123Z")
+}
+
+func TestToken_ShouldReturnUnpaddedBase64UrlToken(t *testing.T) {
+	var thirdPartyAttributeBytes []byte = test.GetTestFileBytes(t, "testthirdpartyattribute.txt")
+	issuanceDetails, err := ParseIssuanceDetails(thirdPartyAttributeBytes)
+	assert.Assert(t, is.Nil(err))
+
+	decodedToken, _ := base64.RawURLEncoding.DecodeString(issuanceDetails.Token())
+	assert.Equal(t, string(decodedToken), "someIssuanceToken")
 }
 
 func TestShouldLogWarningIfErrorInParsingExpiryDate(t *testing.T) {
@@ -40,7 +49,7 @@ func TestShouldLogWarningIfErrorInParsingExpiryDate(t *testing.T) {
 	assert.Assert(t, is.Nil(err))
 
 	var tokenBytes []byte = []byte(tokenValue)
-	var expectedBase64Token string = base64.StdEncoding.EncodeToString(tokenBytes)
+	var expectedBase64Token string = base64.RawURLEncoding.EncodeToString(tokenBytes)
 
 	result, err := ParseIssuanceDetails(marshalled)
 	assert.Equal(t, expectedBase64Token, result.Token())

@@ -42,7 +42,7 @@ func TestShouldReturnFirstMatchingThirdPartyAttribute(t *testing.T) {
 	result := parsedExtraData.AttributeIssuanceDetails()
 
 	var tokenBytes = []byte(tokenValue1)
-	var base64EncodedToken = base64.StdEncoding.EncodeToString(tokenBytes)
+	var base64EncodedToken = base64.RawURLEncoding.EncodeToString(tokenBytes)
 
 	assert.Equal(t, result.Token(), base64EncodedToken)
 	assert.Equal(t, result.Attributes()[0].Name(), "attributeName1")
@@ -61,7 +61,7 @@ func TestShouldParseMultipleIssuingAttributes(t *testing.T) {
 
 	result := extraData.AttributeIssuanceDetails()
 
-	assert.Equal(t, result.Token(), "c29tZUlzc3VhbmNlVG9rZW4=")
+	assert.Equal(t, result.Token(), "c29tZUlzc3VhbmNlVG9rZW4")
 	assert.Equal(t,
 		result.ExpiryDate().Format("2006-01-02T15:04:05.000Z"),
 		time.Date(2019, time.October, 15, 22, 04, 05, 123000000, time.UTC).Format("2006-01-02T15:04:05.000Z"))
@@ -103,7 +103,7 @@ func TestShouldHandleNoIssuingAttributes(t *testing.T) {
 	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
 	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, base64.StdEncoding.EncodeToString(tokenValueBytes), result.Token())
+	assert.Equal(t, base64.RawURLEncoding.EncodeToString(tokenValueBytes), result.Token())
 }
 
 func TestShouldHandleNoIssuingAttributeDefinitions(t *testing.T) {
@@ -123,7 +123,7 @@ func TestShouldHandleNoIssuingAttributeDefinitions(t *testing.T) {
 	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
 
 	assert.Assert(t, is.Nil(err))
-	assert.Equal(t, base64.StdEncoding.EncodeToString(tokenValueBytes), result.Token())
+	assert.Equal(t, base64.RawURLEncoding.EncodeToString(tokenValueBytes), result.Token())
 }
 
 func processThirdPartyAttribute(t *testing.T, marshalledThirdPartyAttribute []byte) (*attribute.IssuanceDetails, error) {
