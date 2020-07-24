@@ -51,14 +51,14 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	_, err := client.GetActivityDetails(test.EncryptedToken)
 
 	assert.Check(t, err != nil)
-	assert.ErrorContains(t, err, "Unknown HTTP Error")
+	assert.ErrorContains(t, err, "unknown HTTP error")
 	tempError, temporary := err.(interface {
 		Temporary() bool
 		Unwrap() error
 	})
 	assert.Check(t, temporary)
 	assert.Check(t, tempError.Temporary())
-	assert.ErrorContains(t, tempError.Unwrap(), "Unknown HTTP Error")
+	assert.ErrorContains(t, tempError.Unwrap(), "unknown HTTP error")
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
