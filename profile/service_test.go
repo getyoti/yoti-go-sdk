@@ -76,7 +76,7 @@ func TestProfileService_RequestErrIsReturned(t *testing.T) {
 	}
 	_, err := GetActivityDetails(client, test.EncryptedToken, "clientSdkId", "https://apiUrl", getValidKey())
 
-	assert.ErrorContains(t, err, "404: Profile Not Found")
+	assert.ErrorContains(t, err, "404: Profile not found")
 }
 
 func TestProfileService_InvalidToken(t *testing.T) {
