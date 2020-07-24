@@ -77,7 +77,7 @@ func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {
 
 	_, err := client.GetActivityDetails(test.EncryptedToken)
 
-	assert.ErrorContains(t, err, "Profile Not Found")
+	assert.ErrorContains(t, err, "Profile not found")
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
