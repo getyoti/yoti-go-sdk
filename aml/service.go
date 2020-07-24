@@ -10,14 +10,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
-func getAMLEndpoint(sdkID string) string {
+func getCheckEndpoint(sdkID string) string {
 	return fmt.Sprintf("/aml-check?appId=%s", sdkID)
 }
 
-// PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
+// PerformCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
-func PerformAmlCheck(httpClient requests.HttpClient, amlProfile AmlProfile, clientSdkId, apiUrl string, key *rsa.PrivateKey) (amlResult AmlResult, err error) {
-	payload, err := json.Marshal(amlProfile)
+func PerformCheck(httpClient requests.HttpClient, profile Profile, clientSdkId, apiUrl string, key *rsa.PrivateKey) (result Result, err error) {
+	payload, err := json.Marshal(profile)
 	if err != nil {
 		return
 	}
@@ -27,7 +27,7 @@ func PerformAmlCheck(httpClient requests.HttpClient, amlProfile AmlProfile, clie
 		Key:        key,
 		HTTPMethod: http.MethodPost,
 		BaseURL:    apiUrl,
-		Endpoint:   getAMLEndpoint(clientSdkId),
+		Endpoint:   getCheckEndpoint(clientSdkId),
 		Headers:    headers,
 		Body:       payload,
 	}.Request()
@@ -48,6 +48,6 @@ func PerformAmlCheck(httpClient requests.HttpClient, amlProfile AmlProfile, clie
 		return
 	}
 
-	amlResult, err = GetAmlResult(responseBytes)
+	result, err = GetResult(responseBytes)
 	return
 }
