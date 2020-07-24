@@ -192,7 +192,7 @@ func TestProfileService_TokenDecodedSuccessfully(t *testing.T) {
 	}
 
 	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
-	assert.ErrorContains(t, err, "Unknown HTTP Error")
+	assert.ErrorContains(t, err, "unknown HTTP error")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
