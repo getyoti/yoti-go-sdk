@@ -5,37 +5,37 @@ import (
 	"log"
 )
 
-// AmlAddress Address for Anti Money Laundering (AML) purposes
-type AmlAddress struct {
+// Address Address for Anti Money Laundering (AML) purposes
+type Address struct {
 	Country  string `json:"country"`
 	Postcode string `json:"post_code"`
 }
 
-// AmlProfile User profile for Anti Money Laundering (AML) checks
-type AmlProfile struct {
-	GivenNames string     `json:"given_names"`
-	FamilyName string     `json:"family_name"`
-	Address    AmlAddress `json:"address"`
-	SSN        string     `json:"ssn"`
+// Profile User profile for Anti Money Laundering (AML) checks
+type Profile struct {
+	GivenNames string  `json:"given_names"`
+	FamilyName string  `json:"family_name"`
+	Address    Address `json:"address"`
+	SSN        string  `json:"ssn"`
 }
 
-// AmlResult Result of Anti Money Laundering (AML) check for a particular user
-type AmlResult struct {
+// Result Result of Anti Money Laundering (AML) check for a particular user
+type Result struct {
 	OnFraudList bool `json:"on_fraud_list"`
 	OnPEPList   bool `json:"on_pep_list"`
 	OnWatchList bool `json:"on_watch_list"`
 }
 
-// GetAmlResult Parses AML result from response
-func GetAmlResult(amlResponse []byte) (AmlResult, error) {
-	var amlResult AmlResult
-	err := json.Unmarshal(amlResponse, &amlResult)
+// GetResult Parses AML result from response
+func GetResult(response []byte) (Result, error) {
+	var result Result
+	err := json.Unmarshal(response, &result)
 
 	if err != nil {
 		log.Printf(
 			"Unable to get AML result from response. Error: %s", err)
-		return amlResult, err
+		return result, err
 	}
 
-	return amlResult, err
+	return result, err
 }
