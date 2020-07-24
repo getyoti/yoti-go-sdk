@@ -30,6 +30,9 @@ How to manage users
 1) [Sandbox](#sandbox) -
 How to use the Yoti sandbox service to test your application
 
+1) [AML Integration](#aml-integration) -
+How to integrate with Yoti's AML (Anti Money Laundering) service
+
 1) [Running the example](#running-the-profile-example) -
 Running the profile example project
 

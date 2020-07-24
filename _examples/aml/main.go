@@ -36,10 +36,10 @@ func main() {
 	givenNames := "Edward Richard George"
 	familyName := "Heath"
 
-	amlAddress := aml.AmlAddress{
+	amlAddress := aml.Address{
 		Country: "GBR"}
 
-	amlProfile := aml.AmlProfile{
+	amlProfile := aml.Profile{
 		GivenNames: givenNames,
 		FamilyName: familyName,
 		Address:    amlAddress}

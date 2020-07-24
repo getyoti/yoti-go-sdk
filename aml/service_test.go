@@ -23,7 +23,7 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
+func TestPerformCheck_WithInvalidJSON(t *testing.T) {
 	key := getValidKey()
 
 	client := &mockHTTPClient{
@@ -35,11 +35,11 @@ func TestYotiClient_PerformAmlCheck_WithInvalidJSON(t *testing.T) {
 		},
 	}
 
-	_, err := PerformAmlCheck(client, createStandardAmlProfile(), "clientSdkId", "https://apiUrl", key)
+	_, err := PerformCheck(client, createStandardProfile(), "clientSdkId", "https://apiUrl", key)
 	assert.Check(t, strings.Contains(err.Error(), "invalid character"))
 }
 
-func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
+func TestPerformCheck_Success(t *testing.T) {
 	key := getValidKey()
 
 	client := &mockHTTPClient{
@@ -51,7 +51,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 		},
 	}
 
-	result, err := PerformAmlCheck(client, createStandardAmlProfile(), "clientSdkId", "https://apiUrl", key)
+	result, err := PerformCheck(client, createStandardProfile(), "clientSdkId", "https://apiUrl", key)
 	assert.NilError(t, err)
 
 	assert.Check(t, result.OnFraudList)
@@ -59,7 +59,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 	assert.Check(t, result.OnWatchList)
 }
 
-func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
+func TestPerformCheck_Unsuccessful(t *testing.T) {
 	key := getValidKey()
 	responseBody := "some service unavailable response"
 
@@ -72,7 +72,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 		},
 	}
 
-	_, err := PerformAmlCheck(client, createStandardAmlProfile(), "clientSdkId", "https://apiUrl", key)
+	_, err := PerformCheck(client, createStandardProfile(), "clientSdkId", "https://apiUrl", key)
 	assert.ErrorContains(t, err, fmt.Sprintf("%d: AML Check was unsuccessful - %s", 503, responseBody))
 
 	tempError, temporary := err.(interface {
@@ -84,11 +84,11 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 func getValidKey() *rsa.PrivateKey {
 	return test.GetValidKey("../test/test-key.pem")
 }
-func createStandardAmlProfile() AmlProfile {
-	var amlAddress = AmlAddress{
+func createStandardProfile() Profile {
+	var amlAddress = Address{
 		Country: "GBR"}
 
-	var amlProfile = AmlProfile{
+	var amlProfile = Profile{
 		GivenNames: "Edward Richard George",
 		FamilyName: "Heath",
 		Address:    amlAddress}
