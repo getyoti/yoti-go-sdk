@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	defaultUnknownErrorMessageConst = "Unknown HTTP Error"
+	defaultUnknownErrorMessageConst = "unknown HTTP error"
 
 	// DefaultHTTPErrorMessages maps HTTP error status codes to format strings
 	// to create useful error messages. -1 is used to specify a default message

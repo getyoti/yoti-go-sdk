@@ -55,7 +55,7 @@ func ExampleCreateShareURL() {
 func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
 	_, err := createShareUrlWithErrorResponse(503, "SERVICE UNAVAILABLE")
 
-	assert.ErrorContains(t, err, "503: Unknown HTTP Error: SERVICE UNAVAILABLE")
+	assert.ErrorContains(t, err, "503: unknown HTTP error: SERVICE UNAVAILABLE")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
