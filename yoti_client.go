@@ -77,8 +77,8 @@ func (client *Client) GetActivityDetails(token string) (activity profile.Activit
 
 // PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
 // Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
-func (client *Client) PerformAmlCheck(amlProfile aml.AmlProfile) (amlResult aml.AmlResult, err error) {
-	return aml.PerformAmlCheck(client.HTTPClient, amlProfile, client.GetSdkID(), client.getAPIURL(), client.Key)
+func (client *Client) PerformAmlCheck(profile aml.Profile) (result aml.Result, err error) {
+	return aml.PerformCheck(client.HTTPClient, profile, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
 // CreateShareURL creates a QR code for a specified dynamic scenario
