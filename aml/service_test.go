@@ -61,7 +61,7 @@ func TestYotiClient_PerformAmlCheck_Success(t *testing.T) {
 
 func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	key := getValidKey()
-	responseBody := "SERVICE UNAVAILABLE - Unable to reach the Integrity Service"
+	responseBody := "some service unavailable response"
 
 	client := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -73,7 +73,7 @@ func TestYotiClient_PerformAmlCheck_Unsuccessful(t *testing.T) {
 	}
 
 	_, err := PerformAmlCheck(client, createStandardAmlProfile(), "clientSdkId", "https://apiUrl", key)
-	assert.ErrorContains(t, err, fmt.Sprintf("%d: AML Check was unsuccessful: %s", 503, responseBody))
+	assert.ErrorContains(t, err, fmt.Sprintf("%d: AML Check was unsuccessful - %s", 503, responseBody))
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
