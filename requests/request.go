@@ -47,7 +47,7 @@ func formatHTTPError(message string, statusCode int, body []byte) error {
 	if len(body) == 0 {
 		return fmt.Errorf("%d: %s", statusCode, message)
 	}
-	return fmt.Errorf("%d: %s: %s", statusCode, message, body)
+	return fmt.Errorf("%d: %s - %s", statusCode, message, body)
 }
 
 func handleHTTPError(response *http.Response, errorMessages ...map[int]string) error {

@@ -53,9 +53,9 @@ func ExampleCreateShareURL() {
 }
 
 func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(503, "SERVICE UNAVAILABLE")
+	_, err := createShareUrlWithErrorResponse(503, "some service unavailable response")
 
-	assert.ErrorContains(t, err, "503: unknown HTTP error: SERVICE UNAVAILABLE")
+	assert.ErrorContains(t, err, "503: unknown HTTP error - some service unavailable response")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -64,9 +64,9 @@ func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
 }
 
 func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(404, "NOT FOUND")
+	_, err := createShareUrlWithErrorResponse(404, "some not found response")
 
-	assert.ErrorContains(t, err, "404: Application was not found: NOT FOUND")
+	assert.ErrorContains(t, err, "404: Application was not found - some not found response")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -75,9 +75,9 @@ func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
 }
 
 func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(400, "INVALID JSON")
+	_, err := createShareUrlWithErrorResponse(400, "some invalid JSON response")
 
-	assert.ErrorContains(t, err, "400: JSON is incorrect, contains invalid data: INVALID JSON")
+	assert.ErrorContains(t, err, "400: JSON is incorrect, contains invalid data - some invalid JSON response")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
