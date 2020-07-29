@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
@@ -14,6 +15,7 @@ func ExampleCheckReportsBuilder() {
 		WithSubCheck("some_check").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -21,6 +23,7 @@ func ExampleCheckReportsBuilder() {
 		WithValue("some_value").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -29,6 +32,7 @@ func ExampleCheckReportsBuilder() {
 		WithRecommendation(recommendation).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -37,6 +41,7 @@ func ExampleCheckReportsBuilder() {
 		WithRecommendation(recommendation).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -45,11 +50,13 @@ func ExampleCheckReportsBuilder() {
 		WithRecommendation(recommendation).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	zoomLivenessCheck, err := check.NewZoomLivenessCheckBuilder().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -61,6 +68,7 @@ func ExampleCheckReportsBuilder() {
 		WithAsyncReportDelay(10).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -72,6 +80,7 @@ func ExampleCheckReportsBuilder() {
 func ExampleCheckReportsBuilder_minimal() {
 	checkReports, err := NewCheckReportsBuilder().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 

@@ -2,6 +2,7 @@ package extension
 
 import (
 	"fmt"
+	"os"
 )
 
 func ExampleLocationConstraintExtension() {
@@ -12,6 +13,7 @@ func ExampleLocationConstraintExtension() {
 		WithUncertainty(0.001).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
