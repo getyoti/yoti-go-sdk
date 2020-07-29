@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/task"
 )
@@ -11,6 +12,7 @@ func ExampleTaskResultsBuilder() {
 	textDataExtractionTask, err := task.NewDocumentTextDataExtractionTaskBuilder().
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -18,6 +20,7 @@ func ExampleTaskResultsBuilder() {
 		WithDocumentTextDataExtractionTask(textDataExtractionTask).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 

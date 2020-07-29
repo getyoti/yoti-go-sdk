@@ -3,6 +3,7 @@ package check
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
 )
@@ -13,6 +14,7 @@ func ExampleZoomLivenessCheckBuilder() {
 		WithSubCheck("some_check").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -20,6 +22,7 @@ func ExampleZoomLivenessCheckBuilder() {
 		WithValue("some_value").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -28,6 +31,7 @@ func ExampleZoomLivenessCheckBuilder() {
 		WithRecommendation(recommendation).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 

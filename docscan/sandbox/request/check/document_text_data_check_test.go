@@ -3,6 +3,7 @@ package check
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
@@ -14,7 +15,7 @@ func ExampleDocumentTextDataCheckBuilder() {
 		WithSubCheck("some_check").
 		Build()
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -22,11 +23,13 @@ func ExampleDocumentTextDataCheckBuilder() {
 		WithValue("some_value").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	filter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -38,6 +41,7 @@ func ExampleDocumentTextDataCheckBuilder() {
 		WithDocumentField("other", "field").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -53,6 +57,7 @@ func ExampleDocumentTextDataCheckBuilder_WithDocumentFields() {
 		}).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -64,6 +69,7 @@ func ExampleDocumentTextDataCheckBuilder_WithDocumentFields() {
 func ExampleDocumentTextDataCheckBuilder_minimal() {
 	check, err := NewDocumentTextDataCheckBuilder().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
