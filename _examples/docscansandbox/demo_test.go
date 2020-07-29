@@ -62,10 +62,10 @@ func startWebDriver() selenium.WebDriver {
 
 func newSandboxClient() *sandbox.Client {
 	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
-	sdkID := os.Getenv("YOTI_SANDBOX_CLIENT_SDK_ID")
 	if err != nil {
 		panic(err)
 	}
+	sdkID := os.Getenv("YOTI_SANDBOX_CLIENT_SDK_ID")
 
 	client, err := sandbox.NewClient(sdkID, key)
 	if err != nil {
@@ -208,7 +208,7 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 		return errors.New(string(request) + configErr.Error())
 	}
 
-	return configErr
+	return nil
 }
 
 func (c *webContext) iAmOn(path string) error {
@@ -250,7 +250,7 @@ func (c *webContext) iShouldSee(text string) error {
 func (c *webContext) iSwitchToTheIframe() error {
 	iFrame, err := c.wd.FindElement(selenium.ByTagName, "iframe")
 	if err != nil {
-		panic(err)
+		return err
 	}
 	return c.wd.SwitchFrame(iFrame)
 }
