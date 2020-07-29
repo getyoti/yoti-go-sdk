@@ -2,6 +2,7 @@ package attribute
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
@@ -16,6 +17,7 @@ func ExampleNewJSON() {
 	}
 	attribute, err := NewJSON(&proto)
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 	fmt.Println(attribute.Value())

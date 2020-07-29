@@ -2,6 +2,7 @@ package dynamic
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -13,8 +14,10 @@ import (
 func ExampleDynamicPolicyBuilder_WithFamilyName() {
 	policy, err := (&DynamicPolicyBuilder{}).WithFamilyName().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"family_name"}
@@ -23,8 +26,10 @@ func ExampleDynamicPolicyBuilder_WithFamilyName() {
 func ExampleDynamicPolicyBuilder_WithSelfie() {
 	policy, err := (&DynamicPolicyBuilder{}).WithSelfie().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"selfie"}
@@ -33,11 +38,13 @@ func ExampleDynamicPolicyBuilder_WithSelfie() {
 func ExampleDynamicPolicyBuilder_WithAgeOver() {
 	constraint, err := (&SourceConstraintBuilder{}).WithDrivingLicence("").Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	policy, err := (&DynamicPolicyBuilder{}).WithAgeOver(18, constraint).Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -49,8 +56,10 @@ func ExampleDynamicPolicyBuilder_WithAgeOver() {
 func ExampleDynamicPolicyBuilder_WithSelfieAuth() {
 	policy, err := (&DynamicPolicyBuilder{}).WithSelfieAuth().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[],"wanted_auth_types":[1],"wanted_remember_me":false}
@@ -59,8 +68,10 @@ func ExampleDynamicPolicyBuilder_WithSelfieAuth() {
 func ExampleDynamicPolicyBuilder_WithWantedRememberMe() {
 	policy, err := (&DynamicPolicyBuilder{}).WithWantedRememberMe().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[],"wanted_auth_types":[],"wanted_remember_me":true}
@@ -69,11 +80,13 @@ func ExampleDynamicPolicyBuilder_WithWantedRememberMe() {
 func ExampleDynamicPolicyBuilder_WithFullName() {
 	constraint, err := (&SourceConstraintBuilder{}).WithPassport("").Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	policy, err := (&DynamicPolicyBuilder{}).WithFullName(&constraint).Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -86,8 +99,10 @@ func ExampleDynamicPolicyBuilder() {
 	policy, err := (&DynamicPolicyBuilder{}).WithFullName().
 		WithPinAuth().WithWantedRememberMe().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"full_name"}],"wanted_auth_types":[2],"wanted_remember_me":true}
@@ -96,8 +111,10 @@ func ExampleDynamicPolicyBuilder() {
 func ExampleDynamicPolicyBuilder_WithAgeUnder() {
 	policy, err := (&DynamicPolicyBuilder{}).WithAgeUnder(18).Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"date_of_birth","derivation":"age_under:18"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -106,8 +123,10 @@ func ExampleDynamicPolicyBuilder_WithAgeUnder() {
 func ExampleDynamicPolicyBuilder_WithGivenNames() {
 	policy, err := (&DynamicPolicyBuilder{}).WithGivenNames().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"given_names"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -116,8 +135,10 @@ func ExampleDynamicPolicyBuilder_WithGivenNames() {
 func ExampleDynamicPolicyBuilder_WithDateOfBirth() {
 	policy, err := (&DynamicPolicyBuilder{}).WithDateOfBirth().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"date_of_birth"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -126,8 +147,10 @@ func ExampleDynamicPolicyBuilder_WithDateOfBirth() {
 func ExampleDynamicPolicyBuilder_WithGender() {
 	policy, err := (&DynamicPolicyBuilder{}).WithGender().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"gender"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -136,8 +159,10 @@ func ExampleDynamicPolicyBuilder_WithGender() {
 func ExampleDynamicPolicyBuilder_WithPostalAddress() {
 	policy, err := (&DynamicPolicyBuilder{}).WithPostalAddress().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"postal_address"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -146,8 +171,10 @@ func ExampleDynamicPolicyBuilder_WithPostalAddress() {
 func ExampleDynamicPolicyBuilder_WithStructuredPostalAddress() {
 	policy, err := (&DynamicPolicyBuilder{}).WithStructuredPostalAddress().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"structured_postal_address"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -156,8 +183,10 @@ func ExampleDynamicPolicyBuilder_WithStructuredPostalAddress() {
 func ExampleDynamicPolicyBuilder_WithNationality() {
 	policy, err := (&DynamicPolicyBuilder{}).WithNationality().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"nationality"}],"wanted_auth_types":[],"wanted_remember_me":false}
@@ -166,8 +195,10 @@ func ExampleDynamicPolicyBuilder_WithNationality() {
 func ExampleDynamicPolicyBuilder_WithPhoneNumber() {
 	policy, err := (&DynamicPolicyBuilder{}).WithPhoneNumber().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"phone_number"}],"wanted_auth_types":[],"wanted_remember_me":false}

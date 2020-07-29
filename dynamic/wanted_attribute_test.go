@@ -2,14 +2,17 @@ package dynamic
 
 import (
 	"fmt"
+	"os"
 )
 
 func ExampleWantedAttributeBuilder_WithName() {
 	builder := (&WantedAttributeBuilder{}).WithName("TEST NAME")
 	attribute, err := builder.Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	fmt.Println(attribute.name)
 	// Output: TEST NAME
 }
@@ -20,8 +23,10 @@ func ExampleWantedAttributeBuilder_WithDerivation() {
 		WithName("TEST NAME").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	fmt.Println(attribute.derivation)
 	// Output: TEST DERIVATION
 }
@@ -30,13 +35,16 @@ func ExampleWantedAttributeBuilder_WithConstraint() {
 	constraint, err := (&SourceConstraintBuilder{}).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
+
 	attribute, err := (&WantedAttributeBuilder{}).
 		WithName("TEST NAME").
 		WithConstraint(&constraint).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -51,6 +59,7 @@ func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
 		WithAcceptSelfAsserted(true).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
