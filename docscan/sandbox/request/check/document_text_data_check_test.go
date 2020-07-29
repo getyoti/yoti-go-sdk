@@ -14,6 +14,7 @@ func ExampleDocumentTextDataCheckBuilder() {
 		WithSubCheck("some_check").
 		Build()
 	if err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 
