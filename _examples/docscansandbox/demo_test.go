@@ -79,28 +79,29 @@ type webContext struct {
 	client *sandbox.Client
 }
 
-func (c *webContext) getIFrameSessionID() string {
-	iFrame, err := c.wd.FindElement(selenium.ByTagName, "iframe")
+func (c *webContext) getIFrameSessionID() (sessionId string, err error){
+	var iFrame selenium.WebElement
+	iFrame, err = c.wd.FindElement(selenium.ByTagName, "iframe")
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	iFrameURL, err := iFrame.GetAttribute("src")
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	parsedURL, err := url.Parse(iFrameURL)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	query, err := url.ParseQuery(parsedURL.RawQuery)
 	if err != nil {
-		panic(err)
+		return
 	}
 
-	return query.Get("sessionID")
+	return query.Get("sessionID"), nil
 }
 
 func (c *webContext) iConfigureTheSessionResponse() error {
@@ -201,7 +202,13 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 		return err
 	}
 
-	configErr := c.client.ConfigureSessionResponse(c.getIFrameSessionID(), responseConfig)
+	var sessionId string
+	sessionId, err = c.getIFrameSessionID()
+	if err != nil {
+		return err
+	}
+
+	configErr := c.client.ConfigureSessionResponse(sessionId, responseConfig)
 
 	if configErr != nil {
 		request, _ := json.Marshal(responseConfig)
@@ -218,7 +225,7 @@ func (c *webContext) iAmOn(path string) error {
 func (c *webContext) clickOn(selector string) error {
 	elem, err := c.wd.FindElement(selenium.ByCSSSelector, selector)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	return elem.Click()
@@ -258,7 +265,7 @@ func (c *webContext) iSwitchToTheIframe() error {
 func (c *webContext) iUploadADocument() error {
 	uploadElement, err := c.wd.FindElement(selenium.ByCSSSelector, "input[data-qa='change-photo']")
 	if err != nil {
-		panic(err)
+		return err
 	}
 	return uploadElement.SendKeys(documentImagePath)
 }
@@ -271,11 +278,11 @@ func (c *webContext) iWaitSeconds(seconds int) error {
 func (c *webContext) elementContains(selector string, text string) error {
 	elem, err := c.wd.FindElement(selenium.ByCSSSelector, selector)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	elemText, err := elem.Text()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if !strings.Contains(elemText, text) {
 		return fmt.Errorf("\"%s\" does not contain \"%s\"", selector, text)
