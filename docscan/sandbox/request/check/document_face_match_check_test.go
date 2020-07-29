@@ -3,6 +3,7 @@ package check
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
@@ -14,6 +15,7 @@ func ExampleDocumentFaceMatchCheckBuilder() {
 		WithSubCheck("some_check").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -21,11 +23,13 @@ func ExampleDocumentFaceMatchCheckBuilder() {
 		WithValue("some_value").
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	filter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
@@ -35,6 +39,7 @@ func ExampleDocumentFaceMatchCheckBuilder() {
 		WithDocumentFilter(filter).
 		Build()
 	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
