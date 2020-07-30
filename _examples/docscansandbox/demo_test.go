@@ -79,7 +79,7 @@ type webContext struct {
 	client *sandbox.Client
 }
 
-func (c *webContext) getIFrameSessionID() (sessionId string, err error){
+func (c *webContext) getIFrameSessionID() (sessionId string, err error) {
 	var iFrame selenium.WebElement
 	iFrame, err = c.wd.FindElement(selenium.ByTagName, "iframe")
 	if err != nil {
