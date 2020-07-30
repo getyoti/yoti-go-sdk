@@ -1,4 +1,4 @@
-package docscan
+package docscanerr
 
 import (
 	"bytes"
@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-// ErrorDO maps from Doc Scan JSON error responses
-type ErrorDO struct {
+// DataObject maps from Doc Scan JSON error responses
+type DataObject struct {
 	Code    string        `json:"code"`
 	Message string        `json:"message"`
 	Error   []ErrorItemDO `json:"error,omitempty"`
@@ -29,8 +29,8 @@ type Error struct {
 	Response *http.Response
 }
 
-// NewError creates a new Doc Scan Error
-func NewError(err error, response *http.Response) *Error {
+// New creates a new Doc Scan Error
+func New(err error, response *http.Response) *Error {
 	return &Error{
 		message:  formatResponseMessage(err, response),
 		Err:      err,
@@ -56,7 +56,7 @@ func formatResponseMessage(err error, response *http.Response) string {
 	body, _ := ioutil.ReadAll(response.Body)
 	response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 
-	var errorDO ErrorDO
+	var errorDO DataObject
 	jsonError := json.Unmarshal(body, &errorDO)
 
 	if jsonError != nil || errorDO.Code == "" || errorDO.Message == "" {
