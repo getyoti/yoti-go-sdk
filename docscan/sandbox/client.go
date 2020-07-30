@@ -95,7 +95,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 
 	request, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
-		HTTPMethod: "PUT",
+		HTTPMethod: http.MethodPut,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   requestEndpoint,
 		Headers:    yotirequest.JSONHeaders(),
@@ -119,7 +119,7 @@ func (client *Client) ConfigureApplicationResponse(responseConfig request.Respon
 
 	request, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
-		HTTPMethod: "PUT",
+		HTTPMethod: http.MethodPut,
 		BaseURL:    client.getAPIURL(),
 		Endpoint:   requestEndpoint,
 		Headers:    yotirequest.JSONHeaders(),
