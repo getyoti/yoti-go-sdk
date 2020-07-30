@@ -12,9 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan"
-
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/response/docscanerr"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
 	"gotest.tools/v3/assert"
 )
@@ -43,7 +42,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 
 func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
-	jsonBytes, _ := json.Marshal(docscan.ErrorDO{
+	jsonBytes, _ := json.Marshal(docscanerr.DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 	})
@@ -63,13 +62,13 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
 	assert.ErrorContains(t, err, "400: SOME_CODE - some message")
 
-	errorResponse := err.(*docscan.Error).Response
+	errorResponse := err.(*docscanerr.Error).Response
 	assert.Equal(t, response, errorResponse)
 
 	body, _ := ioutil.ReadAll(errorResponse.Body)
 	assert.Equal(t, string(body), string(jsonBytes))
 
-	assert.ErrorContains(t, err.(*docscan.Error).Unwrap(), "400: unknown HTTP error")
+	assert.ErrorContains(t, err.(*docscanerr.Error).Unwrap(), "400: unknown HTTP error")
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnMissingKeyError(t *testing.T) {
