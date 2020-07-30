@@ -12,7 +12,7 @@ import (
 // JSONAttribute is a Yoti attribute which returns an interface as its value
 type JSONAttribute struct {
 	attributeDetails
-	// Value returns the value of a JSON attribute in the form of an interface
+	// value returns the value of a JSON attribute in the form of an interface
 	value map[string]interface{}
 }
 
