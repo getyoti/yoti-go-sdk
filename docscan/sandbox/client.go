@@ -75,7 +75,7 @@ func (client *Client) marshalJSON(v interface{}) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-func (client *Client) makeConfigureResponseRequest(request *http.Request) (err error) {
+func (client *Client) makeConfigureResponseRequest(request *http.Request) error {
 	response, err := requests.Execute(client.getHTTPClient(), request)
 
 	if err != nil {
@@ -86,7 +86,7 @@ func (client *Client) makeConfigureResponseRequest(request *http.Request) (err e
 }
 
 // ConfigureSessionResponse configures the response for the session
-func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig request.ResponseConfig) (err error) {
+func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig request.ResponseConfig) error {
 	requestEndpoint := "/sessions/" + sessionID + "/response-config"
 	requestBody, err := client.marshalJSON(responseConfig)
 	if err != nil {
@@ -110,7 +110,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 }
 
 // ConfigureApplicationResponse configures the response for the application
-func (client *Client) ConfigureApplicationResponse(responseConfig request.ResponseConfig) (err error) {
+func (client *Client) ConfigureApplicationResponse(responseConfig request.ResponseConfig) error {
 	requestEndpoint := "/apps/" + client.SdkID + "/response-config"
 	requestBody, err := client.marshalJSON(responseConfig)
 	if err != nil {
