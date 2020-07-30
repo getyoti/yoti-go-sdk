@@ -1,4 +1,4 @@
-package docscan
+package docscanerr
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 )
 
 func TestError_ShouldReturnFormattedError(t *testing.T) {
-	jsonBytes, _ := json.Marshal(ErrorDO{
+	jsonBytes, _ := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 		Error: []ErrorItemDO{
@@ -24,7 +24,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 		},
 	})
 
-	err := NewError(
+	err := New(
 		errors.New("some error"),
 		&http.Response{
 			StatusCode: 401,
@@ -36,12 +36,12 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 }
 
 func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
-	jsonBytes, _ := json.Marshal(ErrorDO{
+	jsonBytes, _ := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 	})
 
-	err := NewError(
+	err := New(
 		errors.New("some error"),
 		&http.Response{
 			StatusCode: 400,
@@ -53,7 +53,7 @@ func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
 }
 
 func TestError_ShouldReturnFormattedError_ReturnWrappedErrorByDefault(t *testing.T) {
-	err := NewError(
+	err := New(
 		errors.New("some error"),
 		&http.Response{
 			StatusCode: 401,
@@ -65,7 +65,7 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorByDefault(t *testing
 
 func TestError_ShouldReturnFormattedError_ShouldUnwrapOriginalError(t *testing.T) {
 	wrappedError := errors.New("some error")
-	err := NewError(
+	err := New(
 		wrappedError,
 		&http.Response{
 			StatusCode: 401,
@@ -81,7 +81,7 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *t
 		StatusCode: 400,
 		Body:       ioutil.NopCloser(strings.NewReader("some invalid JSON")),
 	}
-	err := NewError(
+	err := New(
 		errors.New("some error"),
 		response,
 	)
@@ -101,7 +101,7 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 		StatusCode: 400,
 		Body:       ioutil.NopCloser(strings.NewReader(jsonString)),
 	}
-	err := NewError(
+	err := New(
 		errors.New("some error"),
 		response,
 	)
