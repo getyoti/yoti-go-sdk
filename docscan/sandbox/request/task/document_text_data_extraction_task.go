@@ -6,7 +6,7 @@ import (
 
 // DocumentTextDataExtractionTask represents a document text data extraction task
 type DocumentTextDataExtractionTask struct {
-	documentTask
+	*documentTask
 	Result documentTextDataExtractionTaskResult `json:"result"`
 }
 
@@ -26,7 +26,7 @@ func NewDocumentTextDataExtractionTaskBuilder() *DocumentTextDataExtractionTaskB
 }
 
 // WithDocumentFilter adds a document filter to the task
-func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFilter(filter filter.DocumentFilter) *DocumentTextDataExtractionTaskBuilder {
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFilter(filter *filter.DocumentFilter) *DocumentTextDataExtractionTaskBuilder {
 	b.documentTaskBuilder.withDocumentFilter(filter)
 	return b
 }
@@ -47,8 +47,8 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFields(documentField
 }
 
 // Build creates a new DocumentTextDataExtractionTask
-func (b *DocumentTextDataExtractionTaskBuilder) Build() (DocumentTextDataExtractionTask, error) {
-	return DocumentTextDataExtractionTask{
+func (b *DocumentTextDataExtractionTaskBuilder) Build() (*DocumentTextDataExtractionTask, error) {
+	return &DocumentTextDataExtractionTask{
 		documentTask: b.documentTaskBuilder.build(),
 		Result: documentTextDataExtractionTaskResult{
 			DocumentFields: b.documentFields,

@@ -22,8 +22,8 @@ func NewTaskResultsBuilder() *TaskResultsBuilder {
 }
 
 // WithDocumentTextDataExtractionTask adds a document text data extraction task
-func (b *TaskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextDataExtractionTasks task.DocumentTextDataExtractionTask) *TaskResultsBuilder {
-	b.documentTextDataExtractionTasks = append(b.documentTextDataExtractionTasks, &documentTextDataExtractionTasks)
+func (b *TaskResultsBuilder) WithDocumentTextDataExtractionTask(documentTextDataExtractionTasks *task.DocumentTextDataExtractionTask) *TaskResultsBuilder {
+	b.documentTextDataExtractionTasks = append(b.documentTextDataExtractionTasks, documentTextDataExtractionTasks)
 	return b
 }
 

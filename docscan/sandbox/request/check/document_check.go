@@ -5,7 +5,7 @@ import (
 )
 
 type documentCheck struct {
-	check
+	*check
 	DocumentFilter *filter.DocumentFilter `json:"document_filter,omitempty"`
 }
 
@@ -14,12 +14,12 @@ type documentCheckBuilder struct {
 	documentFilter *filter.DocumentFilter
 }
 
-func (b *documentCheckBuilder) withDocumentFilter(filter filter.DocumentFilter) {
-	b.documentFilter = &filter
+func (b *documentCheckBuilder) withDocumentFilter(filter *filter.DocumentFilter) {
+	b.documentFilter = filter
 }
 
-func (b *documentCheckBuilder) build() documentCheck {
-	return documentCheck{
+func (b *documentCheckBuilder) build() *documentCheck {
+	return &documentCheck{
 		check:          b.checkBuilder.build(),
 		DocumentFilter: b.documentFilter,
 	}
