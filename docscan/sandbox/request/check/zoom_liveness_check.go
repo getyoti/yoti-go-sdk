@@ -19,19 +19,19 @@ func NewZoomLivenessCheckBuilder() *ZoomLivenessCheckBuilder {
 }
 
 // WithRecommendation sets the recommendation on the check
-func (b *ZoomLivenessCheckBuilder) WithRecommendation(recommendation report.Recommendation) *ZoomLivenessCheckBuilder {
+func (b *ZoomLivenessCheckBuilder) WithRecommendation(recommendation *report.Recommendation) *ZoomLivenessCheckBuilder {
 	b.livenessCheckBuilder.withRecommendation(recommendation)
 	return b
 }
 
 // WithBreakdown adds a breakdown item to the check
-func (b *ZoomLivenessCheckBuilder) WithBreakdown(breakdown report.Breakdown) *ZoomLivenessCheckBuilder {
+func (b *ZoomLivenessCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *ZoomLivenessCheckBuilder {
 	b.livenessCheckBuilder.withBreakdown(breakdown)
 	return b
 }
 
 // Build creates a new LivenessCheck
-func (b *ZoomLivenessCheckBuilder) Build() (LivenessCheck, error) {
+func (b *ZoomLivenessCheckBuilder) Build() (*LivenessCheck, error) {
 	livenessCheck := b.livenessCheckBuilder.
 		withLivenessType(zoom).
 		build()

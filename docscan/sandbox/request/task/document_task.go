@@ -12,12 +12,12 @@ type documentTaskBuilder struct {
 	documentFilter *filter.DocumentFilter
 }
 
-func (b *documentTaskBuilder) withDocumentFilter(filter filter.DocumentFilter) {
-	b.documentFilter = &filter
+func (b *documentTaskBuilder) withDocumentFilter(filter *filter.DocumentFilter) {
+	b.documentFilter = filter
 }
 
-func (b *documentTaskBuilder) build() documentTask {
-	return documentTask{
+func (b *documentTaskBuilder) build() *documentTask {
+	return &documentTask{
 		DocumentFilter: b.documentFilter,
 	}
 }
