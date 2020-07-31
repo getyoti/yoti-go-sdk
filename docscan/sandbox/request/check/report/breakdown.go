@@ -60,14 +60,14 @@ func (b *BreakdownBuilder) Build() (Breakdown, error) {
 		Details:  b.details,
 	}
 
-	subCheckErr := validate.NotEmpty(breakdown.SubCheck, "Sub Check cannot be empty")
-	if subCheckErr != nil {
-		return breakdown, subCheckErr
+	err := validate.NotEmpty(breakdown.SubCheck, "Sub Check cannot be empty")
+	if err != nil {
+		return breakdown, err
 	}
 
-	resultErr := validate.NotEmpty(breakdown.Result, "Result cannot be empty")
-	if resultErr != nil {
-		return breakdown, resultErr
+	err = validate.NotEmpty(breakdown.Result, "Result cannot be empty")
+	if err != nil {
+		return breakdown, err
 	}
 
 	return breakdown, nil
