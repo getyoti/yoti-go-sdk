@@ -38,12 +38,14 @@ func PerformCheck(httpClient requests.HttpClient, profile Profile, clientSdkId, 
 	httpErrorMessages := make(map[int]string)
 	httpErrorMessages[-1] = "AML Check was unsuccessful"
 
-	response, err := requests.Execute(httpClient, request, httpErrorMessages)
+	var response *http.Response
+	response, err = requests.Execute(httpClient, request, httpErrorMessages)
 	if err != nil {
 		return
 	}
 
-	responseBytes, err := ioutil.ReadAll(response.Body)
+	var responseBytes []byte
+	responseBytes, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
