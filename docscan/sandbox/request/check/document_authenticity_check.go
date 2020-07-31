@@ -7,7 +7,7 @@ import (
 
 // DocumentAuthenticityCheck Represents a document authenticity check
 type DocumentAuthenticityCheck struct {
-	documentCheck
+	*documentCheck
 }
 
 // DocumentAuthenticityCheckBuilder builds a DocumentAuthenticityCheck
@@ -21,26 +21,26 @@ func NewDocumentAuthenticityCheckBuilder() *DocumentAuthenticityCheckBuilder {
 }
 
 // WithRecommendation sets the recommendation on the check
-func (b *DocumentAuthenticityCheckBuilder) WithRecommendation(recommendation report.Recommendation) *DocumentAuthenticityCheckBuilder {
+func (b *DocumentAuthenticityCheckBuilder) WithRecommendation(recommendation *report.Recommendation) *DocumentAuthenticityCheckBuilder {
 	b.documentCheckBuilder.withRecommendation(recommendation)
 	return b
 }
 
 // WithBreakdown adds a breakdown item to the check
-func (b *DocumentAuthenticityCheckBuilder) WithBreakdown(breakdown report.Breakdown) *DocumentAuthenticityCheckBuilder {
+func (b *DocumentAuthenticityCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *DocumentAuthenticityCheckBuilder {
 	b.documentCheckBuilder.withBreakdown(breakdown)
 	return b
 }
 
 // WithDocumentFilter adds a document filter to the check
-func (b *DocumentAuthenticityCheckBuilder) WithDocumentFilter(filter filter.DocumentFilter) *DocumentAuthenticityCheckBuilder {
+func (b *DocumentAuthenticityCheckBuilder) WithDocumentFilter(filter *filter.DocumentFilter) *DocumentAuthenticityCheckBuilder {
 	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
 
 // Build creates a new DocumentAuthenticityCheck
-func (b *DocumentAuthenticityCheckBuilder) Build() (DocumentAuthenticityCheck, error) {
-	return DocumentAuthenticityCheck{
+func (b *DocumentAuthenticityCheckBuilder) Build() (*DocumentAuthenticityCheck, error) {
+	return &DocumentAuthenticityCheck{
 		documentCheck: b.documentCheckBuilder.build(),
 	}, nil
 }

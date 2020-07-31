@@ -33,8 +33,8 @@ func (b *DocumentFilterBuilder) WithDocumentType(documentType string) *DocumentF
 }
 
 // Build creates a new DocumentFilter
-func (b *DocumentFilterBuilder) Build() (DocumentFilter, error) {
-	return DocumentFilter{
+func (b *DocumentFilterBuilder) Build() (*DocumentFilter, error) {
+	return &DocumentFilter{
 		DocumentTypes: b.documentTypes,
 		CountryCodes:  b.countryCodes,
 	}, nil

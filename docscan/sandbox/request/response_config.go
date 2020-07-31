@@ -34,14 +34,14 @@ func (b *ResponseConfigBuilder) WithCheckReports(checkReports CheckReports) *Res
 }
 
 // Build creates ResponseConfig
-func (b *ResponseConfigBuilder) Build() (ResponseConfig, error) {
-	responseConfig := ResponseConfig{
+func (b *ResponseConfigBuilder) Build() (*ResponseConfig, error) {
+	responseConfig := &ResponseConfig{
 		CheckReports: b.checkReports,
 		TaskResults:  b.taskResults,
 	}
 
 	if responseConfig.CheckReports == nil {
-		return responseConfig, errors.New("Check Reports must be provided")
+		return nil, errors.New("Check Reports must be provided")
 	}
 
 	return responseConfig, nil
