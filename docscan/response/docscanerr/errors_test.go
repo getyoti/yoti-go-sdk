@@ -17,7 +17,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 		Code:    "SOME_CODE",
 		Message: "some message",
 		Error: []ErrorItemDO{
-			ErrorItemDO{
+			{
 				Message:  "some property message",
 				Property: "some.property",
 			},
