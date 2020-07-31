@@ -8,7 +8,7 @@ import (
 // DocumentTextDataCheck Represents a document text data check
 type DocumentTextDataCheck struct {
 	Result DocumentTextDataCheckResult `json:"result"`
-	documentCheck
+	*documentCheck
 }
 
 // DocumentTextDataCheckBuilder builds a DocumentTextDataCheck
@@ -29,19 +29,19 @@ func NewDocumentTextDataCheckBuilder() *DocumentTextDataCheckBuilder {
 }
 
 // WithRecommendation sets the recommendation on the check
-func (b *DocumentTextDataCheckBuilder) WithRecommendation(recommendation report.Recommendation) *DocumentTextDataCheckBuilder {
+func (b *DocumentTextDataCheckBuilder) WithRecommendation(recommendation *report.Recommendation) *DocumentTextDataCheckBuilder {
 	b.documentCheckBuilder.withRecommendation(recommendation)
 	return b
 }
 
 // WithBreakdown adds a breakdown item to the check
-func (b *DocumentTextDataCheckBuilder) WithBreakdown(breakdown report.Breakdown) *DocumentTextDataCheckBuilder {
+func (b *DocumentTextDataCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *DocumentTextDataCheckBuilder {
 	b.documentCheckBuilder.withBreakdown(breakdown)
 	return b
 }
 
 // WithDocumentFilter adds a document filter to the check
-func (b *DocumentTextDataCheckBuilder) WithDocumentFilter(filter filter.DocumentFilter) *DocumentTextDataCheckBuilder {
+func (b *DocumentTextDataCheckBuilder) WithDocumentFilter(filter *filter.DocumentFilter) *DocumentTextDataCheckBuilder {
 	b.documentCheckBuilder.withDocumentFilter(filter)
 	return b
 }
@@ -62,10 +62,10 @@ func (b *DocumentTextDataCheckBuilder) WithDocumentFields(documentFields map[str
 }
 
 // Build creates a new DocumentTextDataCheck
-func (b *DocumentTextDataCheckBuilder) Build() (DocumentTextDataCheck, error) {
+func (b *DocumentTextDataCheckBuilder) Build() (*DocumentTextDataCheck, error) {
 	documentCheck := b.documentCheckBuilder.build()
 
-	return DocumentTextDataCheck{
+	return &DocumentTextDataCheck{
 		documentCheck: documentCheck,
 		Result: DocumentTextDataCheckResult{
 			checkResult:    documentCheck.Result,
