@@ -60,18 +60,19 @@ func startWebDriver() selenium.WebDriver {
 	return wd
 }
 
-func newSandboxClient() *sandbox.Client {
+func newSandboxClient() (*sandbox.Client, error) {
 	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	sdkID := os.Getenv("YOTI_SANDBOX_CLIENT_SDK_ID")
 
-	client, err := sandbox.NewClient(sdkID, key)
+	var client *sandbox.Client
+	client, err = sandbox.NewClient(sdkID, key)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return client
+	return client, nil
 }
 
 type webContext struct {
@@ -208,11 +209,10 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 		return err
 	}
 
-	configErr := c.client.ConfigureSessionResponse(sessionId, responseConfig)
-
-	if configErr != nil {
+	err = c.client.ConfigureSessionResponse(sessionId, responseConfig)
+	if err != nil {
 		request, _ := json.Marshal(responseConfig)
-		return errors.New(string(request) + configErr.Error())
+		return errors.New(string(request) + err.Error())
 	}
 
 	return nil
@@ -322,7 +322,11 @@ func FeatureContext(s *godog.Suite) {
 	context := &webContext{}
 
 	s.BeforeScenario(func(*messages.Pickle) {
-		context.client = newSandboxClient()
+		sandboxClient, err := newSandboxClient()
+		if err != nil {
+			panic(err)
+		}
+		context.client = sandboxClient
 		context.wd = pool.Get().(selenium.WebDriver)
 	})
 	s.AfterScenario(func(*messages.Pickle, error) {

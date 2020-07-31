@@ -49,9 +49,9 @@ func (b *RecommendationBuilder) Build() (Recommendation, error) {
 		RecoverySuggestion: b.recoverySuggestion,
 	}
 
-	valueErr := validate.NotEmpty(recommendation.Value, "Value cannot be empty")
-	if valueErr != nil {
-		return recommendation, valueErr
+	err := validate.NotEmpty(recommendation.Value, "Value cannot be empty")
+	if err != nil {
+		return recommendation, err
 	}
 
 	return recommendation, nil

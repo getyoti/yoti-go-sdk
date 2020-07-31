@@ -91,8 +91,8 @@ func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
 
 func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
 	key, _ := ioutil.ReadFile("../../test/test-key.pem")
-	client, clientErr := NewClient("ClientSDKID", key)
-	assert.NilError(t, clientErr)
+	client, err := NewClient("ClientSDKID", key)
+	assert.NilError(t, err)
 
 	client.HTTPClient = &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
