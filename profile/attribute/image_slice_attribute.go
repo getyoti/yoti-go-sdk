@@ -3,6 +3,7 @@ package attribute
 import (
 	"errors"
 
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -10,7 +11,7 @@ import (
 // ImageSliceAttribute is a Yoti attribute which returns a slice of images as its value
 type ImageSliceAttribute struct {
 	attributeDetails
-	value []*Image
+	value []*media.Image
 }
 
 // NewImageSlice creates a new ImageSlice attribute
@@ -25,7 +26,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 		return nil, err
 	}
 
-	var imageSliceValue []*Image
+	var imageSliceValue []*media.Image
 	if parsedMultiValue != nil {
 		imageSliceValue = CreateImageSlice(parsedMultiValue)
 	}
@@ -41,10 +42,10 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 }
 
 // CreateImageSlice takes a slice of Items, and converts them into a slice of images
-func CreateImageSlice(items []*Item) (result []*Image) {
+func CreateImageSlice(items []*Item) (result []*media.Image) {
 	for _, item := range items {
 
-		imageValue := item.GetValue().(*Image)
+		imageValue := item.GetValue().(*media.Image)
 
 		result = append(result, imageValue)
 	}
@@ -53,6 +54,6 @@ func CreateImageSlice(items []*Item) (result []*Image) {
 }
 
 // Value returns the value of the ImageSliceAttribute
-func (a *ImageSliceAttribute) Value() []*Image {
+func (a *ImageSliceAttribute) Value() []*media.Image {
 	return a.value
 }

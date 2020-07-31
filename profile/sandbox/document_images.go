@@ -3,12 +3,12 @@ package sandbox
 import (
 	"strings"
 
-	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 )
 
 // Attribute describes an attribute on a sandbox profile
 type DocumentImages struct {
-	Images []attribute.Image
+	Images []media.Image
 }
 
 func (d DocumentImages) getValue() string {
@@ -23,8 +23,8 @@ func (d DocumentImages) getValue() string {
 
 // WithPngImage adds a PNG image to the slice of document images
 func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
-	pngImage := attribute.Image{
-		Type: attribute.ImageTypePng,
+	pngImage := media.Image{
+		Type: media.ImageTypePng,
 		Data: imageContent,
 	}
 
@@ -35,8 +35,8 @@ func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
 
 // WithPngImage adds a JPEG image to the slice of document images
 func (d DocumentImages) WithJpegImage(imageContent []byte) DocumentImages {
-	jpegImage := attribute.Image{
-		Type: attribute.ImageTypeJpeg,
+	jpegImage := media.Image{
+		Type: media.ImageTypeJpeg,
 		Data: imageContent,
 	}
 

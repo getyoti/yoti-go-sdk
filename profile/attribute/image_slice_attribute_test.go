@@ -3,12 +3,13 @@ package attribute
 import (
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
 )
 
-func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expectedBase64URLLast10 string) {
+func assertIsExpectedImage(t *testing.T, image *media.Image, imageType string, expectedBase64URLLast10 string) {
 	assert.Equal(t, image.Type, imageType)
 
 	actualBase64URL := image.Base64URL()
@@ -18,7 +19,7 @@ func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expecte
 	assert.Equal(t, ActualBase64URLLast10Chars, expectedBase64URLLast10)
 }
 
-func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*Image, anchor *anchor.Anchor) {
+func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*media.Image, anchor *anchor.Anchor) {
 
 	assert.Equal(t, len(actualDocumentImages), 2, "This Document Images attribute should have two images")
 
