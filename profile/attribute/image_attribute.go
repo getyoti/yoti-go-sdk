@@ -1,6 +1,7 @@
 package attribute
 
 import (
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -8,12 +9,12 @@ import (
 // ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	attributeDetails
-	value *Image
+	value *media.Image
 }
 
 // NewImage creates a new Image attribute
 func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
-	imageValue, err := ParseImageValue(a.ContentType, a.Value)
+	imageValue, err := media.ParseImageValue(a.ContentType, a.Value)
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	if err != nil {
@@ -31,6 +32,6 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 }
 
 // Value returns the value of the ImageAttribute as *Image
-func (a *ImageAttribute) Value() *Image {
+func (a *ImageAttribute) Value() *media.Image {
 	return a.value
 }

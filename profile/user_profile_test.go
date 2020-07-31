@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
-	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/v3/assert"
@@ -250,8 +250,8 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 
 func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	attributeValue := []byte("value")
-	expected := attribute.Image{
-		Type: attribute.ImageTypeJpeg,
+	expected := media.Image{
+		Type: media.ImageTypeJpeg,
 		Data: attributeValue,
 	}
 
@@ -265,13 +265,13 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	assert.DeepEqual(t, att.Value().(*attribute.Image), &expected)
+	assert.DeepEqual(t, att.Value().(*media.Image), &expected)
 }
 
 func TestProfile_GetAttribute_Png(t *testing.T) {
 	attributeValue := []byte("value")
-	expected := attribute.Image{
-		Type: attribute.ImageTypePng,
+	expected := media.Image{
+		Type: media.ImageTypePng,
 		Data: attributeValue,
 	}
 
@@ -285,7 +285,7 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attr)
 	att := result.GetAttribute(attributeName)
 
-	assert.DeepEqual(t, att.Value().(*attribute.Image), &expected)
+	assert.DeepEqual(t, att.Value().(*media.Image), &expected)
 }
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {

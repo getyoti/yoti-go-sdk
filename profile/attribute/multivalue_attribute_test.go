@@ -3,6 +3,7 @@ package attribute
 import (
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/golang/protobuf/proto"
 	"gotest.tools/v3/assert"
@@ -131,10 +132,10 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 			for innerKey, item := range innerItems {
 				switch innerKey {
 				case 0:
-					assertIsExpectedImage(t, item.GetValue().(*Image), "jpeg", "vWgD//2Q==")
+					assertIsExpectedImage(t, item.GetValue().(*media.Image), "jpeg", "vWgD//2Q==")
 
 				case 1:
-					assertIsExpectedImage(t, item.GetValue().(*Image), "jpeg", "38TVEH/9k=")
+					assertIsExpectedImage(t, item.GetValue().(*media.Image), "jpeg", "38TVEH/9k=")
 				}
 			}
 		}

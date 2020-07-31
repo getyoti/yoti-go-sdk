@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
@@ -46,7 +47,7 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 
 	case yotiprotoattr.ContentType_JPEG,
 		yotiprotoattr.ContentType_PNG:
-		return ParseImageValue(contentType, byteValue)
+		return media.ParseImageValue(contentType, byteValue)
 
 	case yotiprotoattr.ContentType_UNDEFINED:
 		log.Print("Content Type Undefined, attempting to parse it as a string")

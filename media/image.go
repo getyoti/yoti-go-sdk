@@ -1,9 +1,7 @@
-package attribute
+package media
 
 import (
-	"encoding/base64"
 	"errors"
-	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -21,18 +19,15 @@ type Image struct {
 	Data []byte
 }
 
-// GetMIMEType returns the MIME type of this piece of Yoti user information. For more information see:
-// https://en.wikipedia.org/wiki/Media_type
-func GetMIMEType(imageType string) string {
-	return fmt.Sprintf("image/%v", imageType)
-}
-
 // Base64URL is the Image encoded as a base64 URL
 func (image *Image) Base64URL() string {
-	base64EncodedImage := base64.StdEncoding.EncodeToString(image.Data)
-	contentType := GetMIMEType(image.Type)
+	mediaValue := Value{
+		Type:    "image",
+		SubType: image.Type,
+		Data:    image.Data,
+	}
 
-	return "data:" + contentType + ";base64," + base64EncodedImage
+	return mediaValue.Base64URL()
 }
 
 // ParseImageValue wraps image data into an image struct
@@ -51,7 +46,7 @@ func ParseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*
 	}
 
 	return &Image{
-		Data: byteValue,
 		Type: imageType,
+		Data: byteValue,
 	}, nil
 }
