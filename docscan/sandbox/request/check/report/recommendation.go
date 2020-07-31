@@ -42,8 +42,8 @@ func (b *RecommendationBuilder) WithRecoverySuggestion(recoverySuggestion string
 }
 
 // Build creates a new Recommendation
-func (b *RecommendationBuilder) Build() (Recommendation, error) {
-	recommendation := Recommendation{
+func (b *RecommendationBuilder) Build() (*Recommendation, error) {
+	recommendation := &Recommendation{
 		Value:              b.value,
 		Reason:             b.reason,
 		RecoverySuggestion: b.recoverySuggestion,
@@ -51,7 +51,7 @@ func (b *RecommendationBuilder) Build() (Recommendation, error) {
 
 	err := validate.NotEmpty(recommendation.Value, "Value cannot be empty")
 	if err != nil {
-		return recommendation, err
+		return nil, err
 	}
 
 	return recommendation, nil

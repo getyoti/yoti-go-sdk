@@ -33,26 +33,26 @@ func NewCheckReportsBuilder() *CheckReportsBuilder {
 }
 
 // WithDocumentAuthenticityCheck adds a document authenticity check
-func (b *CheckReportsBuilder) WithDocumentAuthenticityCheck(documentAuthenticityCheck check.DocumentAuthenticityCheck) *CheckReportsBuilder {
-	b.documentAuthenticityChecks = append(b.documentAuthenticityChecks, &documentAuthenticityCheck)
+func (b *CheckReportsBuilder) WithDocumentAuthenticityCheck(documentAuthenticityCheck *check.DocumentAuthenticityCheck) *CheckReportsBuilder {
+	b.documentAuthenticityChecks = append(b.documentAuthenticityChecks, documentAuthenticityCheck)
 	return b
 }
 
 // WithDocumentTextDataCheck adds a document text data check
-func (b *CheckReportsBuilder) WithDocumentTextDataCheck(documentTextDataCheck check.DocumentTextDataCheck) *CheckReportsBuilder {
-	b.documentTextDataChecks = append(b.documentTextDataChecks, &documentTextDataCheck)
+func (b *CheckReportsBuilder) WithDocumentTextDataCheck(documentTextDataCheck *check.DocumentTextDataCheck) *CheckReportsBuilder {
+	b.documentTextDataChecks = append(b.documentTextDataChecks, documentTextDataCheck)
 	return b
 }
 
 // WithDocumentFaceMatchCheck adds a document face match check
-func (b *CheckReportsBuilder) WithDocumentFaceMatchCheck(documentFaceMatchCheck check.DocumentFaceMatchCheck) *CheckReportsBuilder {
-	b.documentFaceMatchChecks = append(b.documentFaceMatchChecks, &documentFaceMatchCheck)
+func (b *CheckReportsBuilder) WithDocumentFaceMatchCheck(documentFaceMatchCheck *check.DocumentFaceMatchCheck) *CheckReportsBuilder {
+	b.documentFaceMatchChecks = append(b.documentFaceMatchChecks, documentFaceMatchCheck)
 	return b
 }
 
 // WithLivenessCheck adds a liveness check
-func (b *CheckReportsBuilder) WithLivenessCheck(livenessCheck check.LivenessCheck) *CheckReportsBuilder {
-	b.livenessChecks = append(b.livenessChecks, &livenessCheck)
+func (b *CheckReportsBuilder) WithLivenessCheck(livenessCheck *check.LivenessCheck) *CheckReportsBuilder {
+	b.livenessChecks = append(b.livenessChecks, livenessCheck)
 	return b
 }
 
