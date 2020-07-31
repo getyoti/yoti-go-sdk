@@ -53,8 +53,8 @@ func (b *BreakdownBuilder) WithDetail(name string, value string) *BreakdownBuild
 }
 
 // Build creates a new Breakdown
-func (b *BreakdownBuilder) Build() (Breakdown, error) {
-	breakdown := Breakdown{
+func (b *BreakdownBuilder) Build() (*Breakdown, error) {
+	breakdown := &Breakdown{
 		SubCheck: b.subCheck,
 		Result:   b.result,
 		Details:  b.details,
@@ -62,12 +62,12 @@ func (b *BreakdownBuilder) Build() (Breakdown, error) {
 
 	err := validate.NotEmpty(breakdown.SubCheck, "Sub Check cannot be empty")
 	if err != nil {
-		return breakdown, err
+		return nil, err
 	}
 
 	err = validate.NotEmpty(breakdown.Result, "Result cannot be empty")
 	if err != nil {
-		return breakdown, err
+		return nil, err
 	}
 
 	return breakdown, nil
