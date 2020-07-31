@@ -1,7 +1,7 @@
 package report
 
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/validate"
+	"errors"
 )
 
 // Recommendation describes a recommendation on check
@@ -49,9 +49,8 @@ func (b *RecommendationBuilder) Build() (*Recommendation, error) {
 		RecoverySuggestion: b.recoverySuggestion,
 	}
 
-	err := validate.NotEmpty(recommendation.Value, "Value cannot be empty")
-	if err != nil {
-		return nil, err
+	if len(recommendation.Value) == 0 {
+		return nil, errors.New("Value cannot be empty")
 	}
 
 	return recommendation, nil

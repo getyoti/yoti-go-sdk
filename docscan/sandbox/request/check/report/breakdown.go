@@ -1,7 +1,8 @@
 package report
 
+
 import (
-	"github.com/getyoti/yoti-go-sdk/v3/validate"
+	"errors"
 )
 
 // Breakdown describes a breakdown on check
@@ -60,14 +61,12 @@ func (b *BreakdownBuilder) Build() (*Breakdown, error) {
 		Details:  b.details,
 	}
 
-	err := validate.NotEmpty(breakdown.SubCheck, "Sub Check cannot be empty")
-	if err != nil {
-		return nil, err
+	if len(breakdown.SubCheck) == 0 {
+		return nil, errors.New("Sub Check cannot be empty")
 	}
 
-	err = validate.NotEmpty(breakdown.Result, "Result cannot be empty")
-	if err != nil {
-		return nil, err
+	if len(breakdown.Result) == 0 {
+		return nil, errors.New("Result cannot be empty")
 	}
 
 	return breakdown, nil
