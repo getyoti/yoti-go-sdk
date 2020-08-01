@@ -7,7 +7,7 @@ import (
 func ExampleExtension() {
 	content := "SOME CONTENT"
 	extType := "SOME_TYPE"
-	extension, err := (&ExtensionBuilder{}).WithContent(content).WithType(extType).Build()
+	extension, err := (&Builder{}).WithContent(content).WithType(extType).Build()
 	if err != nil {
 		return
 	}
