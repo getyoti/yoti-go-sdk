@@ -12,6 +12,10 @@ type Value struct {
 
 // Base64URL is the base64 data URL for the media
 func (v *Value) Base64URL() string {
-	base64EncodedImage := base64.StdEncoding.EncodeToString(v.Data)
-	return "data:" + v.MimeType + ";base64," + base64EncodedImage
+	return base64URL(v.MimeType, v.Data)
+}
+
+func base64URL(mimeType string, data []byte) string {
+	base64EncodedImage := base64.StdEncoding.EncodeToString(data)
+	return "data:" + mimeType + ";base64," + base64EncodedImage
 }
