@@ -34,11 +34,11 @@ func ExampleCreateShareURL() {
 		},
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
 		return
 	}
-	scenario, err := (&DynamicScenarioBuilder{}).WithPolicy(policy).Build()
+	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
@@ -97,11 +97,11 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 		},
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
 		return
 	}
-	scenario, err := (&DynamicScenarioBuilder{}).WithPolicy(policy).Build()
+	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
