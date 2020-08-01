@@ -39,7 +39,7 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 }
 
 func getAnchorValuesFromCertificate(parsedCerts []*x509.Certificate) (anchorType Type, extension string) {
-	defaultAnchorType := AnchorTypeUnknown
+	defaultAnchorType := TypeUnknown
 
 	for _, cert := range parsedCerts {
 		for _, ext := range cert.Extensions {
@@ -51,7 +51,7 @@ func getAnchorValuesFromCertificate(parsedCerts []*x509.Certificate) (anchorType
 			if err != nil {
 				log.Printf("error parsing anchor extension, %v", err)
 				continue
-			} else if parsedAnchorType == AnchorTypeUnknown {
+			} else if parsedAnchorType == TypeUnknown {
 				continue
 			}
 			return parsedAnchorType, value
@@ -62,13 +62,13 @@ func getAnchorValuesFromCertificate(parsedCerts []*x509.Certificate) (anchorType
 }
 
 func parseExtension(ext pkix.Extension) (anchorType Type, val string, err error) {
-	anchorType = AnchorTypeUnknown
+	anchorType = TypeUnknown
 
 	switch {
 	case ext.Id.Equal(sourceOID):
-		anchorType = AnchorTypeSource
+		anchorType = TypeSource
 	case ext.Id.Equal(verifierOID):
-		anchorType = AnchorTypeVerifier
+		anchorType = TypeVerifier
 	default:
 		return anchorType, "", nil
 	}
