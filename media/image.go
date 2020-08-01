@@ -1,9 +1,7 @@
 package media
 
 import (
-	"errors"
-
-	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
+	"fmt"
 )
 
 const (
@@ -22,31 +20,9 @@ type Image struct {
 // Base64URL is the Image encoded as a base64 URL
 func (image *Image) Base64URL() string {
 	mediaValue := Value{
-		Type:    "image",
-		SubType: image.Type,
-		Data:    image.Data,
+		MimeType: fmt.Sprintf("image/%s", image.Type),
+		Data:     image.Data,
 	}
 
 	return mediaValue.Base64URL()
-}
-
-// ParseImageValue wraps image data into an image struct
-func ParseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*Image, error) {
-	var imageType string
-
-	switch contentType {
-	case yotiprotoattr.ContentType_JPEG:
-		imageType = ImageTypeJpeg
-
-	case yotiprotoattr.ContentType_PNG:
-		imageType = ImageTypePng
-
-	default:
-		return nil, errors.New("cannot create Image with unsupported type")
-	}
-
-	return &Image{
-		Type: imageType,
-		Data: byteValue,
-	}, nil
 }
