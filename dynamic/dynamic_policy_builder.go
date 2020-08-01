@@ -13,24 +13,24 @@ const (
 	authTypePinConst
 )
 
-// DynamicPolicyBuilder constructs a json payload specifying the dynamic policy
+// PolicyBuilder constructs a json payload specifying the dynamic policy
 // for a dynamic scenario
-type DynamicPolicyBuilder struct {
+type PolicyBuilder struct {
 	wantedAttributes   map[string]WantedAttribute
 	wantedAuthTypes    map[int]bool
 	isWantedRememberMe bool
 	err                error
 }
 
-// DynamicPolicy represents a dynamic policy for a share
-type DynamicPolicy struct {
+// Policy represents a dynamic policy for a share
+type Policy struct {
 	attributes   []WantedAttribute
 	authTypes    []int
 	rememberMeID bool
 }
 
 // WithWantedAttribute adds an attribute from WantedAttributeBuilder to the policy
-func (b *DynamicPolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *PolicyBuilder {
 	if b.wantedAttributes == nil {
 		b.wantedAttributes = make(map[string]WantedAttribute)
 	}
@@ -46,7 +46,7 @@ func (b *DynamicPolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *D
 
 // WithWantedAttributeByName adds an attribute by its name. This is not the preferred
 // way of adding an attribute - instead use the other methods below
-func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithWantedAttributeByName(name string, options ...interface{}) *PolicyBuilder {
 	attributeBuilder := (&WantedAttributeBuilder{}).WithName(name)
 
 	for _, option := range options {
@@ -69,73 +69,73 @@ func (b *DynamicPolicyBuilder) WithWantedAttributeByName(name string, options ..
 }
 
 // WithFamilyName adds the family name attribute
-func (b *DynamicPolicyBuilder) WithFamilyName(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithFamilyName(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrFamilyName, options...)
 }
 
 // WithGivenNames adds the given names attribute
-func (b *DynamicPolicyBuilder) WithGivenNames(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithGivenNames(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrGivenNames, options...)
 }
 
 // WithFullName adds the full name attribute
-func (b *DynamicPolicyBuilder) WithFullName(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithFullName(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrFullName, options...)
 }
 
 // WithDateOfBirth adds the date of birth attribute
-func (b *DynamicPolicyBuilder) WithDateOfBirth(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithDateOfBirth(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrDateOfBirth, options...)
 }
 
 // WithGender adds the gender attribute
-func (b *DynamicPolicyBuilder) WithGender(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithGender(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrGender, options...)
 }
 
 // WithPostalAddress adds the postal address attribute
-func (b *DynamicPolicyBuilder) WithPostalAddress(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithPostalAddress(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrAddress, options...)
 }
 
 // WithStructuredPostalAddress adds the structured postal address attribute
-func (b *DynamicPolicyBuilder) WithStructuredPostalAddress(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithStructuredPostalAddress(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrStructuredPostalAddress, options...)
 }
 
 // WithNationality adds the nationality attribute
-func (b *DynamicPolicyBuilder) WithNationality(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithNationality(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrNationality, options...)
 }
 
 // WithPhoneNumber adds the phone number attribute
-func (b *DynamicPolicyBuilder) WithPhoneNumber(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithPhoneNumber(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrMobileNumber, options...)
 }
 
 // WithSelfie adds the selfie attribute
-func (b *DynamicPolicyBuilder) WithSelfie(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithSelfie(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrSelfie, options...)
 }
 
 // WithEmail adds the email address attribute
-func (b *DynamicPolicyBuilder) WithEmail(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithEmail(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrEmailAddress, options...)
 }
 
 // WithDocumentImages adds the document images attribute
-func (b *DynamicPolicyBuilder) WithDocumentImages(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithDocumentImages(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrDocumentImages, options...)
 }
 
 // WithDocumentDetails adds the document details attribute
-func (b *DynamicPolicyBuilder) WithDocumentDetails(options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithDocumentDetails(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrDocumentDetails, options...)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
 // Prefer to use WithAgeOver and WithAgeUnder instead of using this directly
-func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *PolicyBuilder {
 	var attributeBuilder WantedAttributeBuilder
 	attributeBuilder.
 		WithName(consts.AttrDateOfBirth).
@@ -161,24 +161,24 @@ func (b *DynamicPolicyBuilder) WithAgeDerivedAttribute(derivation string, option
 
 // WithAgeOver sets this dynamic policy as requesting whether the user is older
 // than a certain age
-func (b *DynamicPolicyBuilder) WithAgeOver(age int, options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithAgeOver(age int, options ...interface{}) *PolicyBuilder {
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeOver, age), options...)
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
 // than a certain age
-func (b *DynamicPolicyBuilder) WithAgeUnder(age int, options ...interface{}) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithAgeUnder(age int, options ...interface{}) *PolicyBuilder {
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeUnder, age), options...)
 }
 
 // WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"
-func (b *DynamicPolicyBuilder) WithWantedRememberMe() *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithWantedRememberMe() *PolicyBuilder {
 	b.isWantedRememberMe = true
 	return b
 }
 
 // WithWantedAuthType sets this dynamic policy as requiring a specific authentication type
-func (b *DynamicPolicyBuilder) WithWantedAuthType(wantedAuthType int) *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithWantedAuthType(wantedAuthType int) *PolicyBuilder {
 	if b.wantedAuthTypes == nil {
 		b.wantedAuthTypes = make(map[int]bool)
 	}
@@ -187,25 +187,25 @@ func (b *DynamicPolicyBuilder) WithWantedAuthType(wantedAuthType int) *DynamicPo
 }
 
 // WithSelfieAuth sets this dynamic policy as requiring Selfie-based authentication
-func (b *DynamicPolicyBuilder) WithSelfieAuth() *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithSelfieAuth() *PolicyBuilder {
 	return b.WithWantedAuthType(authTypeSelfieConst)
 }
 
 // WithPinAuth sets this dynamic policy as requiring PIN authentication
-func (b *DynamicPolicyBuilder) WithPinAuth() *DynamicPolicyBuilder {
+func (b *PolicyBuilder) WithPinAuth() *PolicyBuilder {
 	return b.WithWantedAuthType(authTypePinConst)
 }
 
 // Build constructs a dynamic policy object
-func (b *DynamicPolicyBuilder) Build() (DynamicPolicy, error) {
-	return DynamicPolicy{
+func (b *PolicyBuilder) Build() (Policy, error) {
+	return Policy{
 		attributes:   b.attributesAsList(),
 		authTypes:    b.authTypesAsList(),
 		rememberMeID: b.isWantedRememberMe,
 	}, b.err
 }
 
-func (b *DynamicPolicyBuilder) attributesAsList() []WantedAttribute {
+func (b *PolicyBuilder) attributesAsList() []WantedAttribute {
 	attributeList := make([]WantedAttribute, 0)
 	for _, attr := range b.wantedAttributes {
 		attributeList = append(attributeList, attr)
@@ -213,7 +213,7 @@ func (b *DynamicPolicyBuilder) attributesAsList() []WantedAttribute {
 	return attributeList
 }
 
-func (b *DynamicPolicyBuilder) authTypesAsList() []int {
+func (b *PolicyBuilder) authTypesAsList() []int {
 	authTypeList := make([]int, 0)
 	for auth, b := range b.wantedAuthTypes {
 		if b {
@@ -224,7 +224,7 @@ func (b *DynamicPolicyBuilder) authTypesAsList() []int {
 }
 
 // MarshalJSON returns the JSON encoding
-func (policy *DynamicPolicy) MarshalJSON() ([]byte, error) {
+func (policy *Policy) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Wanted           []WantedAttribute `json:"wanted"`
 		WantedAuthTypes  []int             `json:"wanted_auth_types"`
