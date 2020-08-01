@@ -6,21 +6,21 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-// ExtraData represents extra pieces information on the receipt.
+// Data represents extra pieces information on the receipt.
 // Initialize with NewExtraData or DefaultExtraData
-type ExtraData struct {
+type Data struct {
 	attributeIssuanceDetails *attribute.IssuanceDetails
 }
 
 // DefaultExtraData initialises the ExtraData struct
-func DefaultExtraData() (extraData *ExtraData) {
-	return &ExtraData{
+func DefaultExtraData() (extraData *Data) {
+	return &Data{
 		attributeIssuanceDetails: nil,
 	}
 }
 
 // NewExtraData takes a base64 encoded string and parses it into ExtraData
-func NewExtraData(extraDataBytes []byte) (*ExtraData, error) {
+func NewExtraData(extraDataBytes []byte) (*Data, error) {
 	var err error
 	var extraData = DefaultExtraData()
 
@@ -35,7 +35,7 @@ func NewExtraData(extraDataBytes []byte) (*ExtraData, error) {
 		if de.Type == yotiprotoshare.DataEntry_THIRD_PARTY_ATTRIBUTE {
 			attributeIssuanceDetails, err = attribute.ParseIssuanceDetails(de.Value)
 
-			return &ExtraData{
+			return &Data{
 				attributeIssuanceDetails: attributeIssuanceDetails,
 			}, err
 		}
@@ -45,6 +45,6 @@ func NewExtraData(extraDataBytes []byte) (*ExtraData, error) {
 }
 
 // AttributeIssuanceDetails represents the details of attribute(s) to be issued by a third party. Will be nil if not provided by Yoti.
-func (e ExtraData) AttributeIssuanceDetails() (issuanceDetails *attribute.IssuanceDetails) {
+func (e Data) AttributeIssuanceDetails() (issuanceDetails *attribute.IssuanceDetails) {
 	return e.attributeIssuanceDetails
 }

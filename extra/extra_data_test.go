@@ -144,7 +144,7 @@ func processThirdPartyAttribute(t *testing.T, marshalledThirdPartyAttribute []by
 	return parsedExtraData.AttributeIssuanceDetails(), err
 }
 
-func parseProtoExtraData(t *testing.T, protoExtraData *yotiprotoshare.ExtraData) (*ExtraData, error) {
+func parseProtoExtraData(t *testing.T, protoExtraData *yotiprotoshare.ExtraData) (*Data, error) {
 	extraDataMarshalled, err := proto.Marshal(protoExtraData)
 	assert.NilError(t, err)
 

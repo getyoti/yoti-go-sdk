@@ -83,7 +83,7 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 		userProfile := newUserProfile(userAttributeList)
 		applicationProfile := NewApplicationProfile(applicationAttributeList)
 
-		var extraData *extra.ExtraData
+		var extraData *extra.Data
 		extraData, err = parseExtraData(&parsedResponse.Receipt, key, err)
 
 		timestamp, timestampErr := time.Parse(time.RFC3339Nano, parsedResponse.Receipt.Timestamp)
@@ -105,7 +105,7 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 	return activityDetails, err
 }
 
-func parseExtraData(receipt *receiptDO, key *rsa.PrivateKey, err error) (*extra.ExtraData, error) {
+func parseExtraData(receipt *receiptDO, key *rsa.PrivateKey, err error) (*extra.Data, error) {
 	decryptedExtraData, decryptErr := decryptExtraData(receipt, key)
 	if decryptErr != nil {
 		err = yotierror.MultiError{This: errors.New("Unable to decrypt ExtraData from the receipt. Error: " + decryptErr.Error()), Next: err}
