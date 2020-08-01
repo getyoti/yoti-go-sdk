@@ -15,7 +15,7 @@ import (
 type IssuanceDetails struct {
 	token      string
 	expiryDate *time.Time
-	attributes []AttributeDefinition
+	attributes []Definition
 }
 
 // Token is the issuance token that can be used to retrieve the user's stored details.
@@ -31,7 +31,7 @@ func (i IssuanceDetails) ExpiryDate() *time.Time {
 }
 
 // Attributes information about the attributes the third party would like to issue.
-func (i IssuanceDetails) Attributes() []AttributeDefinition {
+func (i IssuanceDetails) Attributes() []Definition {
 	return i.attributes
 }
 
@@ -62,9 +62,9 @@ func ParseIssuanceDetails(thirdPartyAttributeBytes []byte) (*IssuanceDetails, er
 	}, dateParseErr
 }
 
-func parseIssuingAttributeDefinitions(definitions []*yotiprotoshare.Definition) (issuingAttributes []AttributeDefinition) {
+func parseIssuingAttributeDefinitions(definitions []*yotiprotoshare.Definition) (issuingAttributes []Definition) {
 	for _, definition := range definitions {
-		attributeDefinition := AttributeDefinition{
+		attributeDefinition := Definition{
 			name: definition.Name,
 		}
 		issuingAttributes = append(issuingAttributes, attributeDefinition)
