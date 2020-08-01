@@ -1,8 +1,6 @@
 package media
 
-import (
-	"fmt"
-)
+import "fmt"
 
 const (
 	// ImageTypeJpeg JPEG format
@@ -18,11 +16,7 @@ type Image struct {
 }
 
 // Base64URL is the Image encoded as a base64 URL
-func (image *Image) Base64URL() string {
-	mediaValue := Value{
-		MimeType: fmt.Sprintf("image/%s", image.Type),
-		Data:     image.Data,
-	}
-
-	return mediaValue.Base64URL()
+func (i *Image) Base64URL() string {
+	mimeType := fmt.Sprintf("image/%s", i.Type)
+	return base64URL(mimeType, i.Data)
 }
