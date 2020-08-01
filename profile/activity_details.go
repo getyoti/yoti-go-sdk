@@ -14,7 +14,7 @@ type ActivityDetails struct {
 	timestamp          time.Time
 	receiptID          string
 	ApplicationProfile ApplicationProfile
-	extraData          *extra.ExtraData
+	extraData          *extra.Data
 }
 
 // RememberMeID is a unique, stable identifier for a user in the context
@@ -43,6 +43,6 @@ func (a ActivityDetails) ReceiptID() string {
 }
 
 // ExtraData represents extra pieces information on the receipt
-func (a ActivityDetails) ExtraData() *extra.ExtraData {
+func (a ActivityDetails) ExtraData() *extra.Data {
 	return a.extraData
 }
