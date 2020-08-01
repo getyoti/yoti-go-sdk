@@ -18,7 +18,7 @@ func getDynamicShareEndpoint(clientSdkId string) string {
 }
 
 // CreateShareURL creates a QR code for a dynamic scenario
-func CreateShareURL(httpClient requests.HttpClient, scenario *DynamicScenario, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
+func CreateShareURL(httpClient requests.HttpClient, scenario *Scenario, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
 	endpoint := getDynamicShareEndpoint(clientSdkId)
 
 	payload, err := scenario.MarshalJSON()

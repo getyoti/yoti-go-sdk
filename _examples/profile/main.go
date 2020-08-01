@@ -63,7 +63,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	policy, err := (&dynamic.DynamicPolicyBuilder{}).WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
+	policy, err := (&dynamic.PolicyBuilder{}).WithFullName(constraint).WithStructuredPostalAddress(constraint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -73,7 +73,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).
+	scenario, err := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).
 		WithCallbackEndpoint(profileEndpoint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
@@ -88,7 +88,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 }
 
 func dynamicShare(w http.ResponseWriter, req *http.Request) {
-	policy, err := (&dynamic.DynamicPolicyBuilder{}).WithFullName().WithEmail().Build()
+	policy, err := (&dynamic.PolicyBuilder{}).WithFullName().WithEmail().Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -97,7 +97,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		)))
 		return
 	}
-	scenario, err := (&dynamic.DynamicScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint(profileEndpoint).Build()
+	scenario, err := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint(profileEndpoint).Build()
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
@@ -110,7 +110,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 	pageFromScenario(w, req, "Dynamic Share example", scenario)
 }
 
-func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, scenario dynamic.DynamicScenario) {
+func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, scenario dynamic.Scenario) {
 	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))

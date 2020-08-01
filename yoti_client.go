@@ -82,6 +82,6 @@ func (client *Client) PerformAmlCheck(profile aml.Profile) (result aml.Result, e
 }
 
 // CreateShareURL creates a QR code for a specified dynamic scenario
-func (client *Client) CreateShareURL(scenario *dynamic.DynamicScenario) (share dynamic.ShareURL, err error) {
+func (client *Client) CreateShareURL(scenario *dynamic.Scenario) (share dynamic.ShareURL, err error) {
 	return dynamic.CreateShareURL(client.HTTPClient, scenario, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
