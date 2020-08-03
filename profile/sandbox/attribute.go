@@ -22,7 +22,7 @@ func (attr Attribute) WithName(name string) Attribute {
 	return attr
 }
 
-// WithAnchor sets the value of a Sandbox Attribute
+// WithValue sets the value of a Sandbox Attribute
 func (attr Attribute) WithValue(value string) Attribute {
 	attr.Value = value
 	return attr
