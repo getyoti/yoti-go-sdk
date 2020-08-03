@@ -266,7 +266,6 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	pemBytes, err := ioutil.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
-	attributeName := "attributeName"
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
 	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "tokenValue")
@@ -300,7 +299,6 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 }
 
 func TestProfileService_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
-	var attributeName = "attributeName"
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
 	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "")
