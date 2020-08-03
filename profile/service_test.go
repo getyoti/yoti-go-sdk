@@ -166,7 +166,7 @@ func TestProfileService_SharingFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
-	assert.ErrorContains(t, err, ErrSharingFailure.Error())
+	assert.ErrorContains(t, err, "sharing failure")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
