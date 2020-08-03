@@ -18,7 +18,7 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 			return &parsedTime, nil
 		}
 
-		return nil, fmt.Errorf("Unable to parse date value: %q. Error: %q", string(byteValue), err)
+		return nil, fmt.Errorf("unable to parse date value: %q. Error: %q", string(byteValue), err)
 
 	case yotiprotoattr.ContentType_JSON:
 		unmarshalledJSON, err := unmarshallJSON(byteValue)
@@ -27,7 +27,7 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 			return unmarshalledJSON, nil
 		}
 
-		return nil, fmt.Errorf("Unable to parse JSON value: %q. Error: %q", string(byteValue), err)
+		return nil, fmt.Errorf("unable to parse JSON value: %q. Error: %q", string(byteValue), err)
 
 	case yotiprotoattr.ContentType_STRING:
 		return string(byteValue), nil
@@ -42,7 +42,7 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 			return int, nil
 		}
 
-		return nil, fmt.Errorf("Unable to parse INT value: %q. Error: %q", string(byteValue), err)
+		return nil, fmt.Errorf("unable to parse INT value: %q. Error: %q", string(byteValue), err)
 
 	case yotiprotoattr.ContentType_JPEG,
 		yotiprotoattr.ContentType_PNG:

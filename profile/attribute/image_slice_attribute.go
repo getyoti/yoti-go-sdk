@@ -16,7 +16,7 @@ type ImageSliceAttribute struct {
 // NewImageSlice creates a new ImageSlice attribute
 func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 	if a.ContentType != yotiprotoattr.ContentType_MULTI_VALUE {
-		return nil, errors.New("Creating an Image Slice attribute with content types other than MULTI_VALUE is not supported")
+		return nil, errors.New("creating an Image Slice attribute with content types other than MULTI_VALUE is not supported")
 	}
 
 	parsedMultiValue, err := parseMultiValue(a.Value)

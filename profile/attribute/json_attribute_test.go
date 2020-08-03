@@ -30,7 +30,7 @@ func TestNewJSON_ShouldReturnNilForInvalidJSON(t *testing.T) {
 	}
 	attribute, err := NewJSON(&proto)
 	assert.Check(t, attribute == nil)
-	assert.ErrorContains(t, err, "Unable to parse JSON value")
+	assert.ErrorContains(t, err, "unable to parse JSON value")
 }
 
 func TestYotiClient_UnmarshallJSONValue_InvalidValueThrowsError(t *testing.T) {
