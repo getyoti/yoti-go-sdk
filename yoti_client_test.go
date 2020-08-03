@@ -26,7 +26,7 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test/test-key-invalid-format.pem")
 	_, err := NewClient("", key)
 
-	assert.ErrorContains(t, err, "Invalid Key: not PEM-encoded")
+	assert.ErrorContains(t, err, "invalid Key: not PEM-encoded")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
