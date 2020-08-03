@@ -33,10 +33,10 @@ func (p baseProfile) GetStringAttribute(attributeName string) *attribute.StringA
 func (p baseProfile) GetImageAttribute(attributeName string) *attribute.ImageAttribute {
 	for _, a := range p.attributeSlice {
 		if a.Name == attributeName {
-			attribute, err := attribute.NewImage(a)
+			imageAttribute, err := attribute.NewImage(a)
 
 			if err == nil {
-				return attribute
+				return imageAttribute
 			}
 		}
 	}

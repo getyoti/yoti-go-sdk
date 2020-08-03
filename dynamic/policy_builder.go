@@ -215,8 +215,8 @@ func (b *PolicyBuilder) attributesAsList() []WantedAttribute {
 
 func (b *PolicyBuilder) authTypesAsList() []int {
 	authTypeList := make([]int, 0)
-	for auth, b := range b.wantedAuthTypes {
-		if b {
+	for auth, boolValue := range b.wantedAuthTypes {
+		if boolValue {
 			authTypeList = append(authTypeList, auth)
 		}
 	}
