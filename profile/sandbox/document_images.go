@@ -6,7 +6,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 )
 
-// Attribute describes an attribute on a sandbox profile
+// DocumentImages describes a Document Images attribute on a sandbox profile
 type DocumentImages struct {
 	Images []attribute.Image
 }
@@ -33,7 +33,7 @@ func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
 	return d
 }
 
-// WithPngImage adds a JPEG image to the slice of document images
+// WithJpegImage adds a JPEG image to the slice of document images
 func (d DocumentImages) WithJpegImage(imageContent []byte) DocumentImages {
 	jpegImage := attribute.Image{
 		Type: attribute.ImageTypeJpeg,
