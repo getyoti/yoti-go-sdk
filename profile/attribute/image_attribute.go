@@ -39,7 +39,7 @@ func (a *ImageAttribute) Value() *media.Image {
 }
 
 func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*media.Image, error) {
-	var imageType string
+	var imageType media.ImageType
 
 	switch contentType {
 	case yotiprotoattr.ContentType_JPEG:
