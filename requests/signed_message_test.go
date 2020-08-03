@@ -100,12 +100,12 @@ func TestSignedRequest_checkMandatories_WhenErrorIsSetReturnIt(t *testing.T) {
 
 func TestSignedRequest_checkMandatories_WhenKeyMissing(t *testing.T) {
 	msg := &SignedRequest{}
-	assert.Error(t, msg.checkMandatories(), "Missing Private Key")
+	assert.Error(t, msg.checkMandatories(), "missing private key")
 }
 
 func TestSignedRequest_checkMandatories_WhenHTTPMethodMissing(t *testing.T) {
 	msg := &SignedRequest{Key: privateKey}
-	assert.Error(t, msg.checkMandatories(), "Missing HTTPMethod")
+	assert.Error(t, msg.checkMandatories(), "missing HTTPMethod")
 }
 
 func TestSignedRequest_checkMandatories_WhenBaseURLMissing(t *testing.T) {
@@ -113,7 +113,7 @@ func TestSignedRequest_checkMandatories_WhenBaseURLMissing(t *testing.T) {
 		Key:        privateKey,
 		HTTPMethod: http.MethodPost,
 	}
-	assert.Error(t, msg.checkMandatories(), "Missing BaseURL")
+	assert.Error(t, msg.checkMandatories(), "missing BaseURL")
 }
 
 func TestSignedRequest_checkMandatories_WhenEndpointMissing(t *testing.T) {
@@ -122,7 +122,7 @@ func TestSignedRequest_checkMandatories_WhenEndpointMissing(t *testing.T) {
 		HTTPMethod: http.MethodPost,
 		BaseURL:    "example.com",
 	}
-	assert.Error(t, msg.checkMandatories(), "Missing Endpoint")
+	assert.Error(t, msg.checkMandatories(), "missing Endpoint")
 }
 
 func ExampleSignedRequest_generateDigest() {
@@ -146,12 +146,12 @@ func ExampleSignedRequest_WithPemFile() {
 
 func TestSignedRequest_WithPemFile_NotPemEncodedShouldError(t *testing.T) {
 	msg := SignedRequest{}.WithPemFile([]byte("not pem encoded"))
-	assert.ErrorContains(t, msg.Error, "Not PEM-encoded")
+	assert.ErrorContains(t, msg.Error, "not PEM-encoded")
 }
 
 func TestSignedRequest_WithPemFile_NotRSAKeyShouldError(t *testing.T) {
 	msg := SignedRequest{}.WithPemFile([]byte(`-----BEGIN RSA PUBLIC KEY-----
 ` + exampleKey + `
 -----END RSA PUBLIC KEY-----`))
-	assert.ErrorContains(t, msg.Error, "Not an RSA Private Key")
+	assert.ErrorContains(t, msg.Error, "not an RSA Private Key")
 }

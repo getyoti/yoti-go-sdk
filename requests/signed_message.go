@@ -89,11 +89,11 @@ func getNonce() (string, error) {
 func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
 	block, _ := pem.Decode(in)
 	if block == nil {
-		msg.Error = errors.New("Not PEM-encoded")
+		msg.Error = errors.New("input is not PEM-encoded")
 		return msg
 	}
 	if block.Type != "RSA PRIVATE KEY" {
-		msg.Error = errors.New("Not an RSA Private Key")
+		msg.Error = errors.New("input is not an RSA Private Key")
 		return msg
 	}
 
@@ -159,16 +159,16 @@ func (msg *SignedRequest) checkMandatories() error {
 		return msg.Error
 	}
 	if msg.Key == nil {
-		return fmt.Errorf("Missing Private Key")
+		return fmt.Errorf("missing private key")
 	}
 	if msg.HTTPMethod == "" {
-		return fmt.Errorf("Missing HTTPMethod")
+		return fmt.Errorf("missing HTTPMethod")
 	}
 	if msg.BaseURL == "" {
-		return fmt.Errorf("Missing BaseURL")
+		return fmt.Errorf("missing BaseURL")
 	}
 	if msg.Endpoint == "" {
-		return fmt.Errorf("Missing Endpoint")
+		return fmt.Errorf("missing Endpoint")
 	}
 	return nil
 }

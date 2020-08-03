@@ -47,7 +47,7 @@ func ParseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*
 		imageType = ImageTypePng
 
 	default:
-		return nil, errors.New("Cannot create Image with unsupported type")
+		return nil, errors.New("cannot create Image with unsupported type")
 	}
 
 	return &Image{

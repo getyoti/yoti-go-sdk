@@ -39,7 +39,7 @@ func (i IssuanceDetails) Attributes() []Definition {
 func ParseIssuanceDetails(thirdPartyAttributeBytes []byte) (*IssuanceDetails, error) {
 	thirdPartyAttributeStruct := &yotiprotoshare.ThirdPartyAttribute{}
 	if err := proto.Unmarshal(thirdPartyAttributeBytes, thirdPartyAttributeStruct); err != nil {
-		return nil, fmt.Errorf("Unable to parse ThirdPartyAttribute value: %q. Error: %q", string(thirdPartyAttributeBytes), err)
+		return nil, fmt.Errorf("unable to parse ThirdPartyAttribute value: %q. Error: %q", string(thirdPartyAttributeBytes), err)
 	}
 
 	var issuingAttributesProto = thirdPartyAttributeStruct.GetIssuingAttributes()
