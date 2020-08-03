@@ -9,7 +9,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func assertIsExpectedImage(t *testing.T, image *media.Image, imageType string, expectedBase64URLLast10 string) {
+func assertIsExpectedImage(t *testing.T, image *media.Image, imageType media.ImageType, expectedBase64URLLast10 string) {
 	assert.Equal(t, image.Type, imageType)
 
 	actualBase64URL := image.Base64URL()
@@ -23,8 +23,8 @@ func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages 
 
 	assert.Equal(t, len(actualDocumentImages), 2, "This Document Images attribute should have two images")
 
-	assertIsExpectedImage(t, actualDocumentImages[0], "jpeg", "vWgD//2Q==")
-	assertIsExpectedImage(t, actualDocumentImages[1], "jpeg", "38TVEH/9k=")
+	assertIsExpectedImage(t, actualDocumentImages[0], media.ImageTypeJpeg, "vWgD//2Q==")
+	assertIsExpectedImage(t, actualDocumentImages[1], media.ImageTypeJpeg, "38TVEH/9k=")
 
 	expectedValue := "NATIONAL_ID"
 	assert.Equal(t, anchor.Value(), expectedValue)
