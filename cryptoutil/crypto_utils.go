@@ -19,16 +19,16 @@ func ParseRSAKey(keyBytes []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(keyBytes)
 
 	if block == nil {
-		return nil, errors.New("Invalid Key: not PEM-encoded")
+		return nil, errors.New("invalid Key: not PEM-encoded")
 	}
 
 	if block.Type != "RSA PRIVATE KEY" {
-		return nil, errors.New("Invalid Key: not RSA private key")
+		return nil, errors.New("invalid Key: not RSA private key")
 	}
 
 	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, errors.New("Invalid Key: bad RSA private key")
+		return nil, errors.New("invalid Key: bad RSA private key")
 	}
 
 	return key, nil
@@ -65,7 +65,7 @@ func pkcs7Unpad(ciphertext []byte, blocksize int) (result []byte, err error) {
 		return
 	}
 	if len(ciphertext) == 0 {
-		err = errors.New("Cannot remove padding on empty byte array")
+		err = errors.New("cannot remove padding on empty byte array")
 		return
 	}
 	if len(ciphertext)%blocksize != 0 {

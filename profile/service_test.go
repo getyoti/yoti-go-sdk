@@ -63,7 +63,7 @@ func TestProfileService_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testi
 func TestProfileService_ErrIsThrownForInvalidToken(t *testing.T) {
 	_, err := GetActivityDetails(nil, "invalidToken", "clientSdkId", "apiUrl", getValidKey())
 
-	assert.ErrorContains(t, err, "Unable to decrypt token")
+	assert.ErrorContains(t, err, "unable to decrypt token")
 }
 
 func TestProfileService_RequestErrIsReturned(t *testing.T) {
@@ -81,7 +81,7 @@ func TestProfileService_RequestErrIsReturned(t *testing.T) {
 
 func TestProfileService_InvalidToken(t *testing.T) {
 	_, err := GetActivityDetails(nil, "", "sdkId", "https://apiurl", getValidKey())
-	assert.ErrorContains(t, err, "Invalid Token")
+	assert.ErrorContains(t, err, "invalid Token")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool

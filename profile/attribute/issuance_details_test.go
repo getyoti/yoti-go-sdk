@@ -141,5 +141,5 @@ func TestInvalidProtobufThrowsError(t *testing.T) {
 
 	assert.Assert(t, is.Nil(result))
 
-	assert.ErrorContains(t, err, "Unable to parse ThirdPartyAttribute value")
+	assert.ErrorContains(t, err, "unable to parse ThirdPartyAttribute value")
 }

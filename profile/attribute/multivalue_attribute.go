@@ -47,7 +47,7 @@ func parseMultiValue(data []byte) ([]*Item, error) {
 			parsedInnerMultiValueItems, err := parseMultiValue(multiValueItem.Data)
 
 			if err != nil {
-				return nil, fmt.Errorf("Unable to parse multi-value data: %v", err)
+				return nil, fmt.Errorf("unable to parse multi-value data: %v", err)
 			}
 
 			value = &Item{
@@ -58,7 +58,7 @@ func parseMultiValue(data []byte) ([]*Item, error) {
 			itemValue, err := parseValue(multiValueItem.ContentType, multiValueItem.Data)
 
 			if err != nil {
-				return nil, fmt.Errorf("Unable to parse data within a multi-value attribute. Content type: %q, data: %q, error: %v",
+				return nil, fmt.Errorf("unable to parse data within a multi-value attribute. Content type: %q, data: %q, error: %v",
 					multiValueItem.ContentType, multiValueItem.Data, err)
 			}
 
@@ -77,7 +77,7 @@ func unmarshallMultiValue(bytes []byte) (*yotiprotoattr.MultiValue, error) {
 	multiValueStruct := &yotiprotoattr.MultiValue{}
 
 	if err := proto.Unmarshal(bytes, multiValueStruct); err != nil {
-		return nil, fmt.Errorf("Unable to parse MULTI_VALUE value: %q. Error: %q", string(bytes), err)
+		return nil, fmt.Errorf("unable to parse MULTI_VALUE value: %q. Error: %q", string(bytes), err)
 	}
 
 	return multiValueStruct, nil

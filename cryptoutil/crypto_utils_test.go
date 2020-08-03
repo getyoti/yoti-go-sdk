@@ -46,7 +46,7 @@ VGVzdCBTdHJpbmc=
 
 	_, err := ParseRSAKey(testPEM)
 
-	assert.Error(t, err, "Invalid Key: not RSA private key")
+	assert.Error(t, err, "invalid Key: not RSA private key")
 }
 
 func TestCryptoutil_ParseRSAKey_InvalidKeyShouldFail(t *testing.T) {
@@ -56,7 +56,7 @@ VGVzdCBTdHJpbmc=
 
 	_, err := ParseRSAKey(testPEM)
 
-	assert.Error(t, err, "Invalid Key: bad RSA private key")
+	assert.Error(t, err, "invalid Key: bad RSA private key")
 }
 
 func TestCryptoutil_decipherAes_EmptyCiphertextShouldError(t *testing.T) {
@@ -80,7 +80,7 @@ func TestCryptoutil_pkcs7Unpad_InvalidBlocksizeShouldError(t *testing.T) {
 
 func TestCryptoutil_pkcs7Unpad_EmptyByteArrayShouldError(t *testing.T) {
 	_, err := pkcs7Unpad([]byte{}, 1)
-	assert.Error(t, err, "Cannot remove padding on empty byte array")
+	assert.Error(t, err, "cannot remove padding on empty byte array")
 }
 
 func TestCryptoutil_pkcs7Unpad_CiphertextNotMultipleOfBlocksizeShouldError(t *testing.T) {
