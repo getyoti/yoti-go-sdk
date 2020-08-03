@@ -101,7 +101,7 @@ func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
 	return msg
 }
 
-func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error) {
+func (msg *SignedRequest) addParametersToEndpoint() (string, error) {
 	if msg.Params == nil {
 		msg.Params = make(map[string]string)
 	}
@@ -117,7 +117,7 @@ func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error)
 		msg.Params["timestamp"] = getTimestamp()
 	}
 
-	endpoint = msg.Endpoint
+	endpoint := msg.Endpoint
 	if !strings.Contains(endpoint, "?") {
 		endpoint = endpoint + "?"
 	} else {
@@ -133,7 +133,8 @@ func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error)
 		endpoint = fmt.Sprintf(formatString, endpoint, param, value)
 		firstParam = false
 	}
-	return
+
+	return endpoint, nil
 }
 
 func (msg *SignedRequest) generateDigest(endpoint string) (digest string) {

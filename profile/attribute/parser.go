@@ -37,9 +37,9 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 
 	case yotiprotoattr.ContentType_INT:
 		var stringValue = string(byteValue)
-		int, err := strconv.Atoi(stringValue)
+		intValue, err := strconv.Atoi(stringValue)
 		if err == nil {
-			return int, nil
+			return intValue, nil
 		}
 
 		return nil, fmt.Errorf("unable to parse INT value: %q. Error: %q", string(byteValue), err)

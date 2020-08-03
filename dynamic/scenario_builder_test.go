@@ -36,14 +36,14 @@ func ExampleScenarioBuilder_WithExtension() {
 	if err != nil {
 		return
 	}
-	extension, err := (&extension.TransactionalFlowExtensionBuilder{}).
+	builtExtension, err := (&extension.TransactionalFlowExtensionBuilder{}).
 		WithContent("Transactional Flow Extension").
 		Build()
 	if err != nil {
 		return
 	}
 
-	scenario, err := (&ScenarioBuilder{}).WithExtension(extension).WithPolicy(policy).Build()
+	scenario, err := (&ScenarioBuilder{}).WithExtension(builtExtension).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
