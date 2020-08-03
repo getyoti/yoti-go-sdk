@@ -8,7 +8,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
 
-// Profile represents the details retrieved for a particular user. Consists of
+// UserProfile represents the details retrieved for a particular user. Consists of
 // Yoti attributes: a small piece of information about a Yoti user such as a
 // photo of the user or the user's date of birth.
 type UserProfile struct {
