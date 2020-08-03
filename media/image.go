@@ -1,22 +1,23 @@
 package media
 
-import "fmt"
+// ImageType is the MIME type of the image
+type ImageType string
 
 const (
 	// ImageTypeJpeg JPEG format
-	ImageTypeJpeg string = "jpeg"
+	ImageTypeJpeg ImageType = "image/jpeg"
+
 	// ImageTypePng PNG format
-	ImageTypePng string = "png"
+	ImageTypePng ImageType = "image/png"
 )
 
 // Image format of the image and the image data
 type Image struct {
-	Type string
+	Type ImageType
 	Data []byte
 }
 
 // Base64URL is the Image encoded as a base64 URL
 func (i *Image) Base64URL() string {
-	mimeType := fmt.Sprintf("image/%s", i.Type)
-	return base64URL(mimeType, i.Data)
+	return base64URL(string(i.Type), i.Data)
 }
