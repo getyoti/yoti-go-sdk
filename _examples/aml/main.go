@@ -27,7 +27,7 @@ func main() {
 		return
 	}
 
-	client, err := yoti.NewClient(sdkID, key)
+	client, err = yoti.NewClient(sdkID, key)
 	if err != nil {
 		log.Printf("Problem initialising client: Error: `%s`", err)
 		return
@@ -44,7 +44,8 @@ func main() {
 		FamilyName: familyName,
 		Address:    amlAddress}
 
-	result, err := client.PerformAmlCheck(amlProfile)
+	var result aml.Result
+	result, err = client.PerformAmlCheck(amlProfile)
 
 	if err != nil {
 		log.Printf(

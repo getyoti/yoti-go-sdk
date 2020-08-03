@@ -73,7 +73,7 @@ func TestDocumentDetailsShouldParseRedactedAadhar(t *testing.T) {
 }
 
 func TestDocumentDetailsShouldParseSpecialCharacters(t *testing.T) {
-	test_data := [][]string{
+	testData := [][]string{
 		{"type country **** - authority", "****"},
 		{"type country ~!@#$%^&*()-_=+[]{}|;':,./<>? - authority", "~!@#$%^&*()-_=+[]{}|;':,./<>?"},
 		{"type country \"\" - authority", "\"\""},
@@ -82,7 +82,7 @@ func TestDocumentDetailsShouldParseSpecialCharacters(t *testing.T) {
 		{"type country '' - authority", "''"},
 		{"type country ' - authority", "'"},
 	}
-	for _, row := range test_data {
+	for _, row := range testData {
 		details := DocumentDetails{}
 		err := details.Parse(row[0])
 		if err != nil {

@@ -276,7 +276,7 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 		List: dataEntries,
 	}
 
-	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, test.WrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, protoExtraData)
 
 	client := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -313,7 +313,7 @@ func TestProfileService_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *te
 	pemBytes, err := ioutil.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
-	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, test.WrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, protoExtraData)
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 
@@ -368,7 +368,7 @@ func getValidKey() *rsa.PrivateKey {
 	return test.GetValidKey("../test/test-key.pem")
 }
 
-func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotiprotoshare.ExtraData, wrappedReceiptKey string) string {
+func createExtraDataContent(t *testing.T, protoExtraData *yotiprotoshare.ExtraData) string {
 	outBytes, err := proto.Marshal(protoExtraData)
 	assert.NilError(t, err)
 
