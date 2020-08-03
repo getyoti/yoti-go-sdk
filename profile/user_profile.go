@@ -149,14 +149,3 @@ func (p UserProfile) AgeVerifications() (out []attribute.AgeVerification, err er
 	}
 	return out, err
 }
-
-// GetProtobufAnchors gets the anchors associated with an attribute
-func GetProtobufAnchors(profile UserProfile, attributeName string) []*yotiprotoattr.Anchor {
-	for _, v := range profile.attributeSlice {
-		if v.Name == attributeName {
-			return v.Anchors
-		}
-	}
-
-	return nil
-}

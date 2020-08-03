@@ -130,7 +130,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 }
 
 func TestAnchors_None(t *testing.T) {
-	anchorSlice := []*Anchor{}
+	var anchorSlice []*Anchor
 
 	sources := GetSources(anchorSlice)
 	assert.Equal(t, len(sources), 0, "GetSources should not return anything with empty anchors")
