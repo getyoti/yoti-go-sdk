@@ -19,8 +19,7 @@ type ApplicationProfile struct {
 	baseProfile
 }
 
-// Creates a new Profile struct
-func NewApplicationProfile(attributes *yotiprotoattr.AttributeList) ApplicationProfile {
+func newApplicationProfile(attributes *yotiprotoattr.AttributeList) ApplicationProfile {
 	return ApplicationProfile{
 		baseProfile{
 			attributeSlice: createAttributeSlice(attributes),
