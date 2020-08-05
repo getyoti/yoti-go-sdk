@@ -84,6 +84,7 @@ func TestPerformCheck_Unsuccessful(t *testing.T) {
 func getValidKey() *rsa.PrivateKey {
 	return test.GetValidKey("../test/test-key.pem")
 }
+
 func createStandardProfile() Profile {
 	var amlAddress = Address{
 		Country: "GBR"}
