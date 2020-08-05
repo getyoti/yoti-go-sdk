@@ -4,44 +4,44 @@ import (
 	"encoding/json"
 )
 
-// DynamicScenarioBuilder builds a dynamic scenario
-type DynamicScenarioBuilder struct {
-	scenario DynamicScenario
+// ScenarioBuilder builds a dynamic scenario
+type ScenarioBuilder struct {
+	scenario Scenario
 	err      error
 }
 
-// DynamicScenario represents a dynamic scenario
-type DynamicScenario struct {
-	policy           *DynamicPolicy
+// Scenario represents a dynamic scenario
+type Scenario struct {
+	policy           *Policy
 	extensions       []interface{}
 	callbackEndpoint string
 }
 
 // WithPolicy attaches a DynamicPolicy to the DynamicScenario
-func (builder *DynamicScenarioBuilder) WithPolicy(policy DynamicPolicy) *DynamicScenarioBuilder {
+func (builder *ScenarioBuilder) WithPolicy(policy Policy) *ScenarioBuilder {
 	builder.scenario.policy = &policy
 	return builder
 }
 
 // WithExtension adds an extension to the scenario
-func (builder *DynamicScenarioBuilder) WithExtension(extension interface{}) *DynamicScenarioBuilder {
+func (builder *ScenarioBuilder) WithExtension(extension interface{}) *ScenarioBuilder {
 	builder.scenario.extensions = append(builder.scenario.extensions, extension)
 	return builder
 }
 
 // WithCallbackEndpoint sets the callback URL
-func (builder *DynamicScenarioBuilder) WithCallbackEndpoint(endpoint string) *DynamicScenarioBuilder {
+func (builder *ScenarioBuilder) WithCallbackEndpoint(endpoint string) *ScenarioBuilder {
 	builder.scenario.callbackEndpoint = endpoint
 	return builder
 }
 
 // Build constructs the DynamicScenario
-func (builder *DynamicScenarioBuilder) Build() (DynamicScenario, error) {
+func (builder *ScenarioBuilder) Build() (Scenario, error) {
 	if builder.scenario.extensions == nil {
 		builder.scenario.extensions = make([]interface{}, 0)
 	}
 	if builder.scenario.policy == nil {
-		policy, err := (&DynamicPolicyBuilder{}).Build()
+		policy, err := (&PolicyBuilder{}).Build()
 		if err != nil {
 			return builder.scenario, err
 		}
@@ -51,9 +51,9 @@ func (builder *DynamicScenarioBuilder) Build() (DynamicScenario, error) {
 }
 
 // MarshalJSON returns the JSON encoding
-func (scenario DynamicScenario) MarshalJSON() ([]byte, error) {
+func (scenario Scenario) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Policy           DynamicPolicy `json:"policy"`
+		Policy           Policy        `json:"policy"`
 		Extensions       []interface{} `json:"extensions"`
 		CallbackEndpoint string        `json:"callback_endpoint"`
 	}{

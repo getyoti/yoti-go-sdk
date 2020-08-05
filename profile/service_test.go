@@ -63,7 +63,7 @@ func TestProfileService_ParseIsAgeVerifiedValue_InvalidValueThrowsError(t *testi
 func TestProfileService_ErrIsThrownForInvalidToken(t *testing.T) {
 	_, err := GetActivityDetails(nil, "invalidToken", "clientSdkId", "apiUrl", getValidKey())
 
-	assert.ErrorContains(t, err, "Unable to decrypt token")
+	assert.ErrorContains(t, err, "unable to decrypt token")
 }
 
 func TestProfileService_RequestErrIsReturned(t *testing.T) {
@@ -81,7 +81,7 @@ func TestProfileService_RequestErrIsReturned(t *testing.T) {
 
 func TestProfileService_InvalidToken(t *testing.T) {
 	_, err := GetActivityDetails(nil, "", "sdkId", "https://apiurl", getValidKey())
-	assert.ErrorContains(t, err, "Invalid Token")
+	assert.ErrorContains(t, err, "invalid Token")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -166,7 +166,7 @@ func TestProfileService_SharingFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
-	assert.ErrorContains(t, err, ErrSharingFailure.Error())
+	assert.ErrorContains(t, err, "sharing failure")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -266,7 +266,6 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	pemBytes, err := ioutil.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
-	attributeName := "attributeName"
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
 	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "tokenValue")
@@ -276,7 +275,7 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 		List: dataEntries,
 	}
 
-	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, test.WrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, protoExtraData)
 
 	client := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -300,7 +299,6 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 }
 
 func TestProfileService_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *testing.T) {
-	var attributeName = "attributeName"
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
 	expiryDate := time.Now().UTC().AddDate(0, 0, 1)
 	thirdPartyAttributeDataEntry := test.CreateThirdPartyAttributeDataEntry(t, &expiryDate, []string{attributeName}, "")
@@ -313,7 +311,7 @@ func TestProfileService_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *te
 	pemBytes, err := ioutil.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
-	extraDataContent := createExtraDataContent(t, pemBytes, protoExtraData, test.WrappedReceiptKey)
+	extraDataContent := createExtraDataContent(t, protoExtraData)
 
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 
@@ -368,7 +366,7 @@ func getValidKey() *rsa.PrivateKey {
 	return test.GetValidKey("../test/test-key.pem")
 }
 
-func createExtraDataContent(t *testing.T, pemBytes []byte, protoExtraData *yotiprotoshare.ExtraData, wrappedReceiptKey string) string {
+func createExtraDataContent(t *testing.T, protoExtraData *yotiprotoshare.ExtraData) string {
 	outBytes, err := proto.Marshal(protoExtraData)
 	assert.NilError(t, err)
 
