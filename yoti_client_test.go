@@ -54,11 +54,9 @@ func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
 	assert.ErrorContains(t, err, "unknown HTTP error")
 	tempError, temporary := err.(interface {
 		Temporary() bool
-		Unwrap() error
 	})
 	assert.Check(t, temporary)
 	assert.Check(t, tempError.Temporary())
-	assert.ErrorContains(t, tempError.Unwrap(), "unknown HTTP error")
 }
 
 func TestYotiClient_HttpFailure_ReturnsProfileNotFound(t *testing.T) {

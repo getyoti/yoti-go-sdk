@@ -40,7 +40,7 @@ func PerformCheck(httpClient requests.HttpClient, profile Profile, clientSdkId, 
 
 	response, err := requests.Execute(httpClient, request, httpErrorMessages)
 	if err != nil {
-		return
+		return result, err
 	}
 
 	responseBytes, err := ioutil.ReadAll(response.Body)
