@@ -2,8 +2,7 @@ package dynamic
 
 import (
 	"encoding/json"
-
-	"github.com/getyoti/yoti-go-sdk/v3/validate"
+	"errors"
 )
 
 type constraintInterface interface {
@@ -54,7 +53,12 @@ func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
 	if builder.attr.constraints == nil {
 		builder.attr.constraints = make([]constraintInterface, 0)
 	}
-	err := validate.NotEmpty(builder.attr.name, "Wanted attribute names must not be empty")
+
+	var err error
+	if len(builder.attr.name) == 0 {
+		err = errors.New("Wanted attribute names must not be empty")
+	}
+
 	return builder.attr, err
 }
 
