@@ -131,8 +131,8 @@ func (p UserProfile) DocumentDetails() (*attribute.DocumentDetailsAttribute, err
 	return nil, nil
 }
 
-// AgeVerifications returns a list of age verifications for the user.
-// Will be em empty slice if not provided by Yoti.
+// AgeVerifications returns a slice of age verifications for the user.
+// Will be an empty slice if not provided by Yoti.
 func (p UserProfile) AgeVerifications() (out []attribute.AgeVerification, err error) {
 	ageUnderString := strings.Replace(consts.AttrAgeUnder, "%d", "", -1)
 	ageOverString := strings.Replace(consts.AttrAgeOver, "%d", "", -1)
