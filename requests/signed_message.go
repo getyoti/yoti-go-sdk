@@ -200,7 +200,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	}
 	request.Header.Add("X-Yoti-Auth-Digest", signedDigest)
 	request.Header.Add("X-Yoti-SDK", consts.SDKIdentifier)
-	request.Header.Add("X-Yoti-SDK-Verson", consts.SDKVersionIdentifier)
+	request.Header.Add("X-Yoti-SDK-Version", consts.SDKVersionIdentifier)
 
 	for key, values := range msg.Headers {
 		for _, value := range values {
