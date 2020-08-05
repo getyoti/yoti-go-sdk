@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/response/docscanerr"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	yotirequest "github.com/getyoti/yoti-go-sdk/v3/requests"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
 type jsonMarshaler interface {
@@ -79,7 +79,7 @@ func (client *Client) makeConfigureResponseRequest(request *http.Request) error 
 	response, err := requests.Execute(client.getHTTPClient(), request)
 
 	if err != nil {
-		return docscanerr.New(err, response)
+		return yotierror.New(err, response)
 	}
 
 	return nil

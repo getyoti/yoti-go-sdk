@@ -1,4 +1,4 @@
-package docscanerr
+package yotierror
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 	jsonBytes, _ := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
-		Error: []ErrorItemDO{
+		Error: []ItemDataObject{
 			{
 				Message:  "some property message",
 				Property: "some.property",

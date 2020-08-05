@@ -1,4 +1,4 @@
-package docscanerr
+package yotierror
 
 import (
 	"bytes"
@@ -9,27 +9,27 @@ import (
 	"strings"
 )
 
-// DataObject maps from Doc Scan JSON error responses
+// DataObject maps from JSON error responses
 type DataObject struct {
-	Code    string        `json:"code"`
-	Message string        `json:"message"`
-	Error   []ErrorItemDO `json:"error,omitempty"`
+	Code    string           `json:"code"`
+	Message string           `json:"message"`
+	Error   []ItemDataObject `json:"error,omitempty"`
 }
 
-// ErrorItemDO maps from Doc Scan JSON error items
-type ErrorItemDO struct {
+// ItemDataObject maps from JSON error items
+type ItemDataObject struct {
 	Message  string `json:"message"`
 	Property string `json:"property"`
 }
 
-// Error indicates errors related to the Doc Scan API.
+// Error indicates errors related to the Yoti API.
 type Error struct {
 	message  string
 	Err      error
 	Response *http.Response
 }
 
-// New creates a new Doc Scan Error
+// New creates a new Error
 func New(err error, response *http.Response) *Error {
 	return &Error{
 		message:  formatResponseMessage(err, response),
@@ -65,7 +65,7 @@ func formatResponseMessage(err error, response *http.Response) string {
 
 	formattedCodeMessage := fmt.Sprintf("%d: %s - %s", response.StatusCode, errorDO.Code, errorDO.Message)
 
-	formattedItems := []string{}
+	var formattedItems []string
 	for _, item := range errorDO.Error {
 		if item.Message != "" && item.Property != "" {
 			formattedItems = append(
