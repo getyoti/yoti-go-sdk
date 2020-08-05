@@ -77,8 +77,8 @@ func (b *SessionSpecificationBuilder) WithRequestedTask(requestedTask *task.Requ
 }
 
 // WithSDKConfig sets the SDKConfig
-func (b *SessionSpecificationBuilder) WithSDKConfig(notificationConfig *NotificationConfig) *SessionSpecificationBuilder {
-	b.notifications = notificationConfig
+func (b *SessionSpecificationBuilder) WithSDKConfig(SDKConfig *SDKConfig) *SessionSpecificationBuilder {
+	b.sdkConfig = SDKConfig
 	return b
 }
 
