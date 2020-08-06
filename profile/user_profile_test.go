@@ -264,6 +264,7 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	expected := media.NewJpegImage(attributeValue)
 	result := att.Value().(*media.Image)
 
+	assert.DeepEqual(t, expected, result)
 	assert.Equal(t, expected.Base64URL(), result.Base64URL())
 }
 
@@ -283,6 +284,7 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	expected := media.NewPngImage(attributeValue)
 	result := att.Value().(*media.Image)
 
+	assert.DeepEqual(t, expected, result)
 	assert.Equal(t, expected.Base64URL(), result.Base64URL())
 }
 
