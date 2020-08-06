@@ -1,30 +1,38 @@
 package media
 
 import (
-	"encoding/base64"
 	"testing"
 
 	"gotest.tools/v3/assert"
 )
 
-func TestImage_Base64Selfie_Png(t *testing.T) {
-	imageBase64Value, media := createImage(ImageTypePng)
+const (
+	imageBase64Value = "dmFsdWU="
+)
+
+func TestImage_Base64Selfie_CreateImage(t *testing.T) {
+	imageBytes := []byte("value")
+
+	result := NewImage(ImageTypePng, imageBytes)
 	expectedDataUrl := "data:image/png;base64," + imageBase64Value
 
-	assert.Equal(t, expectedDataUrl, media.Base64URL())
+	assert.Equal(t, expectedDataUrl, result.Base64URL())
 }
 
-func TestImage_Base64Selfie_Jpeg(t *testing.T) {
-	imageBase64Value, media := createImage(ImageTypeJpeg)
+func TestImage_Base64Selfie_CreateJpegImage(t *testing.T) {
+	imageBytes := []byte("value")
+
+	result := NewImage(ImageTypeJpeg, imageBytes)
 	expectedDataUrl := "data:image/jpeg;base64," + imageBase64Value
 
-	assert.Equal(t, expectedDataUrl, media.Base64URL())
+	assert.Equal(t, expectedDataUrl, result.Base64URL())
 }
 
-func createImage(MIMEType string) (string, *Image) {
+func TestImage_Base64Selfie_CreatePngImage(t *testing.T) {
 	imageBytes := []byte("value")
-	imageBase64Value := base64.StdEncoding.EncodeToString(imageBytes)
-	media := NewImage(MIMEType, imageBytes)
 
-	return imageBase64Value, media
+	result := NewImage(ImageTypeJpeg, imageBytes)
+	expectedDataUrl := "data:image/jpeg;base64," + imageBase64Value
+
+	assert.Equal(t, expectedDataUrl, result.Base64URL())
 }
