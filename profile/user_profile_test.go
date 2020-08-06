@@ -250,10 +250,6 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 
 func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	attributeValue := []byte("value")
-	expected := media.Image{
-		Type: media.ImageTypeJpeg,
-		Data: attributeValue,
-	}
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
@@ -262,18 +258,17 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 		Anchors:     []*yotiprotoattr.Anchor{},
 	}
 
-	result := createProfileWithSingleAttribute(attr)
-	att := result.GetAttribute(attributeName)
+	profile := createProfileWithSingleAttribute(attr)
+	att := profile.GetAttribute(attributeName)
 
-	assert.DeepEqual(t, att.Value().(*media.Image), &expected)
+	expected := media.NewJpegImage(attributeValue)
+	result := att.Value().(*media.Image)
+
+	assert.Equal(t, expected.Base64URL(), result.Base64URL())
 }
 
 func TestProfile_GetAttribute_Png(t *testing.T) {
 	attributeValue := []byte("value")
-	expected := media.Image{
-		Type: media.ImageTypePng,
-		Data: attributeValue,
-	}
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
@@ -282,10 +277,13 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 		Anchors:     []*yotiprotoattr.Anchor{},
 	}
 
-	result := createProfileWithSingleAttribute(attr)
-	att := result.GetAttribute(attributeName)
+	profile := createProfileWithSingleAttribute(attr)
+	att := profile.GetAttribute(attributeName)
 
-	assert.DeepEqual(t, att.Value().(*media.Image), &expected)
+	expected := media.NewPngImage(attributeValue)
+	result := att.Value().(*media.Image)
+
+	assert.Equal(t, expected.Base64URL(), result.Base64URL())
 }
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {
