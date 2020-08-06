@@ -5,9 +5,15 @@ import (
 	"fmt"
 )
 
+// Media holds a piece of binary data.
 type Media interface {
+	// Base64URL is the media encoded as a base64 URL.
 	Base64URL() string
+
+	// MIMETYPE returns the media's MIME type.
 	MIMEType() MIMEType
+
+	// Data returns the media's raw data.
 	Data() []byte
 }
 
