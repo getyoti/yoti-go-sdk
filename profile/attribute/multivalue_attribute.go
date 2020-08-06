@@ -51,8 +51,8 @@ func parseMultiValue(data []byte) ([]*Item, error) {
 			}
 
 			value = &Item{
-				contentType: yotiprotoattr.ContentType_MULTI_VALUE,
-				value:       parsedInnerMultiValueItems,
+				ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+				Value:       parsedInnerMultiValueItems,
 			}
 		} else {
 			itemValue, err := parseValue(multiValueItem.ContentType, multiValueItem.Data)
@@ -63,8 +63,8 @@ func parseMultiValue(data []byte) ([]*Item, error) {
 			}
 
 			value = &Item{
-				contentType: multiValueItem.ContentType,
-				value:       itemValue,
+				ContentType: multiValueItem.ContentType,
+				Value:       itemValue,
 			}
 		}
 		attributeItems = append(attributeItems, value)
