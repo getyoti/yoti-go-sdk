@@ -21,13 +21,11 @@ func TestImage_Base64Selfie_Jpeg(t *testing.T) {
 	assert.Equal(t, expectedDataUrl, media.Base64URL())
 }
 
-func createImage(contentType ImageType) (string, *Image) {
+func createImage(MIMEType string) (string, *Image) {
 	imageBytes := []byte("value")
 	imageBase64Value := base64.StdEncoding.EncodeToString(imageBytes)
 
-	media := &Image{
-		Type: contentType,
-		Data: imageBytes,
-	}
-	return imageBase64Value, media
+	media := NewImage(MIMEType, imageBytes)
+
+	return imageBase64Value, &media
 }
