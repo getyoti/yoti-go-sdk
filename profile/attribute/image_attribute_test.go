@@ -23,7 +23,7 @@ func TestImageAttribute_Image_Png(t *testing.T) {
 	selfie, err := NewImage(attributeImage)
 	assert.NilError(t, err)
 
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
 }
 
 func TestImageAttribute_Image_Jpeg(t *testing.T) {
@@ -40,7 +40,7 @@ func TestImageAttribute_Image_Jpeg(t *testing.T) {
 	selfie, err := NewImage(attributeImage)
 	assert.NilError(t, err)
 
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
 }
 
 func TestImageAttribute_Image_Default(t *testing.T) {
@@ -56,7 +56,7 @@ func TestImageAttribute_Image_Default(t *testing.T) {
 	selfie, err := NewImage(attributeImage)
 	assert.NilError(t, err)
 
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
 }
 
 func TestImageAttribute_Base64Selfie_Png(t *testing.T) {
