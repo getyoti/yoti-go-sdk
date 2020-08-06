@@ -10,7 +10,7 @@ const (
 	imageBase64Value = "dmFsdWU="
 )
 
-func TestImage_Base64Selfie_CreateImage(t *testing.T) {
+func TestImage_Base64URL_CreateImage(t *testing.T) {
 	imageBytes := []byte("value")
 
 	result := NewImage(ImageTypePng, imageBytes)
@@ -19,16 +19,16 @@ func TestImage_Base64Selfie_CreateImage(t *testing.T) {
 	assert.Equal(t, expectedDataUrl, result.Base64URL())
 }
 
-func TestImage_Base64Selfie_CreateJpegImage(t *testing.T) {
+func TestImage_Base64URL_CreateJpegImage(t *testing.T) {
 	imageBytes := []byte("value")
 
-	result := NewImage(ImageTypeJpeg, imageBytes)
+	result := NewJpegImage(imageBytes)
 	expectedDataUrl := "data:image/jpeg;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataUrl, result.Base64URL())
 }
 
-func TestImage_Base64Selfie_CreatePngImage(t *testing.T) {
+func TestImage_Base64URL_CreatePngImage(t *testing.T) {
 	imageBytes := []byte("value")
 
 	result := NewImage(ImageTypeJpeg, imageBytes)

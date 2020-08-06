@@ -34,5 +34,5 @@ func NewPngImage(data []byte) *Image {
 
 // Base64URL is the Image encoded as a base64 URL
 func (i *Image) Base64URL() string {
-	return base64URL(i.MIMEType, i.Data)
+	return i.Value.Base64URL()
 }
