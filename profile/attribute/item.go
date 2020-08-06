@@ -6,16 +6,9 @@ import (
 
 // Item is a structure which contains information about an attribute value
 type Item struct {
-	contentType yotiprotoattr.ContentType
-	value       interface{}
-}
+	// ContentType is the content of the item.
+	ContentType yotiprotoattr.ContentType
 
-// GetContentType returns the content type of the item.
-func (item *Item) GetContentType() yotiprotoattr.ContentType {
-	return item.contentType
-}
-
-// GetValue returns the underlying data of the item
-func (item *Item) GetValue() interface{} {
-	return item.value
+	// Value is the underlying data of the item.
+	Value interface{}
 }
