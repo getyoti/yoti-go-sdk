@@ -60,7 +60,8 @@ func TestAttribute_NewMultiValue(t *testing.T) {
 
 	assert.NilError(t, err)
 
-	var documentImagesAttributeItems = CreateImageSlice(multiValueAttribute.Value())
+	documentImagesAttributeItems, err := CreateImageSlice(multiValueAttribute.Value())
+	assert.NilError(t, err)
 
 	assertIsExpectedDocumentImagesAttribute(t, documentImagesAttributeItems, multiValueAttribute.Anchors()[0])
 }
@@ -120,11 +121,11 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 	for key, value := range multiValueAttribute.Value() {
 		switch key {
 		case 0:
-			value0 := value.GetValue()
+			value0 := value.Value
 
 			assert.Equal(t, value0.(string), "string")
 		case 1:
-			value1 := value.GetValue()
+			value1 := value.Value
 
 			innerItems, ok := value1.([]*Item)
 			assert.Assert(t, ok)
@@ -132,10 +133,10 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 			for innerKey, item := range innerItems {
 				switch innerKey {
 				case 0:
-					assertIsExpectedImage(t, item.GetValue().(*media.Image), media.ImageTypeJPEG, "vWgD//2Q==")
+					assertIsExpectedImage(t, item.Value.(media.Media), media.ImageTypeJPEG, "vWgD//2Q==")
 
 				case 1:
-					assertIsExpectedImage(t, item.GetValue().(*media.Image), media.ImageTypeJPEG, "38TVEH/9k=")
+					assertIsExpectedImage(t, item.Value.(media.Media), media.ImageTypeJPEG, "38TVEH/9k=")
 				}
 			}
 		}
@@ -149,7 +150,8 @@ func TestAttribute_MultiValueGenericGetter(t *testing.T) {
 
 	// We need to cast, since GetAttribute always returns generic attributes
 	multiValueAttributeValue := multiValueAttribute.Value()
-	imageSlice := CreateImageSlice(multiValueAttributeValue)
+	imageSlice, err := CreateImageSlice(multiValueAttributeValue)
+	assert.NilError(t, err)
 
 	assertIsExpectedDocumentImagesAttribute(t, imageSlice, multiValueAttribute.Anchors()[0])
 }

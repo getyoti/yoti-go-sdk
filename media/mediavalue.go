@@ -8,6 +8,7 @@ import (
 type Media interface {
 	Base64URL() string
 	MIMEType() MIMEType
+	Data() []byte
 }
 
 func base64URL(mimeType MIMEType, data []byte) string {
