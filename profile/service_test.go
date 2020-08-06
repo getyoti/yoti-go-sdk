@@ -123,7 +123,7 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 
 	expectedSelfieValue := "selfie0123456789"
 
-	assert.DeepEqual(t, profile.Selfie().Value().Data, []byte(expectedSelfieValue))
+	assert.DeepEqual(t, profile.Selfie().Value().Data(), []byte(expectedSelfieValue))
 	assert.Equal(t, profile.MobileNumber().Value(), "phone_number0123456789")
 
 	assert.Equal(
