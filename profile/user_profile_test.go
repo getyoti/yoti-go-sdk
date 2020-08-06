@@ -154,7 +154,7 @@ func TestProfile_GetApplicationLogo(t *testing.T) {
 	}
 
 	appProfile := createAppProfileWithSingleAttribute(attr)
-	assert.Equal(t, 16, len(appProfile.ApplicationLogo().Value().Data))
+	assert.Equal(t, 16, len(appProfile.ApplicationLogo().Value().Data()))
 }
 
 func TestProfile_GetApplicationBGColor(t *testing.T) {
@@ -261,8 +261,8 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	profile := createProfileWithSingleAttribute(attr)
 	att := profile.GetAttribute(attributeName)
 
-	expected := media.NewJPEGImage(attributeValue)
-	result := att.Value().(*media.Image)
+	expected := media.JPEGImage(attributeValue)
+	result := att.Value().(media.JPEGImage)
 
 	assert.DeepEqual(t, expected, result)
 	assert.Equal(t, expected.Base64URL(), result.Base64URL())
@@ -281,8 +281,8 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	profile := createProfileWithSingleAttribute(attr)
 	att := profile.GetAttribute(attributeName)
 
-	expected := media.NewPNGImage(attributeValue)
-	result := att.Value().(*media.Image)
+	expected := media.PNGImage(attributeValue)
+	result := att.Value().(media.PNGImage)
 
 	assert.DeepEqual(t, expected, result)
 	assert.Equal(t, expected.Base64URL(), result.Base64URL())
@@ -397,7 +397,7 @@ func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
 	selfie := result.Selfie()
 
 	assert.Equal(t, selfie.Name(), selfieName)
-	assert.DeepEqual(t, attributeValue, selfie.Value().Data)
+	assert.DeepEqual(t, attributeValue, selfie.Value().Data())
 	assert.Equal(t, selfie.ContentType(), yotiprotoattr.ContentType_PNG.String())
 }
 
@@ -504,7 +504,7 @@ func TestAttributeImage_Image_Png(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
 }
 
 func TestAttributeImage_Image_Jpeg(t *testing.T) {
@@ -521,7 +521,7 @@ func TestAttributeImage_Image_Jpeg(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
 }
 
 func TestAttributeImage_Image_Default(t *testing.T) {
@@ -537,7 +537,7 @@ func TestAttributeImage_Image_Default(t *testing.T) {
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.DeepEqual(t, selfie.Value().Data, byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
 	selfieName := consts.AttrSelfie
