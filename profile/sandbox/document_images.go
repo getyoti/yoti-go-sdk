@@ -23,10 +23,7 @@ func (d DocumentImages) getValue() string {
 
 // WithPngImage adds a PNG image to the slice of document images
 func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
-	pngImage := media.Image{
-		Type: media.ImageTypePng,
-		Data: imageContent,
-	}
+	pngImage := media.NewPngImage(imageContent)
 
 	d.Images = append(d.Images, pngImage)
 
@@ -35,10 +32,7 @@ func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
 
 // WithJpegImage adds a JPEG image to the slice of document images
 func (d DocumentImages) WithJpegImage(imageContent []byte) DocumentImages {
-	jpegImage := media.Image{
-		Type: media.ImageTypeJpeg,
-		Data: imageContent,
-	}
+	jpegImage := media.NewJpegImage(imageContent)
 
 	d.Images = append(d.Images, jpegImage)
 
