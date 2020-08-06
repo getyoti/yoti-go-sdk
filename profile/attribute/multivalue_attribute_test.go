@@ -132,10 +132,10 @@ func TestAttribute_NestedMultiValue(t *testing.T) {
 			for innerKey, item := range innerItems {
 				switch innerKey {
 				case 0:
-					assertIsExpectedImage(t, item.GetValue().(*media.Image), media.ImageTypeJpeg, "vWgD//2Q==")
+					assertIsExpectedImage(t, item.GetValue().(*media.Image), media.ImageTypeJPEG, "vWgD//2Q==")
 
 				case 1:
-					assertIsExpectedImage(t, item.GetValue().(*media.Image), media.ImageTypeJpeg, "38TVEH/9k=")
+					assertIsExpectedImage(t, item.GetValue().(*media.Image), media.ImageTypeJPEG, "38TVEH/9k=")
 				}
 			}
 		}
