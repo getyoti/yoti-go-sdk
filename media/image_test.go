@@ -13,7 +13,7 @@ const (
 func TestImage_Base64URL_CreateImage(t *testing.T) {
 	imageBytes := []byte("value")
 
-	result := NewImage(ImageTypePng, imageBytes)
+	result := NewImage(ImageTypePNG, imageBytes)
 	expectedDataUrl := "data:image/png;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataUrl, result.Base64URL())
@@ -22,7 +22,7 @@ func TestImage_Base64URL_CreateImage(t *testing.T) {
 func TestImage_Base64URL_CreateJpegImage(t *testing.T) {
 	imageBytes := []byte("value")
 
-	result := NewJpegImage(imageBytes)
+	result := NewJPEGImage(imageBytes)
 	expectedDataUrl := "data:image/jpeg;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataUrl, result.Base64URL())
@@ -31,7 +31,7 @@ func TestImage_Base64URL_CreateJpegImage(t *testing.T) {
 func TestImage_Base64URL_CreatePngImage(t *testing.T) {
 	imageBytes := []byte("value")
 
-	result := NewPngImage(imageBytes)
+	result := NewPNGImage(imageBytes)
 	expectedDataUrl := "data:image/png;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataUrl, result.Base64URL())

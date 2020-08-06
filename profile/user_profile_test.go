@@ -261,7 +261,7 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 	profile := createProfileWithSingleAttribute(attr)
 	att := profile.GetAttribute(attributeName)
 
-	expected := media.NewJpegImage(attributeValue)
+	expected := media.NewJPEGImage(attributeValue)
 	result := att.Value().(*media.Image)
 
 	assert.DeepEqual(t, expected, result)
@@ -281,7 +281,7 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 	profile := createProfileWithSingleAttribute(attr)
 	att := profile.GetAttribute(attributeName)
 
-	expected := media.NewPngImage(attributeValue)
+	expected := media.NewPNGImage(attributeValue)
 	result := att.Value().(*media.Image)
 
 	assert.DeepEqual(t, expected, result)
