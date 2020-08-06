@@ -11,7 +11,7 @@ import (
 // ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	attributeDetails
-	value *media.Image
+	value media.Media
 }
 
 // NewImage creates a new Image attribute
@@ -34,17 +34,17 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 }
 
 // Value returns the value of the ImageAttribute as *media.Image
-func (a *ImageAttribute) Value() *media.Image {
+func (a *ImageAttribute) Value() media.Media {
 	return a.value
 }
 
-func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*media.Image, error) {
+func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (media.Media, error) {
 	switch contentType {
 	case yotiprotoattr.ContentType_JPEG:
-		return media.NewJPEGImage(byteValue), nil
+		return media.JPEGImage(byteValue), nil
 
 	case yotiprotoattr.ContentType_PNG:
-		return media.NewPNGImage(byteValue), nil
+		return media.PNGImage(byteValue), nil
 
 	default:
 		return nil, errors.New("cannot create Image with unsupported type")

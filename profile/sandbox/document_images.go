@@ -8,7 +8,7 @@ import (
 
 // DocumentImages describes a Document Images attribute on a sandbox profile
 type DocumentImages struct {
-	Images []*media.Image
+	Images []media.Media
 }
 
 func (d DocumentImages) getValue() string {
@@ -23,7 +23,7 @@ func (d DocumentImages) getValue() string {
 
 // WithPngImage adds a PNG image to the slice of document images
 func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
-	pngImage := media.NewPNGImage(imageContent)
+	pngImage := media.PNGImage(imageContent)
 
 	d.Images = append(d.Images, pngImage)
 
@@ -32,7 +32,7 @@ func (d DocumentImages) WithPngImage(imageContent []byte) DocumentImages {
 
 // WithJpegImage adds a JPEG image to the slice of document images
 func (d DocumentImages) WithJpegImage(imageContent []byte) DocumentImages {
-	jpegImage := media.NewJPEGImage(imageContent)
+	jpegImage := media.JPEGImage(imageContent)
 
 	d.Images = append(d.Images, jpegImage)
 

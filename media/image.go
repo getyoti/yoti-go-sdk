@@ -1,38 +1,33 @@
 package media
 
+type MIMEType string
+
 const (
 	// ImageTypeJPEG JPEG format
-	ImageTypeJPEG string = "image/jpeg"
+	ImageTypeJPEG MIMEType = "image/jpeg"
 
 	// ImageTypePNG PNG format
-	ImageTypePNG string = "image/png"
+	ImageTypePNG MIMEType = "image/png"
 )
 
-// Image format of the image and the image data
-type Image struct {
-	Value
+// PNGImage holds the binary data of a PNG image.
+type PNGImage []byte
+
+func (i PNGImage) Base64URL() string {
+	return base64URL(i.MIMEType(), i)
 }
 
-// NewImage creates a new image with the specified MIME type and binary data
-func NewImage(MIMEType string, data []byte) *Image {
-	return &Image{
-		Value: Value{
-			MIMEType: MIMEType,
-			Data:     data,
-		}}
+func (PNGImage) MIMEType() MIMEType {
+	return ImageTypePNG
 }
 
-// NewJPEGImage creates a new JPEG image with the specified binary data
-func NewJPEGImage(data []byte) *Image {
-	return NewImage(ImageTypeJPEG, data)
+// JPEGImage holds the binary data of a JPEG image.
+type JPEGImage []byte
+
+func (i JPEGImage) Base64URL() string {
+	return base64URL(i.MIMEType(), i)
 }
 
-// NewPNGImage creates a new PNG image with the specified binary data
-func NewPNGImage(data []byte) *Image {
-	return NewImage(ImageTypePNG, data)
-}
-
-// Base64URL is the Image encoded as a base64 URL
-func (i *Image) Base64URL() string {
-	return i.Value.Base64URL()
+func (JPEGImage) MIMEType() MIMEType {
+	return ImageTypeJPEG
 }
