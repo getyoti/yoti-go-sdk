@@ -33,7 +33,7 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	}, nil
 }
 
-// Value returns the value of the ImageAttribute as *Image
+// Value returns the value of the ImageAttribute as *media.Image
 func (a *ImageAttribute) Value() *media.Image {
 	return a.value
 }
