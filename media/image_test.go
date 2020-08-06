@@ -31,8 +31,8 @@ func TestImage_Base64URL_CreateJpegImage(t *testing.T) {
 func TestImage_Base64URL_CreatePngImage(t *testing.T) {
 	imageBytes := []byte("value")
 
-	result := NewImage(ImageTypeJpeg, imageBytes)
-	expectedDataUrl := "data:image/jpeg;base64," + imageBase64Value
+	result := NewPngImage(imageBytes)
+	expectedDataUrl := "data:image/png;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataUrl, result.Base64URL())
 }
