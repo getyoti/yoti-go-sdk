@@ -39,18 +39,14 @@ func (a *ImageAttribute) Value() *media.Image {
 }
 
 func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (*media.Image, error) {
-	var imageType string
-
 	switch contentType {
 	case yotiprotoattr.ContentType_JPEG:
-		imageType = media.ImageTypeJpeg
+		return media.NewJpegImage(byteValue), nil
 
 	case yotiprotoattr.ContentType_PNG:
-		imageType = media.ImageTypePng
+		return media.NewPngImage(byteValue), nil
 
 	default:
 		return nil, errors.New("cannot create Image with unsupported type")
 	}
-
-	return media.NewImage(imageType, byteValue), nil
 }
