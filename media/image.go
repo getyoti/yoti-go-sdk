@@ -1,11 +1,11 @@
 package media
 
 const (
-	// ImageTypeJpeg JPEG format
-	ImageTypeJpeg string = "image/jpeg"
+	// ImageTypeJPEG JPEG format
+	ImageTypeJPEG string = "image/jpeg"
 
-	// ImageTypePng PNG format
-	ImageTypePng string = "image/png"
+	// ImageTypePNG PNG format
+	ImageTypePNG string = "image/png"
 )
 
 // Image format of the image and the image data
@@ -22,14 +22,14 @@ func NewImage(MIMEType string, data []byte) *Image {
 		}}
 }
 
-// NewJpegImage creates a new JPEG image with the specified binary data
-func NewJpegImage(data []byte) *Image {
-	return NewImage(ImageTypeJpeg, data)
+// NewJPEGImage creates a new JPEG image with the specified binary data
+func NewJPEGImage(data []byte) *Image {
+	return NewImage(ImageTypeJPEG, data)
 }
 
-// NewPngImage creates a new PNG image with the specified binary data
-func NewPngImage(data []byte) *Image {
-	return NewImage(ImageTypePng, data)
+// NewPNGImage creates a new PNG image with the specified binary data
+func NewPNGImage(data []byte) *Image {
+	return NewImage(ImageTypePNG, data)
 }
 
 // Base64URL is the Image encoded as a base64 URL

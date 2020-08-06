@@ -23,8 +23,8 @@ func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages 
 
 	assert.Equal(t, len(actualDocumentImages), 2, "This Document Images attribute should have two images")
 
-	assertIsExpectedImage(t, actualDocumentImages[0], media.ImageTypeJpeg, "vWgD//2Q==")
-	assertIsExpectedImage(t, actualDocumentImages[1], media.ImageTypeJpeg, "38TVEH/9k=")
+	assertIsExpectedImage(t, actualDocumentImages[0], media.ImageTypeJPEG, "vWgD//2Q==")
+	assertIsExpectedImage(t, actualDocumentImages[1], media.ImageTypeJPEG, "38TVEH/9k=")
 
 	expectedValue := "NATIONAL_ID"
 	assert.Equal(t, anchor.Value(), expectedValue)
