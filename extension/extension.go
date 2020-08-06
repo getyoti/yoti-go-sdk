@@ -11,34 +11,27 @@ type Extension struct {
 	content       interface{}
 }
 
-// ExtensionBuilder is used to construct an Extension object
-type ExtensionBuilder struct {
+// Builder is used to construct an Extension object
+type Builder struct {
 	extension Extension
 }
 
-// New initializes an ExtensionBuilder
-func (builder *ExtensionBuilder) New() *ExtensionBuilder {
-	builder.extension.extensionType = ""
-	builder.extension.content = nil
-	return builder
-}
-
 // WithType sets the extension type string
-func (builder *ExtensionBuilder) WithType(extensionType string) *ExtensionBuilder {
+func (builder *Builder) WithType(extensionType string) *Builder {
 	builder.extension.extensionType = extensionType
 	return builder
 }
 
 // WithContent attaches data to the Extension. The content must implement JSON
 // serialization
-func (builder *ExtensionBuilder) WithContent(content interface{}) *ExtensionBuilder {
+func (builder *Builder) WithContent(content interface{}) *Builder {
 	builder.extension.content = content
 	return builder
 }
 
 // Build constructs the Extension
-func (builder *ExtensionBuilder) Build() Extension {
-	return builder.extension
+func (builder *Builder) Build() (Extension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding

@@ -21,15 +21,6 @@ type LocationConstraintExtension struct {
 	uncertainty float64
 }
 
-// New initializes the builder
-func (builder *LocationConstraintExtensionBuilder) New() *LocationConstraintExtensionBuilder {
-	builder.extension.latitude = 0
-	builder.extension.longitude = 0
-	builder.extension.radius = 0
-	builder.extension.uncertainty = 0
-	return builder
-}
-
 // WithLatitude sets the latitude of the location constraint
 func (builder *LocationConstraintExtensionBuilder) WithLatitude(latitude float64) *LocationConstraintExtensionBuilder {
 	builder.extension.latitude = latitude
@@ -55,8 +46,8 @@ func (builder *LocationConstraintExtensionBuilder) WithUncertainty(uncertainty f
 }
 
 // Build constructs a LocationConstraintExtension from the builder
-func (builder *LocationConstraintExtensionBuilder) Build() LocationConstraintExtension {
-	return builder.extension
+func (builder *LocationConstraintExtensionBuilder) Build() (LocationConstraintExtension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding

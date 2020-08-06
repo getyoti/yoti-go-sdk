@@ -8,9 +8,12 @@ import (
 func ExampleTransactionalFlowExtension() {
 	content := "SOME CONTENT"
 
-	extension := (&TransactionalFlowExtensionBuilder{}).New().
+	extension, err := (&TransactionalFlowExtensionBuilder{}).
 		WithContent(content).
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := json.Marshal(extension)
 	fmt.Println(string(data))

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 )
 
 const (
-	thirdPartyAttributeExentionTypeConst = "THIRD_PARTY_ATTRIBUTE"
+	thirdPartyAttributeExtensionTypeConst = "THIRD_PARTY_ATTRIBUTE"
 )
 
 // ThirdPartyAttributeExtensionBuilder is used to construct a ThirdPartyAttributeExtension
@@ -19,12 +19,7 @@ type ThirdPartyAttributeExtensionBuilder struct {
 // ThirdPartyAttributeExtension is an extension representing the issuance of a third party attribute
 type ThirdPartyAttributeExtension struct {
 	expiryDate  *time.Time
-	definitions []attribute.AttributeDefinition
-}
-
-// New initializes the builder
-func (builder *ThirdPartyAttributeExtensionBuilder) New() *ThirdPartyAttributeExtensionBuilder {
-	return builder
+	definitions []attribute.Definition
 }
 
 // WithExpiryDate sets the expiry date of the extension as a UTC timestamp
@@ -34,13 +29,13 @@ func (builder *ThirdPartyAttributeExtensionBuilder) WithExpiryDate(expiryDate *t
 }
 
 // WithDefinition adds an attribute.AttributeDefinition to the list of definitions
-func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinition(definition attribute.AttributeDefinition) *ThirdPartyAttributeExtensionBuilder {
+func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinition(definition attribute.Definition) *ThirdPartyAttributeExtensionBuilder {
 	builder.extension.definitions = append(builder.extension.definitions, definition)
 	return builder
 }
 
 // WithDefinitions sets the array of attribute.AttributeDefinition on the extension
-func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinitions(definitions []attribute.AttributeDefinition) *ThirdPartyAttributeExtensionBuilder {
+func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinitions(definitions []attribute.Definition) *ThirdPartyAttributeExtensionBuilder {
 	builder.extension.definitions = definitions
 	return builder
 }
@@ -53,14 +48,14 @@ func (builder *ThirdPartyAttributeExtensionBuilder) Build() ThirdPartyAttributeE
 // MarshalJSON returns the JSON encoding
 func (extension ThirdPartyAttributeExtension) MarshalJSON() ([]byte, error) {
 	type thirdPartyAttributeExtension struct {
-		ExpiryDate  string                          `json:"expiry_date"`
-		Definitions []attribute.AttributeDefinition `json:"definitions"`
+		ExpiryDate  string                 `json:"expiry_date"`
+		Definitions []attribute.Definition `json:"definitions"`
 	}
 	return json.Marshal(&struct {
 		Type    string                       `json:"type"`
 		Content thirdPartyAttributeExtension `json:"content"`
 	}{
-		Type: thirdPartyAttributeExentionTypeConst,
+		Type: thirdPartyAttributeExtensionTypeConst,
 		Content: thirdPartyAttributeExtension{
 			ExpiryDate:  extension.expiryDate.UTC().Format("2006-01-02T15:04:05.000Z"),
 			Definitions: extension.definitions,

@@ -5,12 +5,15 @@ import (
 )
 
 func ExampleLocationConstraintExtension() {
-	extension := (&LocationConstraintExtensionBuilder{}).New().
+	extension, err := (&LocationConstraintExtensionBuilder{}).
 		WithLatitude(51.511831).
 		WithLongitude(-0.081446).
 		WithRadius(0.001).
 		WithUncertainty(0.001).
 		Build()
+	if err != nil {
+		return
+	}
 
 	data, _ := extension.MarshalJSON()
 	fmt.Println(string(data))

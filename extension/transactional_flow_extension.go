@@ -18,12 +18,6 @@ type TransactionalFlowExtensionBuilder struct {
 	extension TransactionalFlowExtension
 }
 
-// New initializes a TransactionalFlowExtensionBuilder
-func (builder *TransactionalFlowExtensionBuilder) New() *TransactionalFlowExtensionBuilder {
-	builder.extension.content = nil
-	return builder
-}
-
 // WithContent sets the payload data for a TransactionalFlowExtension. The
 // content must implement JSON serialization
 func (builder *TransactionalFlowExtensionBuilder) WithContent(content interface{}) *TransactionalFlowExtensionBuilder {
@@ -32,8 +26,8 @@ func (builder *TransactionalFlowExtensionBuilder) WithContent(content interface{
 }
 
 // Build constructs a TransactionalFlowExtension
-func (builder *TransactionalFlowExtensionBuilder) Build() TransactionalFlowExtension {
-	return builder.extension
+func (builder *TransactionalFlowExtensionBuilder) Build() (TransactionalFlowExtension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	yoti "github.com/getyoti/yoti-go-sdk/v2"
+	"github.com/getyoti/yoti-go-sdk/v3/consts"
 )
 
 // TokenRequest describes a sandbox token request
@@ -43,23 +43,23 @@ func (t TokenRequest) WithAttributeStruct(attribute Attribute) TokenRequest {
 
 // WithGivenNames adds given names to the sandbox token request
 func (t TokenRequest) WithGivenNames(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstGivenNames, value, anchors)
+	return t.WithAttribute(consts.AttrGivenNames, value, anchors)
 }
 
 // WithFamilyName adds a family name to the sandbox token request
 func (t TokenRequest) WithFamilyName(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstFamilyName, value, anchors)
+	return t.WithAttribute(consts.AttrFamilyName, value, anchors)
 }
 
 // WithFullName adds a full name to the sandbox token request
 func (t TokenRequest) WithFullName(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstFullName, value, anchors)
+	return t.WithAttribute(consts.AttrFullName, value, anchors)
 }
 
 // WithDateOfBirth adds a date of birth to the sandbox token request
 func (t TokenRequest) WithDateOfBirth(value time.Time, anchors []Anchor) TokenRequest {
 	formattedTime := value.Format("2006-01-02")
-	return t.WithAttribute(yoti.AttrConstDateOfBirth, formattedTime, anchors)
+	return t.WithAttribute(consts.AttrDateOfBirth, formattedTime, anchors)
 }
 
 // WithAgeVerification adds an age-based derivation attribute to the sandbox token request
@@ -68,7 +68,7 @@ func (t TokenRequest) WithAgeVerification(dateOfBirth time.Time, derivation Deri
 		anchors = []Anchor{}
 	}
 	attribute := Attribute{
-		Name:       yoti.AttrConstDateOfBirth,
+		Name:       consts.AttrDateOfBirth,
 		Value:      dateOfBirth.Format("2006-01-02"),
 		Derivation: derivation.ToString(),
 		Anchors:    anchors,
@@ -79,28 +79,28 @@ func (t TokenRequest) WithAgeVerification(dateOfBirth time.Time, derivation Deri
 
 // WithGender adds a gender to the sandbox token request
 func (t TokenRequest) WithGender(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstGender, value, anchors)
+	return t.WithAttribute(consts.AttrGender, value, anchors)
 }
 
 // WithPhoneNumber adds a phone number to the sandbox token request
 func (t TokenRequest) WithPhoneNumber(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstMobileNumber, value, anchors)
+	return t.WithAttribute(consts.AttrMobileNumber, value, anchors)
 }
 
 // WithNationality adds a nationality to the sandbox token request
 func (t TokenRequest) WithNationality(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstNationality, value, anchors)
+	return t.WithAttribute(consts.AttrNationality, value, anchors)
 }
 
 // WithPostalAddress adds a formatted address to the sandbox token request
 func (t TokenRequest) WithPostalAddress(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstAddress, value, anchors)
+	return t.WithAttribute(consts.AttrAddress, value, anchors)
 }
 
 // WithStructuredPostalAddress adds a JSON address to the sandbox token request
 func (t TokenRequest) WithStructuredPostalAddress(value map[string]interface{}, anchors []Anchor) TokenRequest {
 	data, _ := json.Marshal(value)
-	return t.WithAttribute(yoti.AttrConstStructuredPostalAddress, string(data), anchors)
+	return t.WithAttribute(consts.AttrStructuredPostalAddress, string(data), anchors)
 }
 
 // WithSelfie adds a selfie image to the sandbox token request
@@ -111,7 +111,7 @@ func (t TokenRequest) WithSelfie(value []byte, anchors []Anchor) TokenRequest {
 // WithBase64Selfie adds a base 64 selfie image to the sandbox token request
 func (t TokenRequest) WithBase64Selfie(base64Value string, anchors []Anchor) TokenRequest {
 	return t.WithAttribute(
-		yoti.AttrConstSelfie,
+		consts.AttrSelfie,
 		base64Value,
 		anchors,
 	)
@@ -119,15 +119,15 @@ func (t TokenRequest) WithBase64Selfie(base64Value string, anchors []Anchor) Tok
 
 // WithEmailAddress adds an email address to the sandbox token request
 func (t TokenRequest) WithEmailAddress(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstEmailAddress, value, anchors)
+	return t.WithAttribute(consts.AttrEmailAddress, value, anchors)
 }
 
 // WithDocumentDetails adds a document details string to the sandbox token request
 func (t TokenRequest) WithDocumentDetails(value string, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstDocumentDetails, value, anchors)
+	return t.WithAttribute(consts.AttrDocumentDetails, value, anchors)
 }
 
 // WithDocumentImages adds document images to the sandbox token request
 func (t TokenRequest) WithDocumentImages(value DocumentImages, anchors []Anchor) TokenRequest {
-	return t.WithAttribute(yoti.AttrConstDocumentImages, value.getValue(), anchors)
+	return t.WithAttribute(consts.AttrDocumentImages, value.getValue(), anchors)
 }

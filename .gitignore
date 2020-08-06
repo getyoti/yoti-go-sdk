@@ -1,15 +1,17 @@
-examples/profile/images/YotiSelfie.jpeg
 .vscode
 
 # Test binary, build with `go test -c`
 *.test
-
-# Example project generated self-signed certificate
-examples/profile/yotiSelfSignedCert.pem
-examples/profile/yotiSelfSignedKey.pem
 
 # Key generated in test
 cryptoutil/tmpKey.pem
 
 # Debug files
 debug
+
+# Report files
+sonar-report.json
+coverage.out
+
+# idea files
+.idea

@@ -1,35 +1,38 @@
 repos:
-- repo: local
-  hooks:
-    - id: local-go-fmt
-      name: 'go fmt'
-      entry: gofmt.sh
-      language: 'script'
-      description: "Go Format"
-      
-    - id: local-tidy
-      name: 'tidy imports'
-      entry: tidy.sh
-      language: 'script'
-      description: "Tidy imports"
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.1.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-yaml
 
-- repo: git://github.com/dnephin/pre-commit-golang
-  rev: master
-  hooks:
+  - repo: local
+    hooks:
+      - id: local-go-fmt
+        name: 'go fmt'
+        entry: sh/gofmt.sh
+        language: 'script'
+        description: "Go Format"
+
+      - id: local-go-build-modtidy
+        name: 'go build & go mod tidy'
+        entry: sh/go-build-modtidy.sh
+        language: 'script'
+        description: "Go build & go mod tidy"
+
+      - id: local-go-imports
+        name: 'tidy imports'
+        entry: sh/goimports.sh
+        language: 'script'
+        description: "Go imports"
+
+  - repo: git://github.com/dnephin/pre-commit-golang
+    rev: master
+    hooks:
       - id: go-vet
-        exclude: "examples/"
-      - id: go-build
-        args: ["./..."]
+        exclude: _examples
       - id: go-cyclo
-        args: [-over=29]       
+        args: [-over=15]
       - id: golangci-lint
         args: ["-e", "SA1019"]
-      - id: go-mod-tidy
       - id: go-unit-tests
         args: ["-race", "./..."]
-        
-- repo: git://github.com/golangci/golangci-lint
-  rev: master
-  hooks:
-    - id: golangci-lint
-      args: ["-e", "SA1019"]     

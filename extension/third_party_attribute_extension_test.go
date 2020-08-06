@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v2/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 	"gotest.tools/v3/assert"
 )
 
-func createDefinitionByName(name string) attribute.AttributeDefinition {
+func createDefinitionByName(name string) attribute.Definition {
 	return attribute.NewAttributeDefinition(name)
 }
 
@@ -23,7 +23,7 @@ func ExampleThirdPartyAttributeExtension() {
 		log.Printf("Error parsing date, %v", err)
 	}
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+	extension := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinition(attributeDefinition).
 		Build()
@@ -39,14 +39,14 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 		log.Printf("Error parsing date, %v", err)
 	}
 
-	definitionList := []attribute.AttributeDefinition{
+	definitionList := []attribute.Definition{
 		createDefinitionByName("some_attribute"),
 		createDefinitionByName("some_other_attribute"),
 	}
 
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+	extension := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinitions(definitionList).
 		WithDefinition(someOtherDefinition).
@@ -64,14 +64,14 @@ func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 		log.Printf("Error parsing date, %v", err)
 	}
 
-	definitionList := []attribute.AttributeDefinition{
+	definitionList := []attribute.Definition{
 		createDefinitionByName("some_attribute"),
 		createDefinitionByName("some_other_attribute"),
 	}
 
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+	extension := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinition(someOtherDefinition).
 		WithDefinitions(definitionList).
@@ -104,7 +104,7 @@ func TestExpiryDatesAreFormattedCorrectly(t *testing.T) {
 	attributeDefinition := attribute.NewAttributeDefinition("some_value")
 
 	for _, date := range expiryDates {
-		extension := (&ThirdPartyAttributeExtensionBuilder{}).New().
+		extension := (&ThirdPartyAttributeExtensionBuilder{}).
 			WithExpiryDate(&date.in).
 			WithDefinition(attributeDefinition).
 			Build()
