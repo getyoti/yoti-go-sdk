@@ -8,7 +8,7 @@ import (
 
 // DocumentImages describes a Document Images attribute on a sandbox profile
 type DocumentImages struct {
-	Images []media.Image
+	Images []*media.Image
 }
 
 func (d DocumentImages) getValue() string {

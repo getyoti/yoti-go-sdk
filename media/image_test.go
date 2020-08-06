@@ -24,8 +24,7 @@ func TestImage_Base64Selfie_Jpeg(t *testing.T) {
 func createImage(MIMEType string) (string, *Image) {
 	imageBytes := []byte("value")
 	imageBase64Value := base64.StdEncoding.EncodeToString(imageBytes)
-
 	media := NewImage(MIMEType, imageBytes)
 
-	return imageBase64Value, &media
+	return imageBase64Value, media
 }

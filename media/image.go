@@ -14,8 +14,8 @@ type Image struct {
 }
 
 // NewImage creates a new image with the specified MIME type and binary data
-func NewImage(MIMEType string, data []byte) Image{
-	return Image{
+func NewImage(MIMEType string, data []byte) *Image{
+	return &Image{
 		Value: Value{
 			MIMEType: MIMEType,
 			Data:     data,
@@ -23,12 +23,12 @@ func NewImage(MIMEType string, data []byte) Image{
 }
 
 // NewJpegImage creates a new JPEG image with the specified binary data
-func NewJpegImage(data []byte) Image{
+func NewJpegImage(data []byte) *Image{
 	return NewImage(ImageTypeJpeg, data)
 }
 
 // NewPngImage creates a new PNG image with the specified binary data
-func NewPngImage(data []byte) Image{
+func NewPngImage(data []byte) *Image{
 	return NewImage(ImageTypePng, data)
 }
 
