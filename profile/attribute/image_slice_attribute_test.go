@@ -9,8 +9,8 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func assertIsExpectedImage(t *testing.T, image *media.Image, imageType media.ImageType, expectedBase64URLLast10 string) {
-	assert.Equal(t, image.Type, imageType)
+func assertIsExpectedImage(t *testing.T, image *media.Image, imageMIMEType string, expectedBase64URLLast10 string) {
+	assert.Equal(t, image.MIMEType, imageMIMEType)
 
 	actualBase64URL := image.Base64URL()
 
