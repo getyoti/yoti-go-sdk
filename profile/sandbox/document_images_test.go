@@ -14,7 +14,7 @@ func TestShouldAddJpegImage(t *testing.T) {
 	documentImages := DocumentImages{}.WithJpegImage([]byte{0xDE, 0xAD, 0xBE, 0xEF})
 
 	documentImage := documentImages.Images[0]
-	assert.Equal(t, media.ImageTypeJPEG, documentImage.MIMEType())
+	assert.Equal(t, media.ImageTypeJPEG, documentImage.MIME())
 	assert.Equal(
 		t,
 		documentImages.getValue(),
@@ -25,7 +25,7 @@ func TestShouldAddPngImage(t *testing.T) {
 	documentImages := DocumentImages{}.WithPngImage([]byte{0xDE, 0xAD, 0xBE, 0xEF})
 
 	documentImage := documentImages.Images[0]
-	assert.Equal(t, media.ImageTypePNG, documentImage.MIMEType())
+	assert.Equal(t, media.ImageTypePNG, documentImage.MIME())
 	assert.Equal(
 		t,
 		documentImages.getValue(),

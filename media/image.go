@@ -1,23 +1,21 @@
 package media
 
-type MIMEType string
-
 const (
 	// ImageTypeJPEG JPEG format
-	ImageTypeJPEG MIMEType = "image/jpeg"
+	ImageTypeJPEG string = "image/jpeg"
 
 	// ImageTypePNG PNG format
-	ImageTypePNG MIMEType = "image/png"
+	ImageTypePNG string = "image/png"
 )
 
 // PNGImage holds the binary data of a PNG image.
 type PNGImage []byte
 
 func (i PNGImage) Base64URL() string {
-	return base64URL(i.MIMEType(), i)
+	return base64URL(i.MIME(), i)
 }
 
-func (PNGImage) MIMEType() MIMEType {
+func (PNGImage) MIME() string {
 	return ImageTypePNG
 }
 
@@ -29,10 +27,10 @@ func (i PNGImage) Data() []byte {
 type JPEGImage []byte
 
 func (i JPEGImage) Base64URL() string {
-	return base64URL(i.MIMEType(), i)
+	return base64URL(i.MIME(), i)
 }
 
-func (JPEGImage) MIMEType() MIMEType {
+func (JPEGImage) MIME() string {
 	return ImageTypeJPEG
 }
 
