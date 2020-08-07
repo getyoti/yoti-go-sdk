@@ -23,7 +23,7 @@ func (PNGImage) MIME() string {
 
 // Data returns the PNG image as raw bytes.
 func (i PNGImage) Data() []byte {
-	return []byte(i)
+	return i
 }
 
 // JPEGImage holds the binary data of a JPEG image.
@@ -41,5 +41,5 @@ func (JPEGImage) MIME() string {
 
 // Data returns the JPEG image as raw bytes.
 func (i JPEGImage) Data() []byte {
-	return []byte(i)
+	return i
 }
