@@ -44,14 +44,17 @@ func NewGeneric(mime string, data []byte) Generic {
 	}
 }
 
+// MIME returns the media's MIME type.
 func (g Generic) MIME() string {
 	return g.mime
 }
 
+// Base64URL is the media encoded as a base64 URL.
 func (g Generic) Base64URL() string {
 	return base64URL(g.MIME(), g.data)
 }
 
+// Data returns the media's raw data.
 func (g Generic) Data() []byte {
 	return g.data
 }
