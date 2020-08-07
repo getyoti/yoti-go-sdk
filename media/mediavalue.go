@@ -30,11 +30,13 @@ func NewMedia(mime string, data []byte) Media {
 	}
 }
 
+// Generic holds binary data defined by its MIME type.
 type Generic struct {
 	mime string
 	data []byte
 }
 
+// NewGeneric creates a new Generic object.
 func NewGeneric(mime string, data []byte) Generic {
 	return Generic{
 		mime: mime,
