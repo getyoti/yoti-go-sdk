@@ -20,7 +20,7 @@ type SessionSpecification struct {
 	Notifications *NotificationConfig `json:"notifications,omitempty"`
 
 	// RequestedChecks is a slice of check.RequestedChecker objects defining the Checks to be performed on each Document
-	RequestedChecks []*check.RequestedCheck `json:"requested_checks,omitempty"`
+	RequestedChecks []check.RequestedChecker `json:"requested_checks,omitempty"`
 
 	// RequestedTasks is a slice of task.RequestedTask objects defining the Tasks to be performed on each Document
 	RequestedTasks []*task.RequestedTask `json:"requested_tasks,omitempty"`
@@ -35,7 +35,7 @@ type SessionSpecificationBuilder struct {
 	resourcesTTL          int
 	userTrackingID        string
 	notifications         *NotificationConfig
-	requestedChecks       []*check.RequestedCheck
+	requestedChecks       []check.RequestedChecker
 	requestedTasks        []*task.RequestedTask
 	sdkConfig             *SDKConfig
 }
@@ -69,8 +69,8 @@ func (b *SessionSpecificationBuilder) WithNotifications(notificationConfig *Noti
 	return b
 }
 
-// WithRequestedCheck adds a RequestedCheck to the required checks
-func (b *SessionSpecificationBuilder) WithRequestedCheck(requestedCheck *check.RequestedCheck) *SessionSpecificationBuilder {
+// WithRequestedCheck adds a RequestedChecker to the required checks
+func (b *SessionSpecificationBuilder) WithRequestedCheck(requestedCheck check.RequestedChecker) *SessionSpecificationBuilder {
 	b.requestedChecks = append(b.requestedChecks, requestedCheck)
 	return b
 }
