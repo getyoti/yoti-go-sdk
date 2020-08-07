@@ -1,28 +1,40 @@
 package check
 
 import (
+	"encoding/json"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 // RequestedFaceMatchCheck requests creation of a FaceMatch Check
 type RequestedFaceMatchCheck struct {
-	*RequestedCheck
-	Config *RequestedFaceMatchConfig `json:"config"`
+	checkType string
+	config    RequestedFaceMatchConfig
 }
 
-// NewRequestedFaceMatchCheck creates a new Document Authenticity Check
-func NewRequestedFaceMatchCheck(config *RequestedFaceMatchConfig) *RequestedFaceMatchCheck {
-	return &RequestedFaceMatchCheck{
-		RequestedCheck: &RequestedCheck{
-			Type: constants.IDDocumentFaceMatch,
-		},
-		Config: config,
-	}
+// Type is the type of the Requested Check
+func (c RequestedFaceMatchCheck) Type() string {
+	return c.checkType
+}
+
+// Config is the configuration of the Requested Check
+func (c RequestedFaceMatchCheck) Config() RequestedCheckConfig {
+	return c.config
+}
+
+func (c RequestedFaceMatchCheck) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Type   string               `json:"type"`
+		Config RequestedCheckConfig `json:"config,omitempty"`
+	}{
+		Type:   c.Type(),
+		Config: c.Config(),
+	})
 }
 
 // RequestedFaceMatchConfig is the configuration applied when creating a FaceMatch Check
 type RequestedFaceMatchConfig struct {
-	*RequestedCheckConfig
+	// *RequestedCheckConfig
 	ManualCheck string `json:"manual_check"`
 }
 
@@ -37,27 +49,31 @@ type RequestedFaceMatchCheckBuilder struct {
 }
 
 // WithManualCheckAlways sets the value of manual check to "ALWAYS"
-func (builder *RequestedFaceMatchCheckBuilder) WithManualCheckAlways() *RequestedFaceMatchCheckBuilder {
-	builder.manualCheck = constants.Always
-	return builder
+func (b *RequestedFaceMatchCheckBuilder) WithManualCheckAlways() *RequestedFaceMatchCheckBuilder {
+	b.manualCheck = constants.Always
+	return b
 }
 
 // WithManualCheckFallback sets the value of manual check to "FALLBACK"
-func (builder *RequestedFaceMatchCheckBuilder) WithManualCheckFallback() *RequestedFaceMatchCheckBuilder {
-	builder.manualCheck = constants.Fallback
-	return builder
+func (b *RequestedFaceMatchCheckBuilder) WithManualCheckFallback() *RequestedFaceMatchCheckBuilder {
+	b.manualCheck = constants.Fallback
+	return b
 }
 
 // WithManualCheckNever sets the value of manual check to "NEVER"
-func (builder *RequestedFaceMatchCheckBuilder) WithManualCheckNever() *RequestedFaceMatchCheckBuilder {
-	builder.manualCheck = constants.Never
-	return builder
+func (b *RequestedFaceMatchCheckBuilder) WithManualCheckNever() *RequestedFaceMatchCheckBuilder {
+	b.manualCheck = constants.Never
+	return b
 }
 
 // Build builds the RequestedFaceMatchCheck
-func (builder *RequestedFaceMatchCheckBuilder) Build() (*RequestedFaceMatchCheck, error) {
-	return NewRequestedFaceMatchCheck(
-		&RequestedFaceMatchConfig{
-			ManualCheck: builder.manualCheck,
-		}), nil
+func (b *RequestedFaceMatchCheckBuilder) Build() (*RequestedFaceMatchCheck, error) {
+	config := RequestedFaceMatchConfig{
+		ManualCheck: b.manualCheck,
+	}
+
+	return &RequestedFaceMatchCheck{
+		checkType: constants.IDDocumentFaceMatch,
+		config:    config,
+	}, nil
 }
