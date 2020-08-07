@@ -4,14 +4,14 @@ import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 
 // SDKConfig provides configuration properties for the the web/native clients
 type SDKConfig struct {
-	AllowedCaptureMethods string `json:"allowed_capture_methods"`
-	PrimaryColour         string `json:"primary_colour"`
-	SecondaryColour       string `json:"secondary_colour"`
-	FontColour            string `json:"font_colour"`
-	Locale                string `json:"locale"`
-	PresetIssuingCountry  string `json:"preset_issuing_country"`
-	SuccessUrl            string `json:"success_url"`
-	ErrorUrl              string `json:"error_url"`
+	AllowedCaptureMethods string `json:"allowed_capture_methods,omitempty"`
+	PrimaryColour         string `json:"primary_colour,omitempty"`
+	SecondaryColour       string `json:"secondary_colour,omitempty"`
+	FontColour            string `json:"font_colour,omitempty"`
+	Locale                string `json:"locale,omitempty"`
+	PresetIssuingCountry  string `json:"preset_issuing_country,omitempty"`
+	SuccessUrl            string `json:"success_url,omitempty"`
+	ErrorUrl              string `json:"error_url,omitempty"`
 }
 
 // SdkConfigBuilder builds the SDKConfig struct
