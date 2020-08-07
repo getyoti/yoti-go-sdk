@@ -8,25 +8,25 @@ import (
 // SessionSpecification is the definition for the Doc Scan Session to be created
 type SessionSpecification struct {
 	// ClientSessionTokenTTL Client-session-token time-to-live to apply to the created Session
-	ClientSessionTokenTTL int `json:"client_session_token_ttl"`
+	ClientSessionTokenTTL int `json:"client_session_token_ttl,omitempty"`
 
 	// ResourcesTTL time-to-live used for all Resources created in the course of the session
-	ResourcesTTL int `json:"resources_ttl"`
+	ResourcesTTL int `json:"resources_ttl,omitempty"`
 
 	// UserTrackingID the User tracking ID, used to track returning users
-	UserTrackingID string `json:"user_tracking_id"`
+	UserTrackingID string `json:"user_tracking_id,omitempty"`
 
 	// Notifications for configuring call-back messages
-	Notifications *NotificationConfig `json:"notifications"`
+	Notifications *NotificationConfig `json:"notifications,omitempty"`
 
-	// RequestedChecks is a slice of check.RequestedCheck objects defining the Checks to be performed on each Document
-	RequestedChecks []*check.RequestedCheck `json:"requested_checks"`
+	// RequestedChecks is a slice of check.RequestedChecker objects defining the Checks to be performed on each Document
+	RequestedChecks []*check.RequestedCheck `json:"requested_checks,omitempty"`
 
 	// RequestedTasks is a slice of task.RequestedTask objects defining the Tasks to be performed on each Document
-	RequestedTasks []*task.RequestedTask `json:"requested_tasks"`
+	RequestedTasks []*task.RequestedTask `json:"requested_tasks,omitempty"`
 
 	// SdkConfig retrieves the SDK configuration set of the session specification
-	SdkConfig *SDKConfig `json:"sdk_config"`
+	SdkConfig *SDKConfig `json:"sdk_config,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -38,6 +38,11 @@ type SessionSpecificationBuilder struct {
 	requestedChecks       []*check.RequestedCheck
 	requestedTasks        []*task.RequestedTask
 	sdkConfig             *SDKConfig
+}
+
+// NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
+func NewSessionSpecificationBuilder() *SessionSpecificationBuilder {
+	return &SessionSpecificationBuilder{}
 }
 
 // WithClientSessionTokenTTL sets the client session token TTL (time-to-live)
