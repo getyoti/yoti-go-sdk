@@ -6,9 +6,14 @@ import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 // Notifications can be configured within a Doc Scan session to allow your backend to be
 // notified of certain events, without having to constantly poll for the state of a session.
 type NotificationConfig struct {
-	AuthToken string   `json:"auth_token"`
-	Endpoint  string   `json:"endpoint"`
-	Topics    []string `json:"topics"`
+	AuthToken string   `json:"auth_token,omitempty"`
+	Endpoint  string   `json:"endpoint,omitempty"`
+	Topics    []string `json:"topics,omitempty"`
+}
+
+// NewNotificationConfigBuilder creates a new NotificationConfigBuilder
+func NewNotificationConfigBuilder() *NotificationConfigBuilder {
+	return &NotificationConfigBuilder{}
 }
 
 // NotificationConfigBuilder builds the NotificationConfig struct
