@@ -17,6 +17,7 @@ func TestImage_Base64URL_CreateJpegImage(t *testing.T) {
 	expectedDataURL := "data:image/jpeg;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataURL, result.Base64URL())
+	assert.DeepEqual(t, imageBytes, result.Data())
 }
 
 func TestImage_Base64URL_CreatePngImage(t *testing.T) {
@@ -26,4 +27,5 @@ func TestImage_Base64URL_CreatePngImage(t *testing.T) {
 	expectedDataURL := "data:image/png;base64," + imageBase64Value
 
 	assert.Equal(t, expectedDataURL, result.Base64URL())
+	assert.DeepEqual(t, imageBytes, result.Data())
 }
