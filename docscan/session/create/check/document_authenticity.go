@@ -1,28 +1,42 @@
 package check
 
 import (
+	"encoding/json"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 // RequestedDocumentAuthenticityCheck requests creation of a Document Authenticity Check
 type RequestedDocumentAuthenticityCheck struct {
-	RequestedCheck
-	Config RequestedDocumentAuthenticityConfig `json:"config"`
+	checkType string
+	config    RequestedDocumentAuthenticityConfig
+}
+
+// Type is the type of the Requested Check
+func (c RequestedDocumentAuthenticityCheck) Type() string {
+	return c.checkType
+}
+
+// Config is the configuration of the Requested Check
+func (c RequestedDocumentAuthenticityCheck) Config() RequestedCheckConfig {
+	return RequestedCheckConfig(
+		c.config,
+	)
+}
+
+// MarshalJSON returns the JSON encoding
+func (c RequestedDocumentAuthenticityCheck) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Type   string               `json:"type"`
+		Config RequestedCheckConfig `json:"config,omitempty"`
+	}{
+		Type:   c.Type(),
+		Config: c.Config(),
+	})
 }
 
 // RequestedDocumentAuthenticityConfig is the configuration applied when creating a Document Authenticity Check
 type RequestedDocumentAuthenticityConfig struct {
-	RequestedCheckConfig
-}
-
-// NewRequestedDocumentAuthenticityCheck creates a new Document Authenticity Check
-func NewRequestedDocumentAuthenticityCheck(config RequestedDocumentAuthenticityConfig) *RequestedDocumentAuthenticityCheck {
-	return &RequestedDocumentAuthenticityCheck{
-		RequestedCheck: RequestedCheck{
-			Type: constants.IDDocumentAuthenticity,
-		},
-		Config: config,
-	}
 }
 
 // RequestedDocumentAuthenticityCheckBuilder builds a RequestedDocumentAuthenticityCheck
@@ -35,7 +49,10 @@ func NewRequestedDocumentAuthenticityCheckBuilder() *RequestedDocumentAuthentici
 	return &RequestedDocumentAuthenticityCheckBuilder{}
 }
 
-// Build creates a new DocumentAuthenticityCheck
+// Build builds the RequestedDocumentAuthenticityCheck
 func (b *RequestedDocumentAuthenticityCheckBuilder) Build() (*RequestedDocumentAuthenticityCheck, error) {
-	return NewRequestedDocumentAuthenticityCheck(b.config), nil
+	return &RequestedDocumentAuthenticityCheck{
+		checkType: constants.IDDocumentAuthenticity,
+		config:    b.config,
+	}, nil
 }
