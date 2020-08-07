@@ -10,7 +10,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/supported"
-	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
@@ -79,7 +79,7 @@ func (client *Client) DeleteSession(sessionID string) error {
 }
 
 // GetMediaContent retrieves media related to a Yoti Doc Scan session based on the supplied media ID
-func (client *Client) GetMediaContent(sessionID, mediaID string) (*attribute.Image, error) { // TODO: change to media.Value
+func (client *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error) {
 	return service.GetMediaContent(client.getHTTPClient(), client.SdkID, client.Key, client.getAPIURL(), sessionID, mediaID)
 }
 

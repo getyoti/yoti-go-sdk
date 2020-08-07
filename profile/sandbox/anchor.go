@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Initialises an anchor where the type is "SOURCE",
+// SourceAnchor initialises an anchor where the type is "SOURCE",
 // which has information about how the anchor was sourced.
 func SourceAnchor(subtype string, timestamp time.Time, value string) Anchor {
 	return Anchor{
@@ -16,7 +16,7 @@ func SourceAnchor(subtype string, timestamp time.Time, value string) Anchor {
 	}
 }
 
-// Initialises an anchor where the type is "VERIFIER",
+// VerifierAnchor initialises an anchor where the type is "VERIFIER",
 // which has information about how the anchor was verified.
 func VerifierAnchor(subtype string, timestamp time.Time, value string) Anchor {
 	return Anchor{

@@ -41,7 +41,7 @@ func PerformCheck(httpClient requests.HttpClient, profile Profile, clientSdkId, 
 	var response *http.Response
 	response, err = requests.Execute(httpClient, request, httpErrorMessages)
 	if err != nil {
-		return
+		return result, err
 	}
 
 	var responseBytes []byte

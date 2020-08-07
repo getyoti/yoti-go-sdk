@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 )
 
-// AttributeDefinition contains information about the attribute(s) issued by a third party.
-type AttributeDefinition struct {
+// Definition contains information about the attribute(s) issued by a third party.
+type Definition struct {
 	name string
 }
 
 // Name of the attribute to be issued.
-func (a AttributeDefinition) Name() string {
+func (a Definition) Name() string {
 	return a.name
 }
 
 // MarshalJSON returns encoded json
-func (a AttributeDefinition) MarshalJSON() ([]byte, error) {
+func (a Definition) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name string `json:"name"`
 	}{
@@ -24,8 +24,8 @@ func (a AttributeDefinition) MarshalJSON() ([]byte, error) {
 }
 
 // NewAttributeDefinition returns a new AttributeDefinition
-func NewAttributeDefinition(s string) AttributeDefinition {
-	return AttributeDefinition{
+func NewAttributeDefinition(s string) Definition {
+	return Definition{
 		name: s,
 	}
 }

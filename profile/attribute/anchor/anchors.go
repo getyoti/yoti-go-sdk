@@ -33,12 +33,12 @@ func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTim
 type Type int
 
 const (
-	// AnchorTypeUnknown - default value
-	AnchorTypeUnknown Type = 1 + iota
-	// AnchorTypeSource - how the anchor has been sourced
-	AnchorTypeSource
-	// AnchorTypeVerifier - how the anchor has been verified
-	AnchorTypeVerifier
+	// TypeUnknown - default value
+	TypeUnknown Type = 1 + iota
+	// TypeSource - how the anchor has been sourced
+	TypeSource
+	// TypeVerifier - how the anchor has been verified
+	TypeVerifier
 )
 
 // Type of the Anchor - most likely either SOURCE or VERIFIER, but it's
@@ -87,12 +87,12 @@ func (a Anchor) Value() string {
 
 // GetSources returns the anchors which identify how and when an attribute value was acquired.
 func GetSources(anchors []*Anchor) (sources []*Anchor) {
-	return filterAnchors(anchors, AnchorTypeSource)
+	return filterAnchors(anchors, TypeSource)
 }
 
 // GetVerifiers returns the anchors which identify how and when an attribute value was verified by another provider.
 func GetVerifiers(anchors []*Anchor) (sources []*Anchor) {
-	return filterAnchors(anchors, AnchorTypeVerifier)
+	return filterAnchors(anchors, TypeVerifier)
 }
 
 func filterAnchors(anchors []*Anchor, anchorType Type) (result []*Anchor) {

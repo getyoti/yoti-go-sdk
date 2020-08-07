@@ -35,13 +35,13 @@ func ExampleCreateShareURL() {
 		},
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
-	scenario, err := (&DynamicScenarioBuilder{}).WithPolicy(policy).Build()
+	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
@@ -103,11 +103,11 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 		},
 	}
 
-	policy, err := (&DynamicPolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
 		return
 	}
-	scenario, err := (&DynamicScenarioBuilder{}).WithPolicy(policy).Build()
+	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}

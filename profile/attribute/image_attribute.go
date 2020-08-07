@@ -1,6 +1,9 @@
 package attribute
 
 import (
+	"errors"
+
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -8,12 +11,12 @@ import (
 // ImageAttribute is a Yoti attribute which returns an image as its value
 type ImageAttribute struct {
 	attributeDetails
-	value *Image
+	value media.Media
 }
 
 // NewImage creates a new Image attribute
 func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
-	imageValue, err := ParseImageValue(a.ContentType, a.Value)
+	imageValue, err := parseImageValue(a.ContentType, a.Value)
 	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	if err != nil {
@@ -30,7 +33,20 @@ func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	}, nil
 }
 
-// Value returns the value of the ImageAttribute as *Image
-func (a *ImageAttribute) Value() *Image {
+// Value returns the value of the ImageAttribute as *media.Image
+func (a *ImageAttribute) Value() media.Media {
 	return a.value
+}
+
+func parseImageValue(contentType yotiprotoattr.ContentType, byteValue []byte) (media.Media, error) {
+	switch contentType {
+	case yotiprotoattr.ContentType_JPEG:
+		return media.JPEGImage(byteValue), nil
+
+	case yotiprotoattr.ContentType_PNG:
+		return media.PNGImage(byteValue), nil
+
+	default:
+		return nil, errors.New("cannot create Image with unsupported type")
+	}
 }

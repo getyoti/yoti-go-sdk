@@ -23,7 +23,7 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 	decoder.UseNumber()
 	err := decoder.Decode(&interfaceValue)
 	if err != nil {
-		err = fmt.Errorf("Unable to parse JSON value: %q. Error: %q", a.Value, err)
+		err = fmt.Errorf("unable to parse JSON value: %q. Error: %q", a.Value, err)
 		return nil, err
 	}
 

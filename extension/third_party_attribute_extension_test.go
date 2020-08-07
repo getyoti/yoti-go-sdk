@@ -12,7 +12,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func createDefinitionByName(name string) attribute.AttributeDefinition {
+func createDefinitionByName(name string) attribute.Definition {
 	return attribute.NewAttributeDefinition(name)
 }
 
@@ -41,7 +41,7 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 		log.Printf("Error parsing date, %v", err)
 	}
 
-	definitionList := []attribute.AttributeDefinition{
+	definitionList := []attribute.Definition{
 		createDefinitionByName("some_attribute"),
 		createDefinitionByName("some_other_attribute"),
 	}
@@ -66,7 +66,7 @@ func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 		log.Printf("Error parsing date, %v", err)
 	}
 
-	definitionList := []attribute.AttributeDefinition{
+	definitionList := []attribute.Definition{
 		createDefinitionByName("some_attribute"),
 		createDefinitionByName("some_other_attribute"),
 	}

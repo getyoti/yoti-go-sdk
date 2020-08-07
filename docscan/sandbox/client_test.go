@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/response/docscanerr"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 	"gotest.tools/v3/assert"
 )
 
@@ -42,7 +42,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 
 func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
-	jsonBytes, _ := json.Marshal(docscanerr.DataObject{
+	jsonBytes, _ := json.Marshal(yotierror.DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 	})
@@ -62,19 +62,17 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "400: SOME_CODE - some message")
 
-	errorResponse := err.(*docscanerr.Error).Response
+	errorResponse := err.(*yotierror.Error).Response
 	assert.Equal(t, response, errorResponse)
 
 	body, _ := ioutil.ReadAll(errorResponse.Body)
 	assert.Equal(t, string(body), string(jsonBytes))
-
-	assert.ErrorContains(t, err.(*docscanerr.Error).Unwrap(), "400: unknown HTTP error")
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnMissingKeyError(t *testing.T) {
 	client := Client{}
 	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
-	assert.ErrorContains(t, err, "Missing Private Key")
+	assert.ErrorContains(t, err, "missing private key")
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
@@ -110,7 +108,7 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("../../test/test-key-invalid-format.pem")
 	_, err := NewClient("", key)
 
-	assert.ErrorContains(t, err, "Invalid Key: not PEM-encoded")
+	assert.ErrorContains(t, err, "invalid Key: not PEM-encoded")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -168,7 +166,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 func TestClient_ConfigureApplicationResponse_ShouldReturnMissingKeyError(t *testing.T) {
 	client := Client{}
 	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
-	assert.ErrorContains(t, err, "Missing Private Key")
+	assert.ErrorContains(t, err, "missing private key")
 }
 
 func TestClient_ConfigureApplicationResponse_ShouldReturnJsonError(t *testing.T) {

@@ -10,8 +10,9 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/supported"
-	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
 // CreateSession creates a Doc Scan session using the supplied session specification
@@ -36,7 +37,7 @@ func CreateSession(httpClient requests.HttpClient, sdkID string, key *rsa.Privat
 	}
 
 	var response *http.Response
-	response, err = requests.Execute(httpClient, request, requests.DefaultHTTPErrorMessages)
+	response, err = requests.Execute(httpClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +68,7 @@ func GetSession(httpClient requests.HttpClient, sdkID string, key *rsa.PrivateKe
 	}
 
 	var response *http.Response
-	response, err = requests.Execute(httpClient, request, requests.DefaultHTTPErrorMessages)
+	response, err = requests.Execute(httpClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +98,7 @@ func DeleteSession(httpClient requests.HttpClient, sdkID string, key *rsa.Privat
 		return err
 	}
 
-	_, err = requests.Execute(httpClient, request, requests.DefaultHTTPErrorMessages)
+	_, err = requests.Execute(httpClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return err
 	}
@@ -106,7 +107,7 @@ func DeleteSession(httpClient requests.HttpClient, sdkID string, key *rsa.Privat
 }
 
 // GetMediaContent retrieves media related to a Yoti Doc Scan session based on the supplied media ID
-func GetMediaContent(httpClient requests.HttpClient, sdkID string, key *rsa.PrivateKey, APIURL, sessionID, mediaID string) (*attribute.Image, error) { // TODO: change to media.Value
+func GetMediaContent(httpClient requests.HttpClient, sdkID string, key *rsa.PrivateKey, APIURL, sessionID, mediaID string) (media.Media, error) {
 	request, err := (&requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: http.MethodGet,
@@ -119,7 +120,7 @@ func GetMediaContent(httpClient requests.HttpClient, sdkID string, key *rsa.Priv
 	}
 
 	var response *http.Response
-	response, err = requests.Execute(httpClient, request, requests.DefaultHTTPErrorMessages)
+	response, err = requests.Execute(httpClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return nil, err
 	}
@@ -132,13 +133,10 @@ func GetMediaContent(httpClient requests.HttpClient, sdkID string, key *rsa.Priv
 
 	contentType := response.Header.Get("Content-type") // TODO: check this
 	if contentType == "" {
-		err = errors.New("unable to parse content type from response")
+		return nil, errors.New("unable to parse content type from response")
 	}
 
-	return &attribute.Image{
-		Type: contentType,
-		Data: responseBytes,
-	}, err
+	return media.NewMedia(contentType, responseBytes), nil
 }
 
 // DeleteMediaContent deletes media related to a Yoti Doc Scan session based on the supplied media ID
@@ -154,7 +152,7 @@ func DeleteMediaContent(httpClient requests.HttpClient, sdkID string, key *rsa.P
 		return err
 	}
 
-	_, err = requests.Execute(httpClient, request, requests.DefaultHTTPErrorMessages)
+	_, err = requests.Execute(httpClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return err
 	}
@@ -175,7 +173,7 @@ func GetSupportedDocuments(httpClient requests.HttpClient, key *rsa.PrivateKey, 
 	}
 
 	var response *http.Response
-	response, err = requests.Execute(httpClient, request, requests.DefaultHTTPErrorMessages)
+	response, err = requests.Execute(httpClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return nil, err
 	}
