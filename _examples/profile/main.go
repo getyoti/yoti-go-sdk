@@ -218,7 +218,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	if selfie != nil {
 		base64URL = selfie.Value().Base64URL()
 
-		decodedImage := decodeImage(selfie.Value().Data)
+		decodedImage := decodeImage(selfie.Value().Data())
 		file := createImage()
 		saveImage(decodedImage, file)
 	}
