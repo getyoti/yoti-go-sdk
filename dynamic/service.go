@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
 func getDynamicShareEndpoint(clientSdkId string) string {
@@ -18,7 +19,7 @@ func getDynamicShareEndpoint(clientSdkId string) string {
 }
 
 // CreateShareURL creates a QR code for a dynamic scenario
-func CreateShareURL(httpClient requests.HttpClient, scenario *DynamicScenario, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
+func CreateShareURL(httpClient requests.HttpClient, scenario *Scenario, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
 	endpoint := getDynamicShareEndpoint(clientSdkId)
 
 	payload, err := scenario.MarshalJSON()
@@ -38,9 +39,9 @@ func CreateShareURL(httpClient requests.HttpClient, scenario *DynamicScenario, c
 		return
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, requests.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
-		return
+		return share, err
 	}
 
 	responseBytes, err := ioutil.ReadAll(response.Body)

@@ -54,7 +54,7 @@ func TestAnchorParser_Passport(t *testing.T) {
 
 	actualAnchor := parsedAnchors[0]
 
-	assert.Equal(t, actualAnchor.Type(), AnchorTypeSource)
+	assert.Equal(t, actualAnchor.Type(), TypeSource)
 
 	expectedDate := time.Date(2018, time.April, 12, 13, 14, 32, 835537e3, time.UTC)
 	actualDate := actualAnchor.SignedTimestamp().Timestamp().UTC()
@@ -76,7 +76,7 @@ func TestAnchorParser_DrivingLicense(t *testing.T) {
 	parsedAnchors := ParseAnchors(anchorSlice)
 	resultAnchor := parsedAnchors[0]
 
-	assert.Equal(t, resultAnchor.Type(), AnchorTypeSource)
+	assert.Equal(t, resultAnchor.Type(), TypeSource)
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 3, 923537e3, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
@@ -102,7 +102,7 @@ func TestAnchorParser_UnknownAnchor(t *testing.T) {
 	assert.Equal(t, actualDate, expectedDate)
 
 	expectedSubType := "TEST UNKNOWN SUB TYPE"
-	expectedType := AnchorTypeUnknown
+	expectedType := TypeUnknown
 	assert.Equal(t, resultAnchor.SubType(), expectedSubType)
 	assert.Equal(t, resultAnchor.Type(), expectedType)
 	assert.Equal(t, resultAnchor.Value(), "")
@@ -113,7 +113,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 
 	resultAnchor := ParseAnchors(anchorSlice)[0]
 
-	assert.Equal(t, resultAnchor.Type(), AnchorTypeVerifier)
+	assert.Equal(t, resultAnchor.Type(), TypeVerifier)
 
 	expectedDate := time.Date(2018, time.April, 11, 12, 13, 4, 95238e3, time.UTC)
 	actualDate := resultAnchor.SignedTimestamp().Timestamp().UTC()
@@ -130,7 +130,7 @@ func TestAnchorParser_YotiAdmin(t *testing.T) {
 }
 
 func TestAnchors_None(t *testing.T) {
-	anchorSlice := []*Anchor{}
+	var anchorSlice []*Anchor
 
 	sources := GetSources(anchorSlice)
 	assert.Equal(t, len(sources), 0, "GetSources should not return anything with empty anchors")

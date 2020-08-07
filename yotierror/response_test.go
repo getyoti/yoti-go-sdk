@@ -1,9 +1,8 @@
-package docscanerr
+package yotierror
 
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -16,7 +15,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 	jsonBytes, _ := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
-		Error: []ErrorItemDO{
+		Error: []ItemDataObject{
 			{
 				Message:  "some property message",
 				Property: "some.property",
@@ -25,7 +24,6 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 	})
 
 	err := New(
-		errors.New("some error"),
 		&http.Response{
 			StatusCode: 401,
 			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -42,7 +40,6 @@ func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
 	})
 
 	err := New(
-		errors.New("some error"),
 		&http.Response{
 			StatusCode: 400,
 			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -54,26 +51,12 @@ func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
 
 func TestError_ShouldReturnFormattedError_ReturnWrappedErrorByDefault(t *testing.T) {
 	err := New(
-		errors.New("some error"),
 		&http.Response{
 			StatusCode: 401,
 		},
 	)
 
-	assert.ErrorContains(t, err, "some error")
-}
-
-func TestError_ShouldReturnFormattedError_ShouldUnwrapOriginalError(t *testing.T) {
-	wrappedError := errors.New("some error")
-	err := New(
-		wrappedError,
-		&http.Response{
-			StatusCode: 401,
-		},
-	)
-
-	assert.ErrorContains(t, err, "some error")
-	assert.Equal(t, err.Unwrap(), wrappedError)
+	assert.ErrorContains(t, err, "401: unknown HTTP error")
 }
 
 func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *testing.T) {
@@ -82,11 +65,10 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *t
 		Body:       ioutil.NopCloser(strings.NewReader("some invalid JSON")),
 	}
 	err := New(
-		errors.New("some error"),
 		response,
 	)
 
-	assert.ErrorContains(t, err, "some error")
+	assert.ErrorContains(t, err, "400: unknown HTTP error - some invalid JSON")
 
 	errorResponse := err.Response
 	assert.Equal(t, response, errorResponse)
@@ -102,7 +84,6 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 		Body:       ioutil.NopCloser(strings.NewReader(jsonString)),
 	}
 	err := New(
-		errors.New("some error"),
 		response,
 	)
 

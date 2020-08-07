@@ -30,9 +30,6 @@ How to manage users
 1) [Sandbox](#sandbox) -
 How to use the Yoti sandbox service to test your application
 
-1) [AML Integration](#aml-integration) -
-How to integrate with Yoti's AML (Anti Money Laundering) service
-
 1) [Running the example](#running-the-profile-example) -
 Running the profile example project
 
@@ -232,74 +229,6 @@ The `profile` object provides a set of attributes corresponding to user attribut
 
 - [Yoti Profile Sandbox](_docs/PROFILE_SANDBOX.md)
 - [Doc Scan Sandbox](_docs/DOC_SCAN_SANDBOX.md)
-
-## AML Integration
-
-Yoti provides an AML (Anti Money Laundering) check service to allow a deeper KYC process to prevent fraud. This is a chargeable service, so please contact [sdksupport@yoti.com](mailto:sdksupport@yoti.com) for more information.
-
-Yoti will provide a boolean result on the following checks:
-
-* PEP list - Verify against Politically Exposed Persons list
-* Fraud list - Verify against  US Social Security Administration Fraud (SSN Fraud) list
-* Watch list - Verify against watch lists from the Office of Foreign Assets Control
-
-To use this functionality you must ensure your application is assigned to your Organisation in the Yoti Hub - please see [here](https://developers.yoti.com/yoti-app/web-integration/#step-1-creating-an-organisation) for further information.
-
-For the AML check you will need to provide the following:
-
-* Data provided by Yoti (please ensure you have selected the Given name(s) and Family name attributes from the Data tab in the Yoti Hub)
-  * Given name(s)
-  * Family name
-* Data that must be collected from the user:
-  * Country of residence (must be an ISO 3166 3-letter code)
-  * Social Security Number (US citizens only)
-  * Postcode/Zip code (US citizens only)
-
-### Consent
-
-Performing an AML check on a person *requires* their consent.
-**You must ensure you have user consent *before* using this service.**
-
-### Code Example
-
-Given a YotiClient initialised with your SDK ID and KeyPair (see [Client Initialisation](#client-initialisation)) performing an AML check is a straightforward case of providing basic profile data.
-
-```Go
-givenNames := "Edward Richard George"
-familyName := "Heath"
-
-amlAddress := aml.Address{
-    Country: "GBR"}
-
-amlProfile := aml.Profile{
-    GivenNames: givenNames,
-    FamilyName: familyName,
-    Address:    amlAddress}
-
-result, err := client.PerformAmlCheck(amlProfile)
-
-log.Printf(
-    "AML Result for %s %s:",
-    givenNames,
-    familyName)
-log.Printf(
-    "On PEP list: %s",
-    strconv.FormatBool(result.OnPEPList))
-log.Printf(
-    "On Fraud list: %s",
-    strconv.FormatBool(result.OnFraudList))
-log.Printf(
-    "On Watch list: %s",
-    strconv.FormatBool(result.OnWatchList))
-}
-```
-
-Additionally, an [example AML application](/_examples/aml/main.go) is provided in the `_examples` folder.
-
-* Rename the [.env.example](_examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
-* Change directory to the aml example folder: `cd _examples/aml`
-* Install the dependencies with `go get`
-* Start the example with `go run main.go`
 
 ## Running the Profile Example
 

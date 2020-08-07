@@ -3,13 +3,14 @@ package attribute
 import (
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
 )
 
-func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expectedBase64URLLast10 string) {
-	assert.Equal(t, image.Type, imageType)
+func assertIsExpectedImage(t *testing.T, image media.Media, imageMIMEType string, expectedBase64URLLast10 string) {
+	assert.Equal(t, image.MIME(), imageMIMEType)
 
 	actualBase64URL := image.Base64URL()
 
@@ -18,12 +19,12 @@ func assertIsExpectedImage(t *testing.T, image *Image, imageType string, expecte
 	assert.Equal(t, ActualBase64URLLast10Chars, expectedBase64URLLast10)
 }
 
-func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []*Image, anchor *anchor.Anchor) {
+func assertIsExpectedDocumentImagesAttribute(t *testing.T, actualDocumentImages []media.Media, anchor *anchor.Anchor) {
 
 	assert.Equal(t, len(actualDocumentImages), 2, "This Document Images attribute should have two images")
 
-	assertIsExpectedImage(t, actualDocumentImages[0], "jpeg", "vWgD//2Q==")
-	assertIsExpectedImage(t, actualDocumentImages[1], "jpeg", "38TVEH/9k=")
+	assertIsExpectedImage(t, actualDocumentImages[0], media.ImageTypeJPEG, "vWgD//2Q==")
+	assertIsExpectedImage(t, actualDocumentImages[1], media.ImageTypeJPEG, "38TVEH/9k=")
 
 	expectedValue := "NATIONAL_ID"
 	assert.Equal(t, anchor.Value(), expectedValue)

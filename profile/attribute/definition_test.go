@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func ExampleAttributeDefinition_MarshalJSON() {
+func ExampleDefinition_MarshalJSON() {
 	exampleDefinition := NewAttributeDefinition("exampleDefinition")
-	json, _ := json.Marshal(exampleDefinition)
-	fmt.Println(string(json))
+	marshalledJSON, _ := json.Marshal(exampleDefinition)
+	fmt.Println(string(marshalledJSON))
 	// Output: {"name":"exampleDefinition"}
 }

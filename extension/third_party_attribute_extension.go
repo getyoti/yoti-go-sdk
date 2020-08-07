@@ -19,7 +19,7 @@ type ThirdPartyAttributeExtensionBuilder struct {
 // ThirdPartyAttributeExtension is an extension representing the issuance of a third party attribute
 type ThirdPartyAttributeExtension struct {
 	expiryDate  *time.Time
-	definitions []attribute.AttributeDefinition
+	definitions []attribute.Definition
 }
 
 // WithExpiryDate sets the expiry date of the extension as a UTC timestamp
@@ -29,13 +29,13 @@ func (builder *ThirdPartyAttributeExtensionBuilder) WithExpiryDate(expiryDate *t
 }
 
 // WithDefinition adds an attribute.AttributeDefinition to the list of definitions
-func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinition(definition attribute.AttributeDefinition) *ThirdPartyAttributeExtensionBuilder {
+func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinition(definition attribute.Definition) *ThirdPartyAttributeExtensionBuilder {
 	builder.extension.definitions = append(builder.extension.definitions, definition)
 	return builder
 }
 
 // WithDefinitions sets the array of attribute.AttributeDefinition on the extension
-func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinitions(definitions []attribute.AttributeDefinition) *ThirdPartyAttributeExtensionBuilder {
+func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinitions(definitions []attribute.Definition) *ThirdPartyAttributeExtensionBuilder {
 	builder.extension.definitions = definitions
 	return builder
 }
@@ -48,8 +48,8 @@ func (builder *ThirdPartyAttributeExtensionBuilder) Build() ThirdPartyAttributeE
 // MarshalJSON returns the JSON encoding
 func (extension ThirdPartyAttributeExtension) MarshalJSON() ([]byte, error) {
 	type thirdPartyAttributeExtension struct {
-		ExpiryDate  string                          `json:"expiry_date"`
-		Definitions []attribute.AttributeDefinition `json:"definitions"`
+		ExpiryDate  string                 `json:"expiry_date"`
+		Definitions []attribute.Definition `json:"definitions"`
 	}
 	return json.Marshal(&struct {
 		Type    string                       `json:"type"`

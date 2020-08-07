@@ -89,11 +89,11 @@ func getNonce() (string, error) {
 func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
 	block, _ := pem.Decode(in)
 	if block == nil {
-		msg.Error = errors.New("Not PEM-encoded")
+		msg.Error = errors.New("input is not PEM-encoded")
 		return msg
 	}
 	if block.Type != "RSA PRIVATE KEY" {
-		msg.Error = errors.New("Not an RSA Private Key")
+		msg.Error = errors.New("input is not an RSA Private Key")
 		return msg
 	}
 
@@ -101,7 +101,7 @@ func (msg SignedRequest) WithPemFile(in []byte) SignedRequest {
 	return msg
 }
 
-func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error) {
+func (msg *SignedRequest) addParametersToEndpoint() (string, error) {
 	if msg.Params == nil {
 		msg.Params = make(map[string]string)
 	}
@@ -117,7 +117,7 @@ func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error)
 		msg.Params["timestamp"] = getTimestamp()
 	}
 
-	endpoint = msg.Endpoint
+	endpoint := msg.Endpoint
 	if !strings.Contains(endpoint, "?") {
 		endpoint = endpoint + "?"
 	} else {
@@ -133,7 +133,8 @@ func (msg *SignedRequest) addParametersToEndpoint() (endpoint string, err error)
 		endpoint = fmt.Sprintf(formatString, endpoint, param, value)
 		firstParam = false
 	}
-	return
+
+	return endpoint, nil
 }
 
 func (msg *SignedRequest) generateDigest(endpoint string) (digest string) {
@@ -159,16 +160,16 @@ func (msg *SignedRequest) checkMandatories() error {
 		return msg.Error
 	}
 	if msg.Key == nil {
-		return fmt.Errorf("Missing Private Key")
+		return fmt.Errorf("missing private key")
 	}
 	if msg.HTTPMethod == "" {
-		return fmt.Errorf("Missing HTTPMethod")
+		return fmt.Errorf("missing HTTPMethod")
 	}
 	if msg.BaseURL == "" {
-		return fmt.Errorf("Missing BaseURL")
+		return fmt.Errorf("missing BaseURL")
 	}
 	if msg.Endpoint == "" {
-		return fmt.Errorf("Missing Endpoint")
+		return fmt.Errorf("missing Endpoint")
 	}
 	return nil
 }
@@ -200,7 +201,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	}
 	request.Header.Add("X-Yoti-Auth-Digest", signedDigest)
 	request.Header.Add("X-Yoti-SDK", consts.SDKIdentifier)
-	request.Header.Add("X-Yoti-SDK-Verson", consts.SDKVersionIdentifier)
+	request.Header.Add("X-Yoti-SDK-Version", consts.SDKVersionIdentifier)
 
 	for key, values := range msg.Headers {
 		for _, value := range values {
