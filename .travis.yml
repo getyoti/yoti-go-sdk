@@ -16,8 +16,6 @@ env:
     - GO111MODULE=on
 
 jobs:
-  allow_failures:
-    - go: master
   include:
     - &test
       stage: Test
@@ -35,8 +33,6 @@ jobs:
       go: "1.14.x"
     - <<: *test
       go: "1.x"
-    - <<: *test
-      go: "master"
 
     - stage: Analysis
       name: Sonarcloud
