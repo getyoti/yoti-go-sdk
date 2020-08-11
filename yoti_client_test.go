@@ -5,8 +5,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v3/aml"
+	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"gotest.tools/v3/assert"
 )
@@ -22,7 +25,15 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func TestYotiClient_KeyLoad_Failure(t *testing.T) {
+func TestNewClient(t *testing.T) {
+	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	assert.NilError(t, readErr)
+
+	_, err := NewClient("some-sdk-id", key)
+	assert.NilError(t, err)
+}
+
+func TestNewClient_KeyLoad_Failure(t *testing.T) {
 	key, _ := ioutil.ReadFile("test/test-key-invalid-format.pem")
 	_, err := NewClient("", key)
 
@@ -32,6 +43,63 @@ func TestYotiClient_KeyLoad_Failure(t *testing.T) {
 		Temporary() bool
 	})
 	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
+func TestYotiClient_PerformAmlCheck(t *testing.T) {
+	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	assert.NilError(t, readErr)
+
+	client, clientErr := NewClient("some-sdk-id", key)
+	assert.NilError(t, clientErr)
+
+	client.HTTPClient = &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 200,
+				Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
+			}, nil
+		},
+	}
+
+	var amlAddress = aml.Address{
+		Country: "GBR"}
+
+	var amlProfile = aml.Profile{
+		GivenNames: "Edward Richard George",
+		FamilyName: "Heath",
+		Address:    amlAddress}
+
+	result, err := client.PerformAmlCheck(amlProfile)
+	assert.NilError(t, err)
+
+	assert.Check(t, result.OnFraudList)
+}
+
+func TestYotiClient_CreateShareURL(t *testing.T) {
+	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	assert.NilError(t, readErr)
+
+	client, clientErr := NewClient("some-sdk-id", key)
+	assert.NilError(t, clientErr)
+
+	client.HTTPClient = &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       ioutil.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
+			}, nil
+		},
+	}
+
+	policy, policyErr := (&dynamic.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	assert.NilError(t, policyErr)
+
+	scenario, scenarioErr := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).Build()
+	assert.NilError(t, scenarioErr)
+
+	result, err := client.CreateShareURL(&scenario)
+	assert.NilError(t, err)
+	assert.Check(t, result.ShareURL == "https://code.yoti.com/some-qr")
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
