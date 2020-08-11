@@ -99,7 +99,7 @@ func TestYotiClient_CreateShareURL(t *testing.T) {
 
 	result, err := client.CreateShareURL(&scenario)
 	assert.NilError(t, err)
-	assert.Check(t, result.ShareURL == "https://code.yoti.com/some-qr")
+	assert.Equal(t, result.ShareURL, "https://code.yoti.com/some-qr")
 }
 
 func TestYotiClient_HttpFailure_ReturnsFailure(t *testing.T) {
