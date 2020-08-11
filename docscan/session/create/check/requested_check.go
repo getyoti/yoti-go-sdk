@@ -1,7 +1,7 @@
 package check
 
-// RequestedChecker requests creation of a Check to be performed on a document
-type RequestedChecker interface {
+// RequestedCheck requests creation of a Check to be performed on a document
+type RequestedCheck interface {
 	Type() string
 	Config() RequestedCheckConfig
 	MarshalJSON() ([]byte, error)
