@@ -1,7 +1,9 @@
 package sandbox
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -10,6 +12,14 @@ func AnchorList() []Anchor {
 		SourceAnchor("", time.Unix(1234567890, 0), ""),
 		VerifierAnchor("", time.Unix(1234567890, 0), ""),
 	}
+}
+
+func ExampleTokenRequest_WithRememberMeID() {
+	time.Local = time.UTC
+	tokenRequest := TokenRequest{}.WithRememberMeID("some-remember-me-id")
+
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"some-remember-me-id","profile_attributes":null}
 }
 
 func ExampleTokenRequest_WithAttribute() {
@@ -23,8 +33,8 @@ func ExampleTokenRequest_WithAttribute() {
 		"Value",
 		nil,
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{AttributeName1 Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]} {AttributeName2 Value   []}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"AttributeName1","value":"Value","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]},{"name":"AttributeName2","value":"Value","derivation":"","optional":"","anchors":[]}]}
 }
 
 func ExampleTokenRequest_WithAttributeStruct() {
@@ -36,8 +46,8 @@ func ExampleTokenRequest_WithAttributeStruct() {
 
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithAttributeStruct(attribute)
-	fmt.Println(tokenRequest)
-	// Output: { [{AttributeName3 Value3   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"AttributeName3","value":"Value3","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithGivenNames() {
@@ -46,8 +56,8 @@ func ExampleTokenRequest_WithGivenNames() {
 		"Value",
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{given_names Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"given_names","value":"Value","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithFamilyName() {
@@ -56,8 +66,8 @@ func ExampleTokenRequest_WithFamilyName() {
 		"Value",
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{family_name Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"family_name","value":"Value","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithFullName() {
@@ -66,15 +76,15 @@ func ExampleTokenRequest_WithFullName() {
 		"Value",
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{full_name Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"full_name","value":"Value","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithDateOfBirth() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithDateOfBirth(time.Unix(1234567890, 0), AnchorList())
-	fmt.Println(tokenRequest)
-	// Output: { [{date_of_birth 2009-02-13   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"date_of_birth","value":"2009-02-13","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithAgeVerification() {
@@ -84,36 +94,36 @@ func ExampleTokenRequest_WithAgeVerification() {
 		Derivation{}.AgeOver(18),
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{date_of_birth 2009-02-13 age_over:18  [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"date_of_birth","value":"2009-02-13","derivation":"age_over:18","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithGender() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithGender("male", AnchorList())
-	fmt.Println(tokenRequest)
-	// Output: { [{gender male   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"gender","value":"male","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithPhoneNumber() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithPhoneNumber("00005550000", AnchorList())
-	fmt.Println(tokenRequest)
-	// Output: { [{phone_number 00005550000   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"phone_number","value":"00005550000","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithNationality() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithNationality("Value", AnchorList())
-	fmt.Println(tokenRequest)
-	// Output: { [{nationality Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"nationality","value":"Value","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithPostalAddress() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithPostalAddress("Value", AnchorList())
-	fmt.Println(tokenRequest)
-	// Output: { [{postal_address Value   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"postal_address","value":"Value","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithStructuredPostalAddress() {
@@ -124,8 +134,8 @@ func ExampleTokenRequest_WithStructuredPostalAddress() {
 		},
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{structured_postal_address {"FormattedAddressLine":"Value"}   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"structured_postal_address","value":"{\"FormattedAddressLine\":\"Value\"}","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithSelfie() {
@@ -134,8 +144,8 @@ func ExampleTokenRequest_WithSelfie() {
 		[]byte{0xDE, 0xAD, 0xBE, 0xEF},
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{selfie 3q2+7w==   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"selfie","value":"3q2+7w==","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithBase64Selfie() {
@@ -144,15 +154,15 @@ func ExampleTokenRequest_WithBase64Selfie() {
 		"3q2+7w==",
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{selfie 3q2+7w==   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"selfie","value":"3q2+7w==","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithEmailAddress() {
 	time.Local = time.UTC
 	tokenRequest := TokenRequest{}.WithEmailAddress("user@example.com", AnchorList())
-	fmt.Println(tokenRequest)
-	// Output: { [{email_address user@example.com   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"email_address","value":"user@example.com","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithDocumentDetails() {
@@ -161,8 +171,8 @@ func ExampleTokenRequest_WithDocumentDetails() {
 		"DRIVING_LICENCE - abc1234",
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{document_details DRIVING_LICENCE - abc1234   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"document_details","value":"DRIVING_LICENCE - abc1234","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
 }
 
 func ExampleTokenRequest_WithDocumentImages() {
@@ -174,6 +184,16 @@ func ExampleTokenRequest_WithDocumentImages() {
 		documentImages,
 		AnchorList(),
 	)
-	fmt.Println(tokenRequest)
-	// Output: { [{document_images data:image/png;base64,3q2+7w==&data:image/jpeg;base64,3q2+7w==   [{SOURCE   2009-02-13 23:31:30 +0000 UTC} {VERIFIER   2009-02-13 23:31:30 +0000 UTC}]}]}
+	printJson(tokenRequest)
+	// Output: {"remember_me_id":"","profile_attributes":[{"name":"document_images","value":"data:image/png;base64,3q2+7w==\u0026data:image/jpeg;base64,3q2+7w==","derivation":"","optional":"","anchors":[{"type":"SOURCE","value":"","sub_type":"","timestamp":1234567890000},{"type":"VERIFIER","value":"","sub_type":"","timestamp":1234567890000}]}]}
+}
+
+func printJson(value interface{}) {
+	marshalledJSON, err := json.Marshal(value)
+	if err != nil {
+		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(marshalledJSON))
 }
