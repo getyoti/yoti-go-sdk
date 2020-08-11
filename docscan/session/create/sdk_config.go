@@ -14,6 +14,11 @@ type SDKConfig struct {
 	ErrorUrl              string `json:"error_url,omitempty"`
 }
 
+// NewSdkConfigBuilder creates a new SdkConfigBuilder
+func NewSdkConfigBuilder() *SdkConfigBuilder {
+	return &SdkConfigBuilder{}
+}
+
 // SdkConfigBuilder builds the SDKConfig struct
 type SdkConfigBuilder struct {
 	allowedCaptureMethods string
@@ -34,14 +39,12 @@ func (b *SdkConfigBuilder) WithAllowedCaptureMethods(captureMethods string) *Sdk
 
 // WithAllowsCamera sets the allowed capture method to "CAMERA"
 func (b *SdkConfigBuilder) WithAllowsCamera() *SdkConfigBuilder {
-	b.allowedCaptureMethods = constants.Camera
-	return b
+	return b.WithAllowedCaptureMethods(constants.Camera)
 }
 
 // WithAllowsCameraAndUpload sets the allowed capture method to "CAMERA_AND_UPLOAD"
 func (b *SdkConfigBuilder) WithAllowsCameraAndUpload() *SdkConfigBuilder {
-	b.allowedCaptureMethods = constants.CameraAndUpload
-	return b
+	return b.WithAllowedCaptureMethods(constants.CameraAndUpload)
 }
 
 // WithPrimaryColour sets the primary colour to be used by the web/native client, hexadecimal value e.g. #ff0000
