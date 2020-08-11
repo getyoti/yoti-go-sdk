@@ -13,7 +13,7 @@ type RequestedFaceMatchCheck struct {
 
 // Type is the type of the Requested Check
 func (c RequestedFaceMatchCheck) Type() string {
-	return constants.IDDocumentFaceMatch
+	return string(constants.FaceMatch)
 }
 
 // Config is the configuration of the Requested Check
@@ -33,7 +33,7 @@ func (c RequestedFaceMatchCheck) MarshalJSON() ([]byte, error) {
 
 // RequestedFaceMatchConfig is the configuration applied when creating a FaceMatch Check
 type RequestedFaceMatchConfig struct {
-	ManualCheck string `json:"manual_check"`
+	ManualCheck constants.ManualCheck `json:"manual_check"`
 }
 
 // NewRequestedFaceMatchCheckBuilder creates a new RequestedFaceMatchCheckBuilder
@@ -43,7 +43,7 @@ func NewRequestedFaceMatchCheckBuilder() *RequestedFaceMatchCheckBuilder {
 
 // RequestedFaceMatchCheckBuilder builds a RequestedFaceMatchCheck
 type RequestedFaceMatchCheckBuilder struct {
-	manualCheck string
+	manualCheck constants.ManualCheck
 }
 
 // WithManualCheckAlways sets the value of manual check to "ALWAYS"

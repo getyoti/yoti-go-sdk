@@ -1,33 +1,34 @@
 package constants
 
-//TODO: should these be exported?
-// If we export, they should be commented :S
+type CaptureMethod string
+
 const (
-	IDDocumentAuthenticity       = "ID_DOCUMENT_AUTHENTICITY"
-	IDDocumentTextDataCheck      = "ID_DOCUMENT_TEXT_DATA_CHECK"
-	IDDocumentTextDataExtraction = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
-	IDDocumentFaceMatch          = "ID_DOCUMENT_FACE_MATCH"
-	Liveness                     = "LIVENESS"
-	Zoom                         = "ZOOM"
+	Camera          CaptureMethod = "CAMERA"
+	CameraAndUpload CaptureMethod = "CAMERA_AND_UPLOAD"
+)
 
-	Camera          = "CAMERA"
-	CameraAndUpload = "CAMERA_AND_UPLOAD"
+type Topic string
 
-	ResourceUpdate    = "RESOURCE_UPDATE"
-	TaskCompletion    = "TASK_COMPLETION"
-	CheckCompletion   = "CHECK_COMPLETION"
-	SessionCompletion = "SESSION_COMPLETION"
+const (
+	ResourceUpdate    Topic = "RESOURCE_UPDATE"
+	TaskCompletion    Topic = "TASK_COMPLETION"
+	CheckCompletion   Topic = "CHECK_COMPLETION"
+	SessionCompletion Topic = "SESSION_COMPLETION"
+)
 
-	IDDocument             = "ID_DOCUMENT"
-	OrthogonalRestrictions = "ORTHOGONAL_RESTRICTIONS"
-	DocumentRestrictions   = "DOCUMENT_RESTRICTIONS"
-	Includelist            = "WHITELIST"
-	Excludelist            = "BLACKLIST"
+type ManualCheck string
 
-	Always   = "ALWAYS"
-	Fallback = "FALLBACK"
-	Never    = "NEVER"
+const (
+	Always   ManualCheck = "ALWAYS"
+	Fallback ManualCheck = "FALLBACK"
+	Never    ManualCheck = "NEVER"
+)
 
-	Desired = "DESIRED"
-	Ignore  = "IGNORE"
+type IDDocument string
+
+const (
+	Authenticity       IDDocument = "ID_DOCUMENT_AUTHENTICITY"
+	TextDataCheck      IDDocument = "ID_DOCUMENT_TEXT_DATA_CHECK"
+	TextDataExtraction IDDocument = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
+	FaceMatch          IDDocument = "ID_DOCUMENT_FACE_MATCH"
 )
