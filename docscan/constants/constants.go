@@ -1,34 +1,20 @@
 package constants
 
-type CaptureMethod string
-
 const (
-	Camera          CaptureMethod = "CAMERA"
-	CameraAndUpload CaptureMethod = "CAMERA_AND_UPLOAD"
-)
+	IDDocumentAuthenticity       string = "ID_DOCUMENT_AUTHENTICITY"
+	IDDocumentTextDataCheck      string = "ID_DOCUMENT_TEXT_DATA_CHECK"
+	IDDocumentTextDataExtraction string = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
+	IDDocumentFaceMatch          string = "ID_DOCUMENT_FACE_MATCH"
 
-type Topic string
+	Camera          string = "CAMERA"
+	CameraAndUpload string = "CAMERA_AND_UPLOAD"
 
-const (
-	ResourceUpdate    Topic = "RESOURCE_UPDATE"
-	TaskCompletion    Topic = "TASK_COMPLETION"
-	CheckCompletion   Topic = "CHECK_COMPLETION"
-	SessionCompletion Topic = "SESSION_COMPLETION"
-)
+	ResourceUpdate    string = "RESOURCE_UPDATE"
+	TaskCompletion    string = "TASK_COMPLETION"
+	CheckCompletion   string = "CHECK_COMPLETION"
+	SessionCompletion string = "SESSION_COMPLETION"
 
-type ManualCheck string
-
-const (
-	Always   ManualCheck = "ALWAYS"
-	Fallback ManualCheck = "FALLBACK"
-	Never    ManualCheck = "NEVER"
-)
-
-type IDDocument string
-
-const (
-	Authenticity       IDDocument = "ID_DOCUMENT_AUTHENTICITY"
-	TextDataCheck      IDDocument = "ID_DOCUMENT_TEXT_DATA_CHECK"
-	TextDataExtraction IDDocument = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
-	FaceMatch          IDDocument = "ID_DOCUMENT_FACE_MATCH"
+	Always   string = "ALWAYS"
+	Fallback string = "FALLBACK"
+	Never    string = "NEVER"
 )

@@ -14,7 +14,7 @@ type RequestedTextExtractionTask struct {
 func NewRequestedTextExtractionTask(config RequestedTextExtractionTaskConfig) *RequestedTextExtractionTask {
 	return &RequestedTextExtractionTask{
 		RequestedTask{
-			Type: constants.TextDataExtraction,
+			Type: constants.IDDocumentTextDataExtraction,
 		},
 		config,
 	}
@@ -23,8 +23,8 @@ func NewRequestedTextExtractionTask(config RequestedTextExtractionTaskConfig) *R
 // RequestedTextExtractionTaskConfig is the configuration applied when creating a Text Extraction Task
 type RequestedTextExtractionTaskConfig struct {
 	RequestedTaskConfig
-	ManualCheck constants.ManualCheck `json:"manual_check"`
-	ChipData    chipData              `json:"chip_data"`
+	ManualCheck string `json:"manual_check"`
+	ChipData    string `json:"chip_data"`
 }
 
 // NewRequestedTextExtractionTaskBuilder creates a new RequestedTextExtractionTaskBuilder
@@ -34,8 +34,8 @@ func NewRequestedTextExtractionTaskBuilder() *RequestedTextExtractionTaskBuilder
 
 // RequestedTextExtractionTaskBuilder builds a RequestedTextExtractionTask
 type RequestedTextExtractionTaskBuilder struct {
-	manualCheck constants.ManualCheck
-	chipData    chipData
+	manualCheck string
+	chipData    string
 }
 
 // WithManualCheckAlways sets the value of manual check to "ALWAYS"
@@ -58,13 +58,13 @@ func (builder *RequestedTextExtractionTaskBuilder) WithManualCheckNever() *Reque
 
 // WithChipDataDesired sets the value of chip data to "DESIRED"
 func (builder *RequestedTextExtractionTaskBuilder) WithChipDataDesired() *RequestedTextExtractionTaskBuilder {
-	builder.chipData = desired
+	builder.chipData = chipDataDesired
 	return builder
 }
 
 // WithChipDataIgnore sets the value of chip data to "IGNORE"
 func (builder *RequestedTextExtractionTaskBuilder) WithChipDataIgnore() *RequestedTextExtractionTaskBuilder {
-	builder.chipData = ignore
+	builder.chipData = chipDataIgnore
 	return builder
 }
 
