@@ -140,7 +140,7 @@ func (p UserProfile) AgeVerifications() (out []attribute.AgeVerification, err er
 	for _, a := range p.attributeSlice {
 		if strings.HasPrefix(a.Name, ageUnderString) ||
 			strings.HasPrefix(a.Name, ageOverString) {
-			verification, err := attribute.AgeVerification{}.New(a)
+			verification, err := attribute.NewAgeVerification(a)
 			if err != nil {
 				return nil, err
 			}
