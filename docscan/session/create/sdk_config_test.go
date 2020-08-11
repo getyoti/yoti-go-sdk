@@ -3,7 +3,6 @@ package create
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 func ExampleSdkConfigBuilder_Build() {
@@ -19,7 +18,7 @@ func ExampleSdkConfigBuilder_Build() {
 		Build()
 
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
