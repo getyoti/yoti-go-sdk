@@ -1,16 +1,14 @@
 package filter
 
-import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
-
 // RequestedDocumentRestrictionsFilter filters for a required document, allowing specification of restrictive parameters
 type RequestedDocumentRestrictionsFilter struct {
-	Inclusion string                         `json:"inclusion"`
+	Inclusion inclusionType                  `json:"inclusion"`
 	Documents []RequestedDocumentRestriction `json:"documents"`
 }
 
 // RequestedDocumentRestrictionsFilterBuilder builds a RequestedDocumentRestrictionsFilter
 type RequestedDocumentRestrictionsFilterBuilder struct {
-	inclusion string
+	inclusion inclusionType
 	documents []RequestedDocumentRestriction
 }
 
@@ -23,13 +21,13 @@ func NewRequestedDocumentRestrictionsFilterBuilder() *RequestedDocumentRestricti
 
 // ForIncludeList sets the type restriction to INCLUDE the document restrictions
 func (b *RequestedDocumentRestrictionsFilterBuilder) ForIncludeList() *RequestedDocumentRestrictionsFilterBuilder {
-	b.inclusion = constants.Includelist
+	b.inclusion = includeList
 	return b
 }
 
 // ForExcludeList sets the type restriction to EXCLUDE the document restrictions
 func (b *RequestedDocumentRestrictionsFilterBuilder) ForExcludeList() *RequestedDocumentRestrictionsFilterBuilder {
-	b.inclusion = constants.Excludelist
+	b.inclusion = excludeList
 	return b
 }
 
