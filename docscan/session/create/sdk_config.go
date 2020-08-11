@@ -4,14 +4,14 @@ import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 
 // SDKConfig provides configuration properties for the the web/native clients
 type SDKConfig struct {
-	AllowedCaptureMethods constants.CaptureMethod `json:"allowed_capture_methods,omitempty"`
-	PrimaryColour         string                  `json:"primary_colour,omitempty"`
-	SecondaryColour       string                  `json:"secondary_colour,omitempty"`
-	FontColour            string                  `json:"font_colour,omitempty"`
-	Locale                string                  `json:"locale,omitempty"`
-	PresetIssuingCountry  string                  `json:"preset_issuing_country,omitempty"`
-	SuccessUrl            string                  `json:"success_url,omitempty"`
-	ErrorUrl              string                  `json:"error_url,omitempty"`
+	AllowedCaptureMethods string `json:"allowed_capture_methods,omitempty"`
+	PrimaryColour         string `json:"primary_colour,omitempty"`
+	SecondaryColour       string `json:"secondary_colour,omitempty"`
+	FontColour            string `json:"font_colour,omitempty"`
+	Locale                string `json:"locale,omitempty"`
+	PresetIssuingCountry  string `json:"preset_issuing_country,omitempty"`
+	SuccessUrl            string `json:"success_url,omitempty"`
+	ErrorUrl              string `json:"error_url,omitempty"`
 }
 
 // NewSdkConfigBuilder creates a new SdkConfigBuilder
@@ -21,7 +21,7 @@ func NewSdkConfigBuilder() *SdkConfigBuilder {
 
 // SdkConfigBuilder builds the SDKConfig struct
 type SdkConfigBuilder struct {
-	allowedCaptureMethods constants.CaptureMethod
+	allowedCaptureMethods string
 	primaryColour         string
 	secondaryColour       string
 	fontColour            string
@@ -32,7 +32,7 @@ type SdkConfigBuilder struct {
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
-func (b *SdkConfigBuilder) WithAllowedCaptureMethods(captureMethods constants.CaptureMethod) *SdkConfigBuilder {
+func (b *SdkConfigBuilder) WithAllowedCaptureMethods(captureMethods string) *SdkConfigBuilder {
 	b.allowedCaptureMethods = captureMethods
 	return b
 }
