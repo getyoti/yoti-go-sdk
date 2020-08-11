@@ -1,8 +1,6 @@
 package task
 
-type chipData string
-
 const (
-	desired chipData = "DESIRED"
-	ignore  chipData = "IGNORE"
+	chipDataDesired string = "DESIRED"
+	chipDataIgnore  string = "IGNORE"
 )
