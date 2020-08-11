@@ -11,7 +11,7 @@ type RequestedLivenessCheck struct {
 
 // Type is the type of the Requested Check
 func (c RequestedLivenessCheck) Type() string {
-	return string(liveness)
+	return liveness
 }
 
 // Config is the configuration of the Requested Check
@@ -34,8 +34,8 @@ func (c RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
 
 // RequestedLivenessConfig is the configuration applied when creating a Liveness Check
 type RequestedLivenessConfig struct {
-	MaxRetries   int          `json:"max_retries,omitempty"`
-	LivenessType livenessType `json:"liveness_type"`
+	MaxRetries   int    `json:"max_retries,omitempty"`
+	LivenessType string `json:"liveness_type"`
 }
 
 // NewRequestedLivenessCheckBuilder creates a new RequestedLivenessCheckBuilder
@@ -45,7 +45,7 @@ func NewRequestedLivenessCheckBuilder() *RequestedLivenessCheckBuilder {
 
 // RequestedLivenessCheckBuilder builds a RequestedLivenessCheck
 type RequestedLivenessCheckBuilder struct {
-	livenessType livenessType
+	livenessType string
 	maxRetries   int
 }
 
@@ -55,7 +55,7 @@ func (b *RequestedLivenessCheckBuilder) ForZoomLiveness() *RequestedLivenessChec
 }
 
 // ForLivenessType sets the liveness type on the builder
-func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType livenessType) *RequestedLivenessCheckBuilder {
+func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType string) *RequestedLivenessCheckBuilder {
 	b.livenessType = livenessType
 	return b
 }

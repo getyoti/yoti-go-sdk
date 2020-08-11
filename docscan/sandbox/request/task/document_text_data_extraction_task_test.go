@@ -9,14 +9,14 @@ import (
 )
 
 func ExampleDocumentTextDataExtractionTaskBuilder() {
-	filter, err := filter.NewDocumentFilterBuilder().Build()
+	docFilter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
-		WithDocumentFilter(filter).
+		WithDocumentFilter(docFilter).
 		WithDocumentField("some", "field").
 		WithDocumentField("other", "field").
 		Build()
@@ -31,14 +31,14 @@ func ExampleDocumentTextDataExtractionTaskBuilder() {
 }
 
 func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
-	filter, err := filter.NewDocumentFilterBuilder().Build()
+	docFilter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
 	}
 
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
-		WithDocumentFilter(filter).
+		WithDocumentFilter(docFilter).
 		WithDocumentFields(map[string]string{
 			"some": "field",
 		}).

@@ -27,7 +27,7 @@ func ExampleDocumentAuthenticityCheckBuilder() {
 		return
 	}
 
-	filter, err := filter.NewDocumentFilterBuilder().Build()
+	docFilter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
 		return
@@ -36,7 +36,7 @@ func ExampleDocumentAuthenticityCheckBuilder() {
 	check, err := NewDocumentAuthenticityCheckBuilder().
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
-		WithDocumentFilter(filter).
+		WithDocumentFilter(docFilter).
 		Build()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
