@@ -2,7 +2,7 @@ package filter
 
 // RequiredDocument defines a document to be provided by the user
 type RequiredDocument struct {
-	Type documentType `json:"type"`
+	Type string `json:"type"`
 }
 
 // RequiredIDDocument defines an identity document to be provided by the user
@@ -14,7 +14,7 @@ type RequiredIDDocument struct {
 // NewRequiredIDDocument creates a new RequiredIDDocument struct
 func NewRequiredIDDocument(filter *RequestedDocumentFilter) *RequiredIDDocument {
 	return &RequiredIDDocument{
-		RequiredDocument: &RequiredDocument{Type: identity},
+		RequiredDocument: &RequiredDocument{Type: identityDocument},
 		Filter:           filter,
 	}
 }
