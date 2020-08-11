@@ -1,7 +1,5 @@
 package filter
 
-import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
-
 // RequestedOrthogonalRestrictionsFilter filters for a required document, allowing specification of restrictive parameters
 type RequestedOrthogonalRestrictionsFilter struct {
 	CountryRestriction *CountryRestriction `json:"country_restriction"`
@@ -25,7 +23,7 @@ func NewRequestedOrthogonalRestrictionsFilterBuilder() *RequestedOrthogonalRestr
 // WithIncludeCountryList sets an "INCLUDE" list of country codes on the filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithIncludeCountryList(countryCodes []string) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.countryRestriction = &CountryRestriction{
-		constants.Includelist,
+		includeList,
 		countryCodes,
 	}
 	return b
@@ -34,7 +32,7 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithIncludeCountryList(co
 // WithExcludeCountryList sets an "EXCLUDE" list of country codes on the filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExcludeCountryList(countryCodes []string) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.countryRestriction = &CountryRestriction{
-		constants.Excludelist,
+		excludeList,
 		countryCodes,
 	}
 	return b
@@ -43,7 +41,7 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExcludeCountryList(co
 // WithIncludeDocumentTypeList sets an "INCLUDE" list of document types on the filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithIncludeDocumentTypeList(documentTypes []string) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.typeRestriction = &TypeRestriction{
-		constants.Includelist,
+		includeList,
 		documentTypes,
 	}
 	return b
@@ -52,7 +50,7 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithIncludeDocumentTypeLi
 // WithExcludeDocumentTypeList sets an "EXCLUDE" list of document types on the filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExcludeDocumentTypeList(documentTypes []string) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.typeRestriction = &TypeRestriction{
-		constants.Excludelist,
+		excludeList,
 		documentTypes,
 	}
 	return b
