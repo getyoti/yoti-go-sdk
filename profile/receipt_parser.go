@@ -11,28 +11,9 @@ import (
 )
 
 func parseApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
-	var unwrappedKey []byte
-	if unwrappedKey, err = cryptoutil.UnwrapKey(receipt.WrappedReceiptKey, key); err != nil {
+	decipheredBytes, err := parseEncryptedProto(receipt, receipt.ProfileContent, key)
+	if err != nil {
 		return
-	}
-
-	if receipt.ProfileContent == "" {
-		return
-	}
-
-	var profileContentBytes []byte
-	if profileContentBytes, err = util.Base64ToBytes(receipt.ProfileContent); err != nil {
-		return
-	}
-
-	encryptedData := &yotiprotocom.EncryptedData{}
-	if err = proto.Unmarshal(profileContentBytes, encryptedData); err != nil {
-		return nil, err
-	}
-
-	var decipheredBytes []byte
-	if decipheredBytes, err = cryptoutil.DecipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText); err != nil {
-		return nil, err
 	}
 
 	attributeList := &yotiprotoattr.AttributeList{}
