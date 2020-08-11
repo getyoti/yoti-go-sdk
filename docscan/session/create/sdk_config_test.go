@@ -24,5 +24,5 @@ func ExampleSdkConfigBuilder_Build() {
 
 	data, _ := json.Marshal(notifications)
 	fmt.Println(string(data))
-	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://successurl.com"}
+	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://successurl.com","error_url":"https://errorurl.com"}
 }
