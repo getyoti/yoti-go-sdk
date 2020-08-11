@@ -1,10 +1,8 @@
 package filter
 
-import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
-
 // RequiredDocument defines a document to be provided by the user
 type RequiredDocument struct {
-	Type string `json:"type"`
+	Type documentType `json:"type"`
 }
 
 // RequiredIDDocument defines an identity document to be provided by the user
@@ -16,7 +14,7 @@ type RequiredIDDocument struct {
 // NewRequiredIDDocument creates a new RequiredIDDocument struct
 func NewRequiredIDDocument(filter *RequestedDocumentFilter) *RequiredIDDocument {
 	return &RequiredIDDocument{
-		RequiredDocument: &RequiredDocument{Type: constants.IDDocument},
+		RequiredDocument: &RequiredDocument{Type: identity},
 		Filter:           filter,
 	}
 }

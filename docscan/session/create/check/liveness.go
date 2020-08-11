@@ -2,8 +2,6 @@ package check
 
 import (
 	"encoding/json"
-
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 // RequestedLivenessCheck requests creation of a Liveness Check
@@ -13,7 +11,7 @@ type RequestedLivenessCheck struct {
 
 // Type is the type of the Requested Check
 func (c RequestedLivenessCheck) Type() string {
-	return constants.Liveness
+	return string(liveness)
 }
 
 // Config is the configuration of the Requested Check
@@ -36,8 +34,8 @@ func (c RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
 
 // RequestedLivenessConfig is the configuration applied when creating a Liveness Check
 type RequestedLivenessConfig struct {
-	MaxRetries   *int   `json:"max_retries,omitempty"`
-	LivenessType string `json:"liveness_type"`
+	MaxRetries   *int         `json:"max_retries,omitempty"`
+	LivenessType livenessType `json:"liveness_type"`
 }
 
 // NewRequestedLivenessCheckBuilder creates a new RequestedLivenessCheckBuilder
@@ -47,17 +45,17 @@ func NewRequestedLivenessCheckBuilder() *RequestedLivenessCheckBuilder {
 
 // RequestedLivenessCheckBuilder builds a RequestedLivenessCheck
 type RequestedLivenessCheckBuilder struct {
-	livenessType string
+	livenessType livenessType
 	maxRetries   *int
 }
 
 // ForZoomLiveness sets the liveness type to "ZOOM"
 func (b *RequestedLivenessCheckBuilder) ForZoomLiveness() *RequestedLivenessCheckBuilder {
-	return b.ForLivenessType(constants.Zoom)
+	return b.ForLivenessType(zoom)
 }
 
 // ForLivenessType sets the liveness type on the builder
-func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType string) *RequestedLivenessCheckBuilder {
+func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType livenessType) *RequestedLivenessCheckBuilder {
 	b.livenessType = livenessType
 	return b
 }
