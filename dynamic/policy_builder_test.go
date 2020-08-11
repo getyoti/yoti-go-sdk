@@ -20,6 +20,26 @@ func ExamplePolicyBuilder_WithFamilyName() {
 	// Output: {"name":"family_name"}
 }
 
+func ExamplePolicyBuilder_WithDocumentDetails() {
+	policy, err := (&PolicyBuilder{}).WithDocumentDetails().Build()
+	if err != nil {
+		return
+	}
+	data, _ := policy.attributes[0].MarshalJSON()
+	fmt.Println(string(data))
+	// Output: {"name":"document_details"}
+}
+
+func ExamplePolicyBuilder_WithDocumentImages() {
+	policy, err := (&PolicyBuilder{}).WithDocumentImages().Build()
+	if err != nil {
+		return
+	}
+	data, _ := policy.attributes[0].MarshalJSON()
+	fmt.Println(string(data))
+	// Output: {"name":"document_images"}
+}
+
 func ExamplePolicyBuilder_WithSelfie() {
 	policy, err := (&PolicyBuilder{}).WithSelfie().Build()
 	if err != nil {
