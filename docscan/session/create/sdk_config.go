@@ -14,7 +14,6 @@ type SDKConfig struct {
 	ErrorUrl              string `json:"error_url,omitempty"`
 }
 
-
 // NewSdkConfigBuilder creates a new SdkConfigBuilder
 func NewSdkConfigBuilder() *SdkConfigBuilder {
 	return &SdkConfigBuilder{}
