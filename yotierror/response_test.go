@@ -95,3 +95,51 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 	body, _ := ioutil.ReadAll(errorResponse.Body)
 	assert.Equal(t, string(body), jsonString)
 }
+
+func TestError_ShouldReturnCustomErrorForCode(t *testing.T) {
+	response := &http.Response{
+		StatusCode: 404,
+		Body:       ioutil.NopCloser(strings.NewReader("some body")),
+	}
+	err := New(
+		response,
+		map[int]string{404: "some message"},
+	)
+
+	assert.ErrorContains(t, err, "404: some message - some body")
+}
+
+func TestError_ShouldReturnCustomDefaultError(t *testing.T) {
+	response := &http.Response{
+		StatusCode: 500,
+		Body:       ioutil.NopCloser(strings.NewReader("some body")),
+	}
+	err := New(
+		response,
+		map[int]string{-1: "some default message"},
+	)
+
+	assert.ErrorContains(t, err, "500: some default message - some body")
+}
+
+func TestError_ShouldReturnTemporaryForServerError(t *testing.T) {
+	response := &http.Response{
+		StatusCode: 500,
+	}
+	err := New(
+		response,
+	)
+
+	assert.Check(t, err.Temporary())
+}
+
+func TestError_ShouldNotReturnTemporaryForClientError(t *testing.T) {
+	response := &http.Response{
+		StatusCode: 400,
+	}
+	err := New(
+		response,
+	)
+
+	assert.Check(t, !err.Temporary())
+}
