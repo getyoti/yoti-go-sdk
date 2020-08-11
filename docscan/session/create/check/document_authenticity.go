@@ -8,13 +8,12 @@ import (
 
 // RequestedDocumentAuthenticityCheck requests creation of a Document Authenticity Check
 type RequestedDocumentAuthenticityCheck struct {
-	checkType string
-	config    RequestedDocumentAuthenticityConfig
+	config RequestedDocumentAuthenticityConfig
 }
 
 // Type is the type of the Requested Check
 func (c RequestedDocumentAuthenticityCheck) Type() string {
-	return c.checkType
+	return constants.IDDocumentAuthenticity
 }
 
 // Config is the configuration of the Requested Check
@@ -52,7 +51,6 @@ func NewRequestedDocumentAuthenticityCheckBuilder() *RequestedDocumentAuthentici
 // Build builds the RequestedDocumentAuthenticityCheck
 func (b *RequestedDocumentAuthenticityCheckBuilder) Build() (*RequestedDocumentAuthenticityCheck, error) {
 	return &RequestedDocumentAuthenticityCheck{
-		checkType: constants.IDDocumentAuthenticity,
-		config:    b.config,
+		config: b.config,
 	}, nil
 }

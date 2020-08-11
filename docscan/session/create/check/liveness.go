@@ -8,13 +8,12 @@ import (
 
 // RequestedLivenessCheck requests creation of a Liveness Check
 type RequestedLivenessCheck struct {
-	checkType string
-	config    RequestedLivenessConfig
+	config RequestedLivenessConfig
 }
 
 // Type is the type of the Requested Check
 func (c RequestedLivenessCheck) Type() string {
-	return c.checkType
+	return constants.Liveness
 }
 
 // Config is the configuration of the Requested Check
@@ -78,7 +77,6 @@ func (b *RequestedLivenessCheckBuilder) Build() (*RequestedLivenessCheck, error)
 	}
 
 	return &RequestedLivenessCheck{
-		checkType: constants.Liveness,
-		config:    config,
+		config: config,
 	}, nil
 }
