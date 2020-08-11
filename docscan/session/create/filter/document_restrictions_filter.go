@@ -2,13 +2,13 @@ package filter
 
 // RequestedDocumentRestrictionsFilter filters for a required document, allowing specification of restrictive parameters
 type RequestedDocumentRestrictionsFilter struct {
-	Inclusion inclusionType                  `json:"inclusion"`
+	Inclusion string                         `json:"inclusion"`
 	Documents []RequestedDocumentRestriction `json:"documents"`
 }
 
 // RequestedDocumentRestrictionsFilterBuilder builds a RequestedDocumentRestrictionsFilter
 type RequestedDocumentRestrictionsFilterBuilder struct {
-	inclusion inclusionType
+	inclusion string
 	documents []RequestedDocumentRestriction
 }
 
