@@ -8,13 +8,12 @@ import (
 
 // RequestedFaceMatchCheck requests creation of a FaceMatch Check
 type RequestedFaceMatchCheck struct {
-	checkType string
-	config    RequestedFaceMatchConfig
+	config RequestedFaceMatchConfig
 }
 
 // Type is the type of the Requested Check
 func (c RequestedFaceMatchCheck) Type() string {
-	return c.checkType
+	return constants.IDDocumentFaceMatch
 }
 
 // Config is the configuration of the Requested Check
@@ -72,7 +71,6 @@ func (b *RequestedFaceMatchCheckBuilder) Build() (*RequestedFaceMatchCheck, erro
 	}
 
 	return &RequestedFaceMatchCheck{
-		checkType: constants.IDDocumentFaceMatch,
-		config:    config,
+		config: config,
 	}, nil
 }
