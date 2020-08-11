@@ -13,7 +13,7 @@ type RequestedDocumentAuthenticityCheck struct {
 
 // Type is the type of the Requested Check
 func (c RequestedDocumentAuthenticityCheck) Type() string {
-	return constants.IDDocumentAuthenticity
+	return string(constants.Authenticity)
 }
 
 // Config is the configuration of the Requested Check
