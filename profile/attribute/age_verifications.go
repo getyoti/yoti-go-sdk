@@ -16,19 +16,19 @@ type AgeVerification struct {
 	Attribute *yotiprotoattr.Attribute
 }
 
-// New constructs an AgeVerification from a protobuffer
-func (AgeVerification) New(attr *yotiprotoattr.Attribute) (value AgeVerification, err error) {
+// NewAgeVerification constructs an AgeVerification from a protobuffer
+func NewAgeVerification(attr *yotiprotoattr.Attribute) (verification AgeVerification, err error) {
 	split := strings.Split(attr.Name, ":")
-	value.Age, err = strconv.Atoi(split[1])
-	value.CheckType = split[0]
+	verification.Age, err = strconv.Atoi(split[1])
+	verification.CheckType = split[0]
 
 	if string(attr.Value) == "true" {
-		value.Result = true
+		verification.Result = true
 	} else {
-		value.Result = false
+		verification.Result = false
 	}
 
-	value.Attribute = attr
+	verification.Attribute = attr
 
 	return
 }
