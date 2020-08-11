@@ -4,6 +4,10 @@
 [![Build Status](https://travis-ci.com/getyoti/yoti-go-sdk.svg?branch=master)](https://travis-ci.com/getyoti/yoti-go-sdk)
 [![GoDoc](https://godoc.org/github.com/getyoti/yoti-go-sdk?status.svg)](https://godoc.org/github.com/getyoti/yoti-go-sdk)
 [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://github.com/getyoti/yoti-go-sdk/blob/master/LICENSE.md)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=coverage)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=bugs)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=code_smells)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
 
 Welcome to the Yoti Go SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Go back-end with Yoti so that your users can share their identity details with your application in a secure and trusted way.
 
