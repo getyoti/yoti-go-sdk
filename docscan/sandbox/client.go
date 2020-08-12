@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/response/docscanerr"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 	yotirequest "github.com/getyoti/yoti-go-sdk/v3/requests"
