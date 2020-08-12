@@ -3,7 +3,6 @@ package task
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 func ExampleRequestedTextExtractionTaskBuilder() {
@@ -12,7 +11,7 @@ func ExampleRequestedTextExtractionTaskBuilder() {
 		WithChipDataIgnore().
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

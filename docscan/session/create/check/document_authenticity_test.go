@@ -3,14 +3,13 @@ package check
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 func ExampleRequestedDocumentAuthenticityCheckBuilder() {
 	check, err := NewRequestedDocumentAuthenticityCheckBuilder().Build()
 
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

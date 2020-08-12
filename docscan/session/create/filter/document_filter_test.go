@@ -3,7 +3,6 @@ package filter
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 func ExampleRequestedDocumentFilterBuilder() {
@@ -13,7 +12,7 @@ func ExampleRequestedDocumentFilterBuilder() {
 		Build()
 
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
