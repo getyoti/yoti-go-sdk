@@ -15,7 +15,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 	jsonBytes, _ := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
-		Error: []ItemDataObject{
+		Errors: []ItemDataObject{
 			{
 				Message:  "some property message",
 				Property: "some.property",
