@@ -3,7 +3,6 @@ package sandbox
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -191,7 +190,7 @@ func ExampleTokenRequest_WithDocumentImages() {
 func printJson(value interface{}) {
 	marshalledJSON, err := json.Marshal(value)
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
