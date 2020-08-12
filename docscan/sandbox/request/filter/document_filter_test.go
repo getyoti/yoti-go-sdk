@@ -47,3 +47,14 @@ func ExampleDocumentFilterBuilder_multipleCountriesAndDocumentTypes() {
 	fmt.Println(string(data))
 	// Output: {"document_types":["some_type","some_other_type"],"country_codes":["some_country","some_other_country"]}
 }
+
+func ExampleDocumentFilterBuilder_countriesAndDocumentTypes() {
+	filter, _ := NewDocumentFilterBuilder().
+		WithCountryCodes([]string{"some_country", "some_other_country"}).
+		WithDocumentTypes([]string{"some_type", "some_other_type"}).
+		Build()
+
+	data, _ := json.Marshal(filter)
+	fmt.Println(string(data))
+	// Output: {"document_types":["some_type","some_other_type"],"country_codes":["some_country","some_other_country"]}
+}
