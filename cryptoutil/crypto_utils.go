@@ -19,16 +19,16 @@ func ParseRSAKey(keyBytes []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(keyBytes)
 
 	if block == nil {
-		return nil, errors.New("invalid Key: not PEM-encoded")
+		return nil, errors.New("invalid key: not PEM-encoded")
 	}
 
 	if block.Type != "RSA PRIVATE KEY" {
-		return nil, errors.New("invalid Key: not RSA private key")
+		return nil, errors.New("invalid key: not RSA private key")
 	}
 
 	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, errors.New("invalid Key: bad RSA private key")
+		return nil, errors.New("invalid key: bad RSA private key")
 	}
 
 	return key, nil
