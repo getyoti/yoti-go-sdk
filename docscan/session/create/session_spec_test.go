@@ -3,7 +3,6 @@ package create
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 )
@@ -14,7 +13,7 @@ func ExampleSessionSpecificationBuilder_Build() {
 		Build()
 
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -22,14 +21,14 @@ func ExampleSessionSpecificationBuilder_Build() {
 		WithManualCheckNever().
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	documentAuthenticityCheck, err := check.NewRequestedDocumentAuthenticityCheckBuilder().
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -37,7 +36,7 @@ func ExampleSessionSpecificationBuilder_Build() {
 		WithMaxRetries(5).
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -54,7 +53,7 @@ func ExampleSessionSpecificationBuilder_Build() {
 		Build()
 
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
