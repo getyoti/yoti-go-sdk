@@ -13,11 +13,11 @@ type DocumentTextDataExtractionTask struct {
 // DocumentTextDataExtractionTaskBuilder builds a DocumentTextDataExtractionTask
 type DocumentTextDataExtractionTaskBuilder struct {
 	documentTaskBuilder
-	documentFields map[string]string
+	documentFields map[string]interface{}
 }
 
 type documentTextDataExtractionTaskResult struct {
-	DocumentFields map[string]string `json:"document_fields,omitempty"`
+	DocumentFields map[string]interface{} `json:"document_fields,omitempty"`
 }
 
 // NewDocumentTextDataExtractionTaskBuilder creates a new DocumentTextDataExtractionTaskBuilder
@@ -32,16 +32,16 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFilter(filter *filte
 }
 
 // WithDocumentField adds a document field to the task
-func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentField(key string, value string) *DocumentTextDataExtractionTaskBuilder {
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentField(key string, value interface{}) *DocumentTextDataExtractionTaskBuilder {
 	if b.documentFields == nil {
-		b.documentFields = make(map[string]string)
+		b.documentFields = make(map[string]interface{})
 	}
 	b.documentFields[key] = value
 	return b
 }
 
 // WithDocumentFields sets document fields
-func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFields(documentFields map[string]string) *DocumentTextDataExtractionTaskBuilder {
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFields(documentFields map[string]interface{}) *DocumentTextDataExtractionTaskBuilder {
 	b.documentFields = documentFields
 	return b
 }

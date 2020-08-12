@@ -14,13 +14,13 @@ type DocumentTextDataCheck struct {
 // DocumentTextDataCheckBuilder builds a DocumentTextDataCheck
 type DocumentTextDataCheckBuilder struct {
 	documentCheckBuilder
-	documentFields map[string]string
+	documentFields map[string]interface{}
 }
 
 // DocumentTextDataCheckResult represent a document text data check result
 type DocumentTextDataCheckResult struct {
 	checkResult
-	DocumentFields map[string]string `json:"document_fields,omitempty"`
+	DocumentFields map[string]interface{} `json:"document_fields,omitempty"`
 }
 
 // NewDocumentTextDataCheckBuilder builds a new DocumentTextDataCheckResult
@@ -47,16 +47,16 @@ func (b *DocumentTextDataCheckBuilder) WithDocumentFilter(filter *filter.Documen
 }
 
 // WithDocumentField adds a document field to the text data check
-func (b *DocumentTextDataCheckBuilder) WithDocumentField(key string, value string) *DocumentTextDataCheckBuilder {
+func (b *DocumentTextDataCheckBuilder) WithDocumentField(key string, value interface{}) *DocumentTextDataCheckBuilder {
 	if b.documentFields == nil {
-		b.documentFields = make(map[string]string)
+		b.documentFields = make(map[string]interface{})
 	}
 	b.documentFields[key] = value
 	return b
 }
 
 // WithDocumentFields sets document fields
-func (b *DocumentTextDataCheckBuilder) WithDocumentFields(documentFields map[string]string) *DocumentTextDataCheckBuilder {
+func (b *DocumentTextDataCheckBuilder) WithDocumentFields(documentFields map[string]interface{}) *DocumentTextDataCheckBuilder {
 	b.documentFields = documentFields
 	return b
 }
