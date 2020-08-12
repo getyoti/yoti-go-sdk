@@ -54,7 +54,7 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 }
 
 // Parse fills a DocumentDetails object from a raw string
-func (details *DocumentDetails) Parse(data string) (err error) {
+func (details *DocumentDetails) Parse(data string) error {
 	dataSlice := strings.Split(data, " ")
 
 	if len(dataSlice) < 3 {
@@ -70,17 +70,17 @@ func (details *DocumentDetails) Parse(data string) (err error) {
 	details.IssuingCountry = dataSlice[1]
 	details.DocumentNumber = dataSlice[2]
 	if len(dataSlice) > 3 && dataSlice[3] != "-" {
-		var dateerr error
-		expirationDateData, dateerr := time.Parse(documentDetailsDateFormatConst, dataSlice[3])
+		expirationDateData, dateErr := time.Parse(documentDetailsDateFormatConst, dataSlice[3])
 
-		if dateerr == nil {
+		if dateErr == nil {
 			details.ExpirationDate = &expirationDateData
 		} else {
-			return dateerr
+			return dateErr
 		}
 	}
 	if len(dataSlice) > 4 {
 		details.IssuingAuthority = dataSlice[4]
 	}
-	return
+
+	return nil
 }

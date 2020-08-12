@@ -12,6 +12,7 @@ func ExampleLocationConstraintExtension() {
 		WithUncertainty(0.001).
 		Build()
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

@@ -12,6 +12,7 @@ func ExampleTransactionalFlowExtension() {
 		WithContent(content).
 		Build()
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
