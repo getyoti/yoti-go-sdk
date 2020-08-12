@@ -24,7 +24,7 @@ var (
 type DataObject struct {
 	Code    string           `json:"code"`
 	Message string           `json:"message"`
-	Error   []ItemDataObject `json:"error,omitempty"`
+	Errors  []ItemDataObject `json:"errors,omitempty"`
 }
 
 // ItemDataObject maps from JSON error items
@@ -78,7 +78,7 @@ func formatResponseMessage(response *http.Response, httpErrorMessages ...map[int
 	formattedCodeMessage := fmt.Sprintf("%d: %s - %s", response.StatusCode, errorDO.Code, errorDO.Message)
 
 	var formattedItems []string
-	for _, item := range errorDO.Error {
+	for _, item := range errorDO.Errors {
 		if item.Message != "" && item.Property != "" {
 			formattedItems = append(
 				formattedItems,
