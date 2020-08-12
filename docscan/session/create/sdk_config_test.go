@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleSdkConfigBuilder_Build() {
-	notifications, err := NewSdkConfigBuilder().
+	sdkConfig, err := NewSdkConfigBuilder().
 		WithAllowsCamera().
 		WithErrorUrl("https://errorurl.com").
 		WithFontColour("#ff0000").
@@ -22,7 +22,7 @@ func ExampleSdkConfigBuilder_Build() {
 		return
 	}
 
-	data, _ := json.Marshal(notifications)
+	data, _ := json.Marshal(sdkConfig)
 	fmt.Println(string(data))
 	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://successurl.com","error_url":"https://errorurl.com"}
 }
