@@ -2,7 +2,6 @@ package attribute
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
@@ -14,7 +13,7 @@ func ExampleDocumentDetails_Parse() {
 	details := DocumentDetails{}
 	err := details.Parse(raw)
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -36,7 +35,7 @@ func ExampleNewDocumentDetails() {
 	}
 	attribute, err := NewDocumentDetails(&proto)
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

@@ -2,7 +2,6 @@ package dynamic
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/extension"
 )
@@ -10,7 +9,7 @@ import (
 func ExampleScenarioBuilder() {
 	scenario, err := (&ScenarioBuilder{}).Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -22,13 +21,13 @@ func ExampleScenarioBuilder() {
 func ExampleScenarioBuilder_WithPolicy() {
 	policy, err := (&PolicyBuilder{}).WithEmail().WithPinAuth().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).WithCallbackEndpoint("/foo").Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -40,7 +39,7 @@ func ExampleScenarioBuilder_WithPolicy() {
 func ExampleScenarioBuilder_WithExtension() {
 	policy, err := (&PolicyBuilder{}).WithFullName().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -48,13 +47,13 @@ func ExampleScenarioBuilder_WithExtension() {
 		WithContent("Transactional Flow Extension").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	scenario, err := (&ScenarioBuilder{}).WithExtension(builtExtension).WithPolicy(policy).Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

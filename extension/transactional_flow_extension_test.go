@@ -3,7 +3,6 @@ package extension
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 func ExampleTransactionalFlowExtension() {
@@ -13,7 +12,7 @@ func ExampleTransactionalFlowExtension() {
 		WithContent(content).
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

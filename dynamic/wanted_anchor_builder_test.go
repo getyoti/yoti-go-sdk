@@ -2,7 +2,6 @@ package dynamic
 
 import (
 	"fmt"
-	"os"
 )
 
 func ExampleWantedAnchorBuilder() {
@@ -11,7 +10,7 @@ func ExampleWantedAnchorBuilder() {
 		WithSubType("AADHAAR").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

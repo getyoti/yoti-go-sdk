@@ -2,7 +2,6 @@ package extension
 
 import (
 	"fmt"
-	"os"
 )
 
 func ExampleExtension() {
@@ -10,7 +9,7 @@ func ExampleExtension() {
 	extType := "SOME_TYPE"
 	extension, err := (&Builder{}).WithContent(content).WithType(extType).Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
