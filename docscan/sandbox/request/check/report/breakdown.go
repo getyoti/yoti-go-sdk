@@ -1,6 +1,5 @@
 package report
 
-
 import (
 	"errors"
 )
