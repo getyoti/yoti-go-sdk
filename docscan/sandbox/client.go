@@ -85,7 +85,7 @@ func (client *Client) makeConfigureResponseRequest(request *http.Request) error 
 }
 
 // ConfigureSessionResponse configures the response for the session
-func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig request.ResponseConfig) error {
+func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig *request.ResponseConfig) error {
 	requestEndpoint := "/sessions/" + sessionID + "/response-config"
 	requestBody, err := client.marshalJSON(responseConfig)
 	if err != nil {
@@ -109,7 +109,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 }
 
 // ConfigureApplicationResponse configures the response for the application
-func (client *Client) ConfigureApplicationResponse(responseConfig request.ResponseConfig) error {
+func (client *Client) ConfigureApplicationResponse(responseConfig *request.ResponseConfig) error {
 	requestEndpoint := "/apps/" + client.SdkID + "/response-config"
 	requestBody, err := client.marshalJSON(responseConfig)
 	if err != nil {
