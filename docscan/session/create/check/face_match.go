@@ -33,7 +33,7 @@ func (c RequestedFaceMatchCheck) MarshalJSON() ([]byte, error) {
 
 // RequestedFaceMatchConfig is the configuration applied when creating a FaceMatch Check
 type RequestedFaceMatchConfig struct {
-	ManualCheck string `json:"manual_check"`
+	ManualCheck string `json:"manual_check,omitempty"`
 }
 
 // NewRequestedFaceMatchCheckBuilder creates a new RequestedFaceMatchCheckBuilder
