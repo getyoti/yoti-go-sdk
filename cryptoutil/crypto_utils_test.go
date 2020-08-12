@@ -57,7 +57,7 @@ VGVzdCBTdHJpbmc=
 
 	_, err := ParseRSAKey(testPEM)
 
-	assert.Error(t, err, "invalid Key: not RSA private key")
+	assert.Error(t, err, "invalid key: not RSA private key")
 }
 
 func TestCryptoutil_ParseRSAKey_InvalidKeyShouldFail(t *testing.T) {
@@ -67,7 +67,7 @@ VGVzdCBTdHJpbmc=
 
 	_, err := ParseRSAKey(testPEM)
 
-	assert.Error(t, err, "invalid Key: bad RSA private key")
+	assert.Error(t, err, "invalid key: bad RSA private key")
 }
 
 func TestCryptoutil_ParseRSAKey_InvalidShouldFail(t *testing.T) {
@@ -75,7 +75,7 @@ func TestCryptoutil_ParseRSAKey_InvalidShouldFail(t *testing.T) {
 
 	_, err := ParseRSAKey(testPEM)
 
-	assert.Error(t, err, "invalid Key: not PEM-encoded")
+	assert.Error(t, err, "invalid key: not PEM-encoded")
 }
 
 func TestCryptoutil_DecipherAes(t *testing.T) {
