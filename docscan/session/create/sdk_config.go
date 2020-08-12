@@ -85,7 +85,7 @@ func (b *SdkConfigBuilder) WithSuccessUrl(url string) *SdkConfigBuilder {
 
 // WithErrorUrl sets the error URL for the redirect that follows the web/native client uploading documents unsuccessfully
 func (b *SdkConfigBuilder) WithErrorUrl(url string) *SdkConfigBuilder {
-	b.successUrl = url
+	b.errorUrl = url
 	return b
 }
 
