@@ -3,7 +3,6 @@ package report
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -46,7 +45,7 @@ func ExampleBreakdownBuilder() {
 		WithDetail("some_name", "some_value").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -61,7 +60,7 @@ func ExampleBreakdownBuilder_minimal() {
 		WithResult("some_result").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
