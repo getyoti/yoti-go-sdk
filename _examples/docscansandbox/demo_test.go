@@ -155,7 +155,7 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 	textDataCheck, err := check.NewDocumentTextDataCheckBuilder().
 		WithBreakdown(textDataCheckBreakdown).
 		WithRecommendation(textDataCheckRecommendation).
-		WithDocumentFields(map[string]string{
+		WithDocumentFields(map[string]interface{}{
 			"full_name":       "John Doe",
 			"nationality":     "GBR",
 			"date_of_birth":   "1986-06-01",
@@ -177,7 +177,7 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 	}
 
 	textExtractionTask, err := task.NewDocumentTextDataExtractionTaskBuilder().
-		WithDocumentFields(map[string]string{
+		WithDocumentFields(map[string]interface{}{
 			"full_name":       "John Doe",
 			"nationality":     "GBR",
 			"date_of_birth":   "1986-06-01",
