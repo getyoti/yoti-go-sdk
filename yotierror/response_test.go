@@ -1,4 +1,4 @@
-package docscanerr
+package yotierror
 
 import (
 	"bytes"
