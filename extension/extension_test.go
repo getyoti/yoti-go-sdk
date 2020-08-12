@@ -9,6 +9,7 @@ func ExampleExtension() {
 	extType := "SOME_TYPE"
 	extension, err := (&Builder{}).WithContent(content).WithType(extType).Build()
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
