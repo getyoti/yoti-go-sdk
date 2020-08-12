@@ -20,7 +20,8 @@ func ExampleThirdPartyAttributeExtension() {
 
 	datetime, err := time.Parse("2006-01-02T15:04:05.000Z", "2019-10-30T12:10:09.458Z")
 	if err != nil {
-		log.Printf("Error parsing date, %v", err)
+		fmt.Printf("error: %s", err.Error())
+		return
 	}
 
 	extension := (&ThirdPartyAttributeExtensionBuilder{}).
