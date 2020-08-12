@@ -36,7 +36,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
@@ -59,7 +59,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "400: SOME_CODE - some message")
 
 	errorResponse := err.(*yotierror.Error).Response
@@ -71,7 +71,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 
 func TestClient_ConfigureSessionResponse_ShouldReturnMissingKeyError(t *testing.T) {
 	client := Client{}
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "missing private key")
 }
 
@@ -83,7 +83,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "some json error")
 }
 
@@ -100,7 +100,7 @@ func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
 		},
 	}
 
-	responseErr := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	responseErr := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, responseErr)
 }
 
@@ -128,7 +128,7 @@ func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 }
 
@@ -142,7 +142,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnHttpClientError(t *testing.
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "some error")
 }
 
@@ -159,13 +159,13 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.ErrorContains(t, err, "401: unknown HTTP error")
 }
 
 func TestClient_ConfigureApplicationResponse_ShouldReturnMissingKeyError(t *testing.T) {
 	client := Client{}
-	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.ErrorContains(t, err, "missing private key")
 }
 
@@ -177,7 +177,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnJsonError(t *testing.T)
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.ErrorContains(t, err, "some json error")
 }
 
@@ -193,7 +193,7 @@ func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.NilError(t, err)
 }
 
@@ -207,7 +207,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnHttpClientError(t *test
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(request.ResponseConfig{})
+	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.ErrorContains(t, err, "some error")
 }
 
@@ -215,7 +215,7 @@ func TestClient_ConfigureSessionResponseUsesConstructorApiUrlOverEnvVariable(t *
 	client := createSandboxClient(t, "constuctorApiURL")
 	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")
 
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 
 	assert.Equal(t, "constuctorApiURL", client.getAPIURL())
@@ -226,7 +226,7 @@ func TestClient_ConfigureSessionResponseUsesOverrideApiUrlOverEnvVariable(t *tes
 	client.OverrideAPIURL("overrideApiURL")
 	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")
 
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 
 	assert.Equal(t, "overrideApiURL", client.getAPIURL())
@@ -237,7 +237,7 @@ func TestClient_ConfigureSessionResponseUsesEnvVariable(t *testing.T) {
 
 	os.Setenv("YOTI_DOC_SCAN_API_URL", "envApiURL")
 
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 
 	assert.Equal(t, "envApiURL", client.getAPIURL())
@@ -248,7 +248,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithEmptyEnvValu
 
 	client := createSandboxClient(t, "")
 
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 
 	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.getAPIURL())
@@ -259,7 +259,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t
 
 	client := createSandboxClient(t, "")
 
-	err := client.ConfigureSessionResponse("some_session_id", request.ResponseConfig{})
+	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 
 	assert.Equal(t, "https://api.yoti.com/sandbox/idverify/v1", client.getAPIURL())
