@@ -1,30 +1,45 @@
 package task
 
 import (
+	"encoding/json"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 // RequestedTextExtractionTask requests creation of a Text Extraction Task
 type RequestedTextExtractionTask struct {
-	RequestedTask
-	Config RequestedTextExtractionTaskConfig `json:"config"`
+	config RequestedTextExtractionTaskConfig
+}
+
+// Type is the type of the Requested Check
+func (t RequestedTextExtractionTask) Type() string {
+	return constants.IDDocumentTextDataExtraction
+}
+
+// Config is the configuration of the Requested Check
+func (t RequestedTextExtractionTask) Config() RequestedTaskConfig {
+	return t.config
+}
+
+func (t RequestedTextExtractionTask) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Type   string              `json:"type"`
+		Config RequestedTaskConfig `json:"config,omitempty"`
+	}{
+		Type:   t.Type(),
+		Config: t.Config(),
+	})
 }
 
 // NewRequestedTextExtractionTask creates a new Document Authenticity Check
 func NewRequestedTextExtractionTask(config RequestedTextExtractionTaskConfig) *RequestedTextExtractionTask {
-	return &RequestedTextExtractionTask{
-		RequestedTask{
-			Type: constants.IDDocumentTextDataExtraction,
-		},
-		config,
-	}
+	return &RequestedTextExtractionTask{config}
 }
 
 // RequestedTextExtractionTaskConfig is the configuration applied when creating a Text Extraction Task
 type RequestedTextExtractionTaskConfig struct {
-	RequestedTaskConfig
-	ManualCheck string `json:"manual_check"`
-	ChipData    string `json:"chip_data"`
+	ManualCheck string `json:"manual_check,omitempty"`
+	ChipData    string `json:"chip_data,omitempty"`
 }
 
 // NewRequestedTextExtractionTaskBuilder creates a new RequestedTextExtractionTaskBuilder
@@ -71,7 +86,6 @@ func (builder *RequestedTextExtractionTaskBuilder) WithChipDataIgnore() *Request
 // Build builds the RequestedTextExtractionTask
 func (builder *RequestedTextExtractionTaskBuilder) Build() (*RequestedTextExtractionTask, error) {
 	config := RequestedTextExtractionTaskConfig{
-		RequestedTaskConfig{},
 		builder.manualCheck,
 		builder.chipData,
 	}
