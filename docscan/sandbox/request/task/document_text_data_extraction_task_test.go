@@ -3,25 +3,24 @@ package task
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
 func ExampleDocumentTextDataExtractionTaskBuilder() {
-	filter, err := filter.NewDocumentFilterBuilder().Build()
+	docFilter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
-		WithDocumentFilter(filter).
+		WithDocumentFilter(docFilter).
 		WithDocumentField("some", "field").
 		WithDocumentField("other", "field").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -31,20 +30,20 @@ func ExampleDocumentTextDataExtractionTaskBuilder() {
 }
 
 func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
-	filter, err := filter.NewDocumentFilterBuilder().Build()
+	docFilter, err := filter.NewDocumentFilterBuilder().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
-		WithDocumentFilter(filter).
+		WithDocumentFilter(docFilter).
 		WithDocumentFields(map[string]string{
 			"some": "field",
 		}).
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -56,7 +55,7 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
 func ExampleDocumentTextDataExtractionTaskBuilder_minimal() {
 	check, err := NewDocumentTextDataExtractionTaskBuilder().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

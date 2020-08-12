@@ -3,7 +3,6 @@ package request
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -18,13 +17,13 @@ func TestResponseConfigBuilder_Build_ShouldRequireCheckReports(t *testing.T) {
 func ExampleResponseConfigBuilder() {
 	taskResults, err := NewTaskResultsBuilder().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	checkReports, err := NewCheckReportsBuilder().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -33,7 +32,7 @@ func ExampleResponseConfigBuilder() {
 		WithCheckReports(checkReports).
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -45,7 +44,7 @@ func ExampleResponseConfigBuilder() {
 func ExampleResponseConfigBuilder_minimal() {
 	checkReports, err := NewCheckReportsBuilder().Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -53,7 +52,7 @@ func ExampleResponseConfigBuilder_minimal() {
 		WithCheckReports(checkReports).
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

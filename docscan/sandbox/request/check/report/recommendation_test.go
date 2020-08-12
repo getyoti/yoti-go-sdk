@@ -3,7 +3,6 @@ package report
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -35,7 +34,7 @@ func ExampleRecommendationBuilder() {
 		WithRecoverySuggestion("some_suggestion").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -49,7 +48,7 @@ func ExampleRecommendationBuilder_minimal() {
 		WithValue("some_value").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
