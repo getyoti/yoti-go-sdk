@@ -36,23 +36,9 @@ func ExampleDocumentTextDataCheckBuilder() {
 		WithBreakdown(breakdown).
 		WithRecommendation(recommendation).
 		WithDocumentFilter(docFilter).
-		WithDocumentField("some", "field").
-		WithDocumentField("other", "field").
-		Build()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	data, _ := json.Marshal(check)
-	fmt.Println(string(data))
-	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":{"other":"field","some":"field"}},"document_filter":{"document_types":[],"country_codes":[]}}
-}
-
-func ExampleDocumentTextDataCheckBuilder_WithDocumentFields() {
-	check, err := NewDocumentTextDataCheckBuilder().
-		WithDocumentFields(map[string]string{
-			"some": "field",
+		WithDocumentField("some-key", "some-value").
+		WithDocumentField("some-other-key", map[string]string{
+			"some-nested-key": "some-nested-value",
 		}).
 		Build()
 	if err != nil {
@@ -62,7 +48,26 @@ func ExampleDocumentTextDataCheckBuilder_WithDocumentFields() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"result":{"report":{},"document_fields":{"some":"field"}}}
+	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[]}]},"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}},"document_filter":{"document_types":[],"country_codes":[]}}
+}
+
+func ExampleDocumentTextDataCheckBuilder_WithDocumentFields() {
+	check, err := NewDocumentTextDataCheckBuilder().
+		WithDocumentFields(map[string]interface{}{
+			"some-key": "some-value",
+			"some-other-key": map[string]string{
+				"some-nested-key": "some-nested-value",
+			},
+		}).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, _ := json.Marshal(check)
+	fmt.Println(string(data))
+	// Output: {"result":{"report":{},"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
 
 func ExampleDocumentTextDataCheckBuilder_minimal() {
