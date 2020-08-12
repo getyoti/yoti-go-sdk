@@ -16,8 +16,10 @@ func ExampleDocumentTextDataExtractionTaskBuilder() {
 
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
 		WithDocumentFilter(docFilter).
-		WithDocumentField("some", "field").
-		WithDocumentField("other", "field").
+		WithDocumentField("some-key", "some-value").
+		WithDocumentField("some-other-key", map[string]string{
+			"some-nested-key": "some-nested-value",
+		}).
 		Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -26,7 +28,7 @@ func ExampleDocumentTextDataExtractionTaskBuilder() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"other":"field","some":"field"}}}
+	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
 
 func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
@@ -38,8 +40,11 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
 
 	check, err := NewDocumentTextDataExtractionTaskBuilder().
 		WithDocumentFilter(docFilter).
-		WithDocumentFields(map[string]string{
-			"some": "field",
+		WithDocumentFields(map[string]interface{}{
+			"some-key": "some-value",
+			"some-other-key": map[string]string{
+				"some-nested-key": "some-nested-value",
+			},
 		}).
 		Build()
 	if err != nil {
@@ -49,7 +54,7 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
 
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
-	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some":"field"}}}
+	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
 
 func ExampleDocumentTextDataExtractionTaskBuilder_minimal() {
