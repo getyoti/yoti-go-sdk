@@ -23,7 +23,7 @@ type SessionSpecification struct {
 	RequestedChecks []check.RequestedCheck `json:"requested_checks,omitempty"`
 
 	// RequestedTasks is a slice of task.RequestedTask objects defining the Tasks to be performed on each Document
-	RequestedTasks []*task.RequestedTask `json:"requested_tasks,omitempty"`
+	RequestedTasks []task.RequestedTask `json:"requested_tasks,omitempty"`
 
 	// SdkConfig retrieves the SDK configuration set of the session specification
 	SdkConfig *SDKConfig `json:"sdk_config,omitempty"`
@@ -36,7 +36,7 @@ type SessionSpecificationBuilder struct {
 	userTrackingID        string
 	notifications         *NotificationConfig
 	requestedChecks       []check.RequestedCheck
-	requestedTasks        []*task.RequestedTask
+	requestedTasks        []task.RequestedTask
 	sdkConfig             *SDKConfig
 }
 
@@ -51,8 +51,8 @@ func (b *SessionSpecificationBuilder) WithClientSessionTokenTTL(clientSessionTok
 	return b
 }
 
-// WithResourcesTtl sets the client session token TTL (time-to-live)
-func (b *SessionSpecificationBuilder) WithResourcesTtl(resourcesTTL int) *SessionSpecificationBuilder {
+// WithResourcesTTL sets the client session token TTL (time-to-live)
+func (b *SessionSpecificationBuilder) WithResourcesTTL(resourcesTTL int) *SessionSpecificationBuilder {
 	b.resourcesTTL = resourcesTTL
 	return b
 }
@@ -76,7 +76,7 @@ func (b *SessionSpecificationBuilder) WithRequestedCheck(requestedCheck check.Re
 }
 
 // WithRequestedTask adds a RequestedTask to the required tasks
-func (b *SessionSpecificationBuilder) WithRequestedTask(requestedTask *task.RequestedTask) *SessionSpecificationBuilder {
+func (b *SessionSpecificationBuilder) WithRequestedTask(requestedTask task.RequestedTask) *SessionSpecificationBuilder {
 	b.requestedTasks = append(b.requestedTasks, requestedTask)
 	return b
 }

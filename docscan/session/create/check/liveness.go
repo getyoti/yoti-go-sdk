@@ -35,7 +35,7 @@ func (c RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
 // RequestedLivenessConfig is the configuration applied when creating a Liveness Check
 type RequestedLivenessConfig struct {
 	MaxRetries   int    `json:"max_retries,omitempty"`
-	LivenessType string `json:"liveness_type"`
+	LivenessType string `json:"liveness_type,omitempty"`
 }
 
 // NewRequestedLivenessCheckBuilder creates a new RequestedLivenessCheckBuilder
