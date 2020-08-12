@@ -26,6 +26,12 @@ func (b *DocumentFilterBuilder) WithCountryCode(countryCode string) *DocumentFil
 	return b
 }
 
+// WithCountryCodes sets the country codes of the filter
+func (b *DocumentFilterBuilder) WithCountryCodes(countryCodes []string) *DocumentFilterBuilder {
+	b.countryCodes = countryCodes
+	return b
+} // TODO: need country codes? Looks like Python just has plural
+
 // WithDocumentType adds a document type to the filter
 func (b *DocumentFilterBuilder) WithDocumentType(documentType string) *DocumentFilterBuilder {
 	b.documentTypes = append(b.documentTypes, documentType)
