@@ -3,7 +3,6 @@ package create
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 func ExampleNotificationConfigBuilder_Build() {
@@ -18,7 +17,7 @@ func ExampleNotificationConfigBuilder_Build() {
 		Build()
 
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 

@@ -3,7 +3,6 @@ package check
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -15,7 +14,7 @@ func ExampleRequestedLivenessCheckBuilder() {
 		WithMaxRetries(9).
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
@@ -29,7 +28,7 @@ func TestRequestedLivenessCheckBuilder_MaxRetriesIsOmittedIfNotSet(t *testing.T)
 		ForLivenessType("LIVENESS_TYPE").
 		Build()
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "error: %s", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
