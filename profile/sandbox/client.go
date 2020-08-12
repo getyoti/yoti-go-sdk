@@ -50,7 +50,7 @@ func (client *Client) SetupSharingProfile(tokenRequest TokenRequest) (token stri
 
 	request, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
-		HTTPMethod: "POST",
+		HTTPMethod: http.MethodPost,
 		BaseURL:    client.BaseURL,
 		Endpoint:   requestEndpoint,
 		Headers:    yotirequest.JSONHeaders(),

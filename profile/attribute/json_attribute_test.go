@@ -16,6 +16,7 @@ func ExampleNewJSON() {
 	}
 	attribute, err := NewJSON(&proto)
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 	fmt.Println(attribute.Value())

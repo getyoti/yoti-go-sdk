@@ -13,8 +13,10 @@ func ExampleDocumentDetails_Parse() {
 	details := DocumentDetails{}
 	err := details.Parse(raw)
 	if err != nil {
-		panic(err)
+		fmt.Printf("error: %s", err.Error())
+		return
 	}
+
 	fmt.Printf(
 		"Document Type: %s, Issuing Country: %s, Document Number: %s, Expiration Date: %s",
 		details.DocumentType,
@@ -33,8 +35,10 @@ func ExampleNewDocumentDetails() {
 	}
 	attribute, err := NewDocumentDetails(&proto)
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
+
 	fmt.Printf(
 		"Document Type: %s, With %d Anchors",
 		attribute.Value().DocumentType,

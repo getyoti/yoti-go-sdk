@@ -36,18 +36,23 @@ func ExampleCreateShareURL() {
 
 	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
+
 	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	result, err := CreateShareURL(client, &scenario, "sdkId", "https://apiurl", key)
 
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
+
 	fmt.Printf("QR code: %s", result.ShareURL)
 	// Output: QR code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
 }

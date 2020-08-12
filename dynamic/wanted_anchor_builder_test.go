@@ -10,6 +10,7 @@ func ExampleWantedAnchorBuilder() {
 		WithSubType("AADHAAR").
 		Build()
 	if err != nil {
+		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
