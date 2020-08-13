@@ -1,4 +1,4 @@
-package service
+package docscan
 
 import "fmt"
 
