@@ -20,14 +20,6 @@ func NewRequestedDocumentRestrictionBuilder() *RequestedDocumentRestrictionBuild
 	}
 }
 
-// WithCountryCode adds a country code to the Restriction
-func (b *RequestedDocumentRestrictionBuilder) WithCountryCode(countryCode string) *RequestedDocumentRestrictionBuilder {
-	b.countryCodes = append(b.countryCodes, countryCode)
-	return b
-}
-
-// TODO: need country code? Looks like Python just has plural
-
 // WithCountryCodes sets the country codes of the Restriction
 func (b *RequestedDocumentRestrictionBuilder) WithCountryCodes(countryCodes []string) *RequestedDocumentRestrictionBuilder {
 	b.countryCodes = countryCodes
