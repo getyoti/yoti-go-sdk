@@ -8,7 +8,7 @@ import (
 func ExampleRequestedDocumentRestrictionBuilder() {
 	restriction, err := NewRequestedDocumentRestrictionBuilder().
 		WithDocumentType("PASSPORT").
-		WithCountryCode("FRA").
+		WithCountryCodes([]string{"FRA"}).
 		Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
