@@ -9,26 +9,47 @@ import (
 // ResourceContainer contains different resources that are part of the Yoti Doc Scan session
 type ResourceContainer struct {
 	IDDocuments           []*IDDocumentResourceResponse `json:"id_documents"`
-	LivenessCapture       []*LivenessResourceResponse   `json:"liveness_capture"`
+	LivenessCapture       []*LivenessResourceResponse
+	RawLivenessCapture    []json.RawMessage `json:"liveness_capture"`
 	zoomLivenessResources []*ZoomLivenessResourceResponse
 }
 
 // ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources
-func (r ResourceContainer) ZoomLivenessResources() []*ZoomLivenessResourceResponse {
+func (r *ResourceContainer) ZoomLivenessResources() []*ZoomLivenessResourceResponse {
 	return r.zoomLivenessResources
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (r *ResourceContainer) UnmarshalJSON(data []byte) error {
-	type result ResourceContainer // declared as "type" to prevent recursive unmarshalling
-	if err := json.Unmarshal(data, (*result)(r)); err != nil {
+	type resourceContainer ResourceContainer
+	err := json.Unmarshal(data, (*resourceContainer)(r))
+	if err != nil {
 		return err
 	}
 
-	for _, resource := range r.LivenessCapture {
-		if resource.LivenessType == constants.Zoom {
-			r.zoomLivenessResources = append(r.zoomLivenessResources, &ZoomLivenessResourceResponse{LivenessResourceResponse: resource})
+	for _, raw := range r.RawLivenessCapture {
+		var v LivenessResourceResponse
+		err = json.Unmarshal(raw, &v)
+		if err != nil {
+			return err
 		}
+
+		switch v.LivenessType {
+		case constants.Zoom:
+			var zoom ZoomLivenessResourceResponse
+			err = json.Unmarshal(raw, &zoom)
+			if err != nil {
+				return err
+			}
+			r.zoomLivenessResources = append(r.zoomLivenessResources, &zoom)
+		default:
+			err = json.Unmarshal(raw, &LivenessResourceResponse{})
+			if err != nil {
+				return err
+			}
+		}
+
+		r.LivenessCapture = append(r.LivenessCapture, &v)
 	}
 
 	return nil
