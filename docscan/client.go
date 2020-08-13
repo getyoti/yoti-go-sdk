@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
@@ -176,12 +177,12 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (*media.Media, error
 		return nil, err
 	}
 
-	contentType := response.Header.Get("Content-type") // TODO: check this
-	if contentType == "" {
+	contentTypes := strings.Split(response.Header.Get("Content-type"), ";")
+	if len(contentTypes) < 1 {
 		err = errors.New("unable to parse content type from response")
 	}
 
-	media := media.NewMedia(contentType, responseBytes)
+	media := media.NewMedia(contentTypes[0], responseBytes)
 	return &media, err
 }
 
