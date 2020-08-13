@@ -24,10 +24,6 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func ExampleClient_CreateSession() {
-	// session := CreateSession(nil, )
-}
-
 func TestCreateSession(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 
