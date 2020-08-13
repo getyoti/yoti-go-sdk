@@ -16,6 +16,4 @@ func ExampleRequestedDocumentAuthenticityCheckBuilder() {
 	data, _ := json.Marshal(check)
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT_AUTHENTICITY","config":{}}
-
-	// TODO: check we want config={}?
 }
