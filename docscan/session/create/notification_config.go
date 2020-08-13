@@ -35,31 +35,31 @@ func (b *NotificationConfigBuilder) WithEndpoint(endpoint string) *NotificationC
 	return b
 }
 
-// WithTopic adds a topic to the list of topics that trigger notification messages
+// WithTopic adds a topic to the slice of topics that trigger notification messages
 func (b *NotificationConfigBuilder) WithTopic(topic string) *NotificationConfigBuilder {
 	b.topics = append(b.topics, topic)
 	return b
 }
 
-// ForResourceUpdate Adds "RESOURCE_UPDATE" to the list of topics that trigger notification messages
+// ForResourceUpdate Adds "RESOURCE_UPDATE" to the slice of topics that trigger notification messages
 func (b *NotificationConfigBuilder) ForResourceUpdate() *NotificationConfigBuilder {
 	b.topics = append(b.topics, constants.ResourceUpdate)
 	return b
 }
 
-// ForTaskCompletion Adds "TASK_COMPLETION" to the list of topics that trigger notification messages
+// ForTaskCompletion Adds "TASK_COMPLETION" to the slice of topics that trigger notification messages
 func (b *NotificationConfigBuilder) ForTaskCompletion() *NotificationConfigBuilder {
 	b.topics = append(b.topics, constants.TaskCompletion)
 	return b
 }
 
-// ForSessionCompletion Adds "SESSION_COMPLETION" to the list of topics that trigger notification messages
+// ForSessionCompletion Adds "SESSION_COMPLETION" to the slice of topics that trigger notification messages
 func (b *NotificationConfigBuilder) ForSessionCompletion() *NotificationConfigBuilder {
 	b.topics = append(b.topics, constants.SessionCompletion)
 	return b
 }
 
-// ForCheckCompletion Adds "CHECK_COMPLETION" to the list of topics that trigger notification messages
+// ForCheckCompletion Adds "CHECK_COMPLETION" to the slice of topics that trigger notification messages
 func (b *NotificationConfigBuilder) ForCheckCompletion() *NotificationConfigBuilder {
 	b.topics = append(b.topics, constants.CheckCompletion)
 	return b
