@@ -1,4 +1,4 @@
-package service
+package docscan
 
 import (
 	"crypto/rand"
@@ -24,7 +24,7 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func ExampleCreateSession() {
+func ExampleClient_CreateSession() {
 	// session := CreateSession(nil, )
 }
 
@@ -48,7 +48,14 @@ func TestCreateSession(t *testing.T) {
 	}
 
 	var sessionSpec *create.SessionSpecification
-	createSessionResult, err := CreateSession(HTTPClient, "sdkId", key, "https://apiurl.com", sessionSpec, nil)
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+	createSessionResult, err := client.CreateSession(sessionSpec)
 	assert.NilError(t, err)
 
 	assert.Equal(t, clientSessionTokenTTL, createSessionResult.ClientSessionTokenTTL)
