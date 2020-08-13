@@ -36,7 +36,6 @@ func TestCreateSession(t *testing.T) {
 	var sessionId string = "c87c4f2a-13fd-4cc8-a0e4-f1637cf32f71"
 
 	jsonResponse := fmt.Sprintf(`{"client_session_token_ttl":%d,"client_session_token":"%s","session_id":"%s"}`, clientSessionTokenTTL, clientSessionToken, sessionId)
-	// jsonResponse := fmt.Sprintf(, clientSessionTokenTTL, clientSessionToken, sessionId)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
