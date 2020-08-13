@@ -208,7 +208,7 @@ func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
 	return nil
 }
 
-// GetSupportedDocuments gets a list of supported documents
+// GetSupportedDocuments gets a slice of supported documents
 func (c *Client) GetSupportedDocuments() (*supported.DocumentsResponse, error) {
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,

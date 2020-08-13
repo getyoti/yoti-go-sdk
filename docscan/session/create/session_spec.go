@@ -2,6 +2,7 @@ package create
 
 import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/task"
 )
 
@@ -27,6 +28,9 @@ type SessionSpecification struct {
 
 	// SdkConfig retrieves the SDK configuration set of the session specification
 	SdkConfig *SDKConfig `json:"sdk_config,omitempty"`
+
+	// RequiredDocuments is a slice of documents that are required from the user to satisfy a sessions requirements.
+	RequiredDocuments []filter.RequiredDocument `json:"required_documents,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -38,6 +42,7 @@ type SessionSpecificationBuilder struct {
 	requestedChecks       []check.RequestedCheck
 	requestedTasks        []task.RequestedTask
 	sdkConfig             *SDKConfig
+	requiredDocuments     []filter.RequiredDocument
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -87,6 +92,12 @@ func (b *SessionSpecificationBuilder) WithSDKConfig(SDKConfig *SDKConfig) *Sessi
 	return b
 }
 
+// WithRequiredDocument adds a required document to the session specification
+func (b *SessionSpecificationBuilder) WithRequiredDocument(IDDocument filter.RequiredDocument) *SessionSpecificationBuilder {
+	b.requiredDocuments = append(b.requiredDocuments, IDDocument)
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -97,5 +108,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.requestedChecks,
 		b.requestedTasks,
 		b.sdkConfig,
+		b.requiredDocuments,
 	}, nil
 }

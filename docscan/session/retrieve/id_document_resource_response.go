@@ -21,7 +21,7 @@ type IDDocumentResourceResponse struct {
 	textExtractionTasks []*TextExtractionTaskResponse
 }
 
-// TextExtractionTasks returns a list of text extraction tasks associated with the ID document
+// TextExtractionTasks returns a slice of text extraction tasks associated with the ID document
 func (i *IDDocumentResourceResponse) TextExtractionTasks() []*TextExtractionTaskResponse {
 	return i.textExtractionTasks
 }
