@@ -16,7 +16,7 @@ import (
 )
 
 // CreateSession creates a Doc Scan session using the supplied session specification
-func CreateSession(httpClient requests.HttpClient, sdkID string, key *rsa.PrivateKey, APIURL string, sessionSpec *create.SessionSpecification, jsonMarshaler jsonMarshaler) (*retrieve.CreateSessionResult, error) {
+func CreateSession(httpClient requests.HttpClient, sdkID string, key *rsa.PrivateKey, APIURL string, sessionSpec *create.SessionSpecification, jsonMarshaler jsonMarshaler) (*create.SessionResult, error) {
 	requestBody, err := marshalJSON(jsonMarshaler, sessionSpec)
 	if err != nil {
 		return nil, err
@@ -48,10 +48,10 @@ func CreateSession(httpClient requests.HttpClient, sdkID string, key *rsa.Privat
 		return nil, err
 	}
 
-	var result *retrieve.CreateSessionResult
-	err = json.Unmarshal(responseBytes, result)
+	var result create.SessionResult
+	err = json.Unmarshal(responseBytes, &result)
 
-	return result, err
+	return &result, err
 }
 
 // GetSession retrieves the state of a previously created Yoti Doc Scan session
@@ -79,10 +79,10 @@ func GetSession(httpClient requests.HttpClient, sdkID string, key *rsa.PrivateKe
 		return nil, err
 	}
 
-	var result *retrieve.GetSessionResult
-	err = json.Unmarshal(responseBytes, result)
+	var result retrieve.GetSessionResult
+	err = json.Unmarshal(responseBytes, &result)
 
-	return result, err
+	return &result, err
 }
 
 // DeleteSession deletes a previously created Yoti Doc Scan session and all of its related resources
@@ -185,13 +185,10 @@ func GetSupportedDocuments(httpClient requests.HttpClient, key *rsa.PrivateKey, 
 		return nil, err
 	}
 
-	var result *supported.DocumentsResponse
-	err = json.Unmarshal(responseBytes, result)
-	if err != nil {
-		return nil, err
-	}
+	var result supported.DocumentsResponse
+	err = json.Unmarshal(responseBytes, &result)
 
-	return result, nil
+	return &result, err
 }
 
 // jsonMarshaler is a mockable JSON marshaler
