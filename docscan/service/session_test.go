@@ -17,7 +17,6 @@ type mockHTTPClient struct {
 	do func(*http.Request) (*http.Response, error)
 }
 
-
 func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	if mock.do != nil {
 		return mock.do(request)
