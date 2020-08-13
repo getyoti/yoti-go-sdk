@@ -64,7 +64,7 @@ func (client *Client) getHTTPClient() requests.HttpClient {
 }
 
 // CreateSession creates a Doc Scan session using the supplied session specification
-func (client *Client) CreateSession(sessionSpec *create.SessionSpecification) (*retrieve.CreateSessionResult, error) {
+func (client *Client) CreateSession(sessionSpec *create.SessionSpecification) (*create.SessionResult, error) {
 	return service.CreateSession(client.getHTTPClient(), client.SdkID, client.Key, client.getAPIURL(), sessionSpec, nil)
 }
 
