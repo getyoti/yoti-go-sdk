@@ -1,9 +1,5 @@
 package retrieve
 
-import (
-	"github.com/getyoti/yoti-go-sdk/v3/util"
-)
-
 // IDDocumentResourceResponse represents an Identity Document resource for a given session
 type IDDocumentResourceResponse struct {
 	ResourceResponse
@@ -16,14 +12,4 @@ type IDDocumentResourceResponse struct {
 	// DocumentFields are the associated document fields of a document
 	DocumentFields  DocumentFieldsResponse  `json:"document_fields"`
 	DocumentIDPhoto DocumentIDPhotoResponse `json:"document_id_photo"`
-}
-
-// GetTextExtractionTasks returns a slice of text extraction tasks associated with the ID document
-func (id IDDocumentResourceResponse) GetTextExtractionTasks() []TextExtractionTaskResponse {
-	filteredTasks := util.Filter(id.Tasks, func(val interface{}) bool {
-		_, isTextExtractionTaskResponse := val.(TextExtractionTaskResponse)
-		return isTextExtractionTaskResponse
-	})
-
-	return filteredTasks.([]TextExtractionTaskResponse)
 }

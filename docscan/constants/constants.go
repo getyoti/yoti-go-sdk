@@ -5,6 +5,7 @@ const (
 	IDDocumentTextDataCheck      string = "ID_DOCUMENT_TEXT_DATA_CHECK"
 	IDDocumentTextDataExtraction string = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
 	IDDocumentFaceMatch          string = "ID_DOCUMENT_FACE_MATCH"
+	Liveness                     string = "LIVENESS"
 
 	Camera          string = "CAMERA"
 	CameraAndUpload string = "CAMERA_AND_UPLOAD"
