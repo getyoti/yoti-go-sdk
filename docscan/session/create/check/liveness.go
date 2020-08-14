@@ -2,6 +2,8 @@ package check
 
 import (
 	"encoding/json"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 // RequestedLivenessCheck requests creation of a Liveness Check
@@ -11,7 +13,7 @@ type RequestedLivenessCheck struct {
 
 // Type is the type of the Requested Check
 func (c RequestedLivenessCheck) Type() string {
-	return liveness
+	return constants.Liveness
 }
 
 // Config is the configuration of the Requested Check

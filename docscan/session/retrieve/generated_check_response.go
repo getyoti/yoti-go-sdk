@@ -5,3 +5,8 @@ type GeneratedCheckResponse struct {
 	ID   string `json:"id"`
 	Type string `json:"type"`
 }
+
+// GeneratedTextDataCheckResponse represents a Text Extraction task response
+type GeneratedTextDataCheckResponse struct {
+	*GeneratedCheckResponse
+}
