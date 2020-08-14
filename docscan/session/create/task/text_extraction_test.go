@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleRequestedTextExtractionTaskBuilder() {
-	check, err := NewRequestedTextExtractionTaskBuilder().
+	task, err := NewRequestedTextExtractionTaskBuilder().
 		WithManualCheckAlways().
 		WithChipDataIgnore().
 		Build()
@@ -15,7 +15,7 @@ func ExampleRequestedTextExtractionTaskBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(check)
+	data, _ := json.Marshal(task)
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT_TEXT_DATA_EXTRACTION","config":{"manual_check":"ALWAYS","chip_data":"IGNORE"}}
 }
