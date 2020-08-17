@@ -6,6 +6,7 @@ const (
 	IDDocumentTextDataExtraction string = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
 	IDDocumentFaceMatch          string = "ID_DOCUMENT_FACE_MATCH"
 	Liveness                     string = "LIVENESS"
+	Zoom                         string = "ZOOM"
 
 	Camera          string = "CAMERA"
 	CameraAndUpload string = "CAMERA_AND_UPLOAD"
