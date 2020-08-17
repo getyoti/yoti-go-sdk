@@ -153,7 +153,7 @@ func (c *Client) DeleteSession(sessionID string) error {
 }
 
 // GetMediaContent retrieves media related to a Yoti Doc Scan session based on the supplied media ID
-func (c *Client) GetMediaContent(sessionID, mediaID string) (*media.Media, error) {
+func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error) {
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodGet,
@@ -183,7 +183,8 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (*media.Media, error
 	}
 
 	media := media.NewMedia(contentTypes[0], responseBytes)
-	return &media, err
+
+	return media, err
 }
 
 // DeleteMediaContent deletes media related to a Yoti Doc Scan session based on the supplied media ID
