@@ -2,7 +2,6 @@ package retrieve
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
@@ -62,9 +61,6 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 
 		case constants.Liveness:
 			g.livenessChecks = append(g.livenessChecks, &LivenessCheckResponse{CheckResponse: check})
-
-		default:
-			fmt.Printf("Unrecognized check type: `%s`", check.Type)
 		}
 	}
 
