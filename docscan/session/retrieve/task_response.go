@@ -2,7 +2,6 @@ package retrieve
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
@@ -20,7 +19,7 @@ type TaskResponse struct {
 	generatedTextDataChecks []*GeneratedTextDataCheckResponse
 }
 
-// GeneratedTextDataChecks  filters the checks, returning only text data checks
+// GeneratedTextDataChecks filters the checks, returning only text data checks
 func (t *TaskResponse) GeneratedTextDataChecks() []*GeneratedTextDataCheckResponse {
 	return t.generatedTextDataChecks
 }
@@ -36,9 +35,6 @@ func (t *TaskResponse) UnmarshalJSON(data []byte) error {
 		switch check.Type {
 		case constants.IDDocumentTextDataCheck:
 			t.generatedTextDataChecks = append(t.generatedTextDataChecks, &GeneratedTextDataCheckResponse{GeneratedCheckResponse: check})
-
-		default:
-			fmt.Printf("Unrecognized check type: `%s`", check.Type)
 		}
 	}
 
