@@ -63,12 +63,12 @@ func (b *DocumentTextDataCheckBuilder) WithDocumentFields(documentFields map[str
 
 // Build creates a new DocumentTextDataCheck
 func (b *DocumentTextDataCheckBuilder) Build() (*DocumentTextDataCheck, error) {
-	documentCheck := b.documentCheckBuilder.build()
+	docCheck := b.documentCheckBuilder.build()
 
 	return &DocumentTextDataCheck{
-		documentCheck: documentCheck,
+		documentCheck: docCheck,
 		Result: DocumentTextDataCheckResult{
-			checkResult:    documentCheck.Result,
+			checkResult:    docCheck.Result,
 			DocumentFields: b.documentFields,
 		},
 	}, nil

@@ -1,11 +1,8 @@
 package check
 
 import (
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
-)
-
-const (
-	zoom = "ZOOM"
 )
 
 // ZoomLivenessCheckBuilder builds a "ZOOM" LivenessCheck
@@ -33,7 +30,7 @@ func (b *ZoomLivenessCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *Z
 // Build creates a new LivenessCheck
 func (b *ZoomLivenessCheckBuilder) Build() (*LivenessCheck, error) {
 	livenessCheck := b.livenessCheckBuilder.
-		withLivenessType(zoom).
+		withLivenessType(constants.Zoom).
 		build()
 
 	return livenessCheck, nil
