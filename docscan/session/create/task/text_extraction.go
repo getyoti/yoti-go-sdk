@@ -12,17 +12,17 @@ type RequestedTextExtractionTask struct {
 }
 
 // Type is the type of the Requested Check
-func (t RequestedTextExtractionTask) Type() string {
+func (t *RequestedTextExtractionTask) Type() string {
 	return constants.IDDocumentTextDataExtraction
 }
 
 // Config is the configuration of the Requested Check
-func (t RequestedTextExtractionTask) Config() RequestedTaskConfig {
+func (t *RequestedTextExtractionTask) Config() RequestedTaskConfig {
 	return t.config
 }
 
 // MarshalJSON marshals the RequestedTextExtractionTask to JSON
-func (t RequestedTextExtractionTask) MarshalJSON() ([]byte, error) {
+func (t *RequestedTextExtractionTask) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type   string              `json:"type"`
 		Config RequestedTaskConfig `json:"config,omitempty"`

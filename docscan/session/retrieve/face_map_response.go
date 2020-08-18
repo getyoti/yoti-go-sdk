@@ -2,5 +2,5 @@ package retrieve
 
 // FaceMapResponse represents a FaceMap response object
 type FaceMapResponse struct {
-	Media MediaResponse `json:"media"`
+	Media *MediaResponse `json:"media"`
 }
