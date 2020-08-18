@@ -24,6 +24,11 @@ func (t *TaskResponse) GeneratedTextDataChecks() []*GeneratedTextDataCheckRespon
 	return t.generatedTextDataChecks
 }
 
+// TextExtractionTaskResponse represents a Text Extraction task response
+type TextExtractionTaskResponse struct {
+	*TaskResponse
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (t *TaskResponse) UnmarshalJSON(data []byte) error {
 	type result TaskResponse // declared as "type" to prevent recursive unmarshalling
