@@ -10,14 +10,14 @@ import (
 
 func TestResourceContainer_UnmarshalJSON(t *testing.T) {
 	zoomLivenessResourceResponse := &LivenessResourceResponse{
-		ResourceResponse: ResourceResponse{ID: "id1234"},
+		ResourceResponse: &ResourceResponse{ID: "id1234"},
 		LivenessType:     constants.Zoom,
 	}
 
 	var livenessResources []*LivenessResourceResponse
 	livenessResources = append(livenessResources, zoomLivenessResourceResponse)
 	livenessResources = append(livenessResources, &LivenessResourceResponse{
-		ResourceResponse: ResourceResponse{ID: "other_id1234"},
+		ResourceResponse: &ResourceResponse{ID: "other_id1234"},
 		LivenessType:     "OTHER_TYPE",
 	})
 

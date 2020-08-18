@@ -23,7 +23,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	textDataCheckResponse := &CheckResponse{
 		Type:   constants.IDDocumentTextDataCheck,
-		Report: ReportResponse{},
+		Report: &ReportResponse{},
 	}
 
 	livenessCheckResponse := &CheckResponse{
@@ -55,7 +55,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	assert.Check(t, result.FaceMatchChecks()[0].Created.Equal(testDate))
 
 	assert.Equal(t, 1, len(result.TextDataChecks()))
-	assert.DeepEqual(t, ReportResponse{}, result.TextDataChecks()[0].Report)
+	assert.DeepEqual(t, &ReportResponse{}, result.TextDataChecks()[0].Report)
 
 	assert.Equal(t, 1, len(result.LivenessChecks()))
 	assert.Check(t, result.LivenessChecks()[0].LastUpdated.Equal(testDate))
