@@ -12,19 +12,19 @@ type RequestedLivenessCheck struct {
 }
 
 // Type is the type of the Requested Check
-func (c RequestedLivenessCheck) Type() string {
+func (c *RequestedLivenessCheck) Type() string {
 	return constants.Liveness
 }
 
 // Config is the configuration of the Requested Check
-func (c RequestedLivenessCheck) Config() RequestedCheckConfig {
+func (c *RequestedLivenessCheck) Config() RequestedCheckConfig {
 	return RequestedCheckConfig(
 		c.config,
 	)
 }
 
 // MarshalJSON returns the JSON encoding
-func (c RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
+func (c *RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type   string               `json:"type"`
 		Config RequestedCheckConfig `json:"config,omitempty"`

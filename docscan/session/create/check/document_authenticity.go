@@ -12,19 +12,19 @@ type RequestedDocumentAuthenticityCheck struct {
 }
 
 // Type is the type of the Requested Check
-func (c RequestedDocumentAuthenticityCheck) Type() string {
+func (c *RequestedDocumentAuthenticityCheck) Type() string {
 	return constants.IDDocumentAuthenticity
 }
 
 // Config is the configuration of the Requested Check
-func (c RequestedDocumentAuthenticityCheck) Config() RequestedCheckConfig {
+func (c *RequestedDocumentAuthenticityCheck) Config() RequestedCheckConfig {
 	return RequestedCheckConfig(
 		c.config,
 	)
 }
 
 // MarshalJSON returns the JSON encoding
-func (c RequestedDocumentAuthenticityCheck) MarshalJSON() ([]byte, error) {
+func (c *RequestedDocumentAuthenticityCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type   string               `json:"type"`
 		Config RequestedCheckConfig `json:"config,omitempty"`

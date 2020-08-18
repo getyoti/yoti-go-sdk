@@ -12,16 +12,16 @@ type RequestedFaceMatchCheck struct {
 }
 
 // Type is the type of the Requested Check
-func (c RequestedFaceMatchCheck) Type() string {
+func (c *RequestedFaceMatchCheck) Type() string {
 	return constants.IDDocumentFaceMatch
 }
 
 // Config is the configuration of the Requested Check
-func (c RequestedFaceMatchCheck) Config() RequestedCheckConfig {
+func (c *RequestedFaceMatchCheck) Config() RequestedCheckConfig {
 	return c.config
 }
 
-func (c RequestedFaceMatchCheck) MarshalJSON() ([]byte, error) {
+func (c *RequestedFaceMatchCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type   string               `json:"type"`
 		Config RequestedCheckConfig `json:"config,omitempty"`
