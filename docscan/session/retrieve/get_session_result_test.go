@@ -18,7 +18,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	testDate := time.Date(2020, 01, 01, 1, 2, 3, 4, time.UTC)
 	faceMatchCheckResponse := &CheckResponse{
 		Type:    constants.IDDocumentFaceMatch,
-		Created: &testDate,
+		Created: testDate,
 	}
 
 	textDataCheckResponse := &CheckResponse{
@@ -28,7 +28,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	livenessCheckResponse := &CheckResponse{
 		Type:        constants.Liveness,
-		LastUpdated: &testDate,
+		LastUpdated: testDate,
 	}
 
 	var checks []*CheckResponse
