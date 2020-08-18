@@ -2,8 +2,6 @@ package profile
 
 import (
 	"encoding/base64"
-	"io/ioutil"
-	"log"
 	"strconv"
 	"strings"
 	"testing"
@@ -206,7 +204,6 @@ func TestProfile_GetAttribute_InvalidInt_ReturnsNil(t *testing.T) {
 
 	result := createProfileWithSingleAttribute(attr)
 
-	log.SetOutput(ioutil.Discard)
 	att := result.GetAttribute(attributeName)
 
 	assert.Assert(t, is.Nil(att))

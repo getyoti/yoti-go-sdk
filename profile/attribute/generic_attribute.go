@@ -1,8 +1,6 @@
 package attribute
 
 import (
-	"log"
-
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 )
@@ -18,7 +16,6 @@ func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
 	value, err := parseValue(a.ContentType, a.Value)
 
 	if err != nil {
-		log.Printf("Error creating new generic attribute: `%s`", err)
 		return nil
 	}
 

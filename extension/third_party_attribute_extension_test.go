@@ -3,7 +3,6 @@ package extension
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"testing"
 	"time"
 
@@ -36,9 +35,7 @@ func ExampleThirdPartyAttributeExtension() {
 
 func TestWithDefinitionShouldAddToList(t *testing.T) {
 	datetime, err := time.Parse("2006-01-02T15:04:05.000Z", "2019-10-30T12:10:09.458Z")
-	if err != nil {
-		log.Printf("Error parsing date, %v", err)
-	}
+	assert.NilError(t, err)
 
 	definitionList := []attribute.Definition{
 		createDefinitionByName("some_attribute"),
@@ -61,9 +58,7 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 
 func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 	datetime, err := time.Parse("2006-01-02T15:04:05.000Z", "2019-10-30T12:10:09.458Z")
-	if err != nil {
-		log.Printf("Error parsing date, %v", err)
-	}
+	assert.NilError(t, err)
 
 	definitionList := []attribute.Definition{
 		createDefinitionByName("some_attribute"),

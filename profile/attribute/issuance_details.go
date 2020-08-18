@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
@@ -80,7 +79,6 @@ func parseExpiryDate(expiryDateString string) (*time.Time, error) {
 
 	parsedTime, err := time.Parse(time.RFC3339Nano, expiryDateString)
 	if err != nil {
-		log.Printf("Unable to parse time value of: %q. Error: %q", expiryDateString, err)
 		return nil, err
 	}
 
