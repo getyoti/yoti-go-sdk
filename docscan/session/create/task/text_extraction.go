@@ -21,6 +21,7 @@ func (t RequestedTextExtractionTask) Config() RequestedTaskConfig {
 	return t.config
 }
 
+// MarshalJSON marshals the RequestedTextExtractionTask to JSON
 func (t RequestedTextExtractionTask) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type   string              `json:"type"`
