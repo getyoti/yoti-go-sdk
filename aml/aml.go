@@ -2,7 +2,6 @@ package aml
 
 import (
 	"encoding/json"
-	"log"
 )
 
 // Address Address for Anti Money Laundering (AML) purposes
@@ -32,8 +31,6 @@ func GetResult(response []byte) (Result, error) {
 	err := json.Unmarshal(response, &result)
 
 	if err != nil {
-		log.Printf(
-			"Unable to get AML result from response. Error: %s", err)
 		return result, err
 	}
 
