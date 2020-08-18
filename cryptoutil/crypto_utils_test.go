@@ -6,7 +6,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -95,7 +94,6 @@ func TestCryptoutil_DecipherAes(t *testing.T) {
 	bytes, err := DecipherAes(unwrappedKey, encryptedData.Iv, encryptedData.CipherText)
 	assert.NilError(t, err)
 	assert.Check(t, bytes != nil)
-	fmt.Println(string(bytes))
 }
 
 func TestCryptoutil_DecipherAes_EmptyCiphertextShouldError(t *testing.T) {

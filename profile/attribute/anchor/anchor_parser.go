@@ -6,7 +6,6 @@ import (
 	"encoding/asn1"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
@@ -49,7 +48,6 @@ func getAnchorValuesFromCertificate(parsedCerts []*x509.Certificate) (anchorType
 			)
 			parsedAnchorType, value, err := parseExtension(ext)
 			if err != nil {
-				log.Printf("error parsing anchor extension, %v", err)
 				continue
 			} else if parsedAnchorType == TypeUnknown {
 				continue

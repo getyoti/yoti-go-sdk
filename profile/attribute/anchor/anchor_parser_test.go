@@ -2,8 +2,6 @@ package anchor
 
 import (
 	"crypto/x509/pkix"
-	"io/ioutil"
-	"log"
 	"math/big"
 	"testing"
 	"time"
@@ -46,8 +44,6 @@ func TestAnchorParser_parseExtension_ShouldErrorForInvalidExtension(t *testing.T
 }
 
 func TestAnchorParser_Passport(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
-
 	anchorSlice := createAnchorSliceFromTestFile(t, "../../../test/fixtures/test_anchor_passport.txt")
 
 	parsedAnchors := ParseAnchors(anchorSlice)
