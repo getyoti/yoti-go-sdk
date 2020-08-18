@@ -2,7 +2,6 @@ package attribute
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -49,11 +48,9 @@ func parseValue(contentType yotiprotoattr.ContentType, byteValue []byte) (interf
 		return parseImageValue(contentType, byteValue)
 
 	case yotiprotoattr.ContentType_UNDEFINED:
-		log.Print("Content Type Undefined, attempting to parse it as a string")
 		return string(byteValue), nil
 
 	default:
-		log.Printf("Unknown type '%s', attempting to parse it as a String", contentType)
 		return string(byteValue), nil
 	}
 }

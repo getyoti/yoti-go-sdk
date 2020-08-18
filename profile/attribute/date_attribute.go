@@ -1,7 +1,6 @@
 package attribute
 
 import (
-	"log"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
@@ -18,7 +17,6 @@ type DateAttribute struct {
 func NewDate(a *yotiprotoattr.Attribute) (*DateAttribute, error) {
 	parsedTime, err := time.Parse("2006-01-02", string(a.Value))
 	if err != nil {
-		log.Printf("Unable to parse time value of: %q. Error: %q", a.Value, err)
 		return nil, err
 	}
 
