@@ -12,8 +12,8 @@ type CheckResponse struct {
 	ResourcesUsed  []string          `json:"resources_used"`
 	GeneratedMedia []*GeneratedMedia `json:"generated_media"`
 	Report         *ReportResponse   `json:"report"`
-	Created        time.Time         `json:"created"`
-	LastUpdated    time.Time         `json:"last_updated"`
+	Created        *time.Time        `json:"created"`
+	LastUpdated    *time.Time        `json:"last_updated"`
 }
 
 // AuthenticityCheckResponse represents a Document Authenticity check for a given session
