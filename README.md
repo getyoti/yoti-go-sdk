@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/getyoti/yoti-go-sdk)](https://goreportcard.com/report/github.com/getyoti/yoti-go-sdk)
 [![Build Status](https://travis-ci.com/getyoti/yoti-go-sdk.svg?branch=master)](https://travis-ci.com/getyoti/yoti-go-sdk)
-[![GoDoc](https://godoc.org/github.com/getyoti/yoti-go-sdk?status.svg)](https://godoc.org/github.com/getyoti/yoti-go-sdk)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/getyoti/yoti-go-sdk/v3)](https://pkg.go.dev/getyoti/yoti-go-sdk/v3)
 [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://github.com/getyoti/yoti-go-sdk/blob/master/LICENSE.md)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=coverage)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=bugs)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
@@ -15,6 +15,10 @@ Welcome to the Yoti Go SDK. This repo contains the tools and step by step instru
 
 1) [An Architectural view](#an-architectural-view) -
 High level overview of integration
+
+
+1) [Requirements](#requirements) -
+Requirements to use the SDK
 
 1) [Installing the SDK](#installing-the-sdk) -
 How to install our SDK
@@ -111,7 +115,7 @@ if err != nil {
 }
 ```
 
-## Handling Errors
+### Handling Errors
 If a network error occurs that can be handled by resending the request,
 the error returned by the SDK will implement the temporary error interface.
 This can be tested for using either `errors.Is` or a type assertion, and resent.
@@ -127,7 +131,7 @@ while true {
 }
 ```
 
-### Profile
+### Retrieveing the user profile
 
 You can then get the user profile from the activityDetails struct:
 
