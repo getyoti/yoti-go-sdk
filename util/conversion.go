@@ -4,10 +4,7 @@ import (
 	"encoding/base64"
 )
 
-func BytesToUtf8(bytes []byte) string {
-	return string(bytes)
-}
-
+// Base64ToBytes converts a base64 string to bytes
 func Base64ToBytes(base64Str string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(base64Str)
 }
