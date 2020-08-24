@@ -103,7 +103,7 @@ func DecryptToken(encryptedConnectToken string, key *rsa.PrivateKey) (result str
 		return "", err
 	}
 
-	return util.BytesToUtf8(decipheredBytes), nil
+	return string(decipheredBytes), nil
 }
 
 // UnwrapKey unwraps an RSA private key
