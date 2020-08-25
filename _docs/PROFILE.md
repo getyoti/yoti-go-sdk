@@ -19,19 +19,17 @@ To integrate your application with Yoti, your back-end must expose a GET endpoin
 The endpoint can be configured in Yoti Hub when you create/update your application.
 
 The image below shows how your application back-end and Yoti integrate in the context of a Login flow.
-Yoti SDK carries out for you steps 6, 7 ,8 and the profile decryption in step 9.
+Yoti SDK carries out for you steps 6, 7, 8, and the profile decryption in step 9.
 
 ![alt text](login_flow.png "Login flow")
-
-Yoti also allows you to enable user details verification from your mobile app by means of the [Android](https://github.com/getyoti/android-sdk-button) and [iOS](https://github.com/getyoti/ios-sdk-button) SDKs. In that scenario, your Yoti-enabled mobile app is playing both the role of the browser and the Yoti app. By the way, your back-end doesn't need to handle these cases in a significantly different way. You might just decide to handle the `User-Agent` header in order to provide different responses for web and mobile clients.
-
 
 ## Profile Retrieval
 
 When your application receives a one time use token via the exposed endpoint (it will be assigned to a query string parameter named `token`), you can easily retrieve the activity details by adding the following to your endpoint handler:
 
 ```Go
-activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
+var activityDetails profile.ActivityDetails
+activityDetails, err = client.GetActivityDetails(yotiOneTimeUseToken)
 if err != nil {
   // handle unhappy path
 }
@@ -40,16 +38,16 @@ if err != nil {
 ### Handling Errors
 If a network error occurs that can be handled by resending the request,
 the error returned by the SDK will implement the temporary error interface.
-This can be tested for using either `errors.Is` or a type assertion, and resent.
+This can be tested for using a type assertion, and resent.
 
 ```Go
-while true {
-  activityDetails, err := client.GetActivityDetails(token)
-  var temp interface{ Temporary() bool }
-  if !errors.Is(err, &temp) {
-    break
-  }
-  // Log the temporary error as a warning
+var activityDetails profile.ActivityDetails
+activityDetails, err = client.GetActivityDetails(yotiOneTimeUseToken)
+tempError, temporary := err.(interface {
+    Temporary() bool
+})
+if !temporary || !tempError.Temporary()	{
+    // can retry same request
 }
 ```
 
@@ -60,7 +58,7 @@ You can then get the user profile from the activityDetails struct:
 ```Go
 var rememberMeID string = activityDetails.RememberMeID()
 var parentRememberMeID string = activityDetails.ParentRememberMeID()
-var userProfile yoti.Profile = activityDetails.UserProfile
+var userProfile profile.UserProfile = activityDetails.UserProfile
 
 var selfie = userProfile.Selfie().Value()
 var givenNames string = userProfile.GivenNames().Value()
