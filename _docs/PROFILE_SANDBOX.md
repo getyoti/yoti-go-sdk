@@ -23,7 +23,7 @@ sandboxClient := sandbox.Client{
 
 Please do not open the PEM file, as this might corrupt the key, and you will need to redownload it.
 
-The format of `privateKey` passed in to the client needs to be `*rsa.PrivateKey`. See the [sandboxexample_test.go](sandboxexample_test.go) to see how to easily create this struct.
+The format of `privateKey` passed in to the client needs to be `*rsa.PrivateKey`. See the [sandboxexample_test.go](../_examples/profilesandbox/sandboxexample_test.go) to see how to easily create this struct.
 
 ## Examples
 
