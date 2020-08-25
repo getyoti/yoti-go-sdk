@@ -16,7 +16,6 @@ Welcome to the Yoti Go SDK. This repo contains the tools and step by step instru
 1) [An Architectural view](#an-architectural-view) -
 High level overview of integration
 
-
 1) [Requirements](#requirements) -
 Requirements to use the SDK
 
@@ -103,7 +102,7 @@ Where:
 
 * `path/to/your-application-pem-file.pem` is the path to the application pem file. It can be downloaded from the Keys tab in the [Yoti Hub](https://hub.yoti.com/).
 
-Please do not open the pem file as this might corrupt the key and you will need regenerate your key.
+Please do not open the pem file as this might corrupt the key, and you will need regenerate your key.
 
 Keeping your settings and access keys outside your repository is highly recommended. You can use a package like [godotenv](https://github.com/joho/godotenv) to manage environment variables more easily.
 
@@ -134,7 +133,7 @@ while true {
 }
 ```
 
-### Retrieveing the user profile
+### Retrieving the user profile
 
 You can then get the user profile from the activityDetails struct:
 
@@ -168,7 +167,7 @@ if err != nil {
 }
 ```
 
-If you have chosen Verify Condition on the Yoti Hub with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method, which requires the result to be cast to the original type:
+If you have chosen "Verify Condition" on the Yoti Hub with the age condition of "Over 18", you can retrieve the user information with the generic .GetAttribute method, which requires the result to be cast to the original type:
 
 ```Go
 userProfile.GetAttribute("age_over:18").Value().(string)
