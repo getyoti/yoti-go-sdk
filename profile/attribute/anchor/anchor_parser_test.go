@@ -134,3 +134,14 @@ func TestAnchors_None(t *testing.T) {
 	verifiers := GetVerifiers(anchorSlice)
 	assert.Equal(t, len(verifiers), 0, "GetVerifiers should not return anything with empty anchors")
 }
+
+func TestAnchorParser_InvalidSignedTimestamp(t *testing.T) {
+	var protoAnchors []*yotiprotoattr.Anchor
+	protoAnchors = append(protoAnchors, &yotiprotoattr.Anchor{
+		SignedTimeStamp: []byte("invalidProto"),
+	})
+	parsedAnchors := ParseAnchors(protoAnchors)
+
+	var expectedAnchors []*Anchor
+	assert.DeepEqual(t, expectedAnchors, parsedAnchors)
+}
