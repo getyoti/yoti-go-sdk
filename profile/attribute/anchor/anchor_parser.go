@@ -29,7 +29,12 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 
 		anchorType, extension := getAnchorValuesFromCertificate(parsedCerts)
 
-		processedAnchor := newAnchor(anchorType, parsedCerts, parseSignedTimestamp(protoAnchor.SignedTimeStamp), protoAnchor.SubType, extension)
+		parsedSignedTimestamp, err := parseSignedTimestamp(protoAnchor.SignedTimeStamp)
+		if err != nil {
+			continue
+		}
+
+		processedAnchor := newAnchor(anchorType, parsedCerts, *parsedSignedTimestamp, protoAnchor.SubType, extension)
 
 		processedAnchors = append(processedAnchors, processedAnchor)
 	}
@@ -85,13 +90,13 @@ func parseExtension(ext pkix.Extension) (anchorType Type, val string, err error)
 	return anchorType, val, nil
 }
 
-func parseSignedTimestamp(rawBytes []byte) yotiprotocom.SignedTimestamp {
+func parseSignedTimestamp(rawBytes []byte) (*yotiprotocom.SignedTimestamp, error) {
 	signedTimestamp := &yotiprotocom.SignedTimestamp{}
 	if err := proto.Unmarshal(rawBytes, signedTimestamp); err != nil {
-		signedTimestamp = nil
+		return signedTimestamp, err
 	}
 
-	return *signedTimestamp
+	return signedTimestamp, nil
 }
 
 func parseCertificates(rawCerts [][]byte) (result []*x509.Certificate) {
