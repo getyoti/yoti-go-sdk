@@ -17,7 +17,7 @@ type WantedAttributeBuilder struct {
 
 // WantedAttribute represents a wanted attribute in a dynamic sharing policy
 type WantedAttribute struct {
-	Name               string                `json:"name,omitempty"`
+	Name               string                `json:"name"`
 	Derivation         string                `json:"derivation,omitempty"`
 	Constraints        []constraintInterface `json:"constraints,omitempty"`
 	AcceptSelfAsserted *bool                 `json:"accept_self_asserted,omitempty"`
