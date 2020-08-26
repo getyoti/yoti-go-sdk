@@ -35,10 +35,10 @@ func (b *PolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *PolicyBu
 		b.wantedAttributes = make(map[string]WantedAttribute)
 	}
 	var key string
-	if attribute.Derivation != "" {
-		key = attribute.Derivation
+	if attribute.derivation != "" {
+		key = attribute.derivation
 	} else {
-		key = attribute.Name
+		key = attribute.name
 	}
 	b.wantedAttributes[key] = attribute
 	return b
