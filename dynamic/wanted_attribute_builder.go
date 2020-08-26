@@ -20,7 +20,7 @@ type WantedAttribute struct {
 	Name               string                `json:"name"`
 	Derivation         string                `json:"derivation,omitempty"`
 	Constraints        []constraintInterface `json:"constraints,omitempty"`
-	AcceptSelfAsserted *bool                 `json:"accept_self_asserted,omitempty"`
+	AcceptSelfAsserted bool                  `json:"accept_self_asserted"`
 }
 
 // WithName sets the name of the wanted attribute
@@ -43,7 +43,7 @@ func (builder *WantedAttributeBuilder) WithConstraint(constraint constraintInter
 
 // WithAcceptSelfAsserted allows self-asserted user details, such as those from Aadhar
 func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *WantedAttributeBuilder {
-	builder.attr.AcceptSelfAsserted = &accept
+	builder.attr.AcceptSelfAsserted = accept
 	return builder
 }
 
