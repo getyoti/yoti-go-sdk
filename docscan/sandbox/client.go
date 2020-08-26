@@ -92,7 +92,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 		return err
 	}
 
-	request, err := (&yotirequest.SignedRequest{
+	signedRequest, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
 		HTTPMethod: http.MethodPut,
 		BaseURL:    client.getAPIURL(),
@@ -105,7 +105,7 @@ func (client *Client) ConfigureSessionResponse(sessionID string, responseConfig 
 		return err
 	}
 
-	return client.makeConfigureResponseRequest(request)
+	return client.makeConfigureResponseRequest(signedRequest)
 }
 
 // ConfigureApplicationResponse configures the response for the application
@@ -116,7 +116,7 @@ func (client *Client) ConfigureApplicationResponse(responseConfig *request.Respo
 		return err
 	}
 
-	request, err := (&yotirequest.SignedRequest{
+	signedRequest, err := (&yotirequest.SignedRequest{
 		Key:        client.Key,
 		HTTPMethod: http.MethodPut,
 		BaseURL:    client.getAPIURL(),
@@ -128,5 +128,5 @@ func (client *Client) ConfigureApplicationResponse(responseConfig *request.Respo
 		return err
 	}
 
-	return client.makeConfigureResponseRequest(request)
+	return client.makeConfigureResponseRequest(signedRequest)
 }

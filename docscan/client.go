@@ -182,9 +182,9 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 		err = errors.New("unable to parse content type from response")
 	}
 
-	media := media.NewMedia(contentTypes[0], responseBytes)
+	result := media.NewMedia(contentTypes[0], responseBytes)
 
-	return media, err
+	return result, err
 }
 
 // DeleteMediaContent deletes media related to a Yoti Doc Scan session based on the supplied media ID
