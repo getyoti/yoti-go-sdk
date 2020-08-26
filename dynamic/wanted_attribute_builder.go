@@ -41,7 +41,7 @@ func (builder *WantedAttributeBuilder) WithConstraint(constraint constraintInter
 	return builder
 }
 
-// WithAcceptSelfAsserted enables self-asserted user details such as from Aadhar
+// WithAcceptSelfAsserted allows self-asserted user details, such as those from Aadhar
 func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *WantedAttributeBuilder {
 	builder.attr.AcceptSelfAsserted = &accept
 	return builder
