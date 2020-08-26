@@ -57,7 +57,7 @@ func getAPIURL() string {
 	if value, exists := os.LookupEnv("YOTI_DOC_SCAN_API_URL"); exists && value != "" {
 		return value
 	} else {
-		return "https://api.yoti.com/sandbox/idverify/v1"
+		return "https://api.yoti.com/idverify/v1"
 	}
 }
 
@@ -102,6 +102,10 @@ func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*creat
 
 // GetSession retrieves the state of a previously created Yoti Doc Scan session
 func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error) {
+	if sessionID == "" {
+		return nil, errors.New("sessionID cannot be an empty string")
+	}
+
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodGet,
@@ -133,6 +137,10 @@ func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error
 
 // DeleteSession deletes a previously created Yoti Doc Scan session and all of its related resources
 func (c *Client) DeleteSession(sessionID string) error {
+	if sessionID == "" {
+		return errors.New("sessionID cannot be an empty string")
+	}
+
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodDelete,
@@ -154,6 +162,11 @@ func (c *Client) DeleteSession(sessionID string) error {
 
 // GetMediaContent retrieves media related to a Yoti Doc Scan session based on the supplied media ID
 func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error) {
+	err := c.validateParameters(sessionID, mediaID)
+	if err != nil {
+		return nil, err
+	}
+
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodGet,
@@ -189,6 +202,11 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 
 // DeleteMediaContent deletes media related to a Yoti Doc Scan session based on the supplied media ID
 func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
+	err := c.validateParameters(sessionID, mediaID)
+	if err != nil {
+		return err
+	}
+
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodDelete,
@@ -236,6 +254,22 @@ func (c *Client) GetSupportedDocuments() (*supported.DocumentsResponse, error) {
 	err = json.Unmarshal(responseBytes, &result)
 
 	return &result, err
+}
+
+func (c *Client) validateParameters(sessionID string, mediaID string) error {
+	if sessionID == "" {
+		return errors.New("sessionID cannot be an empty string")
+	}
+
+	if mediaID == "" {
+		return errors.New("mediaID cannot be an empty string")
+	}
+
+	if c == nil {
+		return errors.New("client is not initialised")
+	}
+
+	return nil
 }
 
 // jsonMarshaler is a mockable JSON marshaler
