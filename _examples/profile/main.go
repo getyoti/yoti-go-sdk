@@ -31,7 +31,7 @@ var (
 	errApplyingTheParsedTemplate = "Error applying the parsed template: "
 	errParsingTheTemplate        = "Error parsing the template: "
 	profileEndpoint              = "/profile"
-	ScenarioBuilderErr           = "Scenario Builder Error: `%s`"
+	scenarioBuilderErr           = "Scenario Builder Error: `%s`"
 )
 
 func home(w http.ResponseWriter, req *http.Request) {
@@ -79,7 +79,7 @@ func sourceConstraints(w http.ResponseWriter, req *http.Request) {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf(ScenarioBuilderErr, err),
+			fmt.Sprintf(scenarioBuilderErr, err),
 		)))
 		return
 	}
@@ -93,7 +93,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf(ScenarioBuilderErr, err),
+			fmt.Sprintf(scenarioBuilderErr, err),
 		)))
 		return
 	}
@@ -102,7 +102,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf(ScenarioBuilderErr, err),
+			fmt.Sprintf(scenarioBuilderErr, err),
 		)))
 		return
 	}

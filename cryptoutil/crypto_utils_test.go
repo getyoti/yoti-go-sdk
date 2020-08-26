@@ -70,7 +70,7 @@ VGVzdCBTdHJpbmc=
 }
 
 func TestCryptoutil_ParseRSAKey_InvalidShouldFail(t *testing.T) {
-	testPEM := []byte{}
+	var testPEM []byte
 
 	_, err := ParseRSAKey(testPEM)
 
