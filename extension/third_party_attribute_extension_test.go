@@ -23,10 +23,15 @@ func ExampleThirdPartyAttributeExtension() {
 		return
 	}
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).
+	extension, err := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinition(attributeDefinition).
 		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
 
 	data, _ := extension.MarshalJSON()
 	fmt.Println(string(data))
@@ -44,12 +49,13 @@ func TestWithDefinitionShouldAddToList(t *testing.T) {
 
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).
+	extension, err := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinitions(definitionList).
 		WithDefinition(someOtherDefinition).
 		Build()
 
+	assert.NilError(t, err)
 	assert.Equal(t, len(extension.definitions), 3)
 	assert.Equal(t, extension.definitions[0].Name(), "some_attribute")
 	assert.Equal(t, extension.definitions[1].Name(), "some_other_attribute")
@@ -67,12 +73,13 @@ func TestWithDefinitionsShouldOverwriteList(t *testing.T) {
 
 	someOtherDefinition := createDefinitionByName("wanted_definition")
 
-	extension := (&ThirdPartyAttributeExtensionBuilder{}).
+	extension, err := (&ThirdPartyAttributeExtensionBuilder{}).
 		WithExpiryDate(&datetime).
 		WithDefinition(someOtherDefinition).
 		WithDefinitions(definitionList).
 		Build()
 
+	assert.NilError(t, err)
 	assert.Equal(t, len(extension.definitions), 2)
 	assert.Equal(t, extension.definitions[0].Name(), "some_attribute")
 	assert.Equal(t, extension.definitions[1].Name(), "some_other_attribute")
@@ -100,10 +107,12 @@ func TestExpiryDatesAreFormattedCorrectly(t *testing.T) {
 	attributeDefinition := attribute.NewAttributeDefinition("some_value")
 
 	for _, date := range expiryDates {
-		extension := (&ThirdPartyAttributeExtensionBuilder{}).
+		extension, err := (&ThirdPartyAttributeExtensionBuilder{}).
 			WithExpiryDate(&date.in).
 			WithDefinition(attributeDefinition).
 			Build()
+
+		assert.NilError(t, err)
 
 		marshalledJson, _ := extension.MarshalJSON()
 
