@@ -211,8 +211,8 @@ func (c *webContext) iConfigureTheSessionResponse() error {
 
 	err = c.client.ConfigureSessionResponse(sessionId, responseConfig)
 	if err != nil {
-		request, _ := json.Marshal(responseConfig)
-		return errors.New(string(request) + err.Error())
+		req, _ := json.Marshal(responseConfig)
+		return errors.New(string(req) + err.Error())
 	}
 
 	return nil
