@@ -34,6 +34,7 @@ func ExampleSessionSpecificationBuilder_Build() {
 	}
 
 	livenessCheck, err := check.NewRequestedLivenessCheckBuilder().
+		ForLivenessType("LIVENESSTYPE").
 		WithMaxRetries(5).
 		Build()
 	if err != nil {
@@ -77,5 +78,5 @@ func ExampleSessionSpecificationBuilder_Build() {
 
 	data, _ := json.Marshal(sessionSpecification)
 	fmt.Println(string(data))
-	// Output: {"client_session_token_ttl":789,"resources_ttl":456,"user_tracking_id":"some-tracking-id","notifications":{"topics":["some-topic"]},"requested_checks":[{"type":"ID_DOCUMENT_FACE_MATCH","config":{"manual_check":"NEVER"}},{"type":"ID_DOCUMENT_AUTHENTICITY","config":{}},{"type":"LIVENESS","config":{"max_retries":5}}],"requested_tasks":[{"type":"ID_DOCUMENT_TEXT_DATA_EXTRACTION","config":{"manual_check":"FALLBACK"}}],"sdk_config":{"allowed_capture_methods":"CAMERA"}}
+	// Output: {"client_session_token_ttl":789,"resources_ttl":456,"user_tracking_id":"some-tracking-id","notifications":{"topics":["some-topic"]},"requested_checks":[{"type":"ID_DOCUMENT_FACE_MATCH","config":{"manual_check":"NEVER"}},{"type":"ID_DOCUMENT_AUTHENTICITY","config":{}},{"type":"LIVENESS","config":{"max_retries":5,"liveness_type":"LIVENESSTYPE"}}],"requested_tasks":[{"type":"ID_DOCUMENT_TEXT_DATA_EXTRACTION","config":{"manual_check":"FALLBACK"}}],"sdk_config":{"allowed_capture_methods":"CAMERA"}}
 }
