@@ -1,7 +1,6 @@
 package dynamic
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
@@ -18,7 +17,7 @@ func ExamplePolicyBuilder_WithFamilyName() {
 		return
 	}
 
-	data, _ := json.Marshal(policy.attributes[0])
+	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"family_name","accept_self_asserted":false}
 }
@@ -28,7 +27,7 @@ func ExamplePolicyBuilder_WithDocumentDetails() {
 	if err != nil {
 		return
 	}
-	data, _ := json.Marshal(policy.attributes[0])
+	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"document_details","accept_self_asserted":false}
 }
@@ -40,7 +39,7 @@ func ExamplePolicyBuilder_WithDocumentImages() {
 		return
 	}
 
-	data, _ := json.Marshal(policy.attributes[0])
+	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"document_images","accept_self_asserted":false}
 }
@@ -52,7 +51,7 @@ func ExamplePolicyBuilder_WithSelfie() {
 		return
 	}
 
-	data, _ := json.Marshal(policy.attributes[0])
+	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"selfie","accept_self_asserted":false}
 }
@@ -70,7 +69,7 @@ func ExamplePolicyBuilder_WithAgeOver() {
 		return
 	}
 
-	data, _ := json.Marshal(policy.attributes[0])
+	data, _ := policy.attributes[0].MarshalJSON()
 	fmt.Println(string(data))
 	// Output: {"name":"date_of_birth","derivation":"age_over:18","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"DRIVING_LICENCE","sub_type":""}],"soft_preference":false}}],"accept_self_asserted":false}
 }
@@ -240,8 +239,8 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *
 	policy, err := builder.Build()
 	assert.NilError(t, err)
 	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].Name, attributeName)
-	assert.Equal(t, len(policy.attributes[0].Constraints), 1)
+	assert.Equal(t, policy.attributes[0].name, attributeName)
+	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPanic(t *testing.T) {
@@ -288,8 +287,8 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *te
 	policy, err := builder.Build()
 	assert.NilError(t, err)
 	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].Name, consts.AttrDateOfBirth)
-	assert.Equal(t, len(policy.attributes[0].Constraints), 1)
+	assert.Equal(t, policy.attributes[0].name, consts.AttrDateOfBirth)
+	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t *testing.T) {
@@ -307,8 +306,8 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t 
 	policy, err := builder.Build()
 	assert.NilError(t, err)
 	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].Name, consts.AttrDateOfBirth)
-	assert.Equal(t, len(policy.attributes[0].Constraints), 1)
+	assert.Equal(t, policy.attributes[0].name, consts.AttrDateOfBirth)
+	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
 func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(t *testing.T) {

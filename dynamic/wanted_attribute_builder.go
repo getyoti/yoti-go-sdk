@@ -1,6 +1,7 @@
 package dynamic
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -17,46 +18,61 @@ type WantedAttributeBuilder struct {
 
 // WantedAttribute represents a wanted attribute in a dynamic sharing policy
 type WantedAttribute struct {
-	Name               string                `json:"name"`
-	Derivation         string                `json:"derivation,omitempty"`
-	Constraints        []constraintInterface `json:"constraints,omitempty"`
-	AcceptSelfAsserted bool                  `json:"accept_self_asserted"`
+	name               string
+	derivation         string
+	constraints        []constraintInterface
+	acceptSelfAsserted bool
 }
 
 // WithName sets the name of the wanted attribute
 func (builder *WantedAttributeBuilder) WithName(name string) *WantedAttributeBuilder {
-	builder.attr.Name = name
+	builder.attr.name = name
 	return builder
 }
 
 // WithDerivation sets the derivation
 func (builder *WantedAttributeBuilder) WithDerivation(derivation string) *WantedAttributeBuilder {
-	builder.attr.Derivation = derivation
+	builder.attr.derivation = derivation
 	return builder
 }
 
 // WithConstraint adds a constraint to a wanted attribute
 func (builder *WantedAttributeBuilder) WithConstraint(constraint constraintInterface) *WantedAttributeBuilder {
-	builder.attr.Constraints = append(builder.attr.Constraints, constraint)
+	builder.attr.constraints = append(builder.attr.constraints, constraint)
 	return builder
 }
 
 // WithAcceptSelfAsserted allows self-asserted user details, such as those from Aadhar
 func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *WantedAttributeBuilder {
-	builder.attr.AcceptSelfAsserted = accept
+	builder.attr.acceptSelfAsserted = accept
 	return builder
 }
 
 // Build generates the wanted attribute's specification
 func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
-	if builder.attr.Constraints == nil {
-		builder.attr.Constraints = make([]constraintInterface, 0)
+	if builder.attr.constraints == nil {
+		builder.attr.constraints = make([]constraintInterface, 0)
 	}
 
 	var err error
-	if len(builder.attr.Name) == 0 {
+	if len(builder.attr.name) == 0 {
 		err = errors.New("Wanted attribute names must not be empty")
 	}
 
 	return builder.attr, err
+}
+
+// MarshalJSON returns the JSON encoding
+func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Name               string                `json:"name"`
+		Derivation         string                `json:"derivation,omitempty"`
+		Constraints        []constraintInterface `json:"constraints,omitempty"`
+		AcceptSelfAsserted bool                  `json:"accept_self_asserted"`
+	}{
+		Name:               attr.name,
+		Derivation:         attr.derivation,
+		Constraints:        attr.constraints,
+		AcceptSelfAsserted: attr.acceptSelfAsserted,
+	})
 }
