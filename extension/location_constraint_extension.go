@@ -39,8 +39,8 @@ func (builder *LocationConstraintExtensionBuilder) WithRadius(radius float64) *L
 	return builder
 }
 
-// WithUncertainty sets the max uncertainty allowed by the location constraint extension
-func (builder *LocationConstraintExtensionBuilder) WithUncertainty(uncertainty float64) *LocationConstraintExtensionBuilder {
+// WithMaxUncertainty sets the max uncertainty allowed by the location constraint extension
+func (builder *LocationConstraintExtensionBuilder) WithMaxUncertainty(uncertainty float64) *LocationConstraintExtensionBuilder {
 	builder.extension.uncertainty = uncertainty
 	return builder
 }
