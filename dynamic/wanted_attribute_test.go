@@ -1,7 +1,6 @@
 package dynamic
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -13,7 +12,7 @@ func ExampleWantedAttributeBuilder_WithName() {
 		return
 	}
 
-	fmt.Println(attribute.Name)
+	fmt.Println(attribute.name)
 	// Output: TEST NAME
 }
 
@@ -27,7 +26,7 @@ func ExampleWantedAttributeBuilder_WithDerivation() {
 		return
 	}
 
-	fmt.Println(attribute.Derivation)
+	fmt.Println(attribute.derivation)
 	// Output: TEST DERIVATION
 }
 
@@ -48,7 +47,7 @@ func ExampleWantedAttributeBuilder_WithConstraint() {
 		return
 	}
 
-	json, _ := json.Marshal(attribute)
+	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
 	// Output: {"name":"TEST NAME","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}],"accept_self_asserted":false}
 }
@@ -63,7 +62,7 @@ func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
 		return
 	}
 
-	json, _ := json.Marshal(attribute)
+	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
 	// Output: {"name":"TEST NAME","accept_self_asserted":true}
 }
@@ -78,7 +77,7 @@ func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted_false() {
 		return
 	}
 
-	json, _ := json.Marshal(attribute)
+	json, _ := attribute.MarshalJSON()
 	fmt.Println(string(json))
 	// Output: {"name":"TEST NAME","accept_self_asserted":false}
 }
