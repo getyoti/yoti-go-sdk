@@ -1,0 +1,24 @@
+<table class="table table-striped">
+    <tbody>
+    <tr>
+        <td>ID</td>
+        <td>{{ .ID }}</td>
+    </tr>
+    <tr>
+        <td>State</td>
+        <td>
+             <span class="badge badge-{{ if eq .State "DONE"}}success{{ else }}secondary{{ end }}">
+                 {{ .State }}
+             </span>
+        </td>
+    </tr>
+    <tr>
+        <td>Created</td>
+        <td>{{ .Created }}</td>
+    </tr>
+    <tr>
+        <td>Last Updated</td>
+        <td>{{ .LastUpdated }}</td>
+    </tr>
+    </tbody>
+</table>
