@@ -21,6 +21,7 @@ func (c *RequestedFaceMatchCheck) Config() RequestedCheckConfig {
 	return c.config
 }
 
+// MarshalJSON returns the JSON encoding
 func (c *RequestedFaceMatchCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type   string               `json:"type"`
