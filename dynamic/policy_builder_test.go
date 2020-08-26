@@ -20,7 +20,7 @@ func ExamplePolicyBuilder_WithFamilyName() {
 
 	data, _ := json.Marshal(policy.attributes[0])
 	fmt.Println(string(data))
-	// Output: {"name":"family_name"}
+	// Output: {"name":"family_name","accept_self_asserted":false}
 }
 
 func ExamplePolicyBuilder_WithDocumentDetails() {
@@ -30,7 +30,7 @@ func ExamplePolicyBuilder_WithDocumentDetails() {
 	}
 	data, _ := json.Marshal(policy.attributes[0])
 	fmt.Println(string(data))
-	// Output: {"name":"document_details"}
+	// Output: {"name":"document_details","accept_self_asserted":false}
 }
 
 func ExamplePolicyBuilder_WithDocumentImages() {
@@ -42,7 +42,7 @@ func ExamplePolicyBuilder_WithDocumentImages() {
 
 	data, _ := json.Marshal(policy.attributes[0])
 	fmt.Println(string(data))
-	// Output: {"name":"document_images"}
+	// Output: {"name":"document_images","accept_self_asserted":false}
 }
 
 func ExamplePolicyBuilder_WithSelfie() {
@@ -54,7 +54,7 @@ func ExamplePolicyBuilder_WithSelfie() {
 
 	data, _ := json.Marshal(policy.attributes[0])
 	fmt.Println(string(data))
-	// Output: {"name":"selfie"}
+	// Output: {"name":"selfie","accept_self_asserted":false}
 }
 
 func ExamplePolicyBuilder_WithAgeOver() {
@@ -72,7 +72,7 @@ func ExamplePolicyBuilder_WithAgeOver() {
 
 	data, _ := json.Marshal(policy.attributes[0])
 	fmt.Println(string(data))
-	// Output: {"name":"date_of_birth","derivation":"age_over:18","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"DRIVING_LICENCE","sub_type":""}],"soft_preference":false}}]}
+	// Output: {"name":"date_of_birth","derivation":"age_over:18","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"DRIVING_LICENCE","sub_type":""}],"soft_preference":false}}],"accept_self_asserted":false}
 }
 
 func ExamplePolicyBuilder_WithSelfieAuth() {
@@ -114,7 +114,7 @@ func ExamplePolicyBuilder_WithFullName() {
 
 	json, _ := policy.MarshalJSON()
 	fmt.Println(string(json))
-	// Output: {"wanted":[{"name":"full_name","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASSPORT","sub_type":""}],"soft_preference":false}}]}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"full_name","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASSPORT","sub_type":""}],"soft_preference":false}}],"accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder() {
@@ -127,7 +127,7 @@ func ExamplePolicyBuilder() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"full_name"}],"wanted_auth_types":[2],"wanted_remember_me":true}
+	// Output: {"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":true}
 }
 
 func ExamplePolicyBuilder_WithAgeUnder() {
@@ -139,7 +139,7 @@ func ExamplePolicyBuilder_WithAgeUnder() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"date_of_birth","derivation":"age_under:18"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"date_of_birth","derivation":"age_under:18","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithGivenNames() {
@@ -151,7 +151,7 @@ func ExamplePolicyBuilder_WithGivenNames() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"given_names"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"given_names","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithDateOfBirth() {
@@ -163,7 +163,7 @@ func ExamplePolicyBuilder_WithDateOfBirth() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"date_of_birth"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"date_of_birth","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithGender() {
@@ -175,7 +175,7 @@ func ExamplePolicyBuilder_WithGender() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"gender"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"gender","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithPostalAddress() {
@@ -187,7 +187,7 @@ func ExamplePolicyBuilder_WithPostalAddress() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"postal_address"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"postal_address","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithStructuredPostalAddress() {
@@ -199,7 +199,7 @@ func ExamplePolicyBuilder_WithStructuredPostalAddress() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"structured_postal_address"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"structured_postal_address","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithNationality() {
@@ -211,7 +211,7 @@ func ExamplePolicyBuilder_WithNationality() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"nationality"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"nationality","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func ExamplePolicyBuilder_WithPhoneNumber() {
@@ -223,7 +223,7 @@ func ExamplePolicyBuilder_WithPhoneNumber() {
 
 	data, _ := policy.MarshalJSON()
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"phone_number"}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"wanted":[{"name":"phone_number","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
 func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *testing.T) {

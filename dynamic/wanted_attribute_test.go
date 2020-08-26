@@ -50,7 +50,7 @@ func ExampleWantedAttributeBuilder_WithConstraint() {
 
 	json, _ := json.Marshal(attribute)
 	fmt.Println(string(json))
-	// Output: {"name":"TEST NAME","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}]}
+	// Output: {"name":"TEST NAME","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}],"accept_self_asserted":false}
 }
 
 func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
