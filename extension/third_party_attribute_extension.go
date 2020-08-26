@@ -41,8 +41,8 @@ func (builder *ThirdPartyAttributeExtensionBuilder) WithDefinitions(definitions 
 }
 
 // Build creates a ThirdPartyAttributeExtension using the supplied values
-func (builder *ThirdPartyAttributeExtensionBuilder) Build() ThirdPartyAttributeExtension {
-	return builder.extension
+func (builder *ThirdPartyAttributeExtensionBuilder) Build() (ThirdPartyAttributeExtension, error) {
+	return builder.extension, nil
 }
 
 // MarshalJSON returns the JSON encoding

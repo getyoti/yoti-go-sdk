@@ -9,7 +9,7 @@ func ExampleLocationConstraintExtension() {
 		WithLatitude(51.511831).
 		WithLongitude(-0.081446).
 		WithRadius(0.001).
-		WithUncertainty(0.001).
+		WithMaxUncertainty(0.001).
 		Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
