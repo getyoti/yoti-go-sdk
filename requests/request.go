@@ -16,7 +16,7 @@ func Execute(httpClient HttpClient, request *http.Request, httpErrorMessages ...
 	statusCodeIsFailure := response.StatusCode >= 300 || response.StatusCode < 200
 
 	if statusCodeIsFailure {
-		return response, yotierror.New(response, httpErrorMessages...)
+		return response, yotierror.NewResponseError(response, httpErrorMessages...)
 	}
 
 	return response, nil
