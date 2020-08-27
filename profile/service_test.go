@@ -81,7 +81,7 @@ func TestProfileService_RequestErrIsReturned(t *testing.T) {
 
 func TestProfileService_InvalidToken(t *testing.T) {
 	_, err := GetActivityDetails(nil, "", "sdkId", "https://apiurl", getValidKey())
-	assert.ErrorContains(t, err, "invalid Token")
+	assert.ErrorContains(t, err, "invalid token")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
