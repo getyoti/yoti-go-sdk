@@ -23,7 +23,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 		},
 	})
 
-	err := New(
+	err := NewResponseError(
 		&http.Response{
 			StatusCode: 401,
 			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -39,7 +39,7 @@ func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
 		Message: "some message",
 	})
 
-	err := New(
+	err := NewResponseError(
 		&http.Response{
 			StatusCode: 400,
 			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -50,7 +50,7 @@ func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
 }
 
 func TestError_ShouldReturnFormattedError_ReturnWrappedErrorByDefault(t *testing.T) {
-	err := New(
+	err := NewResponseError(
 		&http.Response{
 			StatusCode: 401,
 		},
@@ -64,7 +64,7 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *t
 		StatusCode: 400,
 		Body:       ioutil.NopCloser(strings.NewReader("some invalid JSON")),
 	}
-	err := New(
+	err := NewResponseError(
 		response,
 	)
 
@@ -83,7 +83,7 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 		StatusCode: 400,
 		Body:       ioutil.NopCloser(strings.NewReader(jsonString)),
 	}
-	err := New(
+	err := NewResponseError(
 		response,
 	)
 
@@ -101,7 +101,7 @@ func TestError_ShouldReturnCustomErrorForCode(t *testing.T) {
 		StatusCode: 404,
 		Body:       ioutil.NopCloser(strings.NewReader("some body")),
 	}
-	err := New(
+	err := NewResponseError(
 		response,
 		map[int]string{404: "some message"},
 	)
@@ -114,7 +114,7 @@ func TestError_ShouldReturnCustomDefaultError(t *testing.T) {
 		StatusCode: 500,
 		Body:       ioutil.NopCloser(strings.NewReader("some body")),
 	}
-	err := New(
+	err := NewResponseError(
 		response,
 		map[int]string{-1: "some default message"},
 	)
@@ -126,7 +126,7 @@ func TestError_ShouldReturnTemporaryForServerError(t *testing.T) {
 	response := &http.Response{
 		StatusCode: 500,
 	}
-	err := New(
+	err := NewResponseError(
 		response,
 	)
 
@@ -137,7 +137,7 @@ func TestError_ShouldNotReturnTemporaryForClientError(t *testing.T) {
 	response := &http.Response{
 		StatusCode: 400,
 	}
-	err := New(
+	err := NewResponseError(
 		response,
 	)
 
