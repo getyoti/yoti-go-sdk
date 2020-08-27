@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	authTypeSelfieConst = iota + 1
-	authTypePinConst
+	authTypeSelfieConst = 1
+	authTypePinConst    = 2
 )
 
 // PolicyBuilder constructs a json payload specifying the dynamic policy
