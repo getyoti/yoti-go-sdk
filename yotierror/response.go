@@ -40,8 +40,8 @@ type Error struct {
 	Response *http.Response
 }
 
-// New creates a new Error
-func New(response *http.Response, httpErrorMessages ...map[int]string) *Error {
+// NewResponseError creates a new Error
+func NewResponseError(response *http.Response, httpErrorMessages ...map[int]string) *Error {
 	return &Error{
 		message:  formatResponseMessage(response, httpErrorMessages...),
 		Response: response,
