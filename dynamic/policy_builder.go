@@ -45,7 +45,8 @@ func (b *PolicyBuilder) WithWantedAttribute(attribute WantedAttribute) *PolicyBu
 }
 
 // WithWantedAttributeByName adds an attribute by its name. This is not the preferred
-// way of adding an attribute - instead use the other methods below
+// way of adding an attribute - instead use the other methods below.
+// Options allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithWantedAttributeByName(name string, options ...interface{}) *PolicyBuilder {
 	attributeBuilder := (&WantedAttributeBuilder{}).WithName(name)
 
@@ -68,73 +69,74 @@ func (b *PolicyBuilder) WithWantedAttributeByName(name string, options ...interf
 	return b
 }
 
-// WithFamilyName adds the family name attribute
+// WithFamilyName adds the family name attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithFamilyName(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrFamilyName, options...)
 }
 
-// WithGivenNames adds the given names attribute
+// WithGivenNames adds the given names attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithGivenNames(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrGivenNames, options...)
 }
 
-// WithFullName adds the full name attribute
+// WithFullName adds the full name attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithFullName(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrFullName, options...)
 }
 
-// WithDateOfBirth adds the date of birth attribute
+// WithDateOfBirth adds the date of birth attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithDateOfBirth(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrDateOfBirth, options...)
 }
 
-// WithGender adds the gender attribute
+// WithGender adds the gender attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithGender(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrGender, options...)
 }
 
-// WithPostalAddress adds the postal address attribute
+// WithPostalAddress adds the postal address attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithPostalAddress(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrAddress, options...)
 }
 
-// WithStructuredPostalAddress adds the structured postal address attribute
+// WithStructuredPostalAddress adds the structured postal address attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithStructuredPostalAddress(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrStructuredPostalAddress, options...)
 }
 
-// WithNationality adds the nationality attribute
+// WithNationality adds the nationality attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithNationality(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrNationality, options...)
 }
 
-// WithPhoneNumber adds the phone number attribute
+// WithPhoneNumber adds the phone number attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithPhoneNumber(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrMobileNumber, options...)
 }
 
-// WithSelfie adds the selfie attribute
+// WithSelfie adds the selfie attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithSelfie(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrSelfie, options...)
 }
 
-// WithEmail adds the email address attribute
+// WithEmail adds the email address attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithEmail(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrEmailAddress, options...)
 }
 
-// WithDocumentImages adds the document images attribute
+// WithDocumentImages adds the document images attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithDocumentImages(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrDocumentImages, options...)
 }
 
-// WithDocumentDetails adds the document details attribute
+// WithDocumentDetails adds the document details attribute, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithDocumentDetails(options ...interface{}) *PolicyBuilder {
 	return b.WithWantedAttributeByName(consts.AttrDocumentDetails, options...)
 }
 
 // WithAgeDerivedAttribute is a helper method for setting age based derivations
-// Prefer to use WithAgeOver and WithAgeUnder instead of using this directly
+// Prefer to use WithAgeOver and WithAgeUnder instead of using this directly.
+// "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...interface{}) *PolicyBuilder {
 	var attributeBuilder WantedAttributeBuilder
 	attributeBuilder.
@@ -159,14 +161,14 @@ func (b *PolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...in
 	return b.WithWantedAttribute(attr)
 }
 
-// WithAgeOver sets this dynamic policy as requesting whether the user is older
-// than a certain age
+// WithAgeOver sets this dynamic policy as requesting whether the user is older than a certain age.
+// "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithAgeOver(age int, options ...interface{}) *PolicyBuilder {
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeOver, age), options...)
 }
 
 // WithAgeUnder sets this dynamic policy as requesting whether the user is younger
-// than a certain age
+// than a certain age, "options" allows one or more options to be specified e.g. SourceConstraint
 func (b *PolicyBuilder) WithAgeUnder(age int, options ...interface{}) *PolicyBuilder {
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeUnder, age), options...)
 }
