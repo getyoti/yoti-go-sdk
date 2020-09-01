@@ -42,13 +42,23 @@ func home(w http.ResponseWriter, req *http.Request) {
 	t, err := template.ParseFiles("login.html")
 
 	if err != nil {
-		panic(errParsingTheTemplate + err.Error())
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf(errParsingTheTemplate+err.Error()),
+		)))
+		return
 	}
 
 	err = t.Execute(w, templateVars)
 
 	if err != nil {
-		panic(errApplyingTheParsedTemplate + err.Error())
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf(errApplyingTheParsedTemplate+err.Error()),
+		)))
+		return
 	}
 }
 
@@ -148,14 +158,25 @@ func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, sc
 		"yotiShareURL":    share.ShareURL,
 	}
 
-	t, err := template.ParseFiles("dynamic-share.html")
+	var t *template.Template
+	t, err = template.ParseFiles("dynamic-share.html")
 	if err != nil {
-		panic("Error parsing template: " + err.Error())
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("error parsing template: "+err.Error()),
+		)))
+		return
 	}
 
 	err = t.Execute(w, templateVars)
 	if err != nil {
-		panic("Error applying the parsed template: " + err.Error())
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("error applying the parsed template: "+err.Error()),
+		)))
+		return
 	}
 }
 
@@ -274,7 +295,12 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	err = t.Execute(w, templateVars)
 
 	if err != nil {
-		panic("Error applying the parsed profile template. Error: " + err.Error())
+		errorPage(w, r.WithContext(context.WithValue(
+			r.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error applying the parsed profile template. Error: `%s`", err),
+		)))
+		return
 	}
 }
 
