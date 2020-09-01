@@ -97,9 +97,11 @@
             </div>
         {{ end }}
 
-        <div class="yoti-profile-name">
-            {{ .profile.FullName.Value }}
-        </div>
+        {{ if .profile.FullName  }}
+            <div class="yoti-profile-name">
+                {{ .profile.FullName.Value }}
+            </div>
+        {{ end }}
     </section>
 
     <section class="yoti-attributes-section">
