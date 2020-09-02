@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/getyoti/yoti-go-sdk)](https://goreportcard.com/report/github.com/getyoti/yoti-go-sdk)
 [![Build Status](https://travis-ci.com/getyoti/yoti-go-sdk.svg?branch=master)](https://travis-ci.com/getyoti/yoti-go-sdk)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/getyoti/yoti-go-sdk/v3)](https://pkg.go.dev/getyoti/yoti-go-sdk/v3)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/getyoti/yoti-go-sdk/v3)](https://pkg.go.dev/github.com/getyoti/yoti-go-sdk/v3?tab=doc)
 [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://github.com/getyoti/yoti-go-sdk/blob/master/LICENSE.md)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=coverage)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=bugs)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
