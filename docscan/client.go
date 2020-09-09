@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -32,10 +33,15 @@ type Client struct {
 	jsonMarshaler jsonMarshaler
 }
 
+var mustNotBeEmptyString = "%s cannot be an empty string"
+
 // NewClient constructs a Client object
 func NewClient(sdkID string, key []byte) (*Client, error) {
-	decodedKey, err := cryptoutil.ParseRSAKey(key)
+	if sdkID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "SdkID")
+	}
 
+	decodedKey, err := cryptoutil.ParseRSAKey(key)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +109,7 @@ func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*creat
 // GetSession retrieves the state of a previously created Yoti Doc Scan session
 func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error) {
 	if sessionID == "" {
-		return nil, errors.New("sessionID cannot be an empty string")
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
 	}
 
 	request, err := (&requests.SignedRequest{
@@ -138,7 +144,7 @@ func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error
 // DeleteSession deletes a previously created Yoti Doc Scan session and all of its related resources
 func (c *Client) DeleteSession(sessionID string) error {
 	if sessionID == "" {
-		return errors.New("sessionID cannot be an empty string")
+		return fmt.Errorf(mustNotBeEmptyString, "sessionID")
 	}
 
 	request, err := (&requests.SignedRequest{
@@ -162,9 +168,12 @@ func (c *Client) DeleteSession(sessionID string) error {
 
 // GetMediaContent retrieves media related to a Yoti Doc Scan session based on the supplied media ID
 func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error) {
-	err := c.validateParameters(sessionID, mediaID)
-	if err != nil {
-		return nil, err
+	if sessionID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	if mediaID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "mediaID")
 	}
 
 	request, err := (&requests.SignedRequest{
@@ -202,9 +211,12 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 
 // DeleteMediaContent deletes media related to a Yoti Doc Scan session based on the supplied media ID
 func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
-	err := c.validateParameters(sessionID, mediaID)
-	if err != nil {
-		return err
+	if sessionID == "" {
+		return fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	if mediaID == "" {
+		return fmt.Errorf(mustNotBeEmptyString, "mediaID")
 	}
 
 	request, err := (&requests.SignedRequest{
@@ -254,22 +266,6 @@ func (c *Client) GetSupportedDocuments() (*supported.DocumentsResponse, error) {
 	err = json.Unmarshal(responseBytes, &result)
 
 	return &result, err
-}
-
-func (c *Client) validateParameters(sessionID string, mediaID string) error {
-	if sessionID == "" {
-		return errors.New("sessionID cannot be an empty string")
-	}
-
-	if mediaID == "" {
-		return errors.New("mediaID cannot be an empty string")
-	}
-
-	if c == nil {
-		return errors.New("client is not initialised")
-	}
-
-	return nil
 }
 
 // jsonMarshaler is a mockable JSON marshaler
