@@ -25,7 +25,6 @@ func ExampleRequestedLivenessCheckBuilder() {
 
 func TestRequestedLivenessCheckBuilder_MaxRetriesIsOmittedIfNotSet(t *testing.T) {
 	check, err := NewRequestedLivenessCheckBuilder().
-		ForZoomLiveness().
 		ForLivenessType("LIVENESS_TYPE").
 		Build()
 	if err != nil {
