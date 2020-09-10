@@ -21,6 +21,9 @@
             "media": null
         }
         ]
+    }, {
+        "id": "d2677368-e3c2-11ea-87d0-0242ac139182",
+        "liveness_type": "OTHER_LIVENESS_TYPE"
     }
     ]
 }
