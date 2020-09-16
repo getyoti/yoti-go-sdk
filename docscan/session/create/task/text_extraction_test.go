@@ -36,3 +36,63 @@ func TestRequestedTextExtractionTaskBuilder_Build_UsesLastManualCheck(t *testing
 	config := task.Config().(RequestedTextExtractionTaskConfig)
 	assert.Equal(t, "FALLBACK", config.ManualCheck)
 }
+
+func TestRequestedTextExtractionTaskBuilder_WithManualCheckAlways(t *testing.T) {
+	task, err := NewRequestedTextExtractionTaskBuilder().
+		WithManualCheckAlways().
+		Build()
+	if err != nil {
+		t.Fail()
+	}
+
+	config := task.Config().(RequestedTextExtractionTaskConfig)
+	assert.Equal(t, "ALWAYS", config.ManualCheck)
+}
+
+func TestRequestedTextExtractionTaskBuilder_WithManualCheckFallback(t *testing.T) {
+	task, err := NewRequestedTextExtractionTaskBuilder().
+		WithManualCheckFallback().
+		Build()
+	if err != nil {
+		t.Fail()
+	}
+
+	config := task.Config().(RequestedTextExtractionTaskConfig)
+	assert.Equal(t, "FALLBACK", config.ManualCheck)
+}
+
+func TestRequestedTextExtractionTaskBuilder_WithManualCheckNever(t *testing.T) {
+	task, err := NewRequestedTextExtractionTaskBuilder().
+		WithManualCheckNever().
+		Build()
+	if err != nil {
+		t.Fail()
+	}
+
+	config := task.Config().(RequestedTextExtractionTaskConfig)
+	assert.Equal(t, "NEVER", config.ManualCheck)
+}
+
+func TestRequestedTextExtractionTaskBuilder_WithChipDataDesired(t *testing.T) {
+	task, err := NewRequestedTextExtractionTaskBuilder().
+		WithChipDataDesired().
+		Build()
+	if err != nil {
+		t.Fail()
+	}
+
+	config := task.Config().(RequestedTextExtractionTaskConfig)
+	assert.Equal(t, "DESIRED", config.ChipData)
+}
+
+func TestRequestedTextExtractionTaskBuilder_WithChipDataIgnore(t *testing.T) {
+	task, err := NewRequestedTextExtractionTaskBuilder().
+		WithChipDataIgnore().
+		Build()
+	if err != nil {
+		t.Fail()
+	}
+
+	config := task.Config().(RequestedTextExtractionTaskConfig)
+	assert.Equal(t, "IGNORE", config.ChipData)
+}

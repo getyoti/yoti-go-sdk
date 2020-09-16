@@ -60,3 +60,9 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, 1, len(result.LivenessChecks()))
 	assert.Check(t, result.LivenessChecks()[0].LastUpdated.Equal(testDate))
 }
+
+func TestGetSessionResult_UnmarshalJSON_Invalid(t *testing.T) {
+	var result GetSessionResult
+	err := result.UnmarshalJSON([]byte("some-invalid-json"))
+	assert.ErrorContains(t, err, "invalid character")
+}

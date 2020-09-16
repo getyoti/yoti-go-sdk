@@ -23,3 +23,9 @@ func TestLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, "IMAGE", result.ZoomLivenessResources()[0].Frames[0].Media.Type)
 	assert.Equal(t, "BINARY", result.ZoomLivenessResources()[0].FaceMap.Media.Type)
 }
+
+func TestLivenessResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
+	var result ResourceContainer
+	err := result.UnmarshalJSON([]byte("some-invalid-json"))
+	assert.ErrorContains(t, err, "invalid character")
+}

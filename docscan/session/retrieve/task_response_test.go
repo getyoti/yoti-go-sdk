@@ -31,3 +31,9 @@ func TestTaskResponse_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, 1, len(result.GeneratedTextDataChecks()))
 	assert.Equal(t, "some-id", result.GeneratedTextDataChecks()[0].ID)
 }
+
+func TestTaskResponse_UnmarshalJSON_Invalid(t *testing.T) {
+	var result TaskResponse
+	err := result.UnmarshalJSON([]byte("some-invalid-json"))
+	assert.ErrorContains(t, err, "invalid character")
+}

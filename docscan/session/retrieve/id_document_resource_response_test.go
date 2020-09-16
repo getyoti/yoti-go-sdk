@@ -36,3 +36,9 @@ func TestIDDocumentResourceResponse_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, 1, len(result.TextExtractionTasks()))
 	assert.Equal(t, "some-id", result.TextExtractionTasks()[0].ID)
 }
+
+func TestIDDocumentResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
+	var result IDDocumentResourceResponse
+	err := result.UnmarshalJSON([]byte("some-invalid-json"))
+	assert.ErrorContains(t, err, "invalid character")
+}
