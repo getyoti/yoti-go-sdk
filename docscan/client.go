@@ -200,7 +200,7 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 	}
 
 	contentTypes := strings.Split(response.Header.Get("Content-type"), ";")
-	if len(contentTypes) < 1 {
+	if len(contentTypes[0]) < 1 {
 		err = errors.New("unable to parse content type from response")
 	}
 
