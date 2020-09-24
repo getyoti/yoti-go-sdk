@@ -39,13 +39,11 @@
         </div>
     </div>
 
-    {{/*    {{ if len(.getSessionResult.Checks) > 0 }}*/}}
     {{ if .getSessionResult.Checks }}
         <div class="row pt-4">
             <div class="col">
                 <h2>Checks</h2>
                 <div class="accordion mt-3" id="checks">
-                    {{/*                {{ if .getSessionResult.AuthenticityChecks|length > 0 }}*/}}
                     {{ if .AuthenticityChecks }}
                         <div class="card">
                             <div class="card-header" id="authenticity-checks">
@@ -61,16 +59,12 @@
                                  aria-labelledby="authenticity-checks">
                                 <div class="card-body">
                                     {{ range $check := .getSessionResult.AuthenticityChecks }}
-                                        {{/*                            {% for check in sessionResult.AuthenticityChecks }}*/}}
-                                        {{/*                            {% with check=check }}*/}}
                                         {{ template "check.html" $check }}
                                     {{ end }}
-                                    {{/*                            {{ end }}*/}}
                                 </div>
                             </div>
                         </div>
                     {{ end }}
-                    {{/*                {{ if .getSessionResult.TextDataChecks|length > 0 }}*/}}
                     {{ if .TextDataChecks }}
                         <div class="card">
                             <div class="card-header" id="text-data-checks">
@@ -85,16 +79,12 @@
                             <div id="collapse-text-data-checks" class="collapse" aria-labelledby="text-data-checks">
                                 <div class="card-body">
                                     {{ range $check :=  .getSessionResult.TextDataChecks }}
-                                        {{/*                            {% for check in sessionResult.TextDataChecks }}*/}}
-                                        {{/*                            {% with check=check }}*/}}
                                         {{ template "check.html" $check }}
                                     {{ end }}
-                                    {{/*                            {{ end }}*/}}
                                 </div>
                             </div>
                         </div>
                     {{ end }}
-                    {{/*                {{ if .getSessionResult.FaceMatchChecks|length > 0 }}*/}}
                     {{ if .FaceMatchChecks }}
                         <div class="card">
                             <div class="card-header" id="face-match-checks">
@@ -110,16 +100,13 @@
                                  aria-labelledby="face-match-checks">
                                 <div class="card-body">
                                     {{ range $check :=  .getSessionResult.FaceMatchChecks }}
-                                        {{/*                            {% for check in sessionResult.FaceMatchChecks }}*/}}
                                         {% with check=check }}
                                         {{ template "check.html" $check }}
                                     {{ end }}
-                                    {{/*                            {{ end }}*/}}
                                 </div>
                             </div>
                         </div>
                     {{ end }}
-                    {{/*                {{ if .getSessionResult.LivenessChecks|length > 0 }}*/}}
                     {{ if .LivenessChecks }}
                         <div class="card">
                             <div class="card-header" id="liveness-checks">
@@ -134,10 +121,7 @@
                             <div id="collapse-liveness-checks" class="collapse" aria-labelledby="liveness-checks">
                                 <div class="card-body">
                                     {{ range $check := .getSessionResult.AuthenticityChecks }}
-                                        {{/*                            {% for check in sessionResult.AuthenticityChecks }}*/}}
-                                        {{/*                            {% with check=check }}*/}}
                                         {{ template "check.html"  $check}}
-                                        {{/*                           {{ end }}*/}}
                                     {{ end }}
                                 </div>
                             </div>
@@ -147,7 +131,6 @@
             </div>
         </div>
     {{ end }}
-    {{/*    {{ if .getSessionResult.Resources.IDDocuments| length < 0 }}*/}}
     {{ if .getSessionResult.Resources.IDDocuments }}
         <div class="row pt-4">
             <div class="col">
@@ -156,10 +139,7 @@
         </div>
     {{ end }}
 
-    {{/*    {% with doc_num=0 }}*/}}
     {{ range $key, $doc := .getSessionResult.Resources.IDDocuments }}
-        {{/*{% for document in sessionResult.Resources.IDDocuments }}*/}}
-        {{/*    {% set doc_num = loop.index + 1 }}*/}}
         <div class="row pt-4">
             <div class="col">
 
@@ -219,17 +199,12 @@
                                  aria-labelledby="text-extraction-tasks-{{ $key }}">
                                 <div class="card-body">
                                     {{ range $task := $doc.TextExtractionTasks }}
-
-                                        {{/*                        {% for task in document.text_extraction_tasks }}*/}}
-
-                                        {{/*                            {% with task=task }}*/}}
                                         {{ template "task.html" $task }}
 
                                         {{ if $task.GeneratedTextDataChecks}}
                                             <h5>Generated Text Data Checks</h5>
 
                                             {{ range $generatedCheck := $task.GeneratedTextDataChecks }}
-                                                {{/*                        {% for generated_check in task.generated_textDataChecks }}*/}}
                                                 <table class="table table-striped">
                                                     <tbody>
                                                     <tr>
@@ -245,7 +220,6 @@
                                             <h5>Generated Media</h5>
 
                                             {{ range $generatedMedia := $task.GeneratedMedia }}
-                                                {{/*                        {% for generated_media in task.generated_media }}*/}}
                                                 <table class="table table-striped">
                                                     <tbody>
                                                     <tr>
@@ -285,8 +259,6 @@
                                 <div class="card-body">
                                     <div class="card-group">
                                         {{ range $page := $doc.Pages }}
-
-                                            {{/*                            {% for page in document.Pages }}*/}}
                                             {{ if $page.Media }}
                                                 <div class="card" style="width: 18rem;">
                                                     <img class="card-img-top"
@@ -306,7 +278,6 @@
             </div>
         </div>
     {{ end }}
-    {{/*   {{ end }}*/}}
 
     {{ if .getSessionResult.Resources.ZoomLivenessResources}}
         <div class="row pt-4">
@@ -316,10 +287,7 @@
         </div>
     {{ end }}
 
-    {{/*    {% with liveness_num=0 }}*/}}
     {{ range $livenessNum, $liveness := .getSessionResult.Resources.ZoomLivenessResources }}
-        {{/*{% for liveness in sessionResult.resources.zoom_liveness_resources }}*/}}
-        {{/*    {% set liveness_num = loop.index + 1 }}*/}}
         <div class="row pt-4">
             <div class="col">
                 <table class="table table-striped table-light">

@@ -8,7 +8,6 @@
         <td>State</td>
         <td>
                 <span>
-{{/*                        class="badge badge-{{ "success" if check.state == "COMPLETED" else "secondary" }}"*/}}
                     {{ .State }}
                 </span>
         </td>
@@ -25,7 +24,6 @@
         <td>Resources Used</td>
         <td>
             {{ range $index, $element := .ResourcesUsed}}
-                {{/*first index is 0, which returns false, and doesn't add `,`*/}}
                 {{if $index}},{{end}}
                 {{$element}}
             {{end}}
