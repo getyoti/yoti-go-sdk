@@ -1,0 +1,119 @@
+<table class="table table-striped">
+    <tbody>
+    <tr>
+        <td>ID</td>
+        <td>{{ .ID}}</td>
+    </tr>
+    <tr>
+        <td>State</td>
+        <td>
+                <span>
+                    {{ .State }}
+                </span>
+        </td>
+    </tr>
+    <tr>
+        <td>Created</td>
+        <td>{{ .Created }}</td>
+    </tr>
+    <tr>
+        <td>Last Updated</td>
+        <td>{{ .LastUpdated }}</td>
+    </tr>
+    <tr>
+        <td>Resources Used</td>
+        <td>
+            {{ range $index, $element := .ResourcesUsed}}
+                {{if $index}},{{end}}
+                {{$element}}
+            {{end}}
+        </td>
+    </tr>
+
+    {{ if .Report }}
+        {{ if .Report.Recommendation }}
+            <tr>
+                <td>Recommendation</td>
+                <td>
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <td>Value</td>
+                            <td>{{ .Report.Recommendation.Value }}</td>
+                        </tr>
+                        <tr>
+                            <td>Reason</td>
+                            <td>{{ .Report.Recommendation.Reason }}</td>
+                        </tr>
+                        <tr>
+                            <td>Recovery Suggestion</td>
+                            <td>{{ .Report.Recommendation.RecoverySuggestion }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        {{ end }}
+        {{ if .Report.Breakdown }}
+            <tr>
+                <td>Breakdown</td>
+                <td>
+                    {{ range $breakdown := .Report.Breakdown}}
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>Sub Check</td>
+                                <td>{{ $breakdown.SubCheck }}</td>
+                            </tr>
+                            <tr>
+                                <td>Result</td>
+                                <td>{{ $breakdown.Result }}</td>
+                            </tr>
+                            {{ if $breakdown.Details }}
+                                <tr>
+                                    <td>Details</td>
+                                    <td>
+                                        <table class="table table-striped">
+                                            <tbody>
+                                            {{ range $detail := $breakdown.Details}}
+                                                <tr>
+                                                    <td>{{ $detail.Name }}</td>
+                                                    <td>{{ $detail.Value }}</td>
+                                                </tr>
+                                            {{ end }}
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            {{ end }}
+                            </tbody>
+                        </table>
+                    {{ end }}
+                </td>
+            </tr>
+        {{ end }}
+    {{ end }}
+
+    {{ if .GeneratedMedia}}
+        <tr>
+            <td>Generated Media</td>
+            <td>
+                {{ range $media := .GeneratedMedia }}
+                    <table class="table table-striped">
+                        <tbody>
+                        <tr>
+                            <td>ID</td>
+                            <td><a href="/media?mediaId={{ .media.ID }}">{{ .media.ID }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>Type</td>
+                            <td>{{ .media.Type }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                {{ end }}
+            </td>
+        </tr>
+    {{end}}
+    </tbody>
+</table>

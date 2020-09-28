@@ -111,8 +111,8 @@ func ExamplePolicyBuilder_WithFullName() {
 		return
 	}
 
-	json, _ := policy.MarshalJSON()
-	fmt.Println(string(json))
+	marshalledJSON, _ := policy.MarshalJSON()
+	fmt.Println(string(marshalledJSON))
 	// Output: {"wanted":[{"name":"full_name","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASSPORT","sub_type":""}],"soft_preference":false}}],"accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
