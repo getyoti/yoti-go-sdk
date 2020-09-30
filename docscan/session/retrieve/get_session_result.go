@@ -8,17 +8,18 @@ import (
 
 // GetSessionResult contains the information about a created session
 type GetSessionResult struct {
-	ClientSessionTokenTTL int                `json:"client_session_token_ttl"`
-	ClientSessionToken    string             `json:"client_session_token"`
-	SessionID             string             `json:"session_id"`
-	UserTrackingID        string             `json:"user_tracking_id"`
-	State                 string             `json:"state"`
-	Checks                []*CheckResponse   `json:"checks"`
-	Resources             *ResourceContainer `json:"resources"`
-	authenticityChecks    []*AuthenticityCheckResponse
-	faceMatchChecks       []*FaceMatchCheckResponse
-	textDataChecks        []*TextDataCheckResponse
-	livenessChecks        []*LivenessCheckResponse
+	ClientSessionTokenTTL      int                `json:"client_session_token_ttl"`
+	ClientSessionToken         string             `json:"client_session_token"`
+	SessionID                  string             `json:"session_id"`
+	UserTrackingID             string             `json:"user_tracking_id"`
+	State                      string             `json:"state"`
+	Checks                     []*CheckResponse   `json:"checks"`
+	Resources                  *ResourceContainer `json:"resources"`
+	authenticityChecks         []*AuthenticityCheckResponse
+	faceMatchChecks            []*FaceMatchCheckResponse
+	textDataChecks             []*TextDataCheckResponse
+	livenessChecks             []*LivenessCheckResponse
+	idDocumentComparisonChecks []*IDDocumentComparisonCheckResponse
 }
 
 // AuthenticityChecks filters the checks, returning only document authenticity checks
@@ -41,6 +42,11 @@ func (g *GetSessionResult) LivenessChecks() []*LivenessCheckResponse {
 	return g.livenessChecks
 }
 
+// IDDocumentComparisonChecks filters the checks, returning only the identity document comparison checks
+func (g *GetSessionResult) IDDocumentComparisonChecks() []*IDDocumentComparisonCheckResponse {
+	return g.idDocumentComparisonChecks
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 	type result GetSessionResult // declared as "type" to prevent recursive unmarshalling
@@ -61,6 +67,9 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 
 		case constants.Liveness:
 			g.livenessChecks = append(g.livenessChecks, &LivenessCheckResponse{CheckResponse: check})
+
+		case constants.IDDocumentComparison:
+			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
 		}
 	}
 
