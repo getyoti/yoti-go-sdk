@@ -7,13 +7,13 @@ import (
 
 // IDDocumentComparisonCheck Represents a document authenticity check
 type IDDocumentComparisonCheck struct {
-	*documentCheck
+	*check
 	SecondaryDocumentFilter *filter.DocumentFilter `json:"secondary_document_filter,omitempty"`
 }
 
 // IDDocumentComparisonCheckBuilder builds a IDDocumentComparisonCheck
 type IDDocumentComparisonCheckBuilder struct {
-	documentCheckBuilder
+	checkBuilder
 	secondaryDocumentFilter *filter.DocumentFilter
 }
 
@@ -24,19 +24,13 @@ func NewIDDocumentComparisonCheckBuilder() *IDDocumentComparisonCheckBuilder {
 
 // WithRecommendation sets the recommendation on the check
 func (b *IDDocumentComparisonCheckBuilder) WithRecommendation(recommendation *report.Recommendation) *IDDocumentComparisonCheckBuilder {
-	b.documentCheckBuilder.withRecommendation(recommendation)
+	b.checkBuilder.withRecommendation(recommendation)
 	return b
 }
 
 // WithBreakdown adds a breakdown item to the check
 func (b *IDDocumentComparisonCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *IDDocumentComparisonCheckBuilder {
-	b.documentCheckBuilder.withBreakdown(breakdown)
-	return b
-}
-
-// WithDocumentFilter adds a document filter to the check
-func (b *IDDocumentComparisonCheckBuilder) WithDocumentFilter(filter *filter.DocumentFilter) *IDDocumentComparisonCheckBuilder {
-	b.documentCheckBuilder.withDocumentFilter(filter)
+	b.checkBuilder.withBreakdown(breakdown)
 	return b
 }
 
@@ -49,7 +43,7 @@ func (b *IDDocumentComparisonCheckBuilder) WithSecondaryDocumentFilter(filter *f
 // Build creates a new IDDocumentComparisonCheck
 func (b *IDDocumentComparisonCheckBuilder) Build() (*IDDocumentComparisonCheck, error) {
 	return &IDDocumentComparisonCheck{
-		documentCheck:           b.documentCheckBuilder.build(),
+		check:                   b.checkBuilder.build(),
 		SecondaryDocumentFilter: b.secondaryDocumentFilter,
 	}, nil
 }
