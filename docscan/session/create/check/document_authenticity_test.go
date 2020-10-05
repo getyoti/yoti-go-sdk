@@ -21,6 +21,19 @@ func ExampleRequestedDocumentAuthenticityCheckBuilder() {
 	// Output: {"type":"ID_DOCUMENT_AUTHENTICITY","config":{"manual_check":"FALLBACK"}}
 }
 
+func ExampleRequestedDocumentAuthenticityCheckBuilder_Build() {
+	docAuthCheck, err := NewRequestedDocumentAuthenticityCheckBuilder().Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, _ := json.Marshal(docAuthCheck)
+	fmt.Println(string(data))
+	// Output: {"type":"ID_DOCUMENT_AUTHENTICITY","config":{}}
+}
+
 func TestRequestedDocumentAuthenticityCheckBuilder_WithManualCheckAlways(t *testing.T) {
 	docAuthCheck, err := NewRequestedDocumentAuthenticityCheckBuilder().
 		WithManualCheckAlways().
