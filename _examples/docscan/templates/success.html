@@ -34,6 +34,14 @@
                     <td>User Tracking ID</td>
                     <td>{{ .getSessionResult.UserTrackingID }}</td>
                 </tr>
+                {{ if .getSessionResult.BiometricConsentTimestamp }}
+                <tr>
+                    <td>Biometric Consent Timestamp</td>
+                    <td>
+                        {{ .getSessionResult.BiometricConsentTimestamp }}
+                    </td>
+                </tr>
+                {{ end }}
                 </tbody>
             </table>
         </div>
