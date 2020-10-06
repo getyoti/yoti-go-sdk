@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
@@ -15,6 +16,7 @@ type GetSessionResult struct {
 	State                      string             `json:"state"`
 	Checks                     []*CheckResponse   `json:"checks"`
 	Resources                  *ResourceContainer `json:"resources"`
+	BiometricConsentTimestamp  *time.Time         `json:"biometric_consent"`
 	authenticityChecks         []*AuthenticityCheckResponse
 	faceMatchChecks            []*FaceMatchCheckResponse
 	textDataChecks             []*TextDataCheckResponse
