@@ -44,8 +44,11 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	checks = append(checks, livenessCheckResponse)
 	checks = append(checks, idDocComparisonCheckResponse)
 
+	biometricConsentTimestamp := time.Date(2020, 01, 01, 1, 2, 3, 4, time.UTC)
+
 	getSessionResult := GetSessionResult{
-		Checks: checks,
+		Checks:                    checks,
+		BiometricConsentTimestamp: &biometricConsentTimestamp,
 	}
 	marshalled, err := json.Marshal(&getSessionResult)
 	assert.NilError(t, err)
@@ -70,10 +73,19 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 1, len(result.IDDocumentComparisonChecks()))
 	assert.Equal(t, "PENDING", result.IDDocumentComparisonChecks()[0].State)
+
+	assert.Equal(t, biometricConsentTimestamp, *result.BiometricConsentTimestamp)
 }
 
 func TestGetSessionResult_UnmarshalJSON_Invalid(t *testing.T) {
 	var result GetSessionResult
 	err := result.UnmarshalJSON([]byte("some-invalid-json"))
 	assert.ErrorContains(t, err, "invalid character")
+}
+
+func TestGetSessionResult_UnmarshalJSON_WithoutBiometricConsentTimestamp(t *testing.T) {
+	var result GetSessionResult
+	err := result.UnmarshalJSON([]byte("{}"))
+	assert.NilError(t, err)
+	assert.Check(t, result.BiometricConsentTimestamp == nil)
 }
