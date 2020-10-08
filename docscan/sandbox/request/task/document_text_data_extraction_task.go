@@ -1,6 +1,8 @@
 package task
 
 import (
+	"encoding/base64"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
@@ -13,11 +15,18 @@ type DocumentTextDataExtractionTask struct {
 // DocumentTextDataExtractionTaskBuilder builds a DocumentTextDataExtractionTask
 type DocumentTextDataExtractionTaskBuilder struct {
 	documentTaskBuilder
-	documentFields map[string]interface{}
+	documentFields  map[string]interface{}
+	documentIDPhoto *documentIDPhoto
 }
 
 type documentTextDataExtractionTaskResult struct {
-	DocumentFields map[string]interface{} `json:"document_fields,omitempty"`
+	DocumentFields  map[string]interface{} `json:"document_fields,omitempty"`
+	DocumentIDPhoto *documentIDPhoto       `json:"document_id_photo,omitempty"`
+}
+
+type documentIDPhoto struct {
+	ContentType string `json:"content_type"`
+	Data        string `json:"data"`
 }
 
 // NewDocumentTextDataExtractionTaskBuilder creates a new DocumentTextDataExtractionTaskBuilder
@@ -46,12 +55,22 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFields(documentField
 	return b
 }
 
+// WithDocumentIDPhoto set the document ID photo
+func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentIDPhoto(contentType string, data []byte) *DocumentTextDataExtractionTaskBuilder {
+	b.documentIDPhoto = &documentIDPhoto{
+		ContentType: contentType,
+		Data:        base64.StdEncoding.EncodeToString(data),
+	}
+	return b
+}
+
 // Build creates a new DocumentTextDataExtractionTask
 func (b *DocumentTextDataExtractionTaskBuilder) Build() (*DocumentTextDataExtractionTask, error) {
 	return &DocumentTextDataExtractionTask{
 		documentTask: b.documentTaskBuilder.build(),
 		Result: documentTextDataExtractionTaskResult{
-			DocumentFields: b.documentFields,
+			DocumentFields:  b.documentFields,
+			DocumentIDPhoto: b.documentIDPhoto,
 		},
 	}, nil
 }
