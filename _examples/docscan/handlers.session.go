@@ -96,10 +96,17 @@ func showSuccessPage(c *gin.Context) {
 		return
 	}
 
-	render(c, gin.H{
-		"title":            "Success",
-		"getSessionResult": getSessionResult},
-		"success.html")
+	render(
+		c,
+		gin.H{
+			"title":            "Success",
+			"getSessionResult": getSessionResult,
+			"add": func(a int, b int) int {
+				return a + b
+			},
+		},
+		"success.html",
+	)
 	return
 }
 
