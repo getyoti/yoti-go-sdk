@@ -17,11 +17,15 @@ type DocumentTextDataExtractionTaskBuilder struct {
 	documentTaskBuilder
 	documentFields  map[string]interface{}
 	documentIDPhoto *documentIDPhoto
+	detectedCountry string
+	recommendation  *TextDataExtractionRecommendation
 }
 
 type documentTextDataExtractionTaskResult struct {
-	DocumentFields  map[string]interface{} `json:"document_fields,omitempty"`
-	DocumentIDPhoto *documentIDPhoto       `json:"document_id_photo,omitempty"`
+	DocumentFields  map[string]interface{}            `json:"document_fields,omitempty"`
+	DocumentIDPhoto *documentIDPhoto                  `json:"document_id_photo,omitempty"`
+	DetectedCountry string                            `json:"detected_country,omitempty"`
+	Recommendation  *TextDataExtractionRecommendation `json:"recommendation,omitempty"`
 }
 
 type documentIDPhoto struct {
@@ -55,12 +59,24 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentFields(documentField
 	return b
 }
 
-// WithDocumentIDPhoto set the document ID photo
+// WithDocumentIDPhoto sets the document ID photo
 func (b *DocumentTextDataExtractionTaskBuilder) WithDocumentIDPhoto(contentType string, data []byte) *DocumentTextDataExtractionTaskBuilder {
 	b.documentIDPhoto = &documentIDPhoto{
 		ContentType: contentType,
 		Data:        base64.StdEncoding.EncodeToString(data),
 	}
+	return b
+}
+
+// WithDetectedCountry sets the detected country
+func (b *DocumentTextDataExtractionTaskBuilder) WithDetectedCountry(detectedCountry string) *DocumentTextDataExtractionTaskBuilder {
+	b.detectedCountry = detectedCountry
+	return b
+}
+
+// WithRecommendation sets the recommendation
+func (b *DocumentTextDataExtractionTaskBuilder) WithRecommendation(recommendation *TextDataExtractionRecommendation) *DocumentTextDataExtractionTaskBuilder {
+	b.recommendation = recommendation
 	return b
 }
 
@@ -71,6 +87,8 @@ func (b *DocumentTextDataExtractionTaskBuilder) Build() (*DocumentTextDataExtrac
 		Result: documentTextDataExtractionTaskResult{
 			DocumentFields:  b.documentFields,
 			DocumentIDPhoto: b.documentIDPhoto,
+			DetectedCountry: b.detectedCountry,
+			Recommendation:  b.recommendation,
 		},
 	}, nil
 }

@@ -71,6 +71,42 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentIDPhoto() {
 	// Output: {"result":{"document_id_photo":{"content_type":"some-content-type","data":"3q2+7w=="}}}
 }
 
+func ExampleDocumentTextDataExtractionTaskBuilder_WithDetectedCountry() {
+	task, err := NewDocumentTextDataExtractionTaskBuilder().
+		WithDetectedCountry("some-country").
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, _ := json.Marshal(task)
+	fmt.Println(string(data))
+	// Output: {"result":{"detected_country":"some-country"}}
+}
+
+func ExampleDocumentTextDataExtractionTaskBuilder_WithRecommendation() {
+	recommendation, err := NewTextDataExtractionRecommendationBuilder().
+		ForProgress().
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	task, err := NewDocumentTextDataExtractionTaskBuilder().
+		WithRecommendation(recommendation).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, _ := json.Marshal(task)
+	fmt.Println(string(data))
+	// Output: {"result":{"recommendation":{"value":"PROGRESS"}}}
+}
+
 func ExampleDocumentTextDataExtractionTaskBuilder_minimal() {
 	task, err := NewDocumentTextDataExtractionTaskBuilder().Build()
 	if err != nil {
