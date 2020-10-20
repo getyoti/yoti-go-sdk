@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/task"
 )
 
@@ -39,6 +40,13 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
+	var idDocsComparisonCheck *check.RequestedIDDocumentComparisonCheck
+	idDocsComparisonCheck, err = check.NewRequestedIDDocumentComparisonCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
 	var sdkConfig *create.SDKConfig
 	sdkConfig, err = create.NewSdkConfigBuilder().
 		WithAllowsCameraAndUpload().
@@ -55,6 +63,22 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
+	passportFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithIncludedDocumentTypes(
+			[]string{"PASSPORT"}).
+		Build()
+	passportDoc, err := filter.NewRequiredIDDocumentBuilder().
+		WithFilter(passportFilter).
+		Build()
+
+	drivingLicenceFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithIncludedDocumentTypes(
+			[]string{"DRIVING_LICENCE"}).
+		Build()
+	drivingLicenceDoc, err := filter.NewRequiredIDDocumentBuilder().
+		WithFilter(drivingLicenceFilter).
+		Build()
+
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
 		WithResourcesTTL(90000).
@@ -62,8 +86,11 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedCheck(faceMatchCheck).
 		WithRequestedCheck(documentAuthenticityCheck).
 		WithRequestedCheck(livenessCheck).
+		WithRequestedCheck(idDocsComparisonCheck).
 		WithRequestedTask(textExtractionTask).
 		WithSDKConfig(sdkConfig).
+		WithRequiredDocument(passportDoc).
+		WithRequiredDocument(drivingLicenceDoc).
 		Build()
 
 	if err != nil {

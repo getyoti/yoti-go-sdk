@@ -31,6 +31,9 @@ type SessionSpecification struct {
 
 	// RequiredDocuments is a slice of documents that are required from the user to satisfy a sessions requirements.
 	RequiredDocuments []filter.RequiredDocument `json:"required_documents,omitempty"`
+
+	// BlockBiometricConsent sets whether or not to block the collection of biometric consent
+	BlockBiometricConsent *bool `json:"block_biometric_consent,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -43,6 +46,7 @@ type SessionSpecificationBuilder struct {
 	requestedTasks        []task.RequestedTask
 	sdkConfig             *SDKConfig
 	requiredDocuments     []filter.RequiredDocument
+	blockBiometricConsent *bool
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -98,6 +102,12 @@ func (b *SessionSpecificationBuilder) WithRequiredDocument(IDDocument filter.Req
 	return b
 }
 
+// WithBlockBiometricConsent sets whether or not to block the collection of biometric consent
+func (b *SessionSpecificationBuilder) WithBlockBiometricConsent(blockBiometricConsent bool) *SessionSpecificationBuilder {
+	b.blockBiometricConsent = &blockBiometricConsent
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -109,5 +119,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.requestedTasks,
 		b.sdkConfig,
 		b.requiredDocuments,
+		b.blockBiometricConsent,
 	}, nil
 }

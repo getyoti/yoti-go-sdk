@@ -34,6 +34,14 @@
                     <td>User Tracking ID</td>
                     <td>{{ .getSessionResult.UserTrackingID }}</td>
                 </tr>
+                {{ if .getSessionResult.BiometricConsentTimestamp }}
+                <tr>
+                    <td>Biometric Consent Timestamp</td>
+                    <td>
+                        {{ .getSessionResult.BiometricConsentTimestamp }}
+                    </td>
+                </tr>
+                {{ end }}
                 </tbody>
             </table>
         </div>
@@ -44,7 +52,7 @@
             <div class="col">
                 <h2>Checks</h2>
                 <div class="accordion mt-3" id="checks">
-                    {{ if .AuthenticityChecks }}
+                    {{ if .getSessionResult.AuthenticityChecks }}
                         <div class="card">
                             <div class="card-header" id="authenticity-checks">
                                 <h3 class="mb-0">
@@ -65,7 +73,7 @@
                             </div>
                         </div>
                     {{ end }}
-                    {{ if .TextDataChecks }}
+                    {{ if .getSessionResult.TextDataChecks }}
                         <div class="card">
                             <div class="card-header" id="text-data-checks">
                                 <h3 class="mb-0">
@@ -85,7 +93,7 @@
                             </div>
                         </div>
                     {{ end }}
-                    {{ if .FaceMatchChecks }}
+                    {{ if .getSessionResult.FaceMatchChecks }}
                         <div class="card">
                             <div class="card-header" id="face-match-checks">
                                 <h3 class="mb-0">
@@ -100,14 +108,13 @@
                                  aria-labelledby="face-match-checks">
                                 <div class="card-body">
                                     {{ range $check :=  .getSessionResult.FaceMatchChecks }}
-                                        {% with check=check }}
                                         {{ template "check.html" $check }}
                                     {{ end }}
                                 </div>
                             </div>
                         </div>
                     {{ end }}
-                    {{ if .LivenessChecks }}
+                    {{ if .getSessionResult.LivenessChecks }}
                         <div class="card">
                             <div class="card-header" id="liveness-checks">
                                 <h3 class="mb-0">
@@ -126,6 +133,26 @@
                                 </div>
                             </div>
                         </div>
+                    {{ end }}
+                    {{ if .getSessionResult.IDDocumentComparisonChecks }}
+                    <div class="card">
+                        <div class="card-header" id="comparison-checks">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-comparison-checks" aria-expanded="true"
+                                        aria-controls="collapse-comparison-checks">
+                                    ID Document Comparison Checks
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-comparison-checks" class="collapse" aria-labelledby="comparison-checks">
+                            <div class="card-body">
+                                {{ range $check := .getSessionResult.IDDocumentComparisonChecks }}
+                                    {{ template "check.html"  $check}}
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
                     {{ end }}
                 </div>
             </div>
@@ -183,6 +210,31 @@
                             </div>
                         </div>
                     {{ end }}
+
+                    {{ if $doc.DocumentIDPhoto }}
+                    <div class="card">
+                        <div class="card-header" id="document-id-photo-{{ $key }}">
+                            <h4 class="mb-0">
+                                <button class="btn btn-link"
+                                        type="button"
+                                        data-toggle="collapse"
+                                        data-target="#collapse-document-id-photo-{{ $key }}"
+                                        aria-expanded="true"
+                                        aria-controls="collapse-document-id-photo-{{ $key }}">
+                                    Document ID Photo
+                                </button>
+                            </h4>
+                        </div>
+                        <div id="collapse-document-id-photo-{{ $key }}" class="collapse" aria-labelledby="document-id-photo-{{ $key }}">
+                            <div class="card-body">
+                                {{ if $doc.DocumentIDPhoto.Media }}
+                                <img class="card-img-top" src="/media?mediaId={{ $doc.DocumentIDPhoto.Media.ID }}" />
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
                     {{ if $doc.TextExtractionTasks }}
                         <div class="card">
                             <div class="card-header" id="text-extraction-tasks-{{ $key }}">
@@ -242,37 +294,53 @@
                         </div>
                     {{ end }}
 
-                    {{ if $doc.Pages}}
+                    {{ if $doc.Pages }}
+                    {{ range $pageNum, $page := $doc.Pages }}
                         <div class="card">
-                            <div class="card-header" id="document-pages-{{ $key }}">
+                            <div class="card-header" id="document-pages-{{ $key }}-{{ $pageNum }}">
                                 <h4 class="mb-0">
                                     <button class="btn btn-link" type="button" data-toggle="collapse"
-                                            data-target="#collapse-document-pages-{{ $key }}"
+                                            data-target="#collapse-document-pages-{{ $key }}-{{ $pageNum }}"
                                             aria-expanded="true"
-                                            aria-controls="collapse-document-pages-{{ $key }}">
-                                        Pages
+                                            aria-controls="collapse-document-pages-{{ $key }}-{{ $pageNum }}">
+                                        Page {{call $.add $pageNum 1}}
                                     </button>
                                 </h4>
                             </div>
-                            <div id="collapse-document-pages-{{ $key }}" class="collapse"
-                                 aria-labelledby="document-pages-{{ $key }}">
-                                <div class="card-body">
-                                    <div class="card-group">
-                                        {{ range $page := $doc.Pages }}
-                                            {{ if $page.Media }}
-                                                <div class="card" style="width: 18rem;">
-                                                    <img class="card-img-top"
-                                                         src="/media?mediaId={{ $page.Media.ID }}"/>
-                                                    <div class="card-body">
-                                                        <p>Method: {{ $page.CaptureMethod }}</p>
-                                                    </div>
-                                                </div>
-                                            {{ end }}
-                                        {{ end }}
-                                    </div>
+                            <div id="collapse-document-pages-{{ $key }}-{{ $pageNum }}" class="collapse"
+                                 aria-labelledby="document-pages-{{ $key }}-{{ $pageNum }}">
+
+                                <div class="card-group">
+                                    {{ if $page.Media }}
+                                        <div class="card" style="width: 18rem;">
+                                            <img class="card-img-top"
+                                                    src="/media?mediaId={{ $page.Media.ID }}"/>
+                                            <div class="card-body">
+                                                <p>Method: {{ $page.CaptureMethod }}</p>
+                                            </div>
+                                        </div>
+                                    {{ end }}
                                 </div>
+
+                                {{ if $page.Frames}}
+                                <div class="card-group">
+                                    {{ range $frame := $page.Frames }}
+                                        {{ if $frame.Media }}
+                                            <div class="card">
+                                                <img class="card-img-top"
+                                                    src="/media?mediaId={{ $frame.Media.ID }}"/>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Frame</h5>
+                                                </div>
+                                            </div>
+                                        {{ end }}
+                                    {{ end }}
+                                </div>
+                                {{ end }}
+
                             </div>
                         </div>
+                    {{ end }}
                     {{ end }}
                 </div>
             </div>

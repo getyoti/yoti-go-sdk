@@ -2,6 +2,7 @@ package constants
 
 const (
 	IDDocumentAuthenticity       string = "ID_DOCUMENT_AUTHENTICITY"
+	IDDocumentComparison         string = "ID_DOCUMENT_COMPARISON"
 	IDDocumentTextDataCheck      string = "ID_DOCUMENT_TEXT_DATA_CHECK"
 	IDDocumentTextDataExtraction string = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
 	IDDocumentFaceMatch          string = "ID_DOCUMENT_FACE_MATCH"

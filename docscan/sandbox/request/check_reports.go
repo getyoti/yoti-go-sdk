@@ -10,6 +10,7 @@ type CheckReports struct {
 	DocumentTextDataChecks     []*check.DocumentTextDataCheck     `json:"ID_DOCUMENT_TEXT_DATA_CHECK"`
 	DocumentFaceMatchChecks    []*check.DocumentFaceMatchCheck    `json:"ID_DOCUMENT_FACE_MATCH"`
 	LivenessChecks             []*check.LivenessCheck             `json:"LIVENESS"`
+	IDDocumentComparisonChecks []*check.IDDocumentComparisonCheck `json:"ID_DOCUMENT_COMPARISON"`
 	AsyncReportDelay           uint32                             `json:"async_report_delay,omitempty"`
 }
 
@@ -19,6 +20,7 @@ type CheckReportsBuilder struct {
 	documentTextDataChecks     []*check.DocumentTextDataCheck
 	documentFaceMatchChecks    []*check.DocumentFaceMatchCheck
 	livenessChecks             []*check.LivenessCheck
+	idDocumentComparisonChecks []*check.IDDocumentComparisonCheck
 	asyncReportDelay           uint32
 }
 
@@ -29,6 +31,7 @@ func NewCheckReportsBuilder() *CheckReportsBuilder {
 		documentTextDataChecks:     []*check.DocumentTextDataCheck{},
 		documentFaceMatchChecks:    []*check.DocumentFaceMatchCheck{},
 		livenessChecks:             []*check.LivenessCheck{},
+		idDocumentComparisonChecks: []*check.IDDocumentComparisonCheck{},
 	}
 }
 
@@ -56,6 +59,14 @@ func (b *CheckReportsBuilder) WithLivenessCheck(livenessCheck *check.LivenessChe
 	return b
 }
 
+// WithIDDocumentComparisonCheck adds an identity document comparison check
+func (b *CheckReportsBuilder) WithIDDocumentComparisonCheck(idDocumentComparisonCheck *check.IDDocumentComparisonCheck) *CheckReportsBuilder {
+	// fmt.Printf("idDocumentComparisonCheck = %v", idDocumentComparisonCheck)
+	// fmt.Printf("b.idDocumentComparisonChecks = %v", b.idDocumentComparisonChecks)
+	b.idDocumentComparisonChecks = append(b.idDocumentComparisonChecks, idDocumentComparisonCheck)
+	return b
+}
+
 // WithAsyncReportDelay sets the async report delay
 func (b *CheckReportsBuilder) WithAsyncReportDelay(asyncReportDelay uint32) *CheckReportsBuilder {
 	b.asyncReportDelay = asyncReportDelay
@@ -69,6 +80,7 @@ func (b *CheckReportsBuilder) Build() (CheckReports, error) {
 		DocumentTextDataChecks:     b.documentTextDataChecks,
 		DocumentFaceMatchChecks:    b.documentFaceMatchChecks,
 		LivenessChecks:             b.livenessChecks,
+		IDDocumentComparisonChecks: b.idDocumentComparisonChecks,
 		AsyncReportDelay:           b.asyncReportDelay,
 	}, nil
 }

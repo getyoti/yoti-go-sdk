@@ -31,15 +31,24 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 		LastUpdated: &testDate,
 	}
 
+	idDocComparisonCheckResponse := &CheckResponse{
+		Type:  constants.IDDocumentComparison,
+		State: "PENDING",
+	}
+
 	var checks []*CheckResponse
 	checks = append(checks, &CheckResponse{Type: "OTHER_TYPE", ID: "id"})
 	checks = append(checks, authenticityCheckResponse)
 	checks = append(checks, faceMatchCheckResponse)
 	checks = append(checks, textDataCheckResponse)
 	checks = append(checks, livenessCheckResponse)
+	checks = append(checks, idDocComparisonCheckResponse)
+
+	biometricConsentTimestamp := time.Date(2020, 01, 01, 1, 2, 3, 4, time.UTC)
 
 	getSessionResult := GetSessionResult{
-		Checks: checks,
+		Checks:                    checks,
+		BiometricConsentTimestamp: &biometricConsentTimestamp,
 	}
 	marshalled, err := json.Marshal(&getSessionResult)
 	assert.NilError(t, err)
@@ -47,6 +56,8 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	var result GetSessionResult
 	err = json.Unmarshal(marshalled, &result)
 	assert.NilError(t, err)
+
+	assert.Equal(t, 6, len(result.Checks))
 
 	assert.Equal(t, 1, len(result.AuthenticityChecks()))
 	assert.Equal(t, "DONE", result.AuthenticityChecks()[0].State)
@@ -59,10 +70,22 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 1, len(result.LivenessChecks()))
 	assert.Check(t, result.LivenessChecks()[0].LastUpdated.Equal(testDate))
+
+	assert.Equal(t, 1, len(result.IDDocumentComparisonChecks()))
+	assert.Equal(t, "PENDING", result.IDDocumentComparisonChecks()[0].State)
+
+	assert.Equal(t, biometricConsentTimestamp, *result.BiometricConsentTimestamp)
 }
 
 func TestGetSessionResult_UnmarshalJSON_Invalid(t *testing.T) {
 	var result GetSessionResult
 	err := result.UnmarshalJSON([]byte("some-invalid-json"))
 	assert.ErrorContains(t, err, "invalid character")
+}
+
+func TestGetSessionResult_UnmarshalJSON_WithoutBiometricConsentTimestamp(t *testing.T) {
+	var result GetSessionResult
+	err := result.UnmarshalJSON([]byte("{}"))
+	assert.NilError(t, err)
+	assert.Check(t, result.BiometricConsentTimestamp == nil)
 }

@@ -35,3 +35,8 @@ type LivenessCheckResponse struct {
 type TextDataCheckResponse struct {
 	*CheckResponse
 }
+
+// IDDocumentComparisonCheckResponse represents a identity document comparison check for a given session
+type IDDocumentComparisonCheckResponse struct {
+	*CheckResponse
+}
