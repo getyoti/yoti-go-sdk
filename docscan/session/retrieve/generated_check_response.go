@@ -6,7 +6,12 @@ type GeneratedCheckResponse struct {
 	Type string `json:"type"`
 }
 
-// GeneratedTextDataCheckResponse represents a Text Extraction task response
+// GeneratedTextDataCheckResponse represents a text data check response
 type GeneratedTextDataCheckResponse struct {
+	*GeneratedCheckResponse
+}
+
+// GeneratedSupplementaryTextDataCheckResponse represents a supplementary text data check response
+type GeneratedSupplementaryTextDataCheckResponse struct {
 	*GeneratedCheckResponse
 }

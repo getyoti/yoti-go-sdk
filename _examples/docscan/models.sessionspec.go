@@ -4,13 +4,14 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/objective"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/task"
 )
 
 func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	var faceMatchCheck *check.RequestedFaceMatchCheck
 	faceMatchCheck, err = check.NewRequestedFaceMatchCheckBuilder().
-		WithManualCheckNever().
+		WithManualCheckAlways().
 		Build()
 	if err != nil {
 		return nil, err
@@ -34,7 +35,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var textExtractionTask *task.RequestedTextExtractionTask
 	textExtractionTask, err = task.NewRequestedTextExtractionTaskBuilder().
-		WithManualCheckFallback().
+		WithManualCheckAlways().
 		Build()
 	if err != nil {
 		return nil, err
@@ -42,6 +43,14 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var idDocsComparisonCheck *check.RequestedIDDocumentComparisonCheck
 	idDocsComparisonCheck, err = check.NewRequestedIDDocumentComparisonCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var supplementaryDocTextExtractionTask *task.RequestedSupplementaryDocTextExtractionTask
+	supplementaryDocTextExtractionTask, err = task.NewRequestedSupplementaryDocTextExtractionTaskBuilder().
+		WithManualCheckAlways().
 		Build()
 	if err != nil {
 		return nil, err
@@ -67,11 +76,29 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithIncludedDocumentTypes(
 			[]string{"PASSPORT"}).
 		Build()
+	if err != nil {
+		return nil, err
+	}
 	passportDoc, err := filter.NewRequiredIDDocumentBuilder().
 		WithFilter(passportFilter).
 		Build()
+	if err != nil {
+		return nil, err
+	}
 
 	idDoc, err := filter.NewRequiredIDDocumentBuilder().Build()
+
+	proofOfAddressObjective, err := objective.NewProofOfAddressObjectiveBuilder().Build()
+	if err != nil {
+		return nil, err
+	}
+
+	supplementaryDoc, err := filter.NewRequiredSupplementaryDocumentBuilder().
+		WithObjective(proofOfAddressObjective).
+		Build()
+	if err != nil {
+		return nil, err
+	}
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
@@ -82,9 +109,11 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedCheck(livenessCheck).
 		WithRequestedCheck(idDocsComparisonCheck).
 		WithRequestedTask(textExtractionTask).
+		WithRequestedTask(supplementaryDocTextExtractionTask).
 		WithSDKConfig(sdkConfig).
 		WithRequiredDocument(passportDoc).
 		WithRequiredDocument(idDoc).
+		WithRequiredDocument(supplementaryDoc).
 		Build()
 
 	if err != nil {

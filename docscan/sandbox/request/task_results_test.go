@@ -15,8 +15,16 @@ func ExampleTaskResultsBuilder() {
 		return
 	}
 
+	supplementaryTextDataExtractionTask, err := task.NewSupplementaryDocumentTextDataExtractionTaskBuilder().
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	taskResults, err := NewTaskResultsBuilder().
 		WithDocumentTextDataExtractionTask(textDataExtractionTask).
+		WithSupplementaryDocumentTextDataExtractionTask(supplementaryTextDataExtractionTask).
 		Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -25,5 +33,5 @@ func ExampleTaskResultsBuilder() {
 
 	data, _ := json.Marshal(taskResults)
 	fmt.Println(string(data))
-	// Output: {"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[{"result":{}}]}
+	// Output: {"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[{"result":{}}],"SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION":[{"result":{}}]}
 }
