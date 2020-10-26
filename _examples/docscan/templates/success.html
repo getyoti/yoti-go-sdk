@@ -73,20 +73,20 @@
                             </div>
                         </div>
                     {{ end }}
-                    {{ if .getSessionResult.TextDataChecks }}
+                    {{ if .getSessionResult.IDDocumentTextDataChecks }}
                         <div class="card">
                             <div class="card-header" id="text-data-checks">
                                 <h3 class="mb-0">
                                     <button class="btn btn-link" type="button" data-toggle="collapse"
                                             data-target="#collapse-text-data-checks" aria-expanded="true"
                                             aria-controls="collapse-text-data-checks">
-                                        Text Data Checks
+                                        ID Document Text Data Checks
                                     </button>
                                 </h3>
                             </div>
                             <div id="collapse-text-data-checks" class="collapse" aria-labelledby="text-data-checks">
                                 <div class="card-body">
-                                    {{ range $check :=  .getSessionResult.TextDataChecks }}
+                                    {{ range $check :=  .getSessionResult.IDDocumentTextDataChecks }}
                                         {{ template "check.html" $check }}
                                     {{ end }}
                                 </div>
@@ -154,10 +154,33 @@
                         </div>
                     </div>
                     {{ end }}
+
+                    {{ if .getSessionResult.SupplementaryDocumentTextDataChecks }}
+                    <div class="card">
+                        <div class="card-header" id="sup-doc-text-data-checks">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-sup-doc-text-data-checks" aria-expanded="true"
+                                        aria-controls="collapse-sup-doc-text-data-checks">
+                                    Supplementary Document Text Data Checks
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-sup-doc-text-data-checks" class="collapse" aria-labelledby="sup-doc-text-data-checks">
+                            <div class="card-body">
+                                {{ range $check :=  .getSessionResult.SupplementaryDocumentTextDataChecks }}
+                                    {{ template "check.html" $check }}
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
                 </div>
             </div>
         </div>
     {{ end }}
+
     {{ if .getSessionResult.Resources.IDDocuments }}
         <div class="row pt-4">
             <div class="col">
@@ -309,6 +332,186 @@
                             </div>
                             <div id="collapse-document-pages-{{ $key }}-{{ $pageNum }}" class="collapse"
                                  aria-labelledby="document-pages-{{ $key }}-{{ $pageNum }}">
+
+                                <div class="card-group">
+                                    {{ if $page.Media }}
+                                        <div class="card" style="width: 18rem;">
+                                            <img class="card-img-top"
+                                                    src="/media?mediaId={{ $page.Media.ID }}"/>
+                                            <div class="card-body">
+                                                <p>Method: {{ $page.CaptureMethod }}</p>
+                                            </div>
+                                        </div>
+                                    {{ end }}
+                                </div>
+
+                                {{ if $page.Frames}}
+                                <div class="card-group">
+                                    {{ range $frame := $page.Frames }}
+                                        {{ if $frame.Media }}
+                                            <div class="card">
+                                                <img class="card-img-top"
+                                                    src="/media?mediaId={{ $frame.Media.ID }}"/>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Frame</h5>
+                                                </div>
+                                            </div>
+                                        {{ end }}
+                                    {{ end }}
+                                </div>
+                                {{ end }}
+
+                            </div>
+                        </div>
+                    {{ end }}
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    {{ end }}
+
+
+    {{ if .getSessionResult.Resources.SupplementaryDocuments }}
+        <div class="row pt-4">
+            <div class="col">
+                <h2>Supplementary Documents</h2>
+            </div>
+        </div>
+    {{ end }}
+
+    {{ range $key, $doc := .getSessionResult.Resources.SupplementaryDocuments }}
+        <div class="row pt-4">
+            <div class="col">
+
+                <h3>
+                    {{ $doc.DocumentType }} <span
+                            class="badge badge-primary">{{ $doc.IssuingCountry }}</span>
+                </h3>
+
+                <div class="accordion mt-3">
+                    {{ if $doc.DocumentFields }}
+                        <div class="card">
+                            <div class="card-header" id="sup-doc-fields-{{ $key }}">
+                                <h4 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapse-sup-doc-fields-{{ $key }}"
+                                            aria-expanded="true"
+                                            aria-controls="collapse-sup-doc-fields-{{ $key }}">
+                                        Document Fields
+                                    </button>
+                                </h4>
+                            </div>
+                            <div id="collapse-sup-doc-fields-{{ $key }}" class="collapse"
+                                 aria-labelledby="sup-doc-fields-{{ $key }}">
+                                <div class="card-body">
+                                    {{ if $doc.DocumentFields.Media }}
+                                        <h5>Media</h5>
+                                        <table class="table table-striped table-light">
+                                            <tbody>
+                                            <tr>
+                                                <td>ID</td>
+                                                <td>
+                                                    <a href="/media?mediaId={{ $doc.DocumentFields.Media.ID }}">
+                                                        {{ $doc.DocumentFields.Media.ID }}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    {{ end }}
+                                </div>
+                            </div>
+                        </div>
+                    {{ end }}
+
+                    {{ if $doc.DocumentFile }}
+                    <div class="card">
+                        <div class="card-header" id="sup-doc-id-photo-{{ $key }}">
+                            <h4 class="mb-0">
+                            {{ if $doc.DocumentFile.Media }}
+                            <a class="btn btn-link" type="button" href="/media?mediaId={{ $doc.DocumentFile.Media.ID }}">
+                                Download File
+                            </a>
+                            {{ end }}
+                            </h4>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                    {{ if $doc.TextExtractionTasks }}
+                        <div class="card">
+                            <div class="card-header" id="sup-doc-text-extraction-tasks-{{ $key }}">
+                                <h4 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapse-sup-doc-text-extraction-tasks-{{ $key }}"
+                                            aria-expanded="true"
+                                            aria-controls="collapse-sup-doc-text-extraction-tasks-{{ $key }}">
+                                        Text Extraction Tasks
+                                    </button>
+                                </h4>
+                            </div>
+                            <div id="collapse-sup-doc-text-extraction-tasks-{{ $key }}" class="collapse"
+                                 aria-labelledby="sup-doc-text-extraction-tasks-{{ $key }}">
+                                <div class="card-body">
+                                    {{ range $task := $doc.TextExtractionTasks }}
+                                        {{ template "task.html" $task }}
+
+                                        {{ if $task.GeneratedTextDataChecks}}
+                                            <h5>Generated Text Data Checks</h5>
+
+                                            {{ range $generatedCheck := $task.GeneratedTextDataChecks }}
+                                                <table class="table table-striped">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>ID</td>
+                                                        <td>{{ $generatedCheck.ID }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            {{ end }}
+                                        {{ end }}
+
+                                        {{ if $task.GeneratedMedia}}
+                                            <h5>Generated Media</h5>
+
+                                            {{ range $generatedMedia := $task.GeneratedMedia }}
+                                                <table class="table table-striped">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>ID</td>
+                                                        <td>
+                                                            <a href="/media?mediaId={{ $generatedMedia.ID }}">{{ $generatedMedia.ID }}</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Type</td>
+                                                        <td>{{ $generatedMedia.Type }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            {{ end }}
+                                        {{ end }}
+                                    {{ end }}
+                                </div>
+                            </div>
+                        </div>
+                    {{ end }}
+
+                    {{ if $doc.Pages }}
+                    {{ range $pageNum, $page := $doc.Pages }}
+                        <div class="card">
+                            <div class="card-header" id="sup-doc-pages-{{ $key }}-{{ $pageNum }}">
+                                <h4 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapse-sup-doc-pages-{{ $key }}-{{ $pageNum }}"
+                                            aria-expanded="true"
+                                            aria-controls="collapse-sup-doc-pages-{{ $key }}-{{ $pageNum }}">
+                                        Page {{call $.add $pageNum 1}}
+                                    </button>
+                                </h4>
+                            </div>
+                            <div id="collapse-sup-doc-pages-{{ $key }}-{{ $pageNum }}" class="collapse"
+                                 aria-labelledby="sup-doc-pages-{{ $key }}-{{ $pageNum }}">
 
                                 <div class="card-group">
                                     {{ if $page.Media }}

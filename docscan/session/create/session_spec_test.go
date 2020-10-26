@@ -119,3 +119,25 @@ func ExampleSessionSpecificationBuilder_Build_withBlockBiometricConsentFalse() {
 	fmt.Println(string(data))
 	// Output: {"block_biometric_consent":false}
 }
+
+func ExampleSessionSpecificationBuilder_WithRequiredDocument_supplementary() {
+	requiredSupplementaryDocument, err := filter.NewRequiredSupplementaryDocumentBuilder().
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithRequiredDocument(requiredSupplementaryDocument).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, _ := json.Marshal(sessionSpecification)
+	fmt.Println(string(data))
+	// Output: {"required_documents":[{"type":"SUPPLEMENTARY_DOCUMENT"}]}
+}

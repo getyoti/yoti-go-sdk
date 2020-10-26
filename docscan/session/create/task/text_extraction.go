@@ -11,12 +11,12 @@ type RequestedTextExtractionTask struct {
 	config RequestedTextExtractionTaskConfig
 }
 
-// Type is the type of the Requested Check
+// Type is the type of the Requested Task
 func (t *RequestedTextExtractionTask) Type() string {
 	return constants.IDDocumentTextDataExtraction
 }
 
-// Config is the configuration of the Requested Check
+// Config is the configuration of the Requested Task
 func (t *RequestedTextExtractionTask) Config() RequestedTaskConfig {
 	return t.config
 }
@@ -32,7 +32,7 @@ func (t *RequestedTextExtractionTask) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// NewRequestedTextExtractionTask creates a new Document Authenticity Check
+// NewRequestedTextExtractionTask creates a new text extraction task
 func NewRequestedTextExtractionTask(config RequestedTextExtractionTaskConfig) *RequestedTextExtractionTask {
 	return &RequestedTextExtractionTask{config}
 }

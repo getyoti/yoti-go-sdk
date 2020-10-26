@@ -36,6 +36,11 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 		State: "PENDING",
 	}
 
+	supplementaryTextDataCheckResponse := &CheckResponse{
+		Type:   constants.SupplementaryDocumentTextDataCheck,
+		Report: &ReportResponse{},
+	}
+
 	var checks []*CheckResponse
 	checks = append(checks, &CheckResponse{Type: "OTHER_TYPE", ID: "id"})
 	checks = append(checks, authenticityCheckResponse)
@@ -43,6 +48,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	checks = append(checks, textDataCheckResponse)
 	checks = append(checks, livenessCheckResponse)
 	checks = append(checks, idDocComparisonCheckResponse)
+	checks = append(checks, supplementaryTextDataCheckResponse)
 
 	biometricConsentTimestamp := time.Date(2020, 01, 01, 1, 2, 3, 4, time.UTC)
 
@@ -57,7 +63,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	err = json.Unmarshal(marshalled, &result)
 	assert.NilError(t, err)
 
-	assert.Equal(t, 6, len(result.Checks))
+	assert.Equal(t, 7, len(result.Checks))
 
 	assert.Equal(t, 1, len(result.AuthenticityChecks()))
 	assert.Equal(t, "DONE", result.AuthenticityChecks()[0].State)
@@ -68,11 +74,17 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, 1, len(result.TextDataChecks()))
 	assert.DeepEqual(t, &ReportResponse{}, result.TextDataChecks()[0].Report)
 
+	assert.Equal(t, 1, len(result.IDDocumentTextDataChecks()))
+	assert.DeepEqual(t, &ReportResponse{}, result.TextDataChecks()[0].Report)
+
 	assert.Equal(t, 1, len(result.LivenessChecks()))
 	assert.Check(t, result.LivenessChecks()[0].LastUpdated.Equal(testDate))
 
 	assert.Equal(t, 1, len(result.IDDocumentComparisonChecks()))
 	assert.Equal(t, "PENDING", result.IDDocumentComparisonChecks()[0].State)
+
+	assert.Equal(t, 1, len(result.SupplementaryDocumentTextDataChecks()))
+	assert.DeepEqual(t, &ReportResponse{}, result.SupplementaryDocumentTextDataChecks()[0].Report)
 
 	assert.Equal(t, biometricConsentTimestamp, *result.BiometricConsentTimestamp)
 }
