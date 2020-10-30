@@ -269,6 +269,30 @@ func TestClient_GetMediaContent(t *testing.T) {
 	assert.Equal(t, media.ImageTypeJPEG, result.MIME())
 }
 
+func TestClient_GetMediaContent_NoContent(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusNoContent,
+				Header:     map[string][]string{},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	media, err := client.GetMediaContent("some-sessionID", "some-mediaID")
+	assert.Equal(t, media, nil)
+	assert.NilError(t, err)
+}
+
 func TestClient_GetMediaContent_NoContentType(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 

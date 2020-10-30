@@ -71,13 +71,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithFilter(passportFilter).
 		Build()
 
-	drivingLicenceFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
-		WithIncludedDocumentTypes(
-			[]string{"DRIVING_LICENCE"}).
-		Build()
-	drivingLicenceDoc, err := filter.NewRequiredIDDocumentBuilder().
-		WithFilter(drivingLicenceFilter).
-		Build()
+	idDoc, err := filter.NewRequiredIDDocumentBuilder().Build()
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
@@ -90,7 +84,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedTask(textExtractionTask).
 		WithSDKConfig(sdkConfig).
 		WithRequiredDocument(passportDoc).
-		WithRequiredDocument(drivingLicenceDoc).
+		WithRequiredDocument(idDoc).
 		Build()
 
 	if err != nil {

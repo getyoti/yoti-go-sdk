@@ -193,6 +193,10 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 		return nil, err
 	}
 
+	if response.StatusCode == http.StatusNoContent {
+		return nil, nil
+	}
+
 	var responseBytes []byte
 	responseBytes, err = ioutil.ReadAll(response.Body)
 	if err != nil {
