@@ -50,7 +50,7 @@ func (b *CheckReportsBuilder) WithDocumentTextDataCheck(documentTextDataCheck *c
 	return b
 }
 
-// WithDocumentTextDataCheck adds an supplementary document text data check
+// WithDocumentTextDataCheck adds a supplementary document text data check
 func (b *CheckReportsBuilder) WithSupplementaryDocumentTextDataCheck(supplementaryDocumentTextDataCheck *check.SupplementaryDocumentTextDataCheck) *CheckReportsBuilder {
 	b.supplementaryDocumentTextDataChecks = append(
 		b.supplementaryDocumentTextDataChecks,

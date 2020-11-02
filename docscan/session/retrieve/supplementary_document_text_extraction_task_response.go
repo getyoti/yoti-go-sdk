@@ -1,6 +1,6 @@
 package retrieve
 
-// SupplementaryDocumentTextExtractionTaskResponse represents a Supplementary Text Extraction task response
+// SupplementaryDocumentTextExtractionTaskResponse represents a Supplementary Document Text Extraction task response
 type SupplementaryDocumentTextExtractionTaskResponse struct {
 	*TaskResponse
 }

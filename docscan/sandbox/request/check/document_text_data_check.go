@@ -5,7 +5,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
-// DocumentTextDataCheck Represents a document text data check
+// DocumentTextDataCheck represents a document text data check
 type DocumentTextDataCheck struct {
 	Result DocumentTextDataCheckResult `json:"result"`
 	*documentCheck

@@ -5,7 +5,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
-// DocumentTextDataCheck Represents a document text data check
+// SupplementaryDocumentTextDataCheck represents a supplementary document text data check
 type SupplementaryDocumentTextDataCheck struct {
 	Result SupplementaryDocumentTextDataCheckResult `json:"result"`
 	*documentCheck
@@ -17,7 +17,7 @@ type SupplementaryDocumentTextDataCheckBuilder struct {
 	documentFields map[string]interface{}
 }
 
-// SupplementaryDocumentTextDataCheckResult represent a document text data check result
+// SupplementaryDocumentTextDataCheckResult represents a document text data check result
 type SupplementaryDocumentTextDataCheckResult struct {
 	checkResult
 	DocumentFields map[string]interface{} `json:"document_fields,omitempty"`
