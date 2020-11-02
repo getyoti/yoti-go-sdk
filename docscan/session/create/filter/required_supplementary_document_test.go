@@ -81,7 +81,7 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithCountryCodes_empty() {
 
 	data, _ := json.Marshal(requiredSupplementaryDocument)
 	fmt.Println(string(data))
-	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","country_codes":[]}
+	// Output: {"type":"SUPPLEMENTARY_DOCUMENT"}
 }
 
 func ExampleRequiredSupplementaryDocumentBuilder_WithDocumentTypes() {
@@ -111,7 +111,7 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithDocumentTypes_empty() {
 
 	data, _ := json.Marshal(requiredSupplementaryDocument)
 	fmt.Println(string(data))
-	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","document_types":[]}
+	// Output: {"type":"SUPPLEMENTARY_DOCUMENT"}
 }
 
 func ExampleRequiredSupplementaryDocumentBuilder_WithObjective() {
