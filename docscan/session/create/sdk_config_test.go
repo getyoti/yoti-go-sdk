@@ -22,7 +22,12 @@ func ExampleSdkConfigBuilder_Build() {
 		return
 	}
 
-	data, _ := json.Marshal(sdkConfig)
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://successurl.com","error_url":"https://errorurl.com"}
 }
@@ -37,7 +42,12 @@ func ExampleSdkConfigBuilder_WithAllowsCameraAndUpload() {
 		return
 	}
 
-	data, _ := json.Marshal(sdkConfig)
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"allowed_capture_methods":"CAMERA_AND_UPLOAD"}
 }

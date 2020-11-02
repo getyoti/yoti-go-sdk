@@ -16,7 +16,12 @@ func ExampleTransactionalFlowExtension() {
 		return
 	}
 
-	data, _ := json.Marshal(extension)
+	data, err := json.Marshal(extension)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"TRANSACTIONAL_FLOW","content":"SOME CONTENT"}
 }

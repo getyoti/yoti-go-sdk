@@ -24,7 +24,9 @@ func TestClient_httpClient_ShouldReturnDefaultClient(t *testing.T) {
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key: key,
 		HTTPClient: &mockHTTPClient{
@@ -36,16 +38,20 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
+	err = client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
-	jsonBytes, _ := json.Marshal(yotierror.DataObject{
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	jsonBytes, err := json.Marshal(yotierror.DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 	})
+	assert.NilError(t, err)
+
 	response := &http.Response{
 		StatusCode: 400,
 		Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -59,13 +65,14 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
+	err = client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "400: SOME_CODE - some message")
 
 	errorResponse := err.(*yotierror.Error).Response
 	assert.Equal(t, response, errorResponse)
 
-	body, _ := ioutil.ReadAll(errorResponse.Body)
+	body, err := ioutil.ReadAll(errorResponse.Body)
+	assert.NilError(t, err)
 	assert.Equal(t, string(body), string(jsonBytes))
 }
 
@@ -88,7 +95,9 @@ func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
 }
 
 func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
-	key, _ := ioutil.ReadFile("../../test/test-key.pem")
+	key, err := ioutil.ReadFile("../../test/test-key.pem")
+	assert.NilError(t, err)
+
 	client, err := NewClient("ClientSDKID", key)
 	assert.NilError(t, err)
 
@@ -105,8 +114,10 @@ func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, _ := ioutil.ReadFile("../../test/test-key-invalid-format.pem")
-	_, err := NewClient("", key)
+	key, err := ioutil.ReadFile("../../test/test-key-invalid-format.pem")
+	assert.NilError(t, err)
+
+	_, err = NewClient("", key)
 
 	assert.ErrorContains(t, err, "invalid key: not PEM-encoded")
 
@@ -117,7 +128,9 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key: key,
 		HTTPClient: &mockHTTPClient{
@@ -128,12 +141,14 @@ func TestClient_ConfigureSessionResponse_Success(t *testing.T) {
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
+	err = client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.NilError(t, err)
 }
 
 func TestClient_ConfigureSessionResponse_ShouldReturnHttpClientError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key: key,
 		HTTPClient: &mockHTTPClient{
@@ -142,12 +157,14 @@ func TestClient_ConfigureSessionResponse_ShouldReturnHttpClientError(t *testing.
 			},
 		},
 	}
-	err := client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
+	err = client.ConfigureSessionResponse("some_session_id", &request.ResponseConfig{})
 	assert.ErrorContains(t, err, "some error")
 }
 
 func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key: key,
 		HTTPClient: &mockHTTPClient{
@@ -159,7 +176,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
+	err = client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.ErrorContains(t, err, "401: unknown HTTP error")
 }
 
@@ -182,7 +199,9 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnJsonError(t *testing.T)
 }
 
 func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key: key,
 		HTTPClient: &mockHTTPClient{
@@ -193,12 +212,14 @@ func TestClient_ConfigureApplicationResponse_Success(t *testing.T) {
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
+	err = client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.NilError(t, err)
 }
 
 func TestClient_ConfigureApplicationResponse_ShouldReturnHttpClientError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key: key,
 		HTTPClient: &mockHTTPClient{
@@ -207,7 +228,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnHttpClientError(t *test
 			},
 		},
 	}
-	err := client.ConfigureApplicationResponse(&request.ResponseConfig{})
+	err = client.ConfigureApplicationResponse(&request.ResponseConfig{})
 	assert.ErrorContains(t, err, "some error")
 }
 

@@ -12,7 +12,7 @@ import (
 )
 
 func TestError_ShouldReturnFormattedError(t *testing.T) {
-	jsonBytes, _ := json.Marshal(DataObject{
+	jsonBytes, err := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 		Errors: []ItemDataObject{
@@ -22,8 +22,9 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 			},
 		},
 	})
+	assert.NilError(t, err)
 
-	err := NewResponseError(
+	err = NewResponseError(
 		&http.Response{
 			StatusCode: 401,
 			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -34,12 +35,13 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 }
 
 func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
-	jsonBytes, _ := json.Marshal(DataObject{
+	jsonBytes, err := json.Marshal(DataObject{
 		Code:    "SOME_CODE",
 		Message: "some message",
 	})
+	assert.NilError(t, err)
 
-	err := NewResponseError(
+	err = NewResponseError(
 		&http.Response{
 			StatusCode: 400,
 			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
@@ -73,7 +75,9 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *t
 	errorResponse := err.Response
 	assert.Equal(t, response, errorResponse)
 
-	body, _ := ioutil.ReadAll(errorResponse.Body)
+	body, readErr := ioutil.ReadAll(errorResponse.Body)
+	assert.NilError(t, readErr)
+
 	assert.Equal(t, string(body), "some invalid JSON")
 }
 
@@ -92,7 +96,9 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 	errorResponse := err.Response
 	assert.Equal(t, response, errorResponse)
 
-	body, _ := ioutil.ReadAll(errorResponse.Body)
+	body, readErr := ioutil.ReadAll(errorResponse.Body)
+	assert.NilError(t, readErr)
+
 	assert.Equal(t, string(body), jsonString)
 }
 

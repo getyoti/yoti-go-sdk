@@ -34,8 +34,10 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, _ := ioutil.ReadFile("test/test-key-invalid-format.pem")
-	_, err := NewClient("", key)
+	key, err := ioutil.ReadFile("test/test-key-invalid-format.pem")
+	assert.NilError(t, err)
+
+	_, err = NewClient("", key)
 
 	assert.ErrorContains(t, err, "invalid key: not PEM-encoded")
 

@@ -49,7 +49,12 @@ func ExampleBreakdownBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(breakdown)
+	data, err := json.Marshal(breakdown)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"sub_check":"some_sub_check","result":"some_result","details":[{"name":"some_name","value":"some_value"}]}
 }
@@ -64,7 +69,12 @@ func ExampleBreakdownBuilder_minimal() {
 		return
 	}
 
-	data, _ := json.Marshal(breakdown)
+	data, err := json.Marshal(breakdown)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"sub_check":"some_sub_check","result":"some_result","details":[]}
 }

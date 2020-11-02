@@ -85,7 +85,8 @@ func TestShouldHandleNoExpiryDate(t *testing.T) {
 	marshalledThirdPartyAttribute, err := proto.Marshal(thirdPartyAttribute)
 	assert.NilError(t, err)
 
-	result, _ := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
+	result, err := processThirdPartyAttribute(t, marshalledThirdPartyAttribute)
+	assert.NilError(t, err)
 
 	assert.Assert(t, is.Nil(result.ExpiryDate()))
 }

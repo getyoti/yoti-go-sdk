@@ -140,9 +140,11 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 	assert.Check(t, profile.FamilyName() == nil)
 	assert.Check(t, profile.FullName() == nil)
 	assert.Check(t, profile.EmailAddress() == nil)
-	images, _ := profile.DocumentImages()
+	images, err := profile.DocumentImages()
+	assert.NilError(t, err)
 	assert.Check(t, images == nil)
-	documentDetails, _ := profile.DocumentDetails()
+	documentDetails, err := profile.DocumentDetails()
+	assert.NilError(t, err)
 	assert.Check(t, documentDetails == nil)
 
 	expectedDoB := time.Date(1980, time.January, 1, 0, 0, 0, 0, time.UTC)

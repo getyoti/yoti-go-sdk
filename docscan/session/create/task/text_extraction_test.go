@@ -18,7 +18,12 @@ func ExampleRequestedTextExtractionTaskBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT_TEXT_DATA_EXTRACTION","config":{"manual_check":"ALWAYS","chip_data":"IGNORE"}}
 }
