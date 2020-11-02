@@ -13,7 +13,12 @@ func ExampleNewRequestedIDDocumentComparisonCheckBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(check)
+	data, err := json.Marshal(check)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT_COMPARISON","config":{}}
 }

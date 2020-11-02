@@ -45,7 +45,12 @@ func ExampleIDDocumentComparisonCheckBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(idDocumentComparisonCheck)
+	data, err := json.Marshal(idDocumentComparisonCheck)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"report":{"recommendation":{"value":"some_value"},"breakdown":[{"sub_check":"some_check","result":"some_result","details":[{"name":"some_name","value":"some_value"}]}]}},"secondary_document_filter":{"document_types":[],"country_codes":["AUS"]}}
 }
@@ -57,7 +62,12 @@ func ExampleIDDocumentComparisonCheckBuilder_minimal() {
 		return
 	}
 
-	data, _ := json.Marshal(idDocumentComparisonCheck)
+	data, err := json.Marshal(idDocumentComparisonCheck)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"report":{}}}
 }

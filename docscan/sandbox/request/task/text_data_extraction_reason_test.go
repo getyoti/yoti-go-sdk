@@ -15,7 +15,12 @@ func ExampleTextDataExtractionReasonBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(reason)
+	data, err := json.Marshal(reason)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"QUALITY","detail":"some-detail"}
 }
@@ -29,7 +34,12 @@ func ExampleTextDataExtractionReasonBuilder_ForQuality() {
 		return
 	}
 
-	data, _ := json.Marshal(reason)
+	data, err := json.Marshal(reason)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"QUALITY"}
 }
@@ -42,7 +52,12 @@ func ExampleTextDataExtractionReasonBuilder_ForUserError() {
 		return
 	}
 
-	data, _ := json.Marshal(reason)
+	data, err := json.Marshal(reason)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"USER_ERROR"}
 }

@@ -16,7 +16,12 @@ func ExampleRequestedDocumentAuthenticityCheckBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(docAuthCheck)
+	data, err := json.Marshal(docAuthCheck)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT_AUTHENTICITY","config":{"manual_check":"FALLBACK"}}
 }
@@ -29,7 +34,12 @@ func ExampleRequestedDocumentAuthenticityCheckBuilder_Build() {
 		return
 	}
 
-	data, _ := json.Marshal(docAuthCheck)
+	data, err := json.Marshal(docAuthCheck)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT_AUTHENTICITY","config":{}}
 }

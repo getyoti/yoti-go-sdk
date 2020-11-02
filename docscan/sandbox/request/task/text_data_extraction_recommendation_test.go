@@ -19,7 +19,12 @@ func ExampleTextDataExtractionRecommendationBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(recommendation)
+	data, err := json.Marshal(recommendation)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"SHOULD_TRY_AGAIN","reason":{"value":"QUALITY"}}
 }
@@ -33,7 +38,12 @@ func ExampleTextDataExtractionRecommendationBuilder_ForProgress() {
 		return
 	}
 
-	data, _ := json.Marshal(recommendation)
+	data, err := json.Marshal(recommendation)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"PROGRESS"}
 }
@@ -47,7 +57,12 @@ func ExampleTextDataExtractionRecommendationBuilder_ForShouldTryAgain() {
 		return
 	}
 
-	data, _ := json.Marshal(recommendation)
+	data, err := json.Marshal(recommendation)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"SHOULD_TRY_AGAIN"}
 }
@@ -61,7 +76,12 @@ func ExampleTextDataExtractionRecommendationBuilder_ForMustTryAgain() {
 		return
 	}
 
-	data, _ := json.Marshal(recommendation)
+	data, err := json.Marshal(recommendation)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"MUST_TRY_AGAIN"}
 }

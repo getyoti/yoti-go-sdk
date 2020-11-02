@@ -17,7 +17,12 @@ func ExamplePolicyBuilder_WithFamilyName() {
 		return
 	}
 
-	data, _ := policy.attributes[0].MarshalJSON()
+	data, err := policy.attributes[0].MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"name":"family_name","accept_self_asserted":false}
 }
@@ -27,7 +32,12 @@ func ExamplePolicyBuilder_WithDocumentDetails() {
 	if err != nil {
 		return
 	}
-	data, _ := policy.attributes[0].MarshalJSON()
+	data, err := policy.attributes[0].MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"name":"document_details","accept_self_asserted":false}
 }
@@ -39,7 +49,12 @@ func ExamplePolicyBuilder_WithDocumentImages() {
 		return
 	}
 
-	data, _ := policy.attributes[0].MarshalJSON()
+	data, err := policy.attributes[0].MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"name":"document_images","accept_self_asserted":false}
 }
@@ -51,7 +66,12 @@ func ExamplePolicyBuilder_WithSelfie() {
 		return
 	}
 
-	data, _ := policy.attributes[0].MarshalJSON()
+	data, err := policy.attributes[0].MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"name":"selfie","accept_self_asserted":false}
 }
@@ -69,7 +89,12 @@ func ExamplePolicyBuilder_WithAgeOver() {
 		return
 	}
 
-	data, _ := policy.attributes[0].MarshalJSON()
+	data, err := policy.attributes[0].MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"name":"date_of_birth","derivation":"age_over:18","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"DRIVING_LICENCE","sub_type":""}],"soft_preference":false}}],"accept_self_asserted":false}
 }
@@ -81,7 +106,12 @@ func ExamplePolicyBuilder_WithSelfieAuth() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[],"wanted_auth_types":[1],"wanted_remember_me":false}
 }
@@ -93,7 +123,12 @@ func ExamplePolicyBuilder_WithWantedRememberMe() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[],"wanted_auth_types":[],"wanted_remember_me":true}
 }
@@ -111,7 +146,12 @@ func ExamplePolicyBuilder_WithFullName() {
 		return
 	}
 
-	marshalledJSON, _ := policy.MarshalJSON()
+	marshalledJSON, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(marshalledJSON))
 	// Output: {"wanted":[{"name":"full_name","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASSPORT","sub_type":""}],"soft_preference":false}}],"accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -124,7 +164,12 @@ func ExamplePolicyBuilder() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":true}
 }
@@ -136,7 +181,12 @@ func ExamplePolicyBuilder_WithAgeUnder() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"date_of_birth","derivation":"age_under:18","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -148,7 +198,12 @@ func ExamplePolicyBuilder_WithGivenNames() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"given_names","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -160,7 +215,12 @@ func ExamplePolicyBuilder_WithDateOfBirth() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"date_of_birth","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -172,7 +232,12 @@ func ExamplePolicyBuilder_WithGender() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"gender","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -184,7 +249,12 @@ func ExamplePolicyBuilder_WithPostalAddress() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"postal_address","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -196,7 +266,12 @@ func ExamplePolicyBuilder_WithStructuredPostalAddress() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"structured_postal_address","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -208,7 +283,12 @@ func ExamplePolicyBuilder_WithNationality() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"nationality","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
@@ -220,7 +300,12 @@ func ExamplePolicyBuilder_WithPhoneNumber() {
 		return
 	}
 
-	data, _ := policy.MarshalJSON()
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"wanted":[{"name":"phone_number","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }

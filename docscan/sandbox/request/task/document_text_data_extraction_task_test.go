@@ -26,7 +26,12 @@ func ExampleDocumentTextDataExtractionTaskBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
@@ -52,7 +57,12 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentFields() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
@@ -66,7 +76,12 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDocumentIDPhoto() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"document_id_photo":{"content_type":"some-content-type","data":"3q2+7w=="}}}
 }
@@ -80,7 +95,12 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithDetectedCountry() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"detected_country":"some-country"}}
 }
@@ -102,7 +122,12 @@ func ExampleDocumentTextDataExtractionTaskBuilder_WithRecommendation() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"recommendation":{"value":"PROGRESS"}}}
 }
@@ -114,7 +139,12 @@ func ExampleDocumentTextDataExtractionTaskBuilder_minimal() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{}}
 }

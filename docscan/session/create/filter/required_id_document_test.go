@@ -33,7 +33,12 @@ func ExampleRequiredIDDocument_MarshalJSON() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredIDDocument)
+	data, err := json.Marshal(requiredIDDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ID_DOCUMENT","filter":{"type":"DOCUMENT_RESTRICTIONS","inclusion":"WHITELIST","documents":[{"document_types":["PASSPORT"]}]}}
 }

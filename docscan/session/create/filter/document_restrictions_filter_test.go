@@ -24,7 +24,12 @@ func ExampleRequestedDocumentRestrictionsFilterBuilder_ForIncludeList() {
 		return
 	}
 
-	data, _ := json.Marshal(docFilter)
+	data, err := json.Marshal(docFilter)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"DOCUMENT_RESTRICTIONS","inclusion":"WHITELIST","documents":[{"document_types":["PASSPORT"]}]}
 }
@@ -48,7 +53,12 @@ func ExampleRequestedDocumentRestrictionsFilterBuilder_ForExcludeList() {
 		return
 	}
 
-	data, _ := json.Marshal(docFilter)
+	data, err := json.Marshal(docFilter)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"DOCUMENT_RESTRICTIONS","inclusion":"BLACKLIST","documents":[{"document_types":["PASSPORT"]}]}
 }

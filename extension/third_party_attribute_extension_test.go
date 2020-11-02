@@ -33,7 +33,12 @@ func ExampleThirdPartyAttributeExtension() {
 		return
 	}
 
-	data, _ := extension.MarshalJSON()
+	data, err := extension.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"THIRD_PARTY_ATTRIBUTE","content":{"expiry_date":"2019-10-30T12:10:09.458Z","definitions":[{"name":"some_value"}]}}
 }
@@ -114,7 +119,8 @@ func TestExpiryDatesAreFormattedCorrectly(t *testing.T) {
 
 		assert.NilError(t, err)
 
-		marshalledJson, _ := extension.MarshalJSON()
+		marshalledJson, err := extension.MarshalJSON()
+		assert.NilError(t, err)
 
 		attributeIssuanceDetailsJson := unmarshalJSONIntoMap(t, marshalledJson)
 

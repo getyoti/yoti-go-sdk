@@ -14,7 +14,9 @@ import (
 )
 
 func TestClient_SetupSharingProfile_ShouldReturnErrorIfProfileNotCreated(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key:     key,
 		BaseURL: "example.com",
@@ -27,13 +29,15 @@ func TestClient_SetupSharingProfile_ShouldReturnErrorIfProfileNotCreated(t *test
 			},
 		},
 	}
-	_, err := client.SetupSharingProfile(TokenRequest{})
+	_, err = client.SetupSharingProfile(TokenRequest{})
 	assert.ErrorContains(t, err, "Sharing Profile not created")
 }
 
 func TestClient_SetupSharingProfile_Success(t *testing.T) {
 	expectedToken := "shareToken"
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	client := Client{
 		Key:     key,
 		BaseURL: "example.com",

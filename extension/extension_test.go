@@ -13,7 +13,12 @@ func ExampleExtension() {
 		return
 	}
 
-	data, _ := extension.MarshalJSON()
+	data, err := extension.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SOME_TYPE","content":"SOME CONTENT"}
 }

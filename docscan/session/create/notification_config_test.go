@@ -21,7 +21,12 @@ func ExampleNotificationConfigBuilder_Build() {
 		return
 	}
 
-	data, _ := json.Marshal(notifications)
+	data, err := json.Marshal(notifications)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"auth_token":"auth-token","endpoint":"/endpoint","topics":["SOME_TOPIC","CHECK_COMPLETION","RESOURCE_UPDATE","SESSION_COMPLETION","TASK_COMPLETION"]}
 }
