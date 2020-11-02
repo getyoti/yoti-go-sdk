@@ -31,7 +31,12 @@ func ExampleTaskResultsBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(taskResults)
+	data, err := json.Marshal(taskResults)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"ID_DOCUMENT_TEXT_DATA_EXTRACTION":[{"result":{}}],"SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION":[{"result":{}}]}
 }

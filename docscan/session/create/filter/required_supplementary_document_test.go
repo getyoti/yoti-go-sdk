@@ -16,7 +16,12 @@ func ExampleRequiredSupplementaryDocument() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT"}
 }
@@ -49,7 +54,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithFilter() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","filter":{"type":"DOCUMENT_RESTRICTIONS","inclusion":"WHITELIST","documents":[{"document_types":["UTILITY_BILL"]}]}}
 }
@@ -64,7 +74,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithCountryCodes() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","country_codes":["SOME_COUNTRY"]}
 }
@@ -79,7 +94,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithCountryCodes_empty() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT"}
 }
@@ -94,7 +114,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithDocumentTypes() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","document_types":["SOME_DOCUMENT_TYPE"]}
 }
@@ -109,7 +134,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithDocumentTypes_empty() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT"}
 }
@@ -124,7 +154,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithObjective() {
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","objective":{"type":"SOME_OBJECTIVE"}}
 }
@@ -146,7 +181,12 @@ func ExampleRequiredSupplementaryDocumentBuilder_WithObjective_proofOfAddress() 
 		return
 	}
 
-	data, _ := json.Marshal(requiredSupplementaryDocument)
+	data, err := json.Marshal(requiredSupplementaryDocument)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT","objective":{"type":"PROOF_OF_ADDRESS"}}
 }

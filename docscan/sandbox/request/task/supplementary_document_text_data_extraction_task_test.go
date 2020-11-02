@@ -26,7 +26,12 @@ func ExampleSupplementaryDocumentTextDataExtractionTaskBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
@@ -52,7 +57,12 @@ func ExampleSupplementaryDocumentTextDataExtractionTaskBuilder_WithDocumentField
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"document_filter":{"document_types":[],"country_codes":[]},"result":{"document_fields":{"some-key":"some-value","some-other-key":{"some-nested-key":"some-nested-value"}}}}
 }
@@ -66,7 +76,12 @@ func ExampleSupplementaryDocumentTextDataExtractionTaskBuilder_WithDetectedCount
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"detected_country":"some-country"}}
 }
@@ -88,7 +103,12 @@ func ExampleSupplementaryDocumentTextDataExtractionTaskBuilder_WithRecommendatio
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{"recommendation":{"value":"PROGRESS"}}}
 }
@@ -100,7 +120,12 @@ func ExampleSupplementaryDocumentTextDataExtractionTaskBuilder_minimal() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"result":{}}
 }

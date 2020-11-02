@@ -17,7 +17,12 @@ func ExampleRequestedSupplementaryDocTextExtractionTaskBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(task)
+	data, err := json.Marshal(task)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION","config":{"manual_check":"ALWAYS"}}
 }
