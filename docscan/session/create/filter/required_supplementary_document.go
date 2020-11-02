@@ -9,8 +9,8 @@ import (
 // RequiredSupplementaryDocument details a required supplementary document
 type RequiredSupplementaryDocument struct {
 	Filter        RequestedDocumentFilter
-	DocumentTypes *[]string
-	CountryCodes  *[]string
+	DocumentTypes []string
+	CountryCodes  []string
 	Objective     objective.Objective
 }
 
@@ -24,8 +24,8 @@ func (r *RequiredSupplementaryDocument) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Type          string                  `json:"type"`
 		Filter        RequestedDocumentFilter `json:"filter,omitempty"`
-		CountryCodes  *[]string               `json:"country_codes,omitempty"`
-		DocumentTypes *[]string               `json:"document_types,omitempty"`
+		CountryCodes  []string                `json:"country_codes,omitempty"`
+		DocumentTypes []string                `json:"document_types,omitempty"`
 		Objective     objective.Objective     `json:"objective,omitempty"`
 	}{
 		Type:          r.Type(),
@@ -44,8 +44,8 @@ func NewRequiredSupplementaryDocumentBuilder() *RequiredSupplementaryDocumentBui
 // RequiredSupplementaryDocumentBuilder builds a RequiredSupplementaryDocument
 type RequiredSupplementaryDocumentBuilder struct {
 	filter        RequestedDocumentFilter
-	documentTypes *[]string
-	countryCodes  *[]string
+	documentTypes []string
+	countryCodes  []string
 	objective     objective.Objective
 }
 
@@ -57,13 +57,13 @@ func (r *RequiredSupplementaryDocumentBuilder) WithFilter(filter RequestedDocume
 
 // WithCountryCodes sets the country codes on the required supplementary document
 func (r *RequiredSupplementaryDocumentBuilder) WithCountryCodes(countryCodes []string) *RequiredSupplementaryDocumentBuilder {
-	r.countryCodes = &countryCodes
+	r.countryCodes = countryCodes
 	return r
 }
 
 // WithDocumentTypes sets the document types on the required supplementary document
 func (r *RequiredSupplementaryDocumentBuilder) WithDocumentTypes(documentTypes []string) *RequiredSupplementaryDocumentBuilder {
-	r.documentTypes = &documentTypes
+	r.documentTypes = documentTypes
 	return r
 }
 
