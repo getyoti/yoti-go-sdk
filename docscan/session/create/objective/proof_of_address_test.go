@@ -13,7 +13,12 @@ func ExampleProofOfAddressObjectiveBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(objective)
+	data, err := json.Marshal(objective)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"PROOF_OF_ADDRESS"}
 }

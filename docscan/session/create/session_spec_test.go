@@ -137,7 +137,12 @@ func ExampleSessionSpecificationBuilder_WithRequiredDocument_supplementary() {
 		return
 	}
 
-	data, _ := json.Marshal(sessionSpecification)
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"required_documents":[{"type":"SUPPLEMENTARY_DOCUMENT"}]}
 }
