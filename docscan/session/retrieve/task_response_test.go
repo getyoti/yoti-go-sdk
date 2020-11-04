@@ -9,14 +9,20 @@ import (
 )
 
 func TestTaskResponse_UnmarshalJSON(t *testing.T) {
-	generatedTextDataCheck := GeneratedCheckResponse{
-		Type: constants.IDDocumentTextDataCheck,
-		ID:   "some-id",
+	checks := []*GeneratedCheckResponse{
+		{
+			Type: constants.IDDocumentTextDataCheck,
+			ID:   "some-id",
+		},
+		{
+			Type: constants.SupplementaryDocumentTextDataCheck,
+			ID:   "supplementary-id",
+		},
+		{
+			Type: "OTHER_TYPE",
+			ID:   "other-id",
+		},
 	}
-
-	var checks []*GeneratedCheckResponse
-	checks = append(checks, &GeneratedCheckResponse{Type: "OTHER_TYPE", ID: "other-id"})
-	checks = append(checks, &generatedTextDataCheck)
 
 	taskResponse := TaskResponse{
 		GeneratedChecks: checks,
@@ -30,6 +36,12 @@ func TestTaskResponse_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 1, len(result.GeneratedTextDataChecks()))
 	assert.Equal(t, "some-id", result.GeneratedTextDataChecks()[0].ID)
+
+	assert.Equal(t, 1, len(result.generatedTextDataChecks))
+	assert.Equal(t, "some-id", result.generatedTextDataChecks[0].ID)
+
+	assert.Equal(t, 1, len(result.generatedSupplementaryTextDataChecks))
+	assert.Equal(t, "supplementary-id", result.generatedSupplementaryTextDataChecks[0].ID)
 }
 
 func TestTaskResponse_UnmarshalJSON_Invalid(t *testing.T) {

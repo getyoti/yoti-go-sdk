@@ -9,19 +9,20 @@ import (
 
 // GetSessionResult contains the information about a created session
 type GetSessionResult struct {
-	ClientSessionTokenTTL      int                `json:"client_session_token_ttl"`
-	ClientSessionToken         string             `json:"client_session_token"`
-	SessionID                  string             `json:"session_id"`
-	UserTrackingID             string             `json:"user_tracking_id"`
-	State                      string             `json:"state"`
-	Checks                     []*CheckResponse   `json:"checks"`
-	Resources                  *ResourceContainer `json:"resources"`
-	BiometricConsentTimestamp  *time.Time         `json:"biometric_consent"`
-	authenticityChecks         []*AuthenticityCheckResponse
-	faceMatchChecks            []*FaceMatchCheckResponse
-	textDataChecks             []*TextDataCheckResponse
-	livenessChecks             []*LivenessCheckResponse
-	idDocumentComparisonChecks []*IDDocumentComparisonCheckResponse
+	ClientSessionTokenTTL               int                `json:"client_session_token_ttl"`
+	ClientSessionToken                  string             `json:"client_session_token"`
+	SessionID                           string             `json:"session_id"`
+	UserTrackingID                      string             `json:"user_tracking_id"`
+	State                               string             `json:"state"`
+	Checks                              []*CheckResponse   `json:"checks"`
+	Resources                           *ResourceContainer `json:"resources"`
+	BiometricConsentTimestamp           *time.Time         `json:"biometric_consent"`
+	authenticityChecks                  []*AuthenticityCheckResponse
+	faceMatchChecks                     []*FaceMatchCheckResponse
+	textDataChecks                      []*TextDataCheckResponse
+	livenessChecks                      []*LivenessCheckResponse
+	idDocumentComparisonChecks          []*IDDocumentComparisonCheckResponse
+	supplementaryDocumentTextDataChecks []*SupplementaryDocumentTextDataCheckResponse
 }
 
 // AuthenticityChecks filters the checks, returning only document authenticity checks
@@ -34,8 +35,14 @@ func (g *GetSessionResult) FaceMatchChecks() []*FaceMatchCheckResponse {
 	return g.faceMatchChecks
 }
 
-// TextDataChecks filters the checks, returning only Text Data checks
+// TextDataChecks filters the checks, returning only ID Document Text Data checks
+// Deprecated: replaced by IDDocumentTextDataChecks()
 func (g *GetSessionResult) TextDataChecks() []*TextDataCheckResponse {
+	return g.IDDocumentTextDataChecks()
+}
+
+// IDDocumentTextDataChecks filters the checks, returning only ID Document Text Data checks
+func (g *GetSessionResult) IDDocumentTextDataChecks() []*TextDataCheckResponse {
 	return g.textDataChecks
 }
 
@@ -47,6 +54,11 @@ func (g *GetSessionResult) LivenessChecks() []*LivenessCheckResponse {
 // IDDocumentComparisonChecks filters the checks, returning only the identity document comparison checks
 func (g *GetSessionResult) IDDocumentComparisonChecks() []*IDDocumentComparisonCheckResponse {
 	return g.idDocumentComparisonChecks
+}
+
+// SupplementaryDocumentTextDataChecks filters the checks, returning only the supplementary document text data checks
+func (g *GetSessionResult) SupplementaryDocumentTextDataChecks() []*SupplementaryDocumentTextDataCheckResponse {
+	return g.supplementaryDocumentTextDataChecks
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
@@ -72,6 +84,14 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 
 		case constants.IDDocumentComparison:
 			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
+
+		case constants.SupplementaryDocumentTextDataCheck:
+			g.supplementaryDocumentTextDataChecks = append(
+				g.supplementaryDocumentTextDataChecks,
+				&SupplementaryDocumentTextDataCheckResponse{
+					CheckResponse: check,
+				},
+			)
 		}
 	}
 

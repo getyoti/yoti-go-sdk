@@ -38,7 +38,12 @@ func ExampleRecommendationBuilder() {
 		return
 	}
 
-	data, _ := json.Marshal(recommendation)
+	data, err := json.Marshal(recommendation)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"some_value","reason":"some_reason","recovery_suggestion":"some_suggestion"}
 }
@@ -52,7 +57,12 @@ func ExampleRecommendationBuilder_minimal() {
 		return
 	}
 
-	data, _ := json.Marshal(recommendation)
+	data, err := json.Marshal(recommendation)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"value":"some_value"}
 }

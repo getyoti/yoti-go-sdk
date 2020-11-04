@@ -47,7 +47,12 @@ func ExampleWantedAttributeBuilder_WithConstraint() {
 		return
 	}
 
-	marshalledJSON, _ := attribute.MarshalJSON()
+	marshalledJSON, err := attribute.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(marshalledJSON))
 	// Output: {"name":"TEST NAME","constraints":[{"type":"SOURCE","preferred_sources":{"anchors":[],"soft_preference":false}}],"accept_self_asserted":false}
 }
@@ -62,7 +67,12 @@ func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted() {
 		return
 	}
 
-	marshalledJSON, _ := attribute.MarshalJSON()
+	marshalledJSON, err := attribute.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(marshalledJSON))
 	// Output: {"name":"TEST NAME","accept_self_asserted":true}
 }
@@ -77,7 +87,12 @@ func ExampleWantedAttributeBuilder_WithAcceptSelfAsserted_false() {
 		return
 	}
 
-	marshalledJSON, _ := attribute.MarshalJSON()
+	marshalledJSON, err := attribute.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(marshalledJSON))
 	// Output: {"name":"TEST NAME","accept_self_asserted":false}
 }

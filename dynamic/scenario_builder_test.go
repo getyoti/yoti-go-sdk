@@ -13,7 +13,12 @@ func ExampleScenarioBuilder() {
 		return
 	}
 
-	data, _ := scenario.MarshalJSON()
+	data, err := scenario.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"policy":{"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[],"callback_endpoint":""}
 }
@@ -31,7 +36,12 @@ func ExampleScenarioBuilder_WithPolicy() {
 		return
 	}
 
-	data, _ := scenario.MarshalJSON()
+	data, err := scenario.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"policy":{"wanted":[{"name":"email_address","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":false},"extensions":[],"callback_endpoint":"/foo"}
 }
@@ -57,7 +67,12 @@ func ExampleScenarioBuilder_WithExtension() {
 		return
 	}
 
-	data, _ := scenario.MarshalJSON()
+	data, err := scenario.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"policy":{"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"callback_endpoint":""}
 

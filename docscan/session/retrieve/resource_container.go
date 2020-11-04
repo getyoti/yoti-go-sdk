@@ -8,10 +8,11 @@ import (
 
 // ResourceContainer contains different resources that are part of the Yoti Doc Scan session
 type ResourceContainer struct {
-	IDDocuments           []*IDDocumentResourceResponse `json:"id_documents"`
-	LivenessCapture       []*LivenessResourceResponse
-	RawLivenessCapture    []json.RawMessage `json:"liveness_capture"`
-	zoomLivenessResources []*ZoomLivenessResourceResponse
+	IDDocuments            []*IDDocumentResourceResponse            `json:"id_documents"`
+	SupplementaryDocuments []*SupplementaryDocumentResourceResponse `json:"supplementary_documents"`
+	LivenessCapture        []*LivenessResourceResponse
+	RawLivenessCapture     []json.RawMessage `json:"liveness_capture"`
+	zoomLivenessResources  []*ZoomLivenessResourceResponse
 }
 
 // ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources

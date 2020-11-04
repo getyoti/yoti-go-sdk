@@ -9,24 +9,21 @@ import (
 
 // TaskResponse represents the attributes of a task, for any given session
 type TaskResponse struct {
-	ID                      string                    `json:"id"`
-	Type                    string                    `json:"type"`
-	State                   string                    `json:"state"`
-	Created                 *time.Time                `json:"created"`
-	LastUpdated             *time.Time                `json:"last_updated"`
-	GeneratedChecks         []*GeneratedCheckResponse `json:"generated_checks"`
-	GeneratedMedia          []*GeneratedMedia         `json:"generated_media"`
-	generatedTextDataChecks []*GeneratedTextDataCheckResponse
+	ID                                   string                    `json:"id"`
+	Type                                 string                    `json:"type"`
+	State                                string                    `json:"state"`
+	Created                              *time.Time                `json:"created"`
+	LastUpdated                          *time.Time                `json:"last_updated"`
+	GeneratedChecks                      []*GeneratedCheckResponse `json:"generated_checks"`
+	GeneratedMedia                       []*GeneratedMedia         `json:"generated_media"`
+	generatedTextDataChecks              []*GeneratedTextDataCheckResponse
+	generatedSupplementaryTextDataChecks []*GeneratedSupplementaryTextDataCheckResponse
 }
 
 // GeneratedTextDataChecks filters the checks, returning only text data checks
+// Deprecated: this function is now implemented on specific task types
 func (t *TaskResponse) GeneratedTextDataChecks() []*GeneratedTextDataCheckResponse {
 	return t.generatedTextDataChecks
-}
-
-// TextExtractionTaskResponse represents a Text Extraction task response
-type TextExtractionTaskResponse struct {
-	*TaskResponse
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
@@ -39,7 +36,19 @@ func (t *TaskResponse) UnmarshalJSON(data []byte) error {
 	for _, check := range t.GeneratedChecks {
 		switch check.Type {
 		case constants.IDDocumentTextDataCheck:
-			t.generatedTextDataChecks = append(t.generatedTextDataChecks, &GeneratedTextDataCheckResponse{GeneratedCheckResponse: check})
+			t.generatedTextDataChecks = append(
+				t.generatedTextDataChecks,
+				&GeneratedTextDataCheckResponse{
+					GeneratedCheckResponse: check,
+				},
+			)
+		case constants.SupplementaryDocumentTextDataCheck:
+			t.generatedSupplementaryTextDataChecks = append(
+				t.generatedSupplementaryTextDataChecks,
+				&GeneratedSupplementaryTextDataCheckResponse{
+					GeneratedCheckResponse: check,
+				},
+			)
 		}
 	}
 

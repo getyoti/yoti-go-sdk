@@ -14,7 +14,11 @@ func ExampleWantedAnchorBuilder() {
 		return
 	}
 
-	aadhaarJSON, _ := aadhaarAnchor.MarshalJSON()
+	aadhaarJSON, err := aadhaarAnchor.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
 
 	fmt.Println("Aadhaar:", string(aadhaarJSON))
 	// Output: Aadhaar: {"name":"NATIONAL_ID","sub_type":"AADHAAR"}

@@ -31,7 +31,8 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 }
 
 func TestClient_CreateSession(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	var clientSessionTokenTTL int = 100
 	var clientSessionToken string = "8c91671a-7194-4ad7-8483-32703b965cfc"
@@ -83,7 +84,8 @@ func TestClient_CreateSession_ShouldReturnMissingKeyError(t *testing.T) {
 }
 
 func TestClient_CreateSession_ShouldReturnResponseError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -101,12 +103,13 @@ func TestClient_CreateSession_ShouldReturnResponseError(t *testing.T) {
 		HTTPClient: HTTPClient,
 		apiURL:     "https://apiurl.com",
 	}
-	_, err := client.CreateSession(sessionSpec)
+	_, err = client.CreateSession(sessionSpec)
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
 func TestClient_GetSession(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	var clientSessionTokenTTL int = 100
 	var clientSessionToken string = "8c91671a-7194-4ad7-8483-32703b965cfc"
@@ -148,7 +151,8 @@ func TestClient_GetSession_ShouldReturnMissingKeyError(t *testing.T) {
 }
 
 func TestClient_GetSession_ShouldReturnResponseError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -165,12 +169,13 @@ func TestClient_GetSession_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err := client.GetSession("some-id")
+	_, err = client.GetSession("some-id")
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
 func TestClient_GetSession_ShouldReturnJsonError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -188,12 +193,14 @@ func TestClient_GetSession_ShouldReturnJsonError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err := client.GetSession("some-id")
+	_, err = client.GetSession("some-id")
 	assert.ErrorContains(t, err, "invalid character")
 }
 
 func TestClient_DeleteSession(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
@@ -209,7 +216,7 @@ func TestClient_DeleteSession(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	err := client.DeleteSession("some-session-id")
+	err = client.DeleteSession("some-session-id")
 	assert.NilError(t, err)
 }
 
@@ -220,7 +227,8 @@ func TestClient_DeleteSession_ShouldReturnMissingKeyError(t *testing.T) {
 }
 
 func TestClient_DeleteSession_ShouldReturnResponseError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -237,12 +245,13 @@ func TestClient_DeleteSession_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	err := client.DeleteSession("some-id")
+	err = client.DeleteSession("some-id")
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
 func TestClient_GetMediaContent(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	jpegImage := []byte("value")
 	HTTPClient := &mockHTTPClient{
@@ -269,8 +278,34 @@ func TestClient_GetMediaContent(t *testing.T) {
 	assert.Equal(t, media.ImageTypeJPEG, result.MIME())
 }
 
+func TestClient_GetMediaContent_NoContent(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusNoContent,
+				Header:     map[string][]string{},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	media, err := client.GetMediaContent("some-sessionID", "some-mediaID")
+	assert.Equal(t, media, nil)
+	assert.NilError(t, err)
+}
+
 func TestClient_GetMediaContent_NoContentType(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	jpegImage := []byte("value")
 	HTTPClient := &mockHTTPClient{
@@ -290,7 +325,7 @@ func TestClient_GetMediaContent_NoContentType(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err := client.GetMediaContent("some-sessionID", "some-mediaID")
+	_, err = client.GetMediaContent("some-sessionID", "some-mediaID")
 	assert.ErrorContains(t, err, "unable to parse content type from response")
 }
 
@@ -301,7 +336,8 @@ func TestClient_GetMediaContent_ShouldReturnMissingKeyError(t *testing.T) {
 }
 
 func TestClient_GetMediaContent_ShouldReturnResponseError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -318,12 +354,14 @@ func TestClient_GetMediaContent_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err := client.GetMediaContent("some-id", "some-media-id")
+	_, err = client.GetMediaContent("some-id", "some-media-id")
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
 func TestClient_DeleteMediaContent(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
@@ -339,7 +377,7 @@ func TestClient_DeleteMediaContent(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	err := client.DeleteMediaContent("some-session-id", "some-media-id")
+	err = client.DeleteMediaContent("some-session-id", "some-media-id")
 	assert.NilError(t, err)
 }
 
@@ -350,7 +388,8 @@ func TestClient_DeleteMediaContent_ShouldReturnMissingKeyError(t *testing.T) {
 }
 
 func TestClient_DeleteMediaContent_ShouldReturnResponseError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -367,12 +406,14 @@ func TestClient_DeleteMediaContent_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	err := client.DeleteMediaContent("some-id", "some-media-id")
+	err = client.DeleteMediaContent("some-id", "some-media-id")
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
 func TestClient_GetSupportedDocuments(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
 	countryCodeUSA := "USA"
 	documentTypePassport := "PASSPORT"
 	documentsResponse := supported.DocumentsResponse{
@@ -421,7 +462,8 @@ func TestClient_GetSupportedDocuments_ShouldReturnMissingKeyError(t *testing.T) 
 }
 
 func TestClient_GetSupportedDocuments_ShouldReturnResponseError(t *testing.T) {
-	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
 
 	HTTPClient := &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -438,7 +480,7 @@ func TestClient_GetSupportedDocuments_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err := client.GetSupportedDocuments()
+	_, err = client.GetSupportedDocuments()
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
@@ -536,8 +578,10 @@ func Test_EmptySdkID(t *testing.T) {
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, _ := ioutil.ReadFile("../test/test-key-invalid-format.pem")
-	_, err := NewClient("sdkID", key)
+	key, err := ioutil.ReadFile("../test/test-key-invalid-format.pem")
+	assert.NilError(t, err)
+
+	_, err = NewClient("sdkID", key)
 
 	assert.ErrorContains(t, err, "invalid key: not PEM-encoded")
 

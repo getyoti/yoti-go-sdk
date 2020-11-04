@@ -36,13 +36,23 @@ func TestMergeHeaders_HandleNullCaseGracefully(t *testing.T) {
 }
 
 func ExampleJSONHeaders() {
-	jsonHeaders, _ := json.Marshal(JSONHeaders())
+	jsonHeaders, err := json.Marshal(JSONHeaders())
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(jsonHeaders))
 	// Output: {"Accept":["application/json"],"Content-Type":["application/json"]}
 }
 
 func ExampleAuthKeyHeader() {
-	headers, _ := json.Marshal(AuthKeyHeader(&privateKey.PublicKey))
+	headers, err := json.Marshal(AuthKeyHeader(&privateKey.PublicKey))
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(headers))
 	// Output: {"X-Yoti-Auth-Key":["MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpTiICtL+ujx8D0FquVWIaXg+ajJadN5hsTlGUXymiFAunSZjLjTsoGfSPz8PJm6pG9ax1Qb+R5UsSgTRTcpZTps2RLRWr5oPfD66bz4l38QXPSvfg5o+5kNxyCb8QANitF7Ht/DcpsGpL7anruHg/RgCLCBFRaGAodfuJCCM9zwIDAQAB"]}
 }

@@ -159,6 +159,11 @@ func getMedia(c *gin.Context) {
 
 	media, err := client.GetMediaContent(sessionId, mediaID)
 
+	if media == nil && err == nil {
+		c.Status(http.StatusNoContent)
+		return
+	}
+
 	if err != nil || sessionId == "" {
 		c.HTML(
 			http.StatusBadRequest,

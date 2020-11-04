@@ -23,7 +23,12 @@ func ExampleSourceConstraint() {
 		return
 	}
 
-	json, _ := sourceConstraint.MarshalJSON()
+	json, err := sourceConstraint.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println("SourceConstraint:", string(json))
 	// Output: SourceConstraint: {"type":"SOURCE","preferred_sources":{"anchors":[{"name":"DRIVING_LICENCE","sub_type":""}],"soft_preference":true}}
 }
@@ -37,7 +42,12 @@ func ExampleSourceConstraintBuilder_WithPassport() {
 		return
 	}
 
-	json, _ := sourceConstraint.MarshalJSON()
+	json, err := sourceConstraint.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(json))
 	// Output: {"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASSPORT","sub_type":""}],"soft_preference":false}}
 }
@@ -51,7 +61,12 @@ func ExampleSourceConstraintBuilder_WithDrivingLicence() {
 		return
 	}
 
-	json, _ := sourceConstraint.MarshalJSON()
+	json, err := sourceConstraint.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(json))
 	// Output: {"type":"SOURCE","preferred_sources":{"anchors":[{"name":"DRIVING_LICENCE","sub_type":""}],"soft_preference":false}}
 }
@@ -65,7 +80,12 @@ func ExampleSourceConstraintBuilder_WithNationalID() {
 		return
 	}
 
-	json, _ := sourceConstraint.MarshalJSON()
+	json, err := sourceConstraint.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(json))
 	// Output: {"type":"SOURCE","preferred_sources":{"anchors":[{"name":"NATIONAL_ID","sub_type":""}],"soft_preference":false}}
 }
@@ -79,7 +99,12 @@ func ExampleSourceConstraintBuilder_WithPasscard() {
 		return
 	}
 
-	json, _ := sourceConstraint.MarshalJSON()
+	json, err := sourceConstraint.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(json))
 	// Output: {"type":"SOURCE","preferred_sources":{"anchors":[{"name":"PASS_CARD","sub_type":""}],"soft_preference":false}}
 }

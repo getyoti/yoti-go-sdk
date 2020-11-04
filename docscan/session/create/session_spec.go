@@ -97,8 +97,8 @@ func (b *SessionSpecificationBuilder) WithSDKConfig(SDKConfig *SDKConfig) *Sessi
 }
 
 // WithRequiredDocument adds a required document to the session specification
-func (b *SessionSpecificationBuilder) WithRequiredDocument(IDDocument filter.RequiredDocument) *SessionSpecificationBuilder {
-	b.requiredDocuments = append(b.requiredDocuments, IDDocument)
+func (b *SessionSpecificationBuilder) WithRequiredDocument(document filter.RequiredDocument) *SessionSpecificationBuilder {
+	b.requiredDocuments = append(b.requiredDocuments, document)
 	return b
 }
 

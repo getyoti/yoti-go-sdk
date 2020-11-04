@@ -14,7 +14,12 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_WithIncludedCountries()
 		return
 	}
 
-	data, _ := json.Marshal(restriction)
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","country_restriction":{"inclusion":"WHITELIST","country_codes":["KEN","CIV"]}}
 }
@@ -28,7 +33,12 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_WithIncludedDocumentTyp
 		return
 	}
 
-	data, _ := json.Marshal(restriction)
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","type_restriction":{"inclusion":"WHITELIST","document_types":["PASSPORT","DRIVING_LICENCE"]}}
 }
@@ -42,7 +52,12 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_WithExcludedDocumentTyp
 		return
 	}
 
-	data, _ := json.Marshal(restriction)
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","type_restriction":{"inclusion":"BLACKLIST","document_types":["NATIONAL_ID","PASS_CARD"]}}
 }
@@ -56,7 +71,12 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_WithExcludedCountries()
 		return
 	}
 
-	data, _ := json.Marshal(restriction)
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","country_restriction":{"inclusion":"BLACKLIST","country_codes":["CAN","FJI"]}}
 }

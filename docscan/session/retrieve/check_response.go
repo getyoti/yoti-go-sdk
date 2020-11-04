@@ -40,3 +40,8 @@ type TextDataCheckResponse struct {
 type IDDocumentComparisonCheckResponse struct {
 	*CheckResponse
 }
+
+// SupplementaryDocumentTextDataCheckResponse represents a supplementary document text data check for a given session
+type SupplementaryDocumentTextDataCheckResponse struct {
+	*CheckResponse
+}
