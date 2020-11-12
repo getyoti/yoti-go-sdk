@@ -12,6 +12,7 @@ type SDKConfig struct {
 	PresetIssuingCountry  string `json:"preset_issuing_country,omitempty"`
 	SuccessUrl            string `json:"success_url,omitempty"`
 	ErrorUrl              string `json:"error_url,omitempty"`
+	PrivacyPolicyUrl      string `json:"privacy_policy_url,omitempty"`
 }
 
 // NewSdkConfigBuilder creates a new SdkConfigBuilder
@@ -29,6 +30,7 @@ type SdkConfigBuilder struct {
 	presetIssuingCountry  string
 	successUrl            string
 	errorUrl              string
+	privacyPolicyUrl      string
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -89,6 +91,12 @@ func (b *SdkConfigBuilder) WithErrorUrl(url string) *SdkConfigBuilder {
 	return b
 }
 
+// WithPrivacyPolicyUrl sets the privacy policy URL
+func (b *SdkConfigBuilder) WithPrivacyPolicyUrl(url string) *SdkConfigBuilder {
+	b.privacyPolicyUrl = url
+	return b
+}
+
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 	return &SDKConfig{
@@ -100,5 +108,6 @@ func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 		b.presetIssuingCountry,
 		b.successUrl,
 		b.errorUrl,
+		b.privacyPolicyUrl,
 	}, nil
 }

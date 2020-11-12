@@ -178,3 +178,8 @@ func getMedia(c *gin.Context) {
 	c.Data(http.StatusOK, media.MIME(), media.Data())
 	return
 }
+
+func showPrivacyPolicyPage(c *gin.Context) {
+	render(c, gin.H{}, "privacy.html")
+	return
+}

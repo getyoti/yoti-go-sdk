@@ -66,6 +66,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithPresetIssuingCountry("GBR").
 		WithSuccessUrl("https://localhost:8080/success").
 		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
 		Build()
 
 	if err != nil {
