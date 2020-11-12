@@ -8,13 +8,14 @@ import (
 func ExampleSdkConfigBuilder_Build() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithAllowsCamera().
-		WithErrorUrl("https://errorurl.com").
+		WithErrorUrl("https://example.com/error").
 		WithFontColour("#ff0000").
 		WithLocale("fr_FR").
 		WithPresetIssuingCountry("USA").
 		WithPrimaryColour("#aa1111").
 		WithSecondaryColour("#bb2222").
-		WithSuccessUrl("https://successurl.com").
+		WithSuccessUrl("https://example.com/success").
+		WithPrivacyPolicyUrl("https://example.com/privacy").
 		Build()
 
 	if err != nil {
@@ -29,7 +30,7 @@ func ExampleSdkConfigBuilder_Build() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://successurl.com","error_url":"https://errorurl.com"}
+	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://example.com/success","error_url":"https://example.com/error","privacy_policy_url":"https://example.com/privacy"}
 }
 
 func ExampleSdkConfigBuilder_WithAllowsCameraAndUpload() {
