@@ -1,5 +1,6 @@
 # Yoti Go SDK
 
+[![Build Status](https://github.com/getyoti/yoti-go-sdk/workflows/Unit%20Test/badge.svg?branch=master)](https://github.com/getyoti/yoti-go-sdk/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/getyoti/yoti-go-sdk)](https://goreportcard.com/report/github.com/getyoti/yoti-go-sdk)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/getyoti/yoti-go-sdk/v3)](https://pkg.go.dev/github.com/getyoti/yoti-go-sdk/v3?tab=doc)
 [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://github.com/getyoti/yoti-go-sdk/blob/master/LICENSE.md)
