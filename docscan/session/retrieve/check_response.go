@@ -45,3 +45,8 @@ type IDDocumentComparisonCheckResponse struct {
 type SupplementaryDocumentTextDataCheckResponse struct {
 	*CheckResponse
 }
+
+// ThirdPartyCheckResponse represents a check with an external credit reference agency
+type ThirdPartyIdentityCheckResponse struct {
+	*CheckResponse
+}
