@@ -13,6 +13,7 @@ type CheckReports struct {
 	IDDocumentComparisonChecks          []*check.IDDocumentComparisonCheck          `json:"ID_DOCUMENT_COMPARISON"`
 	SupplementaryDocumentTextDataChecks []*check.SupplementaryDocumentTextDataCheck `json:"SUPPLEMENTARY_DOCUMENT_TEXT_DATA_CHECK"`
 	AsyncReportDelay                    uint32                                      `json:"async_report_delay,omitempty"`
+	ThirdPartyIdentityCheck             *check.ThirdPartyIdentityCheck              `json:"third_party_identity_check"`
 }
 
 // CheckReportsBuilder builds CheckReports
@@ -23,6 +24,7 @@ type CheckReportsBuilder struct {
 	livenessChecks                      []*check.LivenessCheck
 	idDocumentComparisonChecks          []*check.IDDocumentComparisonCheck
 	supplementaryDocumentTextDataChecks []*check.SupplementaryDocumentTextDataCheck
+	thirdPartyIdentityCheck             *check.ThirdPartyIdentityCheck
 	asyncReportDelay                    uint32
 }
 
@@ -83,6 +85,11 @@ func (b *CheckReportsBuilder) WithAsyncReportDelay(asyncReportDelay uint32) *Che
 	return b
 }
 
+func (b *CheckReportsBuilder) WithThirdPartyIdentityCheck(thirdPartyIdentityCheck *check.ThirdPartyIdentityCheck) *CheckReportsBuilder {
+	b.thirdPartyIdentityCheck = thirdPartyIdentityCheck
+	return b
+}
+
 // Build creates CheckReports
 func (b *CheckReportsBuilder) Build() (CheckReports, error) {
 	return CheckReports{
@@ -93,5 +100,6 @@ func (b *CheckReportsBuilder) Build() (CheckReports, error) {
 		IDDocumentComparisonChecks:          b.idDocumentComparisonChecks,
 		SupplementaryDocumentTextDataChecks: b.supplementaryDocumentTextDataChecks,
 		AsyncReportDelay:                    b.asyncReportDelay,
+		ThirdPartyIdentityCheck:             b.thirdPartyIdentityCheck,
 	}, nil
 }
