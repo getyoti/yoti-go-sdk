@@ -31,7 +31,12 @@ func (b *ResponseConfigBuilder) WithTaskResults(taskResults TaskResults) *Respon
 
 // WithCheckReports adds check reports to the response configuration
 func (b *ResponseConfigBuilder) WithCheckReports(checkReports CheckReports) *ResponseConfigBuilder {
-	b.checkReports = &checkReports
+	if b.checkReports == nil {
+		b.checkReports = &checkReports
+	} else {
+		mergedReport := MergeCheckReports(*b.checkReports, checkReports)
+		b.checkReports = &mergedReport
+	}
 	return b
 }
 
