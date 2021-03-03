@@ -16,6 +16,28 @@ type CheckReports struct {
 	ThirdPartyIdentityCheck             *check.ThirdPartyIdentityCheck              `json:"third_party_identity_check"`
 }
 
+// MergeCheckReports merges together two check reports objects
+func MergeCheckReports(left, right CheckReports) (out CheckReports) {
+	out.DocumentAuthenticityChecks = append(left.DocumentAuthenticityChecks, right.DocumentAuthenticityChecks...)
+	out.DocumentTextDataChecks = append(left.DocumentTextDataChecks, right.DocumentTextDataChecks...)
+	out.DocumentFaceMatchChecks = append(left.DocumentFaceMatchChecks, right.DocumentFaceMatchChecks...)
+	out.LivenessChecks = append(left.LivenessChecks, right.LivenessChecks...)
+	out.IDDocumentComparisonChecks = append(left.IDDocumentComparisonChecks, right.IDDocumentComparisonChecks...)
+	out.SupplementaryDocumentTextDataChecks = append(left.SupplementaryDocumentTextDataChecks, right.SupplementaryDocumentTextDataChecks...)
+	if right.AsyncReportDelay != 0 {
+		out.AsyncReportDelay = right.AsyncReportDelay
+	} else {
+		out.AsyncReportDelay = left.AsyncReportDelay
+	}
+	if right.ThirdPartyIdentityCheck != nil {
+		out.ThirdPartyIdentityCheck = right.ThirdPartyIdentityCheck
+	} else {
+		out.ThirdPartyIdentityCheck = left.ThirdPartyIdentityCheck
+	}
+
+	return
+}
+
 // CheckReportsBuilder builds CheckReports
 type CheckReportsBuilder struct {
 	documentAuthenticityChecks          []*check.DocumentAuthenticityCheck
