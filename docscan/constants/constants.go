@@ -11,6 +11,7 @@ const (
 	SupplementaryDocumentTextDataExtraction string = "SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION"
 	Liveness                                string = "LIVENESS"
 	Zoom                                    string = "ZOOM"
+	SupplementaryDocumentType               string = "SUPPLEMENTARY_DOCUMENT"
 
 	Camera          string = "CAMERA"
 	CameraAndUpload string = "CAMERA_AND_UPLOAD"
