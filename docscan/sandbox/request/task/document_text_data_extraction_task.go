@@ -3,7 +3,6 @@ package task
 import (
 	"encoding/base64"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/filter"
 )
 
@@ -11,11 +10,6 @@ import (
 type DocumentTextDataExtractionTask struct {
 	*documentTask
 	Result documentTextDataExtractionTaskResult `json:"result"`
-	Config documentTextDataExtractionConfig     `json:"config,omitempty"`
-}
-
-type documentTextDataExtractionConfig struct {
-	ManualCheck string `json:"manual_check,omitempty"`
 }
 
 // DocumentTextDataExtractionTaskBuilder builds a DocumentTextDataExtractionTask
@@ -87,21 +81,6 @@ func (b *DocumentTextDataExtractionTaskBuilder) WithRecommendation(recommendatio
 	return b
 }
 
-// WithManualCheckNever sets the manual check config to never
-func (b *DocumentTextDataExtractionTaskBuilder) WithManualCheckNever() {
-	b.manualCheck = constants.Never
-}
-
-// WithManualCheckAlways sets the manual check config to always
-func (b *DocumentTextDataExtractionTaskBuilder) WithManualCheckAlways() {
-	b.manualCheck = constants.Always
-}
-
-// WithManualCheckFallback sets the manual check config to fallback
-func (b *DocumentTextDataExtractionTaskBuilder) WithManualCheckFallback() {
-	b.manualCheck = constants.Fallback
-}
-
 // Build creates a new DocumentTextDataExtractionTask
 func (b *DocumentTextDataExtractionTaskBuilder) Build() (*DocumentTextDataExtractionTask, error) {
 	return &DocumentTextDataExtractionTask{
@@ -111,9 +90,6 @@ func (b *DocumentTextDataExtractionTaskBuilder) Build() (*DocumentTextDataExtrac
 			DocumentIDPhoto: b.documentIDPhoto,
 			DetectedCountry: b.detectedCountry,
 			Recommendation:  b.recommendation,
-		},
-		Config: documentTextDataExtractionConfig{
-			ManualCheck: b.manualCheck,
 		},
 	}, nil
 }
