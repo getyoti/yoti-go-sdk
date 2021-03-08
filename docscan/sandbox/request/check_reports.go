@@ -13,7 +13,7 @@ type CheckReports struct {
 	IDDocumentComparisonChecks          []*check.IDDocumentComparisonCheck          `json:"ID_DOCUMENT_COMPARISON"`
 	SupplementaryDocumentTextDataChecks []*check.SupplementaryDocumentTextDataCheck `json:"SUPPLEMENTARY_DOCUMENT_TEXT_DATA_CHECK"`
 	AsyncReportDelay                    uint32                                      `json:"async_report_delay,omitempty"`
-	ThirdPartyIdentityCheck             *check.ThirdPartyIdentityCheck              `json:"third_party_identity_check"`
+	ThirdPartyIdentityCheck             *check.ThirdPartyIdentityCheck              `json:"THIRD_PARTY_IDENTITY"`
 }
 
 // CheckReportsBuilder builds CheckReports
