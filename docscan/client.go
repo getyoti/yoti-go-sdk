@@ -70,7 +70,6 @@ func getAPIURL() string {
 // CreateSession creates a Doc Scan session using the supplied session specification
 func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*create.SessionResult, error) {
 	requestBody, err := marshalJSON(c.jsonMarshaler, sessionSpec)
-	fmt.Printf("DEBUG: %s\n", requestBody)
 	if err != nil {
 		return nil, err
 	}

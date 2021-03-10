@@ -2,7 +2,6 @@ package request
 
 import (
 	"errors"
-	"fmt"
 )
 
 // ResponseConfig represents the response config
@@ -25,7 +24,6 @@ func NewResponseConfigBuilder() *ResponseConfigBuilder {
 // WithTaskResults adds task results to the response configuration
 func (b *ResponseConfigBuilder) WithTaskResults(taskResults TaskResults) *ResponseConfigBuilder {
 	b.taskResults = &taskResults
-	fmt.Printf("DEBUG: %v\n", taskResults)
 	return b
 }
 
