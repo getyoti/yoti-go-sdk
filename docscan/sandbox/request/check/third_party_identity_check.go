@@ -30,10 +30,12 @@ func (b *ThirdPartyIdentityCheckBuilder) Build() (*ThirdPartyIdentityCheck, erro
 	return &tpiCheck, nil
 }
 
-func (b *ThirdPartyIdentityCheckBuilder) WithBreakdown(breakdown *report.Breakdown) {
+func (b *ThirdPartyIdentityCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *ThirdPartyIdentityCheckBuilder {
 	b.checkBuilder.withBreakdown(breakdown)
+	return b
 }
 
-func (b *ThirdPartyIdentityCheckBuilder) WithRecommendation(recommendation *report.Recommendation) {
+func (b *ThirdPartyIdentityCheckBuilder) WithRecommendation(recommendation *report.Recommendation) *ThirdPartyIdentityCheckBuilder {
 	b.checkBuilder.withRecommendation(recommendation)
+	return b
 }
