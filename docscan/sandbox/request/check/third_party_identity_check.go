@@ -12,10 +12,6 @@ type ThirdPartyIdentityCheckBuilder struct {
 	checkBuilder
 }
 
-func (c *ThirdPartyIdentityCheck) Report() checkReport {
-	return c.check.Result.Report
-}
-
 // NewThirdPartyIdentityCheckBuilder creates a new ThirdPartyIdentityCheckBuilder
 func NewThirdPartyIdentityCheckBuilder() *ThirdPartyIdentityCheckBuilder {
 	return &ThirdPartyIdentityCheckBuilder{}

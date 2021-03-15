@@ -19,7 +19,6 @@ type DocumentTextDataExtractionTaskBuilder struct {
 	documentIDPhoto *documentIDPhoto
 	detectedCountry string
 	recommendation  *TextDataExtractionRecommendation
-	manualCheck     string
 }
 
 type documentTextDataExtractionTaskResult struct {
