@@ -56,6 +56,13 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
+	var thirdPartyCheck *check.RequestedThirdPartyIdentityCheck
+	thirdPartyCheck, err = check.NewRequestedThirdPartyIdentityCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
 	var sdkConfig *create.SDKConfig
 	sdkConfig, err = create.NewSdkConfigBuilder().
 		WithAllowsCameraAndUpload().
@@ -109,6 +116,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedCheck(documentAuthenticityCheck).
 		WithRequestedCheck(livenessCheck).
 		WithRequestedCheck(idDocsComparisonCheck).
+		WithRequestedCheck(thirdPartyCheck).
 		WithRequestedTask(textExtractionTask).
 		WithRequestedTask(supplementaryDocTextExtractionTask).
 		WithSDKConfig(sdkConfig).
