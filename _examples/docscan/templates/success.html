@@ -127,7 +127,7 @@
                             </div>
                             <div id="collapse-liveness-checks" class="collapse" aria-labelledby="liveness-checks">
                                 <div class="card-body">
-                                    {{ range $check := .getSessionResult.AuthenticityChecks }}
+                                    {{ range $check := .getSessionResult.LivenessChecks }}
                                         {{ template "check.html"  $check}}
                                     {{ end }}
                                 </div>
