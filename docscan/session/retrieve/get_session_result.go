@@ -21,6 +21,7 @@ type GetSessionResult struct {
 	faceMatchChecks                     []*FaceMatchCheckResponse
 	textDataChecks                      []*TextDataCheckResponse
 	livenessChecks                      []*LivenessCheckResponse
+	thirdPartyIdentityChecks            []*ThirdPartyIdentityCheckResponse
 	idDocumentComparisonChecks          []*IDDocumentComparisonCheckResponse
 	supplementaryDocumentTextDataChecks []*SupplementaryDocumentTextDataCheckResponse
 }
@@ -39,6 +40,11 @@ func (g *GetSessionResult) FaceMatchChecks() []*FaceMatchCheckResponse {
 // Deprecated: replaced by IDDocumentTextDataChecks()
 func (g *GetSessionResult) TextDataChecks() []*TextDataCheckResponse {
 	return g.IDDocumentTextDataChecks()
+}
+
+// ThirdPartyIdentityChecks filters the checks, returning only external credit reference agency checks
+func (g *GetSessionResult) ThirdPartyIdentityChecks() []*ThirdPartyIdentityCheckResponse {
+	return g.thirdPartyIdentityChecks
 }
 
 // IDDocumentTextDataChecks filters the checks, returning only ID Document Text Data checks
@@ -84,6 +90,9 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 
 		case constants.IDDocumentComparison:
 			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
+
+		case constants.ThirdPartyIdentityCheck:
+			g.thirdPartyIdentityChecks = append(g.thirdPartyIdentityChecks, &ThirdPartyIdentityCheckResponse{CheckResponse: check})
 
 		case constants.SupplementaryDocumentTextDataCheck:
 			g.supplementaryDocumentTextDataChecks = append(

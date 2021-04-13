@@ -7,6 +7,7 @@ const (
 	IDDocumentTextDataExtraction            string = "ID_DOCUMENT_TEXT_DATA_EXTRACTION"
 	IDDocumentFaceMatch                     string = "ID_DOCUMENT_FACE_MATCH"
 	SupplementaryDocumentTextDataCheck      string = "SUPPLEMENTARY_DOCUMENT_TEXT_DATA_CHECK"
+	ThirdPartyIdentityCheck                 string = "THIRD_PARTY_IDENTITY"
 	SupplementaryDocumentTextDataExtraction string = "SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION"
 	Liveness                                string = "LIVENESS"
 	Zoom                                    string = "ZOOM"

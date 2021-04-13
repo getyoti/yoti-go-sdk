@@ -10,4 +10,5 @@ func initializeRoutes() {
 	router.GET("/", showIndexPage)
 	router.GET("/success", showSuccessPage)
 	router.GET("/media", getMedia)
+	router.GET("/privacy-policy", showPrivacyPolicyPage)
 }
