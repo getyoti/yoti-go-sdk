@@ -22,6 +22,7 @@ type WantedAttribute struct {
 	derivation         string
 	constraints        []constraintInterface
 	acceptSelfAsserted bool
+	Optional           bool
 }
 
 // WithName sets the name of the wanted attribute
@@ -69,10 +70,12 @@ func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
 		Derivation         string                `json:"derivation,omitempty"`
 		Constraints        []constraintInterface `json:"constraints,omitempty"`
 		AcceptSelfAsserted bool                  `json:"accept_self_asserted"`
+		Optional           bool                  `json:"optional,omitempty"`
 	}{
 		Name:               attr.name,
 		Derivation:         attr.derivation,
 		Constraints:        attr.constraints,
 		AcceptSelfAsserted: attr.acceptSelfAsserted,
+		Optional:           attr.Optional,
 	})
 }
