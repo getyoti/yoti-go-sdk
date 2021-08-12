@@ -31,7 +31,7 @@ Please feel free to reach out
 ## Requirements
 
 Supported Go Versions:
-- 1.11+
+- See [./.github/workflows/test.yaml](./.github/workflows/test.yaml) for supported versions
 
 ## Enabling the SDK
 
