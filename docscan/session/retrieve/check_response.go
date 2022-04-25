@@ -46,7 +46,7 @@ type SupplementaryDocumentTextDataCheckResponse struct {
 	*CheckResponse
 }
 
-// ThirdPartyCheckResponse represents a check with an external credit reference agency
+// ThirdPartyIdentityCheckResponse represents a check with an external credit reference agency
 type ThirdPartyIdentityCheckResponse struct {
 	*CheckResponse
 }
