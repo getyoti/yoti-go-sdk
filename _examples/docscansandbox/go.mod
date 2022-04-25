@@ -1,6 +1,6 @@
 module docscansandbox
 
-go 1.12
+go 1.17
 
 require (
 	github.com/cucumber/godog v0.10.0
