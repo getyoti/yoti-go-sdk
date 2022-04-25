@@ -1,6 +1,6 @@
 module aml
 
-go 1.12
+go 1.17
 
 require (
 	github.com/getyoti/yoti-go-sdk/v3 v3.0.0
