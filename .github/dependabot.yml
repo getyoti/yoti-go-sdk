@@ -7,8 +7,6 @@ updates:
     open-pull-requests-limit: 3
     target-branch: development
     reviewers:
-      - echarrod
-      - klaidas
-      - LKDraytonBrown
+      - getyoti/yoti-sign
     assignees:
-      - echarrod
+      - getyoti/yoti-sign
