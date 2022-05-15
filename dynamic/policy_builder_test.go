@@ -1,7 +1,10 @@
 package dynamic
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -411,4 +414,51 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(
 
 	t.Error("Expected Panic")
 
+}
+
+func ExamplePolicyBuilder_WithIdentityProfileRequirements() {
+	identityProfile := []byte(`{
+		"trust_framework": "UK_TFIDA",
+		"scheme": {
+			"type":      "DBS",
+			"objective": "STANDARD"
+		}
+	}`)
+
+	policy, err := (&PolicyBuilder{}).WithIdentityProfileRequirements(identityProfile).Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false,"identity_profile_requirements":{"trust_framework":"UK_TFIDA","scheme":{"type":"DBS","objective":"STANDARD"}}}
+}
+
+func TestPolicyBuilder_WithIdentityProfileRequirements_ShouldFailForInvalidJSON(t *testing.T) {
+	identityProfile := []byte(`{
+		"trust_framework": UK_TFIDA",
+		,
+	}`)
+
+	policy, err := (&PolicyBuilder{}).WithIdentityProfileRequirements(identityProfile).Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	_, err = policy.MarshalJSON()
+	if err == nil {
+		t.Error("expected an error")
+	}
+	var marshallerErr *json.MarshalerError
+	if !errors.As(err, &marshallerErr) {
+		t.Errorf("wanted err to be of type '%v', got: '%v'", reflect.TypeOf(marshallerErr), reflect.TypeOf(err))
+	}
 }

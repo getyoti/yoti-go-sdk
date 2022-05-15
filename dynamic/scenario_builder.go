@@ -15,6 +15,7 @@ type Scenario struct {
 	policy           *Policy
 	extensions       []interface{}
 	callbackEndpoint string
+	subject          *json.RawMessage
 }
 
 // WithPolicy attaches a DynamicPolicy to the DynamicScenario
@@ -32,6 +33,12 @@ func (builder *ScenarioBuilder) WithExtension(extension interface{}) *ScenarioBu
 // WithCallbackEndpoint sets the callback URL
 func (builder *ScenarioBuilder) WithCallbackEndpoint(endpoint string) *ScenarioBuilder {
 	builder.scenario.callbackEndpoint = endpoint
+	return builder
+}
+
+// WithSubject adds an extension to the scenario
+func (builder *ScenarioBuilder) WithSubject(subject json.RawMessage) *ScenarioBuilder {
+	builder.scenario.subject = &subject
 	return builder
 }
 
@@ -53,12 +60,14 @@ func (builder *ScenarioBuilder) Build() (Scenario, error) {
 // MarshalJSON returns the JSON encoding
 func (scenario Scenario) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Policy           Policy        `json:"policy"`
-		Extensions       []interface{} `json:"extensions"`
-		CallbackEndpoint string        `json:"callback_endpoint"`
+		Policy           Policy           `json:"policy"`
+		Extensions       []interface{}    `json:"extensions"`
+		CallbackEndpoint string           `json:"callback_endpoint"`
+		Subject          *json.RawMessage `json:"subject,omitempty"`
 	}{
 		Policy:           *scenario.policy,
 		Extensions:       scenario.extensions,
 		CallbackEndpoint: scenario.callbackEndpoint,
+		Subject:          scenario.subject,
 	})
 }
