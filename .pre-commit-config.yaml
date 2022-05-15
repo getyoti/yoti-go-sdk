@@ -1,3 +1,5 @@
+default_stages:
+  - commit
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -36,3 +38,4 @@ repos:
         args: ["-e", "SA1019"]
       - id: go-unit-tests
         args: ["-race", "./..."]
+        stages: [ push ] # only run tests on push, not on commit
