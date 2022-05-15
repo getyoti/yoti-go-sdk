@@ -9,6 +9,10 @@ func ExampleTextDataExtractionRecommendationBuilder() {
 	reason, err := NewTextDataExtractionReasonBuilder().
 		ForQuality().
 		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
 
 	recommendation, err := NewTextDataExtractionRecommendationBuilder().
 		ForShouldTryAgain().
