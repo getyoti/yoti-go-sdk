@@ -5,7 +5,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // MultiValueAttribute is a Yoti attribute which returns a multi-valued attribute

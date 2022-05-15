@@ -19,7 +19,7 @@ type Anchor struct {
 	value             string
 }
 
-func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp yotiprotocom.SignedTimestamp, subtype string, value string) *Anchor {
+func newAnchor(anchorType Type, originServerCerts []*x509.Certificate, signedTimestamp *yotiprotocom.SignedTimestamp, subtype string, value string) *Anchor {
 	return &Anchor{
 		anchorType:        anchorType,
 		originServerCerts: originServerCerts,
