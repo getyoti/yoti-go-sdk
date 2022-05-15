@@ -579,3 +579,32 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 
 	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
+
+func TestProfileAllowsMultipleAttributesWithSameName(t *testing.T) {
+	firstAttribute := createStringAttribute("full_name", []byte("some_value"), []*yotiprotoattr.Anchor{})
+	secondAttribute := createStringAttribute("full_name", []byte("some_other_value"), []*yotiprotoattr.Anchor{})
+
+	var attributeSlice []*yotiprotoattr.Attribute
+	attributeSlice = append(attributeSlice, firstAttribute, secondAttribute)
+
+	var profile = UserProfile{
+		baseProfile{
+			attributeSlice: attributeSlice,
+		},
+	}
+
+	var fullNames = profile.GetAttributes("full_name")
+
+	assert.Assert(t, is.Equal(len(fullNames), 2))
+	assert.Assert(t, is.Equal(fullNames[0].Value().(string), "some_value"))
+	assert.Assert(t, is.Equal(fullNames[1].Value().(string), "some_other_value"))
+}
+
+func createStringAttribute(name string, value []byte, anchors []*yotiprotoattr.Anchor) *yotiprotoattr.Attribute {
+	return &yotiprotoattr.Attribute{
+		Name:        name,
+		Value:       value,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     anchors,
+	}
+}
