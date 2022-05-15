@@ -10,7 +10,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
 	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 )

@@ -7,7 +7,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	"gotest.tools/v3/assert"
 

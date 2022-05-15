@@ -7,9 +7,6 @@ require (
 	github.com/joho/godotenv v1.3.0
 )
 
-require (
-	github.com/golang/protobuf v1.5.2 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
-)
+require google.golang.org/protobuf v1.26.0 // indirect
 
 replace github.com/getyoti/yoti-go-sdk/v3 => ../../
