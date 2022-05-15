@@ -200,7 +200,7 @@ func (b *PolicyBuilder) WithPinAuth() *PolicyBuilder {
 	return b.WithWantedAuthType(authTypePinConst)
 }
 
-// WithIdentityProfileRequirements adds Identity Profile Requirements to the policy
+// WithIdentityProfileRequirements adds Identity Profile Requirements to the policy. Must be valid JSON.
 func (b *PolicyBuilder) WithIdentityProfileRequirements(identityProfile json.RawMessage) *PolicyBuilder {
 	b.identityProfileRequirements = &identityProfile
 	return b

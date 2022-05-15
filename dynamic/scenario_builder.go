@@ -36,7 +36,7 @@ func (builder *ScenarioBuilder) WithCallbackEndpoint(endpoint string) *ScenarioB
 	return builder
 }
 
-// WithSubject adds an extension to the scenario
+// WithSubject adds a subject to the scenario. Must be valid JSON.
 func (builder *ScenarioBuilder) WithSubject(subject json.RawMessage) *ScenarioBuilder {
 	builder.scenario.subject = &subject
 	return builder
