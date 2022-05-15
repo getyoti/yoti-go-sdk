@@ -71,6 +71,7 @@ func main() {
 	http.HandleFunc(profileEndpoint, profile)
 	http.HandleFunc("/dynamic-share", dynamicShare)
 	http.HandleFunc("/source-constraints", sourceConstraints)
+	http.HandleFunc("/dbs-check", dbsCheck)
 
 	rootdir, err := os.Getwd()
 	if err != nil {
