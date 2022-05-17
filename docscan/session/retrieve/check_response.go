@@ -6,14 +6,15 @@ import (
 
 // CheckResponse represents the attributes of a check, for any given session
 type CheckResponse struct {
-	ID             string            `json:"id"`
-	Type           string            `json:"type"`
-	State          string            `json:"state"`
-	ResourcesUsed  []string          `json:"resources_used"`
-	GeneratedMedia []*GeneratedMedia `json:"generated_media"`
-	Report         *ReportResponse   `json:"report"`
-	Created        *time.Time        `json:"created"`
-	LastUpdated    *time.Time        `json:"last_updated"`
+	ID               string                   `json:"id"`
+	Type             string                   `json:"type"`
+	State            string                   `json:"state"`
+	ResourcesUsed    []string                 `json:"resources_used"`
+	GeneratedMedia   []*GeneratedMedia        `json:"generated_media"`
+	GeneratedProfile GeneratedProfileResponse `json:"generated_profile"`
+	Report           *ReportResponse          `json:"report"`
+	Created          *time.Time               `json:"created"`
+	LastUpdated      *time.Time               `json:"last_updated"`
 }
 
 // AuthenticityCheckResponse represents a Document Authenticity check for a given session
@@ -46,16 +47,12 @@ type SupplementaryDocumentTextDataCheckResponse struct {
 	*CheckResponse
 }
 
-type ProfileCheckResponse struct {
-	*CheckResponse
-}
-
 // ThirdPartyIdentityCheckResponse represents a check with an external credit reference agency
 type ThirdPartyIdentityCheckResponse struct {
-	*ProfileCheckResponse
+	*CheckResponse
 }
 
 // WatchlistScreeningCheckResponse represents a watchlist screening check
 type WatchlistScreeningCheckResponse struct {
-	*ProfileCheckResponse
+	*CheckResponse
 }
