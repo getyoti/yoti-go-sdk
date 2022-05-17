@@ -98,7 +98,11 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
 
 		case constants.ThirdPartyIdentityCheck:
-			g.thirdPartyIdentityChecks = append(g.thirdPartyIdentityChecks, &ThirdPartyIdentityCheckResponse{&ProfileCheckResponse{CheckResponse: check}})
+			g.thirdPartyIdentityChecks = append(
+				g.thirdPartyIdentityChecks,
+				&ThirdPartyIdentityCheckResponse{
+					CheckResponse: check,
+				})
 
 		case constants.SupplementaryDocumentTextDataCheck:
 			g.supplementaryDocumentTextDataChecks = append(
@@ -112,9 +116,7 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 			g.watchlistScreeningChecks = append(
 				g.watchlistScreeningChecks,
 				&WatchlistScreeningCheckResponse{
-					&ProfileCheckResponse{
-						CheckResponse: check,
-					},
+					CheckResponse: check,
 				},
 			)
 		}
