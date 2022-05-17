@@ -41,7 +41,6 @@ type RequestedWatchlistScreeningCheckConfig struct {
 
 // RequestedWatchlistScreeningCheckBuilder builds a RequestedWatchlistScreeningCheck
 type RequestedWatchlistScreeningCheckBuilder struct {
-	config     RequestedWatchlistScreeningCheckConfig
 	categories []string
 }
 
@@ -63,12 +62,16 @@ func (b *RequestedWatchlistScreeningCheckBuilder) WithAdverseMediaCategory() *Re
 
 // WithSanctionsCategory adds SANCTIONS to the list of categories used for watchlist screening
 func (b *RequestedWatchlistScreeningCheckBuilder) WithSanctionsCategory() *RequestedWatchlistScreeningCheckBuilder {
-	return b.WithCategory(constants.AdverseMedia)
+	return b.WithCategory(constants.Sanctions)
 }
 
 // Build builds the RequestedWatchlistScreeningCheck
 func (b *RequestedWatchlistScreeningCheckBuilder) Build() (*RequestedWatchlistScreeningCheck, error) {
+	config := RequestedWatchlistScreeningCheckConfig{
+		Categories: b.categories,
+	}
+
 	return &RequestedWatchlistScreeningCheck{
-		config: b.config,
+		config: config,
 	}, nil
 }

@@ -1,7 +1,6 @@
 package retrieve
 
-// SearchConfig is the base type which search configs must satisfy
-type SearchConfig interface {
-	Type() string
-	Categories() []string
+type SearchConfig struct {
+	Type       string   `json:"type"`
+	Categories []string `json:"categories"`
 }

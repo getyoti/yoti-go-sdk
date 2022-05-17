@@ -22,5 +22,5 @@ func ExampleNewRequestedWatchlistScreeningCheckBuilder() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"type":"WATCHLIST_SCREENING","config":{}}
+	// Output: {"type":"WATCHLIST_SCREENING","config":{"categories":["ADVERSE-MEDIA","SANCTIONS"]}}
 }
