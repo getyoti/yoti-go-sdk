@@ -46,6 +46,11 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 		Report: &ReportResponse{},
 	}
 
+	watchlistScreeningCheckResponse := &CheckResponse{
+		Type:  constants.WatchlistScreening,
+		State: "DONE",
+	}
+
 	var checks []*CheckResponse
 	checks = append(checks, &CheckResponse{Type: "OTHER_TYPE", ID: "id"})
 	checks = append(checks, authenticityCheckResponse)
@@ -55,6 +60,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	checks = append(checks, idDocComparisonCheckResponse)
 	checks = append(checks, thirdPartyIdentityCheckResponse)
 	checks = append(checks, supplementaryTextDataCheckResponse)
+	checks = append(checks, watchlistScreeningCheckResponse)
 
 	biometricConsentTimestamp := time.Date(2020, 01, 01, 1, 2, 3, 4, time.UTC)
 
@@ -69,7 +75,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	err = json.Unmarshal(marshalled, &result)
 	assert.NilError(t, err)
 
-	assert.Equal(t, 8, len(result.Checks))
+	assert.Equal(t, 9, len(result.Checks))
 
 	assert.Equal(t, 1, len(result.AuthenticityChecks()))
 	assert.Equal(t, "DONE", result.AuthenticityChecks()[0].State)
@@ -81,7 +87,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	assert.DeepEqual(t, &ReportResponse{}, result.TextDataChecks()[0].Report)
 
 	assert.Equal(t, 1, len(result.IDDocumentTextDataChecks()))
-	assert.DeepEqual(t, &ReportResponse{}, result.TextDataChecks()[0].Report)
+	assert.DeepEqual(t, &ReportResponse{}, result.IDDocumentTextDataChecks()[0].Report)
 
 	assert.Equal(t, 1, len(result.LivenessChecks()))
 	assert.Check(t, result.LivenessChecks()[0].LastUpdated.Equal(testDate))
@@ -94,6 +100,9 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 1, len(result.SupplementaryDocumentTextDataChecks()))
 	assert.DeepEqual(t, &ReportResponse{}, result.SupplementaryDocumentTextDataChecks()[0].Report)
+
+	assert.Equal(t, 1, len(result.WatchlistScreeningChecks()))
+	assert.DeepEqual(t, "DONE", result.WatchlistScreeningChecks()[0].State)
 
 	assert.Equal(t, biometricConsentTimestamp, *result.BiometricConsentTimestamp)
 }

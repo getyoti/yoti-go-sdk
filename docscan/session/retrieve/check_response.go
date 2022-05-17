@@ -36,7 +36,7 @@ type TextDataCheckResponse struct {
 	*CheckResponse
 }
 
-// IDDocumentComparisonCheckResponse represents a identity document comparison check for a given session
+// IDDocumentComparisonCheckResponse represents an identity document comparison check for a given session
 type IDDocumentComparisonCheckResponse struct {
 	*CheckResponse
 }
@@ -46,7 +46,16 @@ type SupplementaryDocumentTextDataCheckResponse struct {
 	*CheckResponse
 }
 
+type ProfileCheckResponse struct {
+	*CheckResponse
+}
+
 // ThirdPartyIdentityCheckResponse represents a check with an external credit reference agency
 type ThirdPartyIdentityCheckResponse struct {
-	*CheckResponse
+	*ProfileCheckResponse
+}
+
+// WatchlistScreeningCheckResponse represents a watchlist screening check
+type WatchlistScreeningCheckResponse struct {
+	*ProfileCheckResponse
 }

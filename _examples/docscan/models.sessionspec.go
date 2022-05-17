@@ -63,6 +63,15 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
+	var watchlistScreeningCheck *check.RequestedWatchlistScreeningCheck
+	watchlistScreeningCheck, err = check.NewRequestedWatchlistScreeningCheckBuilder().
+		WithAdverseMediaCategory().
+		WithSanctionsCategory().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
 	var sdkConfig *create.SDKConfig
 	sdkConfig, err = create.NewSdkConfigBuilder().
 		WithAllowsCameraAndUpload().
@@ -117,6 +126,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedCheck(livenessCheck).
 		WithRequestedCheck(idDocsComparisonCheck).
 		WithRequestedCheck(thirdPartyCheck).
+		WithRequestedCheck(watchlistScreeningCheck).
 		WithRequestedTask(textExtractionTask).
 		WithRequestedTask(supplementaryDocTextExtractionTask).
 		WithSDKConfig(sdkConfig).

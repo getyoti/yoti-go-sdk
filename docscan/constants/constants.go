@@ -9,8 +9,18 @@ const (
 	SupplementaryDocumentTextDataCheck      string = "SUPPLEMENTARY_DOCUMENT_TEXT_DATA_CHECK"
 	ThirdPartyIdentityCheck                 string = "THIRD_PARTY_IDENTITY"
 	SupplementaryDocumentTextDataExtraction string = "SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION"
-	Liveness                                string = "LIVENESS"
-	Zoom                                    string = "ZOOM"
+	WatchlistScreening                      string = "WATCHLIST_SCREENING"
+	WatchlistAdvancedCA                     string = "WATCHLIST_ADVANCED_CA"
+
+	WithYotiAccounts  = "WITH_YOTI_ACCOUNT"
+	WithCustomAccount = "WITH_CUSTOM_ACCOUNT"
+	TypeList          = "TYPE_LIST"
+	Profiles          = "PROFILE"
+	Exact             = "EXACT"
+	Fuzzy             = "FUZZY"
+
+	Liveness string = "LIVENESS"
+	Zoom     string = "ZOOM"
 
 	Camera          string = "CAMERA"
 	CameraAndUpload string = "CAMERA_AND_UPLOAD"
@@ -19,6 +29,9 @@ const (
 	TaskCompletion    string = "TASK_COMPLETION"
 	CheckCompletion   string = "CHECK_COMPLETION"
 	SessionCompletion string = "SESSION_COMPLETION"
+
+	Sanctions    string = "SANCTIONS"
+	AdverseMedia string = "ADVERSE-MEDIA"
 
 	Always   string = "ALWAYS"
 	Fallback string = "FALLBACK"
