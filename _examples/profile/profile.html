@@ -46,6 +46,15 @@
                                 </tr>
                             {{ end }}
                         </table>
+                    {{ else if eq .Prop.Name "identity_profile_report" }}
+                    <table>
+                        {{ range $key, $value := .Prop.Value }}
+                        <tr>
+                            <td>{{ $key }}</td>
+                            <td>{{ jsonMarshallIndent $value }}</td>
+                        </tr>
+                        {{ end }}
+                    </table>
                     {{ else }}
                         {{ .Prevalue }}
                         {{ .Prop.Value }}
@@ -132,6 +141,7 @@
             {{ if .profile.Gender }} {{ template "attribute" marshalAttribute "Gender" "yoti-icon-gender" .profile.Gender "" }} {{ end }}
             {{ if .profile.DocumentDetails }} {{ template "attribute" marshalAttribute "Document Details" "yoti-icon-document" .profile.DocumentDetails "" }} {{ end }}
             {{ if .profile.DocumentImages }} {{ template "attribute" marshalAttribute "Document Images" "yoti-icon-profile" .profile.DocumentImages "" }} {{ end }}
+            {{ if .profile.IdentityProfileReport }} {{ template "attribute" marshalAttribute "Identity Profile Report" "yoti-icon-profile" .profile.IdentityProfileReport "" }} {{ end }}
         </div>
 
     </section>

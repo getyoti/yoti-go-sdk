@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
+	"github.com/getyoti/yoti-go-sdk/v3/file"
 	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"google.golang.org/protobuf/proto"
@@ -578,6 +579,26 @@ func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
 	base64Selfie := result.Selfie().Value().Base64URL()
 
 	assert.Equal(t, base64Selfie, expectedBase64Selfie)
+}
+
+func TestProfile_IdentityProfileReport_RetrievesAttribute(t *testing.T) {
+	identityProfileReportJSON, err := file.ReadFile("../test/fixtures/RTWIdentityProfileReport.json")
+	assert.NilError(t, err)
+
+	var attr = &yotiprotoattr.Attribute{
+		Name:        consts.AttrIdentityProfileReport,
+		Value:       identityProfileReportJSON,
+		ContentType: yotiprotoattr.ContentType_JSON,
+		Anchors:     []*yotiprotoattr.Anchor{},
+	}
+
+	result := createProfileWithSingleAttribute(attr)
+	att := result.GetAttribute(consts.AttrIdentityProfileReport)
+
+	retrievedIdentityProfile := att.Value().(map[string]interface{})
+	gotProof := retrievedIdentityProfile["proof"]
+
+	assert.Equal(t, gotProof, "<signature provided here>")
 }
 
 func TestProfileAllowsMultipleAttributesWithSameName(t *testing.T) {
