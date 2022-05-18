@@ -593,9 +593,10 @@ func TestProfile_IdentityProfileReport_RetrievesAttribute(t *testing.T) {
 	}
 
 	result := createProfileWithSingleAttribute(attr)
-	att := result.GetAttribute(consts.AttrIdentityProfileReport)
+	att, err := result.IdentityProfileReport()
+	assert.NilError(t, err)
 
-	retrievedIdentityProfile := att.Value().(map[string]interface{})
+	retrievedIdentityProfile := att.Value()
 	gotProof := retrievedIdentityProfile["proof"]
 
 	assert.Equal(t, gotProof, "<signature provided here>")
