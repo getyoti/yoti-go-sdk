@@ -102,6 +102,8 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 1, len(result.SupplementaryDocumentTextDataChecks()))
 	assert.DeepEqual(t, &retrieve.ReportResponse{}, result.SupplementaryDocumentTextDataChecks()[0].Report)
+	assert.Assert(t, result.SupplementaryDocumentTextDataChecks()[0].Report.WatchlistSummary == nil)
+	assert.Assert(t, result.SupplementaryDocumentTextDataChecks()[0].GeneratedProfile == nil)
 
 	assert.Equal(t, 1, len(result.WatchlistScreeningChecks()))
 	assert.DeepEqual(t, "DONE", result.WatchlistScreeningChecks()[0].State)
