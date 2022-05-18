@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"image"
@@ -102,6 +103,13 @@ func profile(w http.ResponseWriter, r *http.Request) {
 					property,
 					prevalue,
 				}
+			},
+			"jsonMarshallIndent": func(data interface{}) string {
+				json, err := json.MarshalIndent(data, "", "\t")
+				if err != nil {
+					fmt.Println(err)
+				}
+				return string(json)
 			},
 		}).
 		ParseFiles("profile.html")

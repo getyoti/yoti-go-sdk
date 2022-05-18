@@ -131,6 +131,12 @@ func (p UserProfile) DocumentDetails() (*attribute.DocumentDetailsAttribute, err
 	return nil, nil
 }
 
+// IdentityProfileReport represents the JSON object containing identity assertion and the
+// verification report. Will be nil if not provided by Yoti.
+func (p UserProfile) IdentityProfileReport() (*attribute.JSONAttribute, error) {
+	return p.GetJSONAttribute(consts.AttrIdentityProfileReport)
+}
+
 // AgeVerifications returns a slice of age verifications for the user.
 // Will be an empty slice if not provided by Yoti.
 func (p UserProfile) AgeVerifications() (out []attribute.AgeVerification, err error) {
