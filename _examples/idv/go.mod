@@ -1,4 +1,4 @@
-module docscan
+module idv
 
 go 1.17
 

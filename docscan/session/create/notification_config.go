@@ -2,8 +2,8 @@ package create
 
 import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 
-// NotificationConfig represents the configuration properties for notifications within the Doc Scan system.
-// Notifications can be configured within a Doc Scan session to allow your backend to be
+// NotificationConfig represents the configuration properties for notifications within the Doc Scan (IDV) system.
+// Notifications can be configured within a Doc Scan (IDV) session to allow your backend to be
 // notified of certain events, without having to constantly poll for the state of a session.
 type NotificationConfig struct {
 	AuthToken string   `json:"auth_token,omitempty"`

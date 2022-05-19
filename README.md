@@ -35,12 +35,13 @@ Supported Go Versions:
 
 ## Enabling the SDK
 
-_As of version **2.4.0**, [modules](https://github.com/golang/go/wiki/Modules) are used. This means it's not necessary to get a copy or fetch all dependencies, as the Go toolchain will fetch them as necessary. You can simply add a `require github.com/getyoti/yoti-go-sdk/v3` to go.mod._
-
-You can reference the project URL by adding the following import:
-
+Simply add `github.com/getyoti/yoti-go-sdk/v3` as an import:
 ```Go
 import "github.com/getyoti/yoti-go-sdk/v3"
+```
+or add the following line to your go.mod file (check https://github.com/getyoti/yoti-go-sdk/releases for the latest version)
+```
+require github.com/getyoti/yoti-go-sdk/v3 v3.0.0
 ```
 
 ## Setup
