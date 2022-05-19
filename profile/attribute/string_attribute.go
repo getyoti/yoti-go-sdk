@@ -20,6 +20,7 @@ func NewString(a *yotiprotoattr.Attribute) *StringAttribute {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
+			id:          &a.EphemeralId,
 		},
 		value: string(a.Value),
 	}

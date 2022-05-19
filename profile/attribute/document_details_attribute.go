@@ -48,6 +48,7 @@ func NewDocumentDetails(a *yotiprotoattr.Attribute) (*DocumentDetailsAttribute, 
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
+			id:          &a.EphemeralId,
 		},
 		value: details,
 	}, nil

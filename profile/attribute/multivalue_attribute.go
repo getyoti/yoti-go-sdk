@@ -27,6 +27,7 @@ func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     anchor.ParseAnchors(a.Anchors),
+			id:          &a.EphemeralId,
 		},
 		items: attributeItems,
 	}, nil
