@@ -21,7 +21,7 @@ type errorDetailsDO struct {
 }
 
 type profileDO struct {
-	SessionData  string         `json:"session_data"`
-	Receipt      receiptDO      `json:"receipt"`
+	SessionData  string          `json:"session_data"`
+	Receipt      receiptDO       `json:"receipt"`
 	ErrorDetails *errorDetailsDO `json:"error_details"`
 }
