@@ -1,0 +1,135 @@
+{
+  "client_session_token_ttl": 8785,
+  "session_id": "d7445779-5e70-4a27-8fec-dd7835106e88",
+  "state": "COMPLETED",
+  "resources": {
+    "id_documents": [
+      {
+        "id": "20deead7-4cb6-4921-a56c-ea10fa0a5595",
+        "tasks": [
+          {
+            "type": "ID_DOCUMENT_TEXT_DATA_EXTRACTION",
+            "id": "738e0007-68b8-466a-bd1d-30448b157cd8",
+            "state": "DONE",
+            "created": "2021-07-20T15:14:42Z",
+            "last_updated": "2021-07-20T15:15:53Z",
+            "generated_checks": [],
+            "generated_media": [
+              {
+                "id": "cfd85b6d-e78f-4c14-994c-78ad0671312d",
+                "type": "JSON"
+              }
+            ]
+          }
+        ],
+        "source": {
+          "type": "END_USER"
+        },
+        "document_type": "PASSPORT",
+        "issuing_country": "GBR",
+        "pages": [
+          {
+            "capture_method": "UPLOAD",
+            "media": {
+              "id": "6b58c356-1e68-4ee2-af54-3264406de92a",
+              "type": "IMAGE",
+              "created": "2021-07-20T15:15:52Z",
+              "last_updated": "2021-07-20T15:15:52Z"
+            },
+            "frames": [{}, {}, {}]
+          }
+        ],
+        "document_fields": {
+          "media": {
+            "id": "cfd85b6d-e78f-4c14-994c-78ad0671312d",
+            "type": "JSON",
+            "created": "2021-07-20T15:15:53Z",
+            "last_updated": "2021-07-20T15:15:53Z"
+          }
+        },
+        "document_id_photo": {
+          "media": {
+            "id": "d8f8051e-c5d7-4334-b5af-6b9a07fdb38c",
+            "type": "IMAGE",
+            "created": "2021-07-20T15:15:53Z",
+            "last_updated": "2021-07-20T15:15:53Z"
+          }
+        }
+      }
+    ],
+    "supplementary_documents": [],
+    "liveness_capture": [],
+    "face_capture": []
+  },
+  "checks": [
+    {
+      "type": "WATCHLIST_SCREENING",
+      "id": "8f4a89a1-4614-47ab-9506-2c82352b66d2",
+      "state": "DONE",
+      "resources_used": ["20deead7-4cb6-4921-a56c-ea10fa0a5595"],
+      "generated_media": [
+        {
+          "id": "2f5bbedd-cc1b-4d9f-a424-90bb5ee0fc99",
+          "type": "JSON"
+        }
+      ],
+      "report": {
+        "recommendation": {
+          "value": "APPROVE"
+        },
+        "breakdown": [
+          {
+            "sub_check": "adverse_media",
+            "result": "PASS",
+            "details": []
+          },
+          {
+            "sub_check": "fitness_probity",
+            "result": "PASS",
+            "details": []
+          },
+          {
+            "sub_check": "pep",
+            "result": "PASS",
+            "details": []
+          },
+          {
+            "sub_check": "sanction",
+            "result": "PASS",
+            "details": []
+          },
+          {
+            "sub_check": "warning",
+            "result": "PASS",
+            "details": []
+          }
+        ],
+        "watchlist_summary": {
+          "total_hits": 0,
+          "search_config": {
+            "categories": ["ADVERSE-MEDIA", "SANCTIONS"]
+          },
+          "raw_results": {
+            "media": {
+              "id": "b0fb459c-f573-4205-9847-5ab72301325c",
+              "type": "JSON",
+              "created": "2021-07-20T15:15:55Z",
+              "last_updated": "2021-07-20T15:15:55Z"
+            }
+          },
+          "associated_country_codes": ["GBR"]
+        }
+      },
+      "created": "2021-07-20T15:15:54Z",
+      "last_updated": "2021-07-20T15:15:55Z",
+      "generated_profile": {
+        "media": {
+          "id": "2f5bbedd-cc1b-4d9f-a424-90bb5ee0fc99",
+          "type": "JSON",
+          "created": "2021-07-20T15:15:55Z",
+          "last_updated": "2021-07-20T15:15:55Z"
+        }
+      }
+    }
+  ]
+}

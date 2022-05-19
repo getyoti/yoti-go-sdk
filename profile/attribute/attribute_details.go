@@ -10,11 +10,17 @@ type attributeDetails struct {
 	name        string
 	contentType string
 	anchors     []*anchor.Anchor
+	id          *string
 }
 
 // Name gets the attribute name
 func (a attributeDetails) Name() string {
 	return a.name
+}
+
+// ID gets the attribute ID
+func (a attributeDetails) ID() *string {
+	return a.id
 }
 
 // ContentType gets the attribute's content type description

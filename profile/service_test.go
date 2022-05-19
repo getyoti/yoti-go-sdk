@@ -18,7 +18,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 

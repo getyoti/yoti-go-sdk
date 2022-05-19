@@ -17,17 +17,18 @@ type ImageAttribute struct {
 // NewImage creates a new Image attribute
 func NewImage(a *yotiprotoattr.Attribute) (*ImageAttribute, error) {
 	imageValue, err := parseImageValue(a.ContentType, a.Value)
-	parsedAnchors := anchor.ParseAnchors(a.Anchors)
-
 	if err != nil {
 		return nil, err
 	}
+
+	parsedAnchors := anchor.ParseAnchors(a.Anchors)
 
 	return &ImageAttribute{
 		attributeDetails: attributeDetails{
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
+			id:          &a.EphemeralId,
 		},
 		value: imageValue,
 	}, nil

@@ -34,6 +34,7 @@ func NewJSON(a *yotiprotoattr.Attribute) (*JSONAttribute, error) {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
+			id:          &a.EphemeralId,
 		},
 		value: interfaceValue,
 	}, nil

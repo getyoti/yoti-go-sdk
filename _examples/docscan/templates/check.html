@@ -1,9 +1,11 @@
 <table class="table table-striped">
-    <tbody>
+    <thead>
     <tr>
-        <td>ID</td>
-        <td>{{ .ID}}</td>
+        <th>ID</th>
+        <th>{{ .ID}}</th>
     </tr>
+    </thead>
+    <tbody>
     <tr>
         <td>State</td>
         <td>
@@ -92,6 +94,75 @@
                 </td>
             </tr>
         {{ end }}
+
+    {{ if .Report }}
+    {{ if .Report.WatchlistSummary }}
+        <tr>
+            <td>Watchlist Summary</td>
+            <td>
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <td>Total hits</td>
+                        <td>{{ .Report.WatchlistSummary.TotalHits }}</td>
+                    </tr>
+                    {{ if .Report.WatchlistSummary.AssociatedCountryCodes }}
+                    <tr>
+                        <td>Associated country codes</td>
+                        {{ call $.stringsJoin .Report.WatchlistSummary.AssociatedCountryCodes ", " }}
+                    </tr>
+                    {{ end }}
+                    {{ if and .Report.WatchlistSummary.RawResults .Report.WatchlistSummary.RawResults.Media }} }}
+                    <tr>
+                        <td>Raw results</td>
+                        <td>
+                            <table class="table table-striped">
+                                <tbody>
+                                <tr>
+                                    <td style="width: auto">Media</td>
+                                    <td>
+                                        <table class="table table-striped small">
+                                            <tbody>
+                                            <tr>
+                                                <td style="width: auto">ID</td>
+                                                <a href="/media?mediaId={{ .Report.WatchlistSummary.RawResults.Media.ID }}">
+                                                    {{ .Report.WatchlistSummary.RawResults.Media.ID }}
+                                                </a>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: auto">Type</td>
+                                                <td>{{ .Report.WatchlistSummary.RawResults.Media.Type }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    {{ end }}
+                    {{ if and .Report.WatchlistSummary.SearchConfig .Report.WatchlistSummary.SearchConfig.Categories }}
+                    <tr>
+                        <td>Search config</td>
+                        <td>
+                            <table class="table table-striped">
+                                <tbody>
+                                <tr>
+                                    <td style="width: auto">Categories</td>
+                                    <td>{{ call $.stringsJoin .Report.WatchlistSummary.SearchConfig.Categories ", " }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    {{ end }}
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        {{ end }}
+    {{ end }}
     {{ end }}
 
     {{ if .GeneratedMedia}}
@@ -114,6 +185,26 @@
                 {{ end }}
             </td>
         </tr>
+    {{end}}
+
+    {{ if .GeneratedProfile}}
+    <tr>
+        <td>Generated Profile</td>
+        <td>
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td><a href="/media?mediaId={{ .GeneratedProfile.Media.ID }}">{{ .GeneratedProfile.Media.ID }}</a></td>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>{{ .GeneratedProfile.Media.Type }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
     {{end}}
     </tbody>
 </table>
