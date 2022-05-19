@@ -10,5 +10,5 @@ var (
 	TokenDecryptError = errors.New("unable to decrypt token")
 
 	// SharingFailureError means that the share between a user and an application was not successful.
-	SharingFailureError = errors.New("sharing failure")
+	SharingFailureError = DetailedSharingFailureError{}
 )

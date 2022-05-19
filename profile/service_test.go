@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
 	"github.com/golang/protobuf/proto"
@@ -167,8 +168,14 @@ func TestProfileService_SharingFailure_ReturnsSpecificFailure(t *testing.T) {
 			}, nil
 		},
 	}
+
+	expectedError := yotierror.DetailedSharingFailureError{
+		Code:        "SOME_ERROR",
+		Description: "SOME_DESCRIPTION",
+	}
+
 	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
-	assert.ErrorContains(t, err, "SOME_ERROR")
+	assert.DeepEqual(t, err, expectedError)
 
 	tempError, temporary := err.(interface {
 		Temporary() bool

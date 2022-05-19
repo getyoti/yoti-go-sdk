@@ -69,41 +69,37 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 	}
 
 	if parsedResponse.Receipt.SharingOutcome != "SUCCESS" {
-		if parsedResponse.ErrorDetails != nil {
-			err = errors.New(parsedResponse.ErrorDetails.ErrorCode)
-		} else {
-			err = yotierror.SharingFailureError
-		}
-	} else {
-		var userAttributeList, applicationAttributeList *yotiprotoattr.AttributeList
-		if userAttributeList, err = parseUserProfile(&parsedResponse.Receipt, key); err != nil {
-			return
-		}
-		if applicationAttributeList, err = parseApplicationProfile(&parsedResponse.Receipt, key); err != nil {
-			return
-		}
-		id := parsedResponse.Receipt.RememberMeID
+		return activityDetails, handleUnsuccessfulShare(parsedResponse)
+	}
 
-		userProfile := newUserProfile(userAttributeList)
-		applicationProfile := newApplicationProfile(applicationAttributeList)
+	var userAttributeList, applicationAttributeList *yotiprotoattr.AttributeList
+	if userAttributeList, err = parseUserProfile(&parsedResponse.Receipt, key); err != nil {
+		return
+	}
+	if applicationAttributeList, err = parseApplicationProfile(&parsedResponse.Receipt, key); err != nil {
+		return
+	}
+	id := parsedResponse.Receipt.RememberMeID
 
-		var extraData *extra.Data
-		extraData, err = parseExtraData(&parsedResponse.Receipt, key, err)
+	userProfile := newUserProfile(userAttributeList)
+	applicationProfile := newApplicationProfile(applicationAttributeList)
 
-		timestamp, timestampErr := time.Parse(time.RFC3339Nano, parsedResponse.Receipt.Timestamp)
-		if timestampErr != nil {
-			err = yotierror.MultiError{This: errors.New("Unable to read timestamp. Error: " + timestampErr.Error()), Next: err}
-		}
+	var extraData *extra.Data
+	extraData, err = parseExtraData(&parsedResponse.Receipt, key, err)
 
-		activityDetails = ActivityDetails{
-			UserProfile:        userProfile,
-			rememberMeID:       id,
-			parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
-			timestamp:          timestamp,
-			receiptID:          parsedResponse.Receipt.ReceiptID,
-			ApplicationProfile: applicationProfile,
-			extraData:          extraData,
-		}
+	timestamp, timestampErr := time.Parse(time.RFC3339Nano, parsedResponse.Receipt.Timestamp)
+	if timestampErr != nil {
+		err = yotierror.MultiError{This: errors.New("Unable to read timestamp. Error: " + timestampErr.Error()), Next: err}
+	}
+
+	activityDetails = ActivityDetails{
+		UserProfile:        userProfile,
+		rememberMeID:       id,
+		parentRememberMeID: parsedResponse.Receipt.ParentRememberMeID,
+		timestamp:          timestamp,
+		receiptID:          parsedResponse.Receipt.ReceiptID,
+		ApplicationProfile: applicationProfile,
+		extraData:          extraData,
 	}
 
 	return activityDetails, err
@@ -135,4 +131,15 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 	result = &parseResult
 
 	return
+}
+
+func handleUnsuccessfulShare(parsedResponse profileDO) error {
+	if parsedResponse.ErrorDetails != nil {
+		return yotierror.DetailedSharingFailureError{
+			Code:        parsedResponse.ErrorDetails.ErrorCode,
+			Description: parsedResponse.ErrorDetails.Description,
+		}
+	}
+
+	return yotierror.SharingFailureError
 }
