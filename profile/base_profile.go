@@ -19,6 +19,16 @@ func (p baseProfile) GetAttribute(attributeName string) *attribute.GenericAttrib
 	return nil
 }
 
+// GetAttributeByID retrieve an attribute by ID on the Yoti profile. Will return nil if attribute is not present.
+func (p baseProfile) GetAttributeByID(attributeID string) *attribute.GenericAttribute {
+	for _, a := range p.attributeSlice {
+		if a.EphemeralId == attributeID {
+			return attribute.NewGeneric(a)
+		}
+	}
+	return nil
+}
+
 // GetAttributes retrieve a list of attributes by name on the Yoti profile.  Will return an empty list of attribute is not present.
 func (p baseProfile) GetAttributes(attributeName string) []*attribute.GenericAttribute {
 	var attributes []*attribute.GenericAttribute

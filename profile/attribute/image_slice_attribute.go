@@ -40,6 +40,7 @@ func NewImageSlice(a *yotiprotoattr.Attribute) (*ImageSliceAttribute, error) {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     anchor.ParseAnchors(a.Anchors),
+			id:          &a.EphemeralId,
 		},
 		value: imageSliceValue,
 	}, nil

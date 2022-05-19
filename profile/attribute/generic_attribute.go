@@ -26,6 +26,7 @@ func NewGeneric(a *yotiprotoattr.Attribute) *GenericAttribute {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
+			id:          &a.EphemeralId,
 		},
 		value: value,
 	}

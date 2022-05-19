@@ -2,6 +2,7 @@ package profile
 
 import (
 	"encoding/base64"
+	"fmt"
 	"strconv"
 	"strings"
 	"testing"
@@ -16,7 +17,58 @@ import (
 	is "gotest.tools/v3/assert/cmp"
 )
 
-const attributeName = "test_attribute_name"
+const (
+	attributeName        = "test_attribute_name"
+	attributeValueString = "value"
+
+	documentImagesAttributeID = "document-images-attribute-id-123"
+	selfieAttributeID         = "selfie-attribute-id-123"
+	fullNameAttributeID       = "full-name-id-123"
+)
+
+var attributeValue = []byte(attributeValueString)
+
+func getUserProfile() UserProfile {
+	userProfile := createProfileWithMultipleAttributes(
+		createDocumentImagesAttribute(documentImagesAttributeID),
+		createSelfieAttribute(yotiprotoattr.ContentType_JPEG, selfieAttributeID),
+		createStringAttribute("full_name", []byte("John Smith"), []*yotiprotoattr.Anchor{}, fullNameAttributeID))
+
+	return userProfile
+}
+
+func ExampleUserProfile_GetAttributeByID() {
+	userProfile := getUserProfile()
+	fullNameAttribute := userProfile.GetAttributeByID("full-name-id-123")
+	value := fullNameAttribute.Value().(string)
+
+	fmt.Println(value)
+	// Output: John Smith
+}
+
+func ExampleUserProfile_GetDocumentImagesAttributeByID() {
+	userProfile := getUserProfile()
+	documentImagesAttribute, err := userProfile.GetDocumentImagesAttributeByID("document-images-attribute-id-123")
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(*documentImagesAttribute.ID())
+	// Output: document-images-attribute-id-123
+}
+
+func ExampleUserProfile_GetSelfieAttributeByID() {
+	userProfile := getUserProfile()
+	selfieAttribute, err := userProfile.GetSelfieAttributeByID("selfie-attribute-id-123")
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(*selfieAttribute.ID())
+	// Output: selfie-attribute-id-123
+}
 
 func createProfileWithSingleAttribute(attr *yotiprotoattr.Attribute) UserProfile {
 	var attributeSlice []*yotiprotoattr.Attribute
@@ -211,12 +263,12 @@ func TestProfile_GetAttribute_InvalidInt_ReturnsNil(t *testing.T) {
 }
 
 func TestProfile_EmptyStringIsAllowed(t *testing.T) {
-	attributeValueString := ""
-	attributeValue := []byte(attributeValueString)
+	emptyString := ""
+	attrValue := []byte(emptyString)
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        consts.AttrGender,
-		Value:       attributeValue,
+		Value:       attrValue,
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     []*yotiprotoattr.Anchor{},
 	}
@@ -224,7 +276,7 @@ func TestProfile_EmptyStringIsAllowed(t *testing.T) {
 	profile := createProfileWithSingleAttribute(attr)
 	att := profile.Gender()
 
-	assert.Equal(t, att.Value(), attributeValueString)
+	assert.Equal(t, att.Value(), emptyString)
 }
 
 func TestProfile_GetAttribute_Time(t *testing.T) {
@@ -247,8 +299,6 @@ func TestProfile_GetAttribute_Time(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Jpeg(t *testing.T) {
-	attributeValue := []byte("value")
-
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
 		Value:       attributeValue,
@@ -267,8 +317,6 @@ func TestProfile_GetAttribute_Jpeg(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Png(t *testing.T) {
-	attributeValue := []byte("value")
-
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
 		Value:       attributeValue,
@@ -288,11 +336,11 @@ func TestProfile_GetAttribute_Png(t *testing.T) {
 
 func TestProfile_GetAttribute_Bool(t *testing.T) {
 	var initialBoolValue = true
-	attributeValue := []byte(strconv.FormatBool(initialBoolValue))
+	attrValue := []byte(strconv.FormatBool(initialBoolValue))
 
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
-		Value:       attributeValue,
+		Value:       attrValue,
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     []*yotiprotoattr.Anchor{},
 	}
@@ -332,9 +380,6 @@ func TestProfile_GetAttribute_JSON(t *testing.T) {
 }
 
 func TestProfile_GetAttribute_Undefined(t *testing.T) {
-	attributeValueString := "value"
-	attributeValue := []byte(attributeValueString)
-
 	var attr = &yotiprotoattr.Attribute{
 		Name:        attributeName,
 		Value:       attributeValue,
@@ -361,14 +406,72 @@ func TestProfile_GetAttribute_ReturnsNil(t *testing.T) {
 	assert.Assert(t, is.Nil(result))
 }
 
+func TestProfile_GetAttributeByID(t *testing.T) {
+	attributeID := "att-id-123"
+
+	var attr1 = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+		EphemeralId: attributeID,
+	}
+	var attr2 = &yotiprotoattr.Attribute{
+		Name:        attributeName,
+		Value:       attributeValue,
+		ContentType: yotiprotoattr.ContentType_STRING,
+		Anchors:     []*yotiprotoattr.Anchor{},
+		EphemeralId: "non-matching-attribute-ID",
+	}
+
+	profile := createProfileWithMultipleAttributes(attr1, attr2)
+
+	result := profile.GetAttributeByID(attributeID)
+	assert.DeepEqual(t, result.ID(), &attributeID)
+}
+
+func TestProfile_GetAttributeByID_ReturnsNil(t *testing.T) {
+	userProfile := UserProfile{
+		baseProfile{
+			attributeSlice: []*yotiprotoattr.Attribute{},
+		},
+	}
+
+	result := userProfile.GetAttributeByID("attributeName")
+
+	assert.Assert(t, is.Nil(result))
+}
+
+func TestProfile_GetDocumentImagesAttributeByID_ReturnsNil(t *testing.T) {
+	userProfile := UserProfile{
+		baseProfile{
+			attributeSlice: []*yotiprotoattr.Attribute{},
+		},
+	}
+
+	result, err := userProfile.GetDocumentImagesAttributeByID("attributeName")
+	assert.NilError(t, err)
+	assert.Assert(t, is.Nil(result))
+}
+
+func TestProfile_GetSelfieAttributeByID_ReturnsNil(t *testing.T) {
+	userProfile := UserProfile{
+		baseProfile{
+			attributeSlice: []*yotiprotoattr.Attribute{},
+		},
+	}
+
+	result, err := userProfile.GetSelfieAttributeByID("attributeName")
+	assert.NilError(t, err)
+	assert.Assert(t, is.Nil(result))
+}
+
 func TestProfile_StringAttribute(t *testing.T) {
 	nationalityName := consts.AttrNationality
-	attributeValueString := "value"
-	attributeValueBytes := []byte(attributeValueString)
 
 	var as = &yotiprotoattr.Attribute{
 		Name:        nationalityName,
-		Value:       attributeValueBytes,
+		Value:       attributeValue,
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     []*yotiprotoattr.Anchor{},
 	}
@@ -381,20 +484,12 @@ func TestProfile_StringAttribute(t *testing.T) {
 }
 
 func TestProfile_AttributeProperty_RetrievesAttribute(t *testing.T) {
-	selfieName := consts.AttrSelfie
-	attributeValue := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        selfieName,
-		Value:       attributeValue,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
+	attributeImage := createSelfieAttribute(yotiprotoattr.ContentType_PNG, "id")
 
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.Equal(t, selfie.Name(), selfieName)
+	assert.Equal(t, selfie.Name(), consts.AttrSelfie)
 	assert.DeepEqual(t, attributeValue, selfie.Value().Data())
 	assert.Equal(t, selfie.ContentType(), yotiprotoattr.ContentType_PNG.String())
 }
@@ -418,16 +513,7 @@ func TestProfile_DocumentDetails_RetrievesAttribute(t *testing.T) {
 }
 
 func TestProfile_DocumentImages_RetrievesAttribute(t *testing.T) {
-	documentImagesName := consts.AttrDocumentImages
-	attributeValue, err := proto.Marshal(&yotiprotoattr.MultiValue{})
-	assert.NilError(t, err)
-
-	protoAttribute := &yotiprotoattr.Attribute{
-		Name:        documentImagesName,
-		Value:       attributeValue,
-		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
-		Anchors:     make([]*yotiprotoattr.Anchor, 0),
-	}
+	protoAttribute := createDocumentImagesAttribute("attr-id")
 
 	result := createProfileWithSingleAttribute(protoAttribute)
 	documentImages, err := result.DocumentImages()
@@ -438,12 +524,12 @@ func TestProfile_DocumentImages_RetrievesAttribute(t *testing.T) {
 
 func TestProfile_AttributesReturnsNilWhenNotPresent(t *testing.T) {
 	documentImagesName := consts.AttrDocumentImages
-	attributeValue, err := proto.Marshal(&yotiprotoattr.MultiValue{})
+	multiValue, err := proto.Marshal(&yotiprotoattr.MultiValue{})
 	assert.NilError(t, err)
 
 	protoAttribute := &yotiprotoattr.Attribute{
 		Name:        documentImagesName,
-		Value:       attributeValue,
+		Value:       multiValue,
 		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
 		Anchors:     make([]*yotiprotoattr.Anchor, 0),
 	}
@@ -489,90 +575,48 @@ func TestMissingPostalAddress_UsesFormattedAddress(t *testing.T) {
 }
 
 func TestAttributeImage_Image_Png(t *testing.T) {
-	selfieName := consts.AttrSelfie
-	byteValue := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        selfieName,
-		Value:       byteValue,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
+	attributeImage := createSelfieAttribute(yotiprotoattr.ContentType_PNG, "id")
 
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), attributeValue)
 }
 
 func TestAttributeImage_Image_Jpeg(t *testing.T) {
-	selfieName := consts.AttrSelfie
-	byteValue := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        selfieName,
-		Value:       byteValue,
-		ContentType: yotiprotoattr.ContentType_JPEG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
+	attributeImage := createSelfieAttribute(yotiprotoattr.ContentType_JPEG, "id")
 
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), attributeValue)
 }
 
 func TestAttributeImage_Image_Default(t *testing.T) {
-	selfieName := consts.AttrSelfie
-	byteValue := []byte("value")
+	attributeImage := createSelfieAttribute(yotiprotoattr.ContentType_PNG, "id")
 
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        selfieName,
-		Value:       byteValue,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
 	result := createProfileWithSingleAttribute(attributeImage)
 	selfie := result.Selfie()
 
-	assert.DeepEqual(t, selfie.Value().Data(), byteValue)
+	assert.DeepEqual(t, selfie.Value().Data(), attributeValue)
 }
 func TestAttributeImage_Base64Selfie_Png(t *testing.T) {
-	selfieName := consts.AttrSelfie
-	imageBytes := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        selfieName,
-		Value:       imageBytes,
-		ContentType: yotiprotoattr.ContentType_PNG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
+	attributeImage := createSelfieAttribute(yotiprotoattr.ContentType_PNG, "id")
 
 	result := createProfileWithSingleAttribute(attributeImage)
-
-	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
-
+	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(attributeValue)
 	expectedBase64Selfie := "data:image/png;base64," + base64ImageExpectedValue
-
 	base64Selfie := result.Selfie().Value().Base64URL()
 
 	assert.Equal(t, base64Selfie, expectedBase64Selfie)
 }
 
 func TestAttributeImage_Base64URL_Jpeg(t *testing.T) {
-	selfieName := consts.AttrSelfie
-	imageBytes := []byte("value")
-
-	var attributeImage = &yotiprotoattr.Attribute{
-		Name:        selfieName,
-		Value:       imageBytes,
-		ContentType: yotiprotoattr.ContentType_JPEG,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
+	attributeImage := createSelfieAttribute(yotiprotoattr.ContentType_JPEG, "id")
 
 	result := createProfileWithSingleAttribute(attributeImage)
 
-	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(imageBytes)
+	base64ImageExpectedValue := base64.StdEncoding.EncodeToString(attributeValue)
 
 	expectedBase64Selfie := "data:image/jpeg;base64," + base64ImageExpectedValue
 
@@ -603,8 +647,8 @@ func TestProfile_IdentityProfileReport_RetrievesAttribute(t *testing.T) {
 }
 
 func TestProfileAllowsMultipleAttributesWithSameName(t *testing.T) {
-	firstAttribute := createStringAttribute("full_name", []byte("some_value"), []*yotiprotoattr.Anchor{})
-	secondAttribute := createStringAttribute("full_name", []byte("some_other_value"), []*yotiprotoattr.Anchor{})
+	firstAttribute := createStringAttribute("full_name", []byte("some_value"), []*yotiprotoattr.Anchor{}, "id")
+	secondAttribute := createStringAttribute("full_name", []byte("some_other_value"), []*yotiprotoattr.Anchor{}, "id")
 
 	var attributeSlice []*yotiprotoattr.Attribute
 	attributeSlice = append(attributeSlice, firstAttribute, secondAttribute)
@@ -622,11 +666,39 @@ func TestProfileAllowsMultipleAttributesWithSameName(t *testing.T) {
 	assert.Assert(t, is.Equal(fullNames[1].Value().(string), "some_other_value"))
 }
 
-func createStringAttribute(name string, value []byte, anchors []*yotiprotoattr.Anchor) *yotiprotoattr.Attribute {
+func createStringAttribute(name string, value []byte, anchors []*yotiprotoattr.Anchor, attributeID string) *yotiprotoattr.Attribute {
 	return &yotiprotoattr.Attribute{
 		Name:        name,
 		Value:       value,
 		ContentType: yotiprotoattr.ContentType_STRING,
 		Anchors:     anchors,
+		EphemeralId: attributeID,
 	}
+}
+
+func createSelfieAttribute(contentType yotiprotoattr.ContentType, attributeID string) *yotiprotoattr.Attribute {
+	var attributeImage = &yotiprotoattr.Attribute{
+		Name:        consts.AttrSelfie,
+		Value:       attributeValue,
+		ContentType: contentType,
+		Anchors:     []*yotiprotoattr.Anchor{},
+		EphemeralId: attributeID,
+	}
+	return attributeImage
+}
+
+func createDocumentImagesAttribute(attributeID string) *yotiprotoattr.Attribute {
+	multiValue, err := proto.Marshal(&yotiprotoattr.MultiValue{})
+	if err != nil {
+		panic(err)
+	}
+
+	protoAttribute := &yotiprotoattr.Attribute{
+		Name:        consts.AttrDocumentImages,
+		Value:       multiValue,
+		ContentType: yotiprotoattr.ContentType_MULTI_VALUE,
+		Anchors:     make([]*yotiprotoattr.Anchor, 0),
+		EphemeralId: attributeID,
+	}
+	return protoAttribute
 }
