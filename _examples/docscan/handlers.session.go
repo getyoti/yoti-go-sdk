@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -25,22 +26,32 @@ var (
 )
 
 func showIndexPage(c *gin.Context) {
-	initialiseDocScanClient(c)
+	err := initialiseDocScanClient()
+	if err != nil {
+		c.HTML(
+			http.StatusUnprocessableEntity,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "Error initialising Doc Scan Client",
+				"ErrorMessage": errors.Unwrap(err)})
+		return
+	}
 
 	sessionSpec, err := buildSessionSpec()
 	if err != nil {
 		c.HTML(
-			http.StatusBadRequest,
+			http.StatusInternalServerError,
 			"error.html",
 			gin.H{
 				"ErrorTitle":   "Error when building sessions spec",
 				"ErrorMessage": err.Error()})
+		return
 	}
 
 	createSessionResult, err = client.CreateSession(sessionSpec)
 	if err != nil {
 		c.HTML(
-			http.StatusBadRequest,
+			http.StatusInternalServerError,
 			"error.html",
 			gin.H{
 				"ErrorTitle":   "Error when creating Doc Scan session",
@@ -71,12 +82,21 @@ func getIframeURL(sessionID, sessionToken string) string {
 }
 
 func showSuccessPage(c *gin.Context) {
-	ensureDocScanClientInitialised(c)
+	err := ensureDocScanClientInitialised()
+	if err != nil {
+		c.HTML(
+			http.StatusUnprocessableEntity,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "error setting the Doc Scan Client",
+				"ErrorMessage": err.Error()})
+		return
+	}
 
 	sessionId, err := c.Cookie("session_id")
 	if err != nil || sessionId == "" {
 		c.HTML(
-			http.StatusBadRequest,
+			http.StatusUnprocessableEntity,
 			"error.html",
 			gin.H{
 				"ErrorTitle":   "Failed to get session ID",
@@ -89,7 +109,7 @@ func showSuccessPage(c *gin.Context) {
 	getSessionResult, err := client.GetSession(sessionId)
 	if err != nil {
 		c.HTML(
-			http.StatusBadRequest,
+			http.StatusInternalServerError,
 			"error.html",
 			gin.H{
 				"ErrorTitle":   "Get Session Failed",
@@ -112,44 +132,35 @@ func showSuccessPage(c *gin.Context) {
 	return
 }
 
-func ensureDocScanClientInitialised(c *gin.Context) {
+func ensureDocScanClientInitialised() error {
 	if client == nil {
-		initialiseDocScanClient(c)
+		return initialiseDocScanClient()
 	}
-	return
+	return nil
 }
 
-func initialiseDocScanClient(c *gin.Context) {
+func initialiseDocScanClient() error {
 	var err error
 	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 	keyFilePath := os.Getenv("YOTI_KEY_FILE_PATH")
 	key, err = ioutil.ReadFile(keyFilePath)
 	if err != nil {
-		c.HTML(
-			http.StatusBadRequest,
-			"error.html",
-			gin.H{
-				"ErrorTitle":   "Failed to get key from YOTI_KEY_FILE_PATH",
-				"ErrorMessage": err.Error()})
+		return fmt.Errorf("failed to get key from YOTI_KEY_FILE_PATH :: %w", err)
 	}
 
 	client, err = docscan.NewClient(sdkID, key)
 	if err != nil {
-		c.HTML(
-			http.StatusBadRequest,
-			"error.html",
-			gin.H{
-				"ErrorTitle":   "Failed to initialise Yoti Doc Scan client",
-				"ErrorMessage": err.Error()})
+		return fmt.Errorf("failed to initialise Yoti Doc Scan client :: %w", err)
 	}
-	return
+
+	return nil
 }
 
 func getMedia(c *gin.Context) {
 	sessionId, err := c.Cookie("session_id")
 	if err != nil || sessionId == "" {
 		c.HTML(
-			http.StatusBadRequest,
+			http.StatusInternalServerError,
 			"error.html",
 			gin.H{
 				"ErrorTitle":   "Failed to get session ID",
@@ -160,12 +171,6 @@ func getMedia(c *gin.Context) {
 	mediaID := c.Query("mediaId")
 
 	media, err := client.GetMediaContent(sessionId, mediaID)
-
-	if media == nil && err == nil {
-		c.Status(http.StatusNoContent)
-		return
-	}
-
 	if err != nil || sessionId == "" {
 		c.HTML(
 			http.StatusBadRequest,
@@ -173,6 +178,11 @@ func getMedia(c *gin.Context) {
 			gin.H{
 				"ErrorTitle":   "Failed to get media",
 				"ErrorMessage": err.Error()})
+		return
+	}
+
+	if media == nil {
+		c.Status(http.StatusNoContent)
 		return
 	}
 
