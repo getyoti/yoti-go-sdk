@@ -67,7 +67,7 @@ func getAPIURL() string {
 	}
 }
 
-// CreateSession creates a Doc Scan session using the supplied session specification
+// CreateSession creates a Doc Scan (IDV) session using the supplied session specification
 func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*create.SessionResult, error) {
 	requestBody, err := marshalJSON(c.jsonMarshaler, sessionSpec)
 	if err != nil {
@@ -106,7 +106,7 @@ func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*creat
 	return &result, err
 }
 
-// GetSession retrieves the state of a previously created Yoti Doc Scan session
+// GetSession retrieves the state of a previously created Yoti Doc Scan (IDV) session
 func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error) {
 	if sessionID == "" {
 		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
@@ -141,7 +141,7 @@ func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error
 	return &result, err
 }
 
-// DeleteSession deletes a previously created Yoti Doc Scan session and all of its related resources
+// DeleteSession deletes a previously created Yoti Doc Scan (IDV) session and all of its related resources
 func (c *Client) DeleteSession(sessionID string) error {
 	if sessionID == "" {
 		return fmt.Errorf(mustNotBeEmptyString, "sessionID")
@@ -166,7 +166,7 @@ func (c *Client) DeleteSession(sessionID string) error {
 	return nil
 }
 
-// GetMediaContent retrieves media related to a Yoti Doc Scan session based on the supplied media ID
+// GetMediaContent retrieves media related to a Yoti Doc Scan (IDV) session based on the supplied media ID
 func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error) {
 	if sessionID == "" {
 		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
@@ -213,7 +213,7 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 	return result, err
 }
 
-// DeleteMediaContent deletes media related to a Yoti Doc Scan session based on the supplied media ID
+// DeleteMediaContent deletes media related to a Yoti Doc Scan (IDV) session based on the supplied media ID
 func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
 	if sessionID == "" {
 		return fmt.Errorf(mustNotBeEmptyString, "sessionID")

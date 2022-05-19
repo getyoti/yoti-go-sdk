@@ -1,6 +1,6 @@
-# Yoti Go Doc Scan Sandbox Module
+# Yoti Go IDV (Doc Scan) Sandbox Module
 
-This module contains the tools you need to test your Go back-end integration with the Doc Scan Sandbox service.
+This module contains the tools you need to test your Go back-end integration with the IDV Sandbox service.
 
 ## Importing the Sandbox
 
@@ -22,4 +22,4 @@ Please do not open the PEM file, as this might corrupt the key, and you will nee
 
 ## Examples
 
-- [Doc Scan Sandbox WebDriver Example](../_examples/docscansandbox/)
+- [IDV Sandbox WebDriver Example](../_examples/docscansandbox/)

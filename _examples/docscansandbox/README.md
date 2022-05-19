@@ -1,4 +1,4 @@
-# Doc Scan Sandbox Example
+# IDV (Doc Scan) Sandbox Example
 
 An example of configuring a session response can be found in the [Demo Test](./demo_test.go)
 

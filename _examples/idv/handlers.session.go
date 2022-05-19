@@ -32,7 +32,7 @@ func showIndexPage(c *gin.Context) {
 			http.StatusUnprocessableEntity,
 			"error.html",
 			gin.H{
-				"ErrorTitle":   "Error initialising Doc Scan Client",
+				"ErrorTitle":   "Error initialising Doc Scan (IDV) Client",
 				"ErrorMessage": errors.Unwrap(err)})
 		return
 	}
@@ -54,7 +54,7 @@ func showIndexPage(c *gin.Context) {
 			http.StatusInternalServerError,
 			"error.html",
 			gin.H{
-				"ErrorTitle":   "Error when creating Doc Scan session",
+				"ErrorTitle":   "Error when creating Doc Scan (IDV) session",
 				"ErrorMessage": err.Error()})
 		return
 	}
@@ -88,7 +88,7 @@ func showSuccessPage(c *gin.Context) {
 			http.StatusUnprocessableEntity,
 			"error.html",
 			gin.H{
-				"ErrorTitle":   "error setting the Doc Scan Client",
+				"ErrorTitle":   "error setting the Doc Scan (IDV) Client",
 				"ErrorMessage": err.Error()})
 		return
 	}
@@ -150,7 +150,7 @@ func initialiseDocScanClient() error {
 
 	client, err = docscan.NewClient(sdkID, key)
 	if err != nil {
-		return fmt.Errorf("failed to initialise Yoti Doc Scan client :: %w", err)
+		return fmt.Errorf("failed to initialise Yoti Doc Scan (IDV) client :: %w", err)
 	}
 
 	return nil

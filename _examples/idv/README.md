@@ -1,4 +1,4 @@
-# Doc Scan Example
+# IDV (Doc Scan) Example
 
 ## Running the example
 
