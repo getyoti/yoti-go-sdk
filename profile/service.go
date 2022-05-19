@@ -69,7 +69,11 @@ func handleSuccessfulResponse(responseBytes []byte, key *rsa.PrivateKey) (activi
 	}
 
 	if parsedResponse.Receipt.SharingOutcome != "SUCCESS" {
-		err = yotierror.SharingFailureError
+		if parsedResponse.ErrorDetails != nil {
+			err = errors.New(parsedResponse.ErrorDetails.ErrorCode)
+		} else {
+			err = yotierror.SharingFailureError
+		}
 	} else {
 		var userAttributeList, applicationAttributeList *yotiprotoattr.AttributeList
 		if userAttributeList, err = parseUserProfile(&parsedResponse.Receipt, key); err != nil {

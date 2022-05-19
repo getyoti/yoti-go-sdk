@@ -156,7 +156,27 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 	assert.DeepEqual(t, actualDoB.Value(), &expectedDoB)
 }
 
-func TestProfileService_SharingFailure_ReturnsFailure(t *testing.T) {
+func TestProfileService_SharingFailure_ReturnsSpecificFailure(t *testing.T) {
+	key := getValidKey()
+
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 200,
+				Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{"error_code":"SOME_ERROR","description":"SOME_DESCRIPTION"}}`)),
+			}, nil
+		},
+	}
+	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
+	assert.ErrorContains(t, err, "SOME_ERROR")
+
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
+func TestProfileService_SharingFailure_ReturnsGenericFailure(t *testing.T) {
 	key := getValidKey()
 
 	client := &mockHTTPClient{
