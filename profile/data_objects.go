@@ -16,8 +16,8 @@ type receiptDO struct {
 }
 
 type errorDetailsDO struct {
-	ErrorCode   string `json:"error_code"`
-	Description string `json:"description"`
+	ErrorCode   *string `json:"error_code"`
+	Description *string `json:"description"`
 }
 
 type profileDO struct {

@@ -134,7 +134,7 @@ func parseIsAgeVerifiedValue(byteValue []byte) (result *bool, err error) {
 }
 
 func handleUnsuccessfulShare(parsedResponse profileDO) error {
-	if parsedResponse.ErrorDetails != nil {
+	if parsedResponse.ErrorDetails != nil && parsedResponse.ErrorDetails.ErrorCode != nil {
 		return yotierror.DetailedSharingFailureError{
 			Code:        parsedResponse.ErrorDetails.ErrorCode,
 			Description: parsedResponse.ErrorDetails.Description,
