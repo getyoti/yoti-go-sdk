@@ -15,7 +15,13 @@ type receiptDO struct {
 	Timestamp                  string `json:"timestamp"`
 }
 
+type errorDetailsDO struct {
+	ErrorCode   *string `json:"error_code"`
+	Description *string `json:"description"`
+}
+
 type profileDO struct {
-	SessionData string    `json:"session_data"`
-	Receipt     receiptDO `json:"receipt"`
+	SessionData  string          `json:"session_data"`
+	Receipt      receiptDO       `json:"receipt"`
+	ErrorDetails *errorDetailsDO `json:"error_details"`
 }
