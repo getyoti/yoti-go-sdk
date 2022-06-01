@@ -1,7 +1,7 @@
 module github.com/getyoti/yoti-go-sdk/v3
 
 require (
-	google.golang.org/protobuf v1.26.0
+	google.golang.org/protobuf v1.28.0
 	gotest.tools/v3 v3.2.0
 )
 
