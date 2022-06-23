@@ -53,6 +53,11 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 		State: "DONE",
 	}
 
+	advancedWatchlistScreeningCheckResponse := &retrieve.CheckResponse{
+		Type:  constants.WatchlistAdvancedCA,
+		State: "PENDING",
+	}
+
 	var checks []*retrieve.CheckResponse
 	checks = append(checks, &retrieve.CheckResponse{Type: "OTHER_TYPE", ID: "id"})
 	checks = append(checks, authenticityCheckResponse)
@@ -63,6 +68,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	checks = append(checks, thirdPartyIdentityCheckResponse)
 	checks = append(checks, supplementaryTextDataCheckResponse)
 	checks = append(checks, watchlistScreeningCheckResponse)
+	checks = append(checks, advancedWatchlistScreeningCheckResponse)
 
 	biometricConsentTimestamp := time.Date(2020, 01, 01, 1, 2, 3, 4, time.UTC)
 
@@ -77,7 +83,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	err = json.Unmarshal(marshalled, &result)
 	assert.NilError(t, err)
 
-	assert.Equal(t, 9, len(result.Checks))
+	assert.Equal(t, 10, len(result.Checks))
 
 	assert.Equal(t, 1, len(result.AuthenticityChecks()))
 	assert.Equal(t, "DONE", result.AuthenticityChecks()[0].State)
@@ -108,6 +114,9 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, 1, len(result.WatchlistScreeningChecks()))
 	assert.DeepEqual(t, "DONE", result.WatchlistScreeningChecks()[0].State)
 
+	assert.Equal(t, 1, len(result.WatchlistAdvancedCAChecks()))
+	assert.DeepEqual(t, "PENDING", result.WatchlistAdvancedCAChecks()[0].State)
+
 	assert.Equal(t, biometricConsentTimestamp, *result.BiometricConsentTimestamp)
 }
 
@@ -131,6 +140,40 @@ func TestGetSessionResult_UnmarshalJSON_Watchlist(t *testing.T) {
 	assert.Equal(t, watchlistSummary.SearchConfig.Categories[1], "SANCTIONS")
 	assert.Equal(t, watchlistSummary.RawResults.Media.Type, "JSON")
 	assert.Equal(t, watchlistSummary.AssociatedCountryCodes[0], "GBR")
+}
+
+func TestGetSessionResult_UnmarshalJSON_Watchlist_Advanced_CA(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/watchlist_advanced_ca_profile_custom.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	assert.Equal(t, 1, len(result.WatchlistAdvancedCAChecks()))
+	watchlistAdvancedCACheck := result.WatchlistAdvancedCAChecks()[0]
+	assert.Equal(t, 1, len(watchlistAdvancedCACheck.GeneratedMedia))
+	assert.Equal(t, watchlistAdvancedCACheck.GeneratedMedia[0].Type, "JSON")
+
+	assert.Equal(t, watchlistAdvancedCACheck.GeneratedProfile.Media.Type, "JSON")
+
+	watchlistSummary := watchlistAdvancedCACheck.Report.WatchlistSummary
+	assert.Equal(t, watchlistSummary.RawResults.Media.Type, "JSON")
+	assert.Equal(t, watchlistSummary.AssociatedCountryCodes[0], "GBR")
+	assert.Equal(t, watchlistSummary.RawResults.Media.Type, "JSON")
+	assert.Equal(t, watchlistSummary.AssociatedCountryCodes[0], "GBR")
+
+	searchConfig := watchlistSummary.SearchConfig
+	assert.Equal(t, "WITH_CUSTOM_ACCOUNT", searchConfig.Type)
+	assert.Equal(t, true, searchConfig.RemoveDeceased)
+	assert.Equal(t, true, searchConfig.ShareURL)
+	assert.Equal(t, "FUZZY", searchConfig.MatchingStrategy.Type)
+	assert.Equal(t, 0.6, searchConfig.MatchingStrategy.Fuzziness)
+	assert.Equal(t, "PROFILE", searchConfig.Sources.Type)
+	assert.Equal(t, "b41d82de-9a1d-4494-97a6-8b1b9895a908", searchConfig.Sources.SearchProfile)
+	assert.Equal(t, "gQ2vf0STnF5nGy9SSdyuGJuYMFfNASmV", searchConfig.APIKey)
+	assert.Equal(t, "111111", searchConfig.ClientRef)
+	assert.Equal(t, true, searchConfig.Monitoring)
 }
 
 func TestGetSessionResult_UnmarshalJSON_Invalid(t *testing.T) {

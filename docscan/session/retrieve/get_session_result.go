@@ -25,6 +25,7 @@ type GetSessionResult struct {
 	idDocumentComparisonChecks          []*IDDocumentComparisonCheckResponse
 	supplementaryDocumentTextDataChecks []*SupplementaryDocumentTextDataCheckResponse
 	watchlistScreeningChecks            []*WatchlistScreeningCheckResponse
+	watchlistAdvancedCAChecks           []*WatchlistAdvancedCACheckResponse
 }
 
 // AuthenticityChecks filters the checks, returning only document authenticity checks
@@ -73,6 +74,11 @@ func (g *GetSessionResult) WatchlistScreeningChecks() []*WatchlistScreeningCheck
 	return g.watchlistScreeningChecks
 }
 
+// WatchlistAdvancedCAChecks filters the checks, returning only the Watchlist Advanced CA Screening checks
+func (g *GetSessionResult) WatchlistAdvancedCAChecks() []*WatchlistAdvancedCACheckResponse {
+	return g.watchlistAdvancedCAChecks
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 	type result GetSessionResult // declared as "type" to prevent recursive unmarshalling
@@ -116,6 +122,14 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 			g.watchlistScreeningChecks = append(
 				g.watchlistScreeningChecks,
 				&WatchlistScreeningCheckResponse{
+					CheckResponse: check,
+				},
+			)
+
+		case constants.WatchlistAdvancedCA:
+			g.watchlistAdvancedCAChecks = append(
+				g.watchlistAdvancedCAChecks,
+				&WatchlistAdvancedCACheckResponse{
 					CheckResponse: check,
 				},
 			)

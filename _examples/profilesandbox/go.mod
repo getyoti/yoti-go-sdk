@@ -10,7 +10,7 @@ require (
 
 require (
 	github.com/google/go-cmp v0.5.5 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
+	google.golang.org/protobuf v1.28.0 // indirect
 )
 
 replace github.com/getyoti/yoti-go-sdk/v3 => ../../

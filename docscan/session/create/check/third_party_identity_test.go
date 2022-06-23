@@ -7,7 +7,6 @@ import (
 
 func ExampleRequestedThirdPartyIdentityCheck() {
 	thirdPartyCheck, err := NewRequestedThirdPartyIdentityCheckBuilder().Build()
-
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return

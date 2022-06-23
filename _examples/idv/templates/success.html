@@ -218,6 +218,26 @@
                     </div>
                     {{ end }}
 
+                    {{ if .getSessionResult.WatchlistAdvancedCAChecks }}
+                    <div class="card">
+                        <div class="card-header" id="watchlist-advanced-ca-checks">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-watchlist-advanced-ca-checks" aria-expanded="true"
+                                        aria-controls="collapse-watchlist-advanced-ca-checks">
+                                    Watchlist Advanced Checks
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-watchlist-advanced-ca-checks" class="collapse" aria-labelledby="watchlist-advanced-ca-checks">
+                            <div class="card-body">
+                                {{ range $check :=  .getSessionResult.WatchlistAdvancedCAChecks }}
+                                {{ template "check.html" $check }}
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
                 </div>
             </div>
         </div>
