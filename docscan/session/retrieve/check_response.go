@@ -56,3 +56,8 @@ type ThirdPartyIdentityCheckResponse struct {
 type WatchlistScreeningCheckResponse struct {
 	*CheckResponse
 }
+
+// WatchlistAdvancedCACheckResponse represents an advanced CA watchlist screening check
+type WatchlistAdvancedCACheckResponse struct {
+	*CheckResponse
+}
