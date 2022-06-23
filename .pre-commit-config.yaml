@@ -33,6 +33,7 @@ repos:
       - id: go-vet
         exclude: _examples
       - id: go-cyclo
+        exclude: _examples
         args: [ "-over", "15", "-ignore", ".pb.go" ]
       - id: golangci-lint
         args: ["-e", "SA1019"]
