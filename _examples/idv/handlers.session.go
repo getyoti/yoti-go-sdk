@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
@@ -125,7 +124,6 @@ func showSuccessPage(c *gin.Context) {
 			"add": func(a int, b int) int {
 				return a + b
 			},
-			"stringsJoin": strings.Join,
 		},
 		"success.html",
 	)
