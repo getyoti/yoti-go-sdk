@@ -13,7 +13,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/file"
 	"github.com/getyoti/yoti-go-sdk/v3/util"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 	"gotest.tools/v3/assert"
 )
 

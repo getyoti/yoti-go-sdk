@@ -24,6 +24,8 @@ type GetSessionResult struct {
 	thirdPartyIdentityChecks            []*ThirdPartyIdentityCheckResponse
 	idDocumentComparisonChecks          []*IDDocumentComparisonCheckResponse
 	supplementaryDocumentTextDataChecks []*SupplementaryDocumentTextDataCheckResponse
+	watchlistScreeningChecks            []*WatchlistScreeningCheckResponse
+	watchlistAdvancedCAChecks           []*WatchlistAdvancedCACheckResponse
 }
 
 // AuthenticityChecks filters the checks, returning only document authenticity checks
@@ -67,6 +69,16 @@ func (g *GetSessionResult) SupplementaryDocumentTextDataChecks() []*Supplementar
 	return g.supplementaryDocumentTextDataChecks
 }
 
+// WatchlistScreeningChecks filters the checks, returning only the Watchlist Screening checks
+func (g *GetSessionResult) WatchlistScreeningChecks() []*WatchlistScreeningCheckResponse {
+	return g.watchlistScreeningChecks
+}
+
+// WatchlistAdvancedCAChecks filters the checks, returning only the Watchlist Advanced CA Screening checks
+func (g *GetSessionResult) WatchlistAdvancedCAChecks() []*WatchlistAdvancedCACheckResponse {
+	return g.watchlistAdvancedCAChecks
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 	type result GetSessionResult // declared as "type" to prevent recursive unmarshalling
@@ -92,12 +104,32 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
 
 		case constants.ThirdPartyIdentityCheck:
-			g.thirdPartyIdentityChecks = append(g.thirdPartyIdentityChecks, &ThirdPartyIdentityCheckResponse{CheckResponse: check})
+			g.thirdPartyIdentityChecks = append(
+				g.thirdPartyIdentityChecks,
+				&ThirdPartyIdentityCheckResponse{
+					CheckResponse: check,
+				})
 
 		case constants.SupplementaryDocumentTextDataCheck:
 			g.supplementaryDocumentTextDataChecks = append(
 				g.supplementaryDocumentTextDataChecks,
 				&SupplementaryDocumentTextDataCheckResponse{
+					CheckResponse: check,
+				},
+			)
+
+		case constants.WatchlistScreening:
+			g.watchlistScreeningChecks = append(
+				g.watchlistScreeningChecks,
+				&WatchlistScreeningCheckResponse{
+					CheckResponse: check,
+				},
+			)
+
+		case constants.WatchlistAdvancedCA:
+			g.watchlistAdvancedCAChecks = append(
+				g.watchlistAdvancedCAChecks,
+				&WatchlistAdvancedCACheckResponse{
 					CheckResponse: check,
 				},
 			)

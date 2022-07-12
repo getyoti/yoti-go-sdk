@@ -1,3 +1,5 @@
+default_stages:
+  - commit
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -25,14 +27,16 @@ repos:
         language: 'script'
         description: "Go imports"
 
-  - repo: git://github.com/dnephin/pre-commit-golang
+  - repo: https://github.com/dnephin/pre-commit-golang
     rev: v0.3.5
     hooks:
       - id: go-vet
         exclude: _examples
       - id: go-cyclo
-        args: [-over=15]
+        exclude: _examples
+        args: [ "-over", "15", "-ignore", ".pb.go" ]
       - id: golangci-lint
         args: ["-e", "SA1019"]
       - id: go-unit-tests
         args: ["-race", "./..."]
+        stages: [ push ] # only run tests on push, not on commit

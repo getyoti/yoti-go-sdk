@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // IssuanceDetails contains information about the attribute(s) issued by a third party

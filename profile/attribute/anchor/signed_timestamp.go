@@ -12,7 +12,7 @@ type SignedTimestamp struct {
 	timestamp *time.Time
 }
 
-func convertSignedTimestamp(protoSignedTimestamp yotiprotocom.SignedTimestamp) SignedTimestamp {
+func convertSignedTimestamp(protoSignedTimestamp *yotiprotocom.SignedTimestamp) SignedTimestamp {
 	uintTimestamp := protoSignedTimestamp.Timestamp
 	intTimestamp := int64(uintTimestamp)
 	unixTime := time.Unix(intTimestamp/1e6, (intTimestamp%1e6)*1e3)

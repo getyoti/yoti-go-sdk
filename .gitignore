@@ -15,3 +15,6 @@ coverage.out
 
 # idea files
 .idea
+
+# Generated binaries
+/_examples/docscan/docscan

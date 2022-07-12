@@ -40,7 +40,7 @@ Keeping your settings and access keys outside your repository is highly recommen
    1. Set the application domain of your app to `localhost:8080`
    2. Set the scenario callback URL to `/profile`
 3. Rename the [.env.example](_examples/profile/.env.example) file to `.env` and fill in the required configuration values (mentioned in the [Configuration](#configuration) section)
-4. Retrieve dependencies with `go get`
-5. Start the server with `go run main.go certificatehelper.go`
+4. Build with `go build`
+5. Start the compiled program by running `./profile`
 
 Visiting `https://localhost:8080/` should show a webpage with a Yoti button rendered on it

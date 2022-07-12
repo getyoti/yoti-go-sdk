@@ -15,6 +15,7 @@ const (
 	AttrNationality             = "nationality"
 	AttrDocumentImages          = "document_images"
 	AttrDocumentDetails         = "document_details"
+	AttrIdentityProfileReport   = "identity_profile_report"
 	AttrAgeOver                 = "age_over:%d"
 	AttrAgeUnder                = "age_under:%d"
 )

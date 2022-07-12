@@ -27,6 +27,7 @@ func NewDate(a *yotiprotoattr.Attribute) (*DateAttribute, error) {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     parsedAnchors,
+			id:          &a.EphemeralId,
 		},
 		value: &parsedTime,
 	}, nil

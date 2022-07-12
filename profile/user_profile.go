@@ -37,6 +37,18 @@ func (p UserProfile) Selfie() *attribute.ImageAttribute {
 	return p.GetImageAttribute(consts.AttrSelfie)
 }
 
+// GetSelfieAttributeByID retrieve a Selfie attribute by ID on the Yoti profile.
+// This attribute is a photograph of the user.
+// Will return nil if attribute is not present.
+func (p UserProfile) GetSelfieAttributeByID(attributeID string) (*attribute.ImageAttribute, error) {
+	for _, a := range p.attributeSlice {
+		if a.EphemeralId == attributeID {
+			return attribute.NewImage(a)
+		}
+	}
+	return nil, nil
+}
+
 // GivenNames corresponds to secondary names in passport, and first/middle names in English. Will be nil if not provided by Yoti.
 func (p UserProfile) GivenNames() *attribute.StringAttribute {
 	return p.GetStringAttribute(consts.AttrGivenNames)
@@ -120,6 +132,19 @@ func (p UserProfile) DocumentImages() (*attribute.ImageSliceAttribute, error) {
 	return nil, nil
 }
 
+// GetDocumentImagesAttributeByID retrieve a Document Images attribute by ID on the Yoti profile.
+// This attribute consists of a slice of document images cropped from the image in the capture page.
+// There can be multiple images as per the number of regions in the capture in this attribute.
+// Will return nil if attribute is not present.
+func (p UserProfile) GetDocumentImagesAttributeByID(attributeID string) (*attribute.ImageSliceAttribute, error) {
+	for _, a := range p.attributeSlice {
+		if a.EphemeralId == attributeID {
+			return attribute.NewImageSlice(a)
+		}
+	}
+	return nil, nil
+}
+
 // DocumentDetails represents information extracted from a document provided by the user.
 // Will be nil if not provided by Yoti.
 func (p UserProfile) DocumentDetails() (*attribute.DocumentDetailsAttribute, error) {
@@ -129,6 +154,12 @@ func (p UserProfile) DocumentDetails() (*attribute.DocumentDetailsAttribute, err
 		}
 	}
 	return nil, nil
+}
+
+// IdentityProfileReport represents the JSON object containing identity assertion and the
+// verification report. Will be nil if not provided by Yoti.
+func (p UserProfile) IdentityProfileReport() (*attribute.JSONAttribute, error) {
+	return p.GetJSONAttribute(consts.AttrIdentityProfileReport)
 }
 
 // AgeVerifications returns a slice of age verifications for the user.

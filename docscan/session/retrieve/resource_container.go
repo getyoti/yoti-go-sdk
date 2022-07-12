@@ -6,7 +6,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
-// ResourceContainer contains different resources that are part of the Yoti Doc Scan session
+// ResourceContainer contains different resources that are part of the Yoti IDV session
 type ResourceContainer struct {
 	IDDocuments            []*IDDocumentResourceResponse            `json:"id_documents"`
 	SupplementaryDocuments []*SupplementaryDocumentResourceResponse `json:"supplementary_documents"`

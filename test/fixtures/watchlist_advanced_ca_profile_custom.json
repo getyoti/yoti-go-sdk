@@ -1,0 +1,257 @@
+{
+  "client_session_token_ttl": 155057,
+  "session_id": "a3819be3-df1f-4d8c-9161-abfe1b19d9e8",
+  "state": "COMPLETED",
+  "resources": {
+    "id_documents": [
+      {
+        "id": "d99241db-243f-472d-84a2-d956b87db5f8",
+        "tasks": [
+          {
+            "type": "ID_DOCUMENT_TEXT_DATA_EXTRACTION",
+            "id": "e1995b9a-9b6f-43b9-a179-32bbe2d25586",
+            "state": "DONE",
+            "created": "2022-01-14T14:54:14Z",
+            "last_updated": "2022-01-14T14:59:13Z",
+            "generated_checks": [
+              {
+                "id": "851cec96-7459-49d3-b9b2-bcbc4c759987",
+                "type": "ID_DOCUMENT_TEXT_DATA_CHECK"
+              }
+            ],
+            "generated_media": [
+              {
+                "id": "a8c9e973-4e58-43d8-952d-17f36f12bce2",
+                "type": "JSON"
+              }
+            ]
+          }
+        ],
+        "source": {
+          "type": "END_USER"
+        },
+        "document_type": "DRIVING_LICENCE",
+        "issuing_country": "GBR",
+        "pages": [
+          {
+            "capture_method": "UPLOAD",
+            "media": {
+              "id": "8c65cb1c-92cb-43df-bac1-65433ac3a1c1",
+              "type": "IMAGE",
+              "created": "2022-01-14T14:54:30Z",
+              "last_updated": "2022-01-14T14:54:30Z"
+            },
+            "frames": [{}, {}]
+          },
+          {
+            "capture_method": "UPLOAD",
+            "media": {
+              "id": "a7c8331c-6e29-4720-8818-27c02e6252b3",
+              "type": "IMAGE",
+              "created": "2022-01-14T14:54:31Z",
+              "last_updated": "2022-01-14T14:54:31Z"
+            },
+            "frames": [{}, {}]
+          }
+        ],
+        "document_fields": {
+          "media": {
+            "id": "b5cae0f3-ae43-41d3-b8a7-1b0d363938ef",
+            "type": "JSON",
+            "created": "2022-01-14T14:59:13Z",
+            "last_updated": "2022-01-14T14:59:13Z"
+          }
+        },
+        "document_id_photo": {
+          "media": {
+            "id": "ee3f9895-0552-4e16-ad9a-914e2f676c10",
+            "type": "IMAGE",
+            "created": "2022-01-14T14:54:34Z",
+            "last_updated": "2022-01-14T14:54:34Z"
+          }
+        }
+      }
+    ],
+    "supplementary_documents": [],
+    "liveness_capture": [],
+    "face_capture": []
+  },
+  "checks": [
+    {
+      "type": "ID_DOCUMENT_AUTHENTICITY",
+      "id": "f11efbfb-712c-4f9d-8328-2add190f32e3",
+      "state": "DONE",
+      "resources_used": ["d99241db-243f-472d-84a2-d956b87db5f8"],
+      "generated_media": [],
+      "report": {
+        "recommendation": {
+          "value": "APPROVE"
+        },
+        "breakdown": [
+          {
+            "sub_check": "doc_number_validation",
+            "result": "PASS",
+            "details": []
+          },
+          {
+            "sub_check": "document_in_date",
+            "result": "PASS",
+            "details": []
+          },
+          {
+            "sub_check": "fraud_list_check",
+            "result": "PASS",
+            "details": []
+          }
+        ]
+      },
+      "created": "2022-01-14T14:54:36Z",
+      "last_updated": "2022-01-14T14:59:14Z"
+    },
+    {
+      "type": "ID_DOCUMENT_TEXT_DATA_CHECK",
+      "id": "851cec96-7459-49d3-b9b2-bcbc4c759987",
+      "state": "DONE",
+      "resources_used": ["d99241db-243f-472d-84a2-d956b87db5f8"],
+      "generated_media": [
+        {
+          "id": "b5cae0f3-ae43-41d3-b8a7-1b0d363938ef",
+          "type": "JSON"
+        }
+      ],
+      "report": {
+        "recommendation": {
+          "value": "APPROVE"
+        },
+        "breakdown": [
+          {
+            "sub_check": "text_data_readable",
+            "result": "PASS",
+            "details": []
+          }
+        ]
+      },
+      "created": "2022-01-14T14:54:36Z",
+      "last_updated": "2022-01-14T14:59:13Z"
+    },
+    {
+      "type": "WATCHLIST_ADVANCED_CA",
+      "id": "06e661c5-0e24-44ed-8f6c-8b99807efc12",
+      "state": "DONE",
+      "resources_used": ["d99241db-243f-472d-84a2-d956b87db5f8"],
+      "generated_media": [
+        {
+          "id": "7c405b5e-348d-4a2c-87ff-787d4fb139c0",
+          "type": "JSON"
+        }
+      ],
+      "report": {
+        "recommendation": {
+          "value": "CONSIDER",
+          "reason": "POTENTIAL_MATCH"
+        },
+        "breakdown": [
+          {
+            "sub_check": "adverse_media",
+            "result": "FAIL",
+            "details": [
+              {
+                "name": "number_of_hits",
+                "value": "251"
+              },
+              {
+                "name": "closest_match",
+                "value": "name_exact,year_of_birth"
+              }
+            ]
+          },
+          {
+            "sub_check": "custom_search",
+            "result": "FAIL",
+            "details": []
+          },
+          {
+            "sub_check": "fitness_probity",
+            "result": "FAIL",
+            "details": [
+              {
+                "name": "number_of_hits",
+                "value": "3"
+              },
+              {
+                "name": "closest_match",
+                "value": "name_exact"
+              }
+            ]
+          },
+          {
+            "sub_check": "pep",
+            "result": "FAIL",
+            "details": [
+              {
+                "name": "number_of_hits",
+                "value": "13"
+              },
+              {
+                "name": "closest_match",
+                "value": "name_exact,year_of_birth"
+              }
+            ]
+          },
+          {
+            "sub_check": "warning",
+            "result": "FAIL",
+            "details": [
+              {
+                "name": "number_of_hits",
+                "value": "9"
+              },
+              {
+                "name": "closest_match",
+                "value": "name_exact,year_of_birth"
+              }
+            ]
+          }
+        ],
+        "watchlist_summary": {
+          "total_hits": 100,
+          "search_config": {
+            "type": "WITH_CUSTOM_ACCOUNT",
+            "remove_deceased": true,
+            "share_url": true,
+            "matching_strategy": {
+              "type": "FUZZY",
+              "fuzziness": 0.6
+            },
+            "sources": {
+              "type": "PROFILE",
+              "search_profile": "b41d82de-9a1d-4494-97a6-8b1b9895a908"
+            },
+            "api_key": "gQ2vf0STnF5nGy9SSdyuGJuYMFfNASmV",
+            "client_ref": "111111",
+            "monitoring": true
+          },
+          "raw_results": {
+            "media": {
+              "id": "0ebadb40-670a-4dd8-b0cc-5079d5d74c1c",
+              "type": "JSON",
+              "created": "2022-01-14T14:59:14Z",
+              "last_updated": "2022-01-14T14:59:14Z"
+            }
+          },
+          "associated_country_codes": ["GBR"]
+        }
+      },
+      "created": "2022-01-14T14:54:36Z",
+      "last_updated": "2022-01-14T14:59:14Z",
+      "generated_profile": {
+        "media": {
+          "id": "7c405b5e-348d-4a2c-87ff-787d4fb139c0",
+          "type": "JSON",
+          "created": "2022-01-14T14:59:14Z",
+          "last_updated": "2022-01-14T14:59:14Z"
+        }
+      }
+    }
+  ]
+}

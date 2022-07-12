@@ -6,7 +6,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/task"
 )
 
-// SessionSpecification is the definition for the Doc Scan Session to be created
+// SessionSpecification is the definition for the Doc Scan (IDV) Session to be created
 type SessionSpecification struct {
 	// ClientSessionTokenTTL Client-session-token time-to-live to apply to the created Session
 	ClientSessionTokenTTL int `json:"client_session_token_ttl,omitempty"`

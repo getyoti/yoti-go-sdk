@@ -9,7 +9,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 type anchorExtension struct {
@@ -34,7 +34,7 @@ func ParseAnchors(protoAnchors []*yotiprotoattr.Anchor) []*Anchor {
 			continue
 		}
 
-		processedAnchor := newAnchor(anchorType, parsedCerts, *parsedSignedTimestamp, protoAnchor.SubType, extension)
+		processedAnchor := newAnchor(anchorType, parsedCerts, parsedSignedTimestamp, protoAnchor.SubType, extension)
 
 		processedAnchors = append(processedAnchors, processedAnchor)
 	}

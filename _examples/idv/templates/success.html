@@ -128,7 +128,7 @@
                             <div id="collapse-liveness-checks" class="collapse" aria-labelledby="liveness-checks">
                                 <div class="card-body">
                                     {{ range $check := .getSessionResult.LivenessChecks }}
-                                        {{ template "check.html"  $check}}
+                                        {{ template "check.html" $check}}
                                     {{ end }}
                                 </div>
                             </div>
@@ -148,7 +148,7 @@
                         <div id="collapse-comparison-checks" class="collapse" aria-labelledby="comparison-checks">
                             <div class="card-body">
                                 {{ range $check := .getSessionResult.IDDocumentComparisonChecks }}
-                                    {{ template "check.html"  $check}}
+                                    {{ template "check.html" $check}}
                                 {{ end }}
                             </div>
                         </div>
@@ -197,6 +197,47 @@
                     </div>
                     {{ end }}
 
+                    {{ if .getSessionResult.WatchlistScreeningChecks }}
+                    <div class="card">
+                        <div class="card-header" id="watchlist-screening-checks">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-watchlist-screening-checks" aria-expanded="true"
+                                        aria-controls="collapse-watchlist-screening-checks">
+                                    Watchlist Screening Checks
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-watchlist-screening-checks" class="collapse" aria-labelledby="watchlist-screening-checks">
+                            <div class="card-body">
+                                {{ range $check :=  .getSessionResult.WatchlistScreeningChecks }}
+                                {{ template "check.html" $check }}
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                    {{ if .getSessionResult.WatchlistAdvancedCAChecks }}
+                    <div class="card">
+                        <div class="card-header" id="watchlist-advanced-ca-checks">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-watchlist-advanced-ca-checks" aria-expanded="true"
+                                        aria-controls="collapse-watchlist-advanced-ca-checks">
+                                    Watchlist Advanced Checks
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-watchlist-advanced-ca-checks" class="collapse" aria-labelledby="watchlist-advanced-ca-checks">
+                            <div class="card-body">
+                                {{ range $check :=  .getSessionResult.WatchlistAdvancedCAChecks }}
+                                {{ template "check.html" $check }}
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
                 </div>
             </div>
         </div>

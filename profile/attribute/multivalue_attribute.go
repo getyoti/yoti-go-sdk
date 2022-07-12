@@ -5,7 +5,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // MultiValueAttribute is a Yoti attribute which returns a multi-valued attribute
@@ -27,6 +27,7 @@ func NewMultiValue(a *yotiprotoattr.Attribute) (*MultiValueAttribute, error) {
 			name:        a.Name,
 			contentType: a.ContentType.String(),
 			anchors:     anchor.ParseAnchors(a.Anchors),
+			id:          &a.EphemeralId,
 		},
 		items: attributeItems,
 	}, nil

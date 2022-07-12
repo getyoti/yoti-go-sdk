@@ -47,7 +47,7 @@ func NewRequestedThirdPartyIdentityCheckBuilder() *RequestedThirdPartyIdentityCh
 	return &RequestedThirdPartyIdentityCheckBuilder{}
 }
 
-// Build builds te RequestedThirdPartyIdentityCheck
+// Build builds the RequestedThirdPartyIdentityCheck
 func (b *RequestedThirdPartyIdentityCheckBuilder) Build() (*RequestedThirdPartyIdentityCheck, error) {
 	return &RequestedThirdPartyIdentityCheck{
 		config: b.config,

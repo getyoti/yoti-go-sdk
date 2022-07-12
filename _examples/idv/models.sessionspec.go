@@ -33,6 +33,40 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
+	var idDocsComparisonCheck *check.RequestedIDDocumentComparisonCheck
+	idDocsComparisonCheck, err = check.NewRequestedIDDocumentComparisonCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var thirdPartyCheck *check.RequestedThirdPartyIdentityCheck
+	thirdPartyCheck, err = check.NewRequestedThirdPartyIdentityCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var watchlistScreeningCheck *check.RequestedWatchlistScreeningCheck
+	watchlistScreeningCheck, err = check.NewRequestedWatchlistScreeningCheckBuilder().
+		WithAdverseMediaCategory().
+		WithSanctionsCategory().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	yotiAccountWatchlistAdvancedCACheck, err := check.NewRequestedWatchlistAdvancedCACheckYotiAccountBuilder().
+		WithRemoveDeceased(true).
+		WithShareURL(true).
+		WithSources(check.RequestedTypeListSources{
+			Types: []string{"pep", "fitness-probity", "warning"}}).
+		WithMatchingStrategy(check.RequestedFuzzyMatchingStrategy{Fuzziness: 0.5}).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
 	var textExtractionTask *task.RequestedTextExtractionTask
 	textExtractionTask, err = task.NewRequestedTextExtractionTaskBuilder().
 		WithManualCheckAlways().
@@ -41,23 +75,9 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
-	var idDocsComparisonCheck *check.RequestedIDDocumentComparisonCheck
-	idDocsComparisonCheck, err = check.NewRequestedIDDocumentComparisonCheckBuilder().
-		Build()
-	if err != nil {
-		return nil, err
-	}
-
 	var supplementaryDocTextExtractionTask *task.RequestedSupplementaryDocTextExtractionTask
 	supplementaryDocTextExtractionTask, err = task.NewRequestedSupplementaryDocTextExtractionTaskBuilder().
 		WithManualCheckAlways().
-		Build()
-	if err != nil {
-		return nil, err
-	}
-
-	var thirdPartyCheck *check.RequestedThirdPartyIdentityCheck
-	thirdPartyCheck, err = check.NewRequestedThirdPartyIdentityCheckBuilder().
 		Build()
 	if err != nil {
 		return nil, err
@@ -75,7 +95,6 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithErrorUrl("https://localhost:8080/error").
 		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
 		Build()
-
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +114,9 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	}
 
 	idDoc, err := filter.NewRequiredIDDocumentBuilder().Build()
+	if err != nil {
+		return nil, err
+	}
 
 	proofOfAddressObjective, err := objective.NewProofOfAddressObjectiveBuilder().Build()
 	if err != nil {
@@ -117,6 +139,8 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedCheck(livenessCheck).
 		WithRequestedCheck(idDocsComparisonCheck).
 		WithRequestedCheck(thirdPartyCheck).
+		WithRequestedCheck(watchlistScreeningCheck).
+		WithRequestedCheck(yotiAccountWatchlistAdvancedCACheck).
 		WithRequestedTask(textExtractionTask).
 		WithRequestedTask(supplementaryDocTextExtractionTask).
 		WithSDKConfig(sdkConfig).

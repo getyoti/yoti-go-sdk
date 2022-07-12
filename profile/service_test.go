@@ -15,9 +15,10 @@ import (
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 
@@ -156,7 +157,69 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 	assert.DeepEqual(t, actualDoB.Value(), &expectedDoB)
 }
 
-func TestProfileService_SharingFailure_ReturnsFailure(t *testing.T) {
+func TestProfileService_SharingFailure_ReturnsSpecificFailure(t *testing.T) {
+	key := getValidKey()
+
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 200,
+				Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{"error_code":"SOME_ERROR","description":"SOME_DESCRIPTION"}}`)),
+			}, nil
+		},
+	}
+
+	errorCode := "SOME_ERROR"
+
+	description := "SOME_DESCRIPTION"
+
+	expectedError := yotierror.DetailedSharingFailureError{
+		Code:        &errorCode,
+		Description: &description,
+	}
+
+	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
+
+	assert.DeepEqual(t, err, expectedError)
+
+	assert.ErrorContains(t, err, "sharing failure")
+
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
+func TestProfileService_SharingFailure_ReturnsGenericErrorWhenErrorCodeIsNull(t *testing.T) {
+	key := getValidKey()
+
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 200,
+				Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{}}`)),
+			}, nil
+		},
+	}
+
+	expectedError := yotierror.DetailedSharingFailureError{
+		Code:        nil,
+		Description: nil,
+	}
+
+	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
+
+	assert.DeepEqual(t, err, expectedError)
+
+	assert.ErrorContains(t, err, "sharing failure")
+
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
+func TestProfileService_SharingFailure_ReturnsGenericFailure(t *testing.T) {
 	key := getValidKey()
 
 	client := &mockHTTPClient{
@@ -168,6 +231,7 @@ func TestProfileService_SharingFailure_ReturnsFailure(t *testing.T) {
 		},
 	}
 	_, err := GetActivityDetails(client, test.EncryptedToken, "sdkId", "https://apiurl", key)
+
 	assert.ErrorContains(t, err, "sharing failure")
 
 	tempError, temporary := err.(interface {

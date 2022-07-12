@@ -3,7 +3,7 @@ package extra
 import (
 	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoshare"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Data represents extra pieces information on the receipt.

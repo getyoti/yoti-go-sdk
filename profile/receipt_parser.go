@@ -7,7 +7,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/util"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func parseApplicationProfile(receipt *receiptDO, key *rsa.PrivateKey) (result *yotiprotoattr.AttributeList, err error) {
