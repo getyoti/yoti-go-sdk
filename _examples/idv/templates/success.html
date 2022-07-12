@@ -128,7 +128,7 @@
                             <div id="collapse-liveness-checks" class="collapse" aria-labelledby="liveness-checks">
                                 <div class="card-body">
                                     {{ range $check := .getSessionResult.LivenessChecks }}
-                                        {{ template "check.html"  $check}}
+                                        {{ template "check.html" $check}}
                                     {{ end }}
                                 </div>
                             </div>
@@ -148,7 +148,7 @@
                         <div id="collapse-comparison-checks" class="collapse" aria-labelledby="comparison-checks">
                             <div class="card-body">
                                 {{ range $check := .getSessionResult.IDDocumentComparisonChecks }}
-                                    {{ template "check.html"  $check}}
+                                    {{ template "check.html" $check}}
                                 {{ end }}
                             </div>
                         </div>

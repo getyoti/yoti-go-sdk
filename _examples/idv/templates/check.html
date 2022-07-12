@@ -109,7 +109,11 @@
                     {{ if .Report.WatchlistSummary.AssociatedCountryCodes }}
                     <tr>
                         <td>Associated country codes</td>
-                        {{ call $.stringsJoin .Report.WatchlistSummary.AssociatedCountryCodes ", " }}
+                        <td>
+                            {{ range $cc := .Report.WatchlistSummary.AssociatedCountryCodes }}
+                                {{ $cc }}
+                            {{ end }}
+                        </td>
                     </tr>
                     {{ end }}
                     {{ if and .Report.WatchlistSummary.RawResults .Report.WatchlistSummary.RawResults.Media }} }}
@@ -150,7 +154,11 @@
                                 <tbody>
                                 <tr>
                                     <td style="width: auto">Categories</td>
-                                    <td>{{ call $.stringsJoin .Report.WatchlistSummary.SearchConfig.Categories ", " }}</td>
+                                    <td>
+                                        {{ range $c := .Report.WatchlistSummary.SearchConfig.Categories }}
+                                            {{ $c }}
+                                        {{ end }}
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
