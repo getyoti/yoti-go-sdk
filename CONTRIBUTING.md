@@ -2,38 +2,8 @@
 
 ## Commit Process
 
-This repo comes with pre-commit hooks. We strongly recommend installing them with `pre-commit install`. This will lint and run unit tests automatically
-
-## VS Code
-
-For developing in VS Code, use the following `launch.json` file (placed inside a `.vscode` folder) to easily run the examples from VS Code:
-
-```javascript
-{
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-    {
-        "name": "AML Example",
-        "type": "go",
-        "request": "launch",
-        "mode": "debug",
-        "program": "${workspaceFolder}/_examples/aml/main.go"
-    },
-    {
-        "name": "Example",
-        "type": "go",
-        "request": "launch",
-        "mode": "debug",
-        "remotePath": "",
-        "host": "127.0.0.1",
-        "program": "${workspaceFolder}/_examples/profile/main.go",
-        "env": {},
-        "args": ["certificatehelper.go"],
-        "showLog": true
-    }
-    ]
-}
+This repo comes with pre-commit hooks. These should be installed before commiting, done with:
+```bash
+pre-commit install --hook-type pre-commit --hook-type pre-push
 ```
+This will lint and run Go tools on commit, and run unit tests when pushing.
