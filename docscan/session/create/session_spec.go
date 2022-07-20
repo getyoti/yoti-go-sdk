@@ -1,6 +1,8 @@
 package create
 
 import (
+	"encoding/json"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/task"
@@ -34,19 +36,24 @@ type SessionSpecification struct {
 
 	// BlockBiometricConsent sets whether or not to block the collection of biometric consent
 	BlockBiometricConsent *bool `json:"block_biometric_consent,omitempty"`
+
+	// IdentityProfileRequirements is an JSON object for defining a required identity profile
+	// within the scope of a trust framework and scheme.
+	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
 type SessionSpecificationBuilder struct {
-	clientSessionTokenTTL int
-	resourcesTTL          int
-	userTrackingID        string
-	notifications         *NotificationConfig
-	requestedChecks       []check.RequestedCheck
-	requestedTasks        []task.RequestedTask
-	sdkConfig             *SDKConfig
-	requiredDocuments     []filter.RequiredDocument
-	blockBiometricConsent *bool
+	clientSessionTokenTTL       int
+	resourcesTTL                int
+	userTrackingID              string
+	notifications               *NotificationConfig
+	requestedChecks             []check.RequestedCheck
+	requestedTasks              []task.RequestedTask
+	sdkConfig                   *SDKConfig
+	requiredDocuments           []filter.RequiredDocument
+	blockBiometricConsent       *bool
+	identityProfileRequirements *json.RawMessage
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -108,6 +115,12 @@ func (b *SessionSpecificationBuilder) WithBlockBiometricConsent(blockBiometricCo
 	return b
 }
 
+// WithIdentityProfileRequirements adds Identity Profile Requirements to the session. Must be valid JSON.
+func (b *SessionSpecificationBuilder) WithIdentityProfileRequirements(identityProfile json.RawMessage) *SessionSpecificationBuilder {
+	b.identityProfileRequirements = &identityProfile
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -120,5 +133,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.sdkConfig,
 		b.requiredDocuments,
 		b.blockBiometricConsent,
+		b.identityProfileRequirements,
 	}, nil
 }
