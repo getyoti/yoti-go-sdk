@@ -39,7 +39,7 @@ type SessionSpecification struct {
 
 	// IdentityProfileRequirements is an JSON object for defining a required identity profile
 	// within the scope of a trust framework and scheme.
-	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements"`
+	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
