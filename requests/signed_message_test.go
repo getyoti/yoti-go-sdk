@@ -80,7 +80,7 @@ func TestRequestShouldBuildForValid(t *testing.T) {
 	assert.Check(t, urlCheck)
 	assert.Check(t, signed.Header.Get("X-Yoti-Auth-Digest") != "")
 	assert.Equal(t, signed.Header.Get("X-Yoti-SDK"), "Go")
-	assert.Equal(t, signed.Header.Get("X-Yoti-SDK-Version"), "3.6.0")
+	assert.Equal(t, signed.Header.Get("X-Yoti-SDK-Version"), "3.7.0")
 }
 
 func TestRequestShouldAddHeaders(t *testing.T) {

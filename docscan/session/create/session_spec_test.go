@@ -2,7 +2,10 @@ package create
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"reflect"
+	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
@@ -160,4 +163,58 @@ func ExampleSessionSpecificationBuilder_WithRequiredDocument_supplementary() {
 
 	fmt.Println(string(data))
 	// Output: {"required_documents":[{"type":"SUPPLEMENTARY_DOCUMENT"}]}
+}
+
+func ExampleSessionSpecificationBuilder_Build_withIdentityProfileRequirements() {
+	identityProfile := []byte(`{
+		"trust_framework": "UK_TFIDA",
+		"scheme": {
+			"type":      "DBS",
+			"objective": "STANDARD"
+		}
+	}`)
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithIdentityProfileRequirements(identityProfile).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"identity_profile_requirements":{"trust_framework":"UK_TFIDA","scheme":{"type":"DBS","objective":"STANDARD"}}}
+}
+
+func TestExampleSessionSpecificationBuilder_Build_WithIdentityProfileRequirements_InvalidJSON(t *testing.T) {
+	identityProfile := []byte(`{
+		"trust_framework": UK_TFIDA",
+		,
+	}`)
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithIdentityProfileRequirements(identityProfile).
+		Build()
+
+	if err != nil {
+		t.Errorf("error: %s", err.Error())
+		return
+	}
+
+	_, err = json.Marshal(sessionSpecification)
+	if err == nil {
+		t.Error("expected an error")
+		return
+	}
+	var marshallerErr *json.MarshalerError
+	if !errors.As(err, &marshallerErr) {
+		t.Errorf("wanted err to be of type '%v', got: '%v'", reflect.TypeOf(marshallerErr), reflect.TypeOf(err))
+	}
 }

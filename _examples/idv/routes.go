@@ -8,6 +8,7 @@ func initializeRoutes() {
 
 	// Handle the index route
 	router.GET("/", showIndexPage)
+	router.GET("/dbs", showDBSPage)
 	router.GET("/success", showSuccessPage)
 	router.GET("/media", getMedia)
 	router.GET("/privacy-policy", showPrivacyPolicyPage)

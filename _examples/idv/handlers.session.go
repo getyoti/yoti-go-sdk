@@ -25,17 +25,6 @@ var (
 )
 
 func showIndexPage(c *gin.Context) {
-	err := initialiseDocScanClient()
-	if err != nil {
-		c.HTML(
-			http.StatusUnprocessableEntity,
-			"error.html",
-			gin.H{
-				"ErrorTitle":   "Error initialising Doc Scan (IDV) Client",
-				"ErrorMessage": errors.Unwrap(err)})
-		return
-	}
-
 	sessionSpec, err := buildSessionSpec()
 	if err != nil {
 		c.HTML(
@@ -46,7 +35,34 @@ func showIndexPage(c *gin.Context) {
 				"ErrorMessage": err.Error()})
 		return
 	}
+	pageFromSessionSpec(c, sessionSpec)
+}
 
+func showDBSPage(c *gin.Context) {
+	sessionSpec, err := buildDBSSessionSpec()
+	if err != nil {
+		c.HTML(
+			http.StatusInternalServerError,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "Error when building sessions spec",
+				"ErrorMessage": err.Error()})
+		return
+	}
+	pageFromSessionSpec(c, sessionSpec)
+}
+
+func pageFromSessionSpec(c *gin.Context, sessionSpec *create.SessionSpecification) {
+	err := initialiseDocScanClient()
+	if err != nil {
+		c.HTML(
+			http.StatusUnprocessableEntity,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "Error initialising Doc Scan (IDV) Client",
+				"ErrorMessage": errors.Unwrap(err)})
+		return
+	}
 	createSessionResult, err = client.CreateSession(sessionSpec)
 	if err != nil {
 		c.HTML(

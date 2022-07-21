@@ -154,3 +154,42 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	}
 	return sessionSpec, nil
 }
+
+func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
+	var sdkConfig *create.SDKConfig
+	sdkConfig, err = create.NewSdkConfigBuilder().
+		WithAllowsCameraAndUpload().
+		WithPrimaryColour("#2d9fff").
+		WithSecondaryColour("#FFFFFF").
+		WithFontColour("#FFFFFF").
+		WithLocale("en-GB").
+		WithPresetIssuingCountry("GBR").
+		WithSuccessUrl("https://localhost:8080/success").
+		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	identityProfile := []byte(`{
+		"trust_framework": "UK_TFIDA",
+		"scheme": {
+			"type":      "DBS",
+			"objective": "STANDARD"
+		}
+	}`)
+
+	sessionSpec, err = create.NewSessionSpecificationBuilder().
+		WithClientSessionTokenTTL(600).
+		WithResourcesTTL(90000).
+		WithUserTrackingID("some-tracking-id").
+		WithSDKConfig(sdkConfig).
+		WithIdentityProfileRequirements(identityProfile).
+		Build()
+
+	if err != nil {
+		return nil, err
+	}
+	return sessionSpec, nil
+}
