@@ -37,7 +37,7 @@ type SessionSpecification struct {
 	// BlockBiometricConsent sets whether or not to block the collection of biometric consent
 	BlockBiometricConsent *bool `json:"block_biometric_consent,omitempty"`
 
-	// IdentityProfileRequirements is an JSON object for defining a required identity profile
+	// IdentityProfileRequirements is a JSON object for defining a required identity profile
 	// within the scope of a trust framework and scheme.
 	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements,omitempty"`
 }
