@@ -47,6 +47,12 @@
         </div>
     </div>
 
+    {{ if .getSessionResult.IdentityProfile }}
+        <div class="col">
+            <h1>Identity Profile</h1>
+            <pre>{{ jsonMarshallIndent .getSessionResult.IdentityProfile }}</pre>
+        </div>
+    {{ end }}
     {{ if .getSessionResult.Checks }}
         <div class="row pt-4">
             <div class="col">
