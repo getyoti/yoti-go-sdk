@@ -180,12 +180,17 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 		}
 	}`)
 
+	subject := []byte(`{
+		"subject_id": "unique-user-id-for-examples"
+	}`)
+
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
 		WithResourcesTTL(90000).
 		WithUserTrackingID("some-tracking-id").
 		WithSDKConfig(sdkConfig).
 		WithIdentityProfileRequirements(identityProfile).
+		WithSubject(subject).
 		Build()
 
 	if err != nil {
