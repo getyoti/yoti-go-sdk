@@ -40,6 +40,10 @@ type SessionSpecification struct {
 	// IdentityProfileRequirements is a JSON object for defining a required identity profile
 	// within the scope of a trust framework and scheme.
 	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements,omitempty"`
+
+	// Subject provides information on the subject allowing to track the same user across multiple sessions.
+	// Should not contain any personal identifiable information.
+	Subject *json.RawMessage `json:"subject,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -54,6 +58,7 @@ type SessionSpecificationBuilder struct {
 	requiredDocuments           []filter.RequiredDocument
 	blockBiometricConsent       *bool
 	identityProfileRequirements *json.RawMessage
+	subject                     *json.RawMessage
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -121,6 +126,11 @@ func (b *SessionSpecificationBuilder) WithIdentityProfileRequirements(identityPr
 	return b
 }
 
+func (b *SessionSpecificationBuilder) WithSubject(subject json.RawMessage) *SessionSpecificationBuilder {
+	b.subject = &subject
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -134,5 +144,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.requiredDocuments,
 		b.blockBiometricConsent,
 		b.identityProfileRequirements,
+		b.subject,
 	}, nil
 }
