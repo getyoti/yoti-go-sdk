@@ -47,10 +47,10 @@
         </div>
     </div>
 
-    {{ if .getSessionResult.IdentityProfile }}
+    {{ if .getSessionResult.IdentityProfileResponse }}
         <div class="col">
-            <h1>Identity Profile</h1>
-            <pre>{{ jsonMarshallIndent .getSessionResult.IdentityProfile }}</pre>
+            <h1>Identity Profile Response</h1>
+            <pre>{{ jsonMarshallIndent .getSessionResult.IdentityProfileResponse }}</pre>
         </div>
     {{ end }}
     {{ if .getSessionResult.Checks }}
