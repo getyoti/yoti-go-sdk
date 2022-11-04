@@ -31,7 +31,7 @@ func ExampleSdkConfigBuilder_Build() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://example.com/success","error_url":"https://example.com/error","privacy_policy_url":"https://example.com/privacy","attempts_configuration":{"id_document_text_data_extraction":{"test_category":3}}}
+	// Output: {"allowed_capture_methods":"CAMERA","primary_colour":"#aa1111","secondary_colour":"#bb2222","font_colour":"#ff0000","locale":"fr_FR","preset_issuing_country":"USA","success_url":"https://example.com/success","error_url":"https://example.com/error","privacy_policy_url":"https://example.com/privacy","attempts_configuration":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":{"test_category":3}}}
 }
 
 func ExampleSdkConfigBuilder_Build_repeatedCallWithIdDocumentTextExtractionCategoryRetries() {
@@ -53,7 +53,7 @@ func ExampleSdkConfigBuilder_Build_repeatedCallWithIdDocumentTextExtractionCateg
 	}
 
 	fmt.Println(string(data))
-	// Output: {"attempts_configuration":{"id_document_text_data_extraction":{"test_category":1}}}
+	// Output: {"attempts_configuration":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":{"test_category":1}}}
 }
 
 func ExampleSdkConfigBuilder_Build_multipleCategoriesWithIdDocumentTextExtractionCategoryRetries() {
@@ -75,7 +75,7 @@ func ExampleSdkConfigBuilder_Build_multipleCategoriesWithIdDocumentTextExtractio
 	}
 
 	fmt.Println(string(data))
-	// Output: {"attempts_configuration":{"id_document_text_data_extraction":{"GENERIC":3,"RECLASSIFICATION":1,"test_category":2}}}
+	// Output: {"attempts_configuration":{"ID_DOCUMENT_TEXT_DATA_EXTRACTION":{"GENERIC":3,"RECLASSIFICATION":1,"test_category":2}}}
 }
 
 func ExampleSdkConfigBuilder_WithAllowsCameraAndUpload() {

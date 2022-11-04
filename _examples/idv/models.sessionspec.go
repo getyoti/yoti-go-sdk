@@ -94,6 +94,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithSuccessUrl("https://localhost:8080/success").
 		WithErrorUrl("https://localhost:8080/error").
 		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		WithIdDocumentTextExtractionGenericRetries(2).
 		Build()
 	if err != nil {
 		return nil, err

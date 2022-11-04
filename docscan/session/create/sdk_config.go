@@ -17,7 +17,7 @@ type SDKConfig struct {
 }
 
 type AttemptsConfiguration struct {
-	IdDocumentTextDataExtraction map[string]int `json:"id_document_text_data_extraction,omitempty"`
+	IdDocumentTextDataExtraction map[string]int `json:"ID_DOCUMENT_TEXT_DATA_EXTRACTION,omitempty"`
 }
 
 // NewSdkConfigBuilder creates a new SdkConfigBuilder
