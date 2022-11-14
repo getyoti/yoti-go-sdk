@@ -176,8 +176,8 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	identityProfile := []byte(`{
 		"trust_framework": "UK_TFIDA",
 		"scheme": {
-			"type":      "DBS",
-			"objective": "STANDARD"
+    		"type": "DBS",
+    		"objective": "BASIC"
 		}
 	}`)
 
@@ -186,8 +186,8 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	}`)
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
-		WithClientSessionTokenTTL(600).
-		WithResourcesTTL(90000).
+		WithClientSessionTokenTTL(6000).
+		WithResourcesTTL(900000).
 		WithUserTrackingID("some-tracking-id").
 		WithSDKConfig(sdkConfig).
 		WithIdentityProfileRequirements(identityProfile).
