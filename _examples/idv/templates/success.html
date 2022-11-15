@@ -47,13 +47,13 @@
         </div>
     </div>
 
-    {{ if .getSessionResult.IdentityProfile }}
+    {{ if .getSessionResult.IdentityProfileResponse }}
     <div class="row pt-4">
         <div class="col">
             <h2>Identity Profile</h2>
         </div>
     </div>
-    {{ $media := index .getSessionResult.IdentityProfile.IdentityProfileReport "media"}}
+    {{ $media := index .getSessionResult.IdentityProfileResponse.Report "media"}}
     {{ if $media }}
     {{ $media_id := index $media "id" }}
     {{ if $media_id }}
