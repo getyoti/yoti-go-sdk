@@ -214,3 +214,19 @@ func TestGetSessionResult_UnmarshalJSON_IdentityProfile(t *testing.T) {
 	assert.Equal(t, ok, true)
 	assert.Equal(t, mid, "c69ff2db-6caf-4e74-8386-037711bbc8d7")
 }
+
+func TestGetSessionResult_UnmarshalJSON_IdentityProfilePreview(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/GetSessionResultWithIdentityProfile.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	identityProfilePreview := result.IdentityProfilePreview
+	assert.Assert(t, identityProfilePreview != nil)
+
+	assert.Assert(t, identityProfilePreview.Media != nil)
+	assert.Equal(t, identityProfilePreview.Media.ID, "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+	assert.Equal(t, identityProfilePreview.Media.Type, "IMAGE")
+}

@@ -76,6 +76,29 @@
     {{ end }}
     {{ end }}
     {{ end }}
+    {{ if .getSessionResult.IdentityProfilePreview }}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Identity Profile Preview</h2>
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>
+                        <a href='/media?mediaId={{ .getSessionResult.IdentityProfilePreview.Media.ID }}'>
+                            {{ .getSessionResult.IdentityProfilePreview.Media.ID }}
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ end }}
     {{ if .getSessionResult.Checks }}
         <div class="row pt-4">
             <div class="col">

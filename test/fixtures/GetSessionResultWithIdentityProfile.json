@@ -28,5 +28,13 @@
         "last_updated": "2022-03-29T11:39:24Z"
       }
     }
+  },
+  "identity_profile_preview": {
+    "media": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "IMAGE",
+      "created": "2021-06-11T11:39:24Z",
+      "last_updated": "2021-06-11T11:39:24Z"
+    }
   }
 }
