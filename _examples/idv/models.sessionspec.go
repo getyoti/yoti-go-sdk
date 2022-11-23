@@ -191,6 +191,7 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 		WithUserTrackingID("some-tracking-id").
 		WithSDKConfig(sdkConfig).
 		WithIdentityProfileRequirements(identityProfile).
+		WithCreateIdentityProfilePreview(true).
 		WithSubject(subject).
 		Build()
 
