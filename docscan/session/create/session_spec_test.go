@@ -267,3 +267,24 @@ func TestExampleSessionSpecificationBuilder_Build_WithSubject_InvalidJSON(t *tes
 		t.Errorf("wanted err to be of type '%v', got: '%v'", reflect.TypeOf(marshallerErr), reflect.TypeOf(err))
 	}
 }
+
+func ExampleSessionSpecificationBuilder_Build_withCreateIdentityProfilePreview() {
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithCreateIdentityProfilePreview(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"create_identity_profile_preview":true}
+}

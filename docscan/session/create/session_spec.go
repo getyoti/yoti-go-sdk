@@ -41,6 +41,9 @@ type SessionSpecification struct {
 	// within the scope of a trust framework and scheme.
 	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements,omitempty"`
 
+	// CreateIdentityProfilePreview is a bool for enabling the creation of the IdentityProfilePreview
+	CreateIdentityProfilePreview bool `json:"create_identity_profile_preview,omitempty"`
+
 	// Subject provides information on the subject allowing to track the same user across multiple sessions.
 	// Should not contain any personal identifiable information.
 	Subject *json.RawMessage `json:"subject,omitempty"`
@@ -48,17 +51,18 @@ type SessionSpecification struct {
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
 type SessionSpecificationBuilder struct {
-	clientSessionTokenTTL       int
-	resourcesTTL                int
-	userTrackingID              string
-	notifications               *NotificationConfig
-	requestedChecks             []check.RequestedCheck
-	requestedTasks              []task.RequestedTask
-	sdkConfig                   *SDKConfig
-	requiredDocuments           []filter.RequiredDocument
-	blockBiometricConsent       *bool
-	identityProfileRequirements *json.RawMessage
-	subject                     *json.RawMessage
+	clientSessionTokenTTL        int
+	resourcesTTL                 int
+	userTrackingID               string
+	notifications                *NotificationConfig
+	requestedChecks              []check.RequestedCheck
+	requestedTasks               []task.RequestedTask
+	sdkConfig                    *SDKConfig
+	requiredDocuments            []filter.RequiredDocument
+	blockBiometricConsent        *bool
+	identityProfileRequirements  *json.RawMessage
+	createIdentityProfilePreview bool
+	subject                      *json.RawMessage
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -120,6 +124,11 @@ func (b *SessionSpecificationBuilder) WithBlockBiometricConsent(blockBiometricCo
 	return b
 }
 
+func (b *SessionSpecificationBuilder) WithCreateIdentityProfilePreview(createIdentityProfilePreview bool) *SessionSpecificationBuilder {
+	b.createIdentityProfilePreview = createIdentityProfilePreview
+	return b
+}
+
 // WithIdentityProfileRequirements adds Identity Profile Requirements to the session. Must be valid JSON.
 func (b *SessionSpecificationBuilder) WithIdentityProfileRequirements(identityProfile json.RawMessage) *SessionSpecificationBuilder {
 	b.identityProfileRequirements = &identityProfile
@@ -144,6 +153,7 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.requiredDocuments,
 		b.blockBiometricConsent,
 		b.identityProfileRequirements,
+		b.createIdentityProfilePreview,
 		b.subject,
 	}, nil
 }
