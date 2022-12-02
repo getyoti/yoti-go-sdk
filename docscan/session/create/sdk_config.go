@@ -27,16 +27,16 @@ func NewSdkConfigBuilder() *SdkConfigBuilder {
 
 // SdkConfigBuilder builds the SDKConfig struct
 type SdkConfigBuilder struct {
-	allowedCaptureMethods               string
-	primaryColour                       string
-	secondaryColour                     string
-	fontColour                          string
-	locale                              string
-	presetIssuingCountry                string
-	successUrl                          string
-	errorUrl                            string
-	privacyPolicyUrl                    string
-	idDocumentTextDataExtractionRetries map[string]int
+	allowedCaptureMethods                string
+	primaryColour                        string
+	secondaryColour                      string
+	fontColour                           string
+	locale                               string
+	presetIssuingCountry                 string
+	successUrl                           string
+	errorUrl                             string
+	privacyPolicyUrl                     string
+	idDocumentTextDataExtractionAttempts map[string]int
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -103,20 +103,20 @@ func (b *SdkConfigBuilder) WithPrivacyPolicyUrl(url string) *SdkConfigBuilder {
 	return b
 }
 
-func (b *SdkConfigBuilder) WithIdDocumentTextExtractionCategoryRetries(category string, retries int) *SdkConfigBuilder {
-	if b.idDocumentTextDataExtractionRetries == nil {
-		b.idDocumentTextDataExtractionRetries = make(map[string]int)
+func (b *SdkConfigBuilder) WithIdDocumentTextExtractionCategoryAttempts(category string, attempts int) *SdkConfigBuilder {
+	if b.idDocumentTextDataExtractionAttempts == nil {
+		b.idDocumentTextDataExtractionAttempts = make(map[string]int)
 	}
-	b.idDocumentTextDataExtractionRetries[category] = retries
+	b.idDocumentTextDataExtractionAttempts[category] = attempts
 	return b
 }
 
-func (b *SdkConfigBuilder) WithIdDocumentTextExtractionReclassificationRetries(retries int) *SdkConfigBuilder {
-	return b.WithIdDocumentTextExtractionCategoryRetries(reclassification, retries)
+func (b *SdkConfigBuilder) WithIdDocumentTextExtractionReclassificationAttempts(attempts int) *SdkConfigBuilder {
+	return b.WithIdDocumentTextExtractionCategoryAttempts(reclassification, attempts)
 }
 
-func (b *SdkConfigBuilder) WithIdDocumentTextExtractionGenericRetries(retries int) *SdkConfigBuilder {
-	return b.WithIdDocumentTextExtractionCategoryRetries(generic, retries)
+func (b *SdkConfigBuilder) WithIdDocumentTextExtractionGenericAttempts(attempts int) *SdkConfigBuilder {
+	return b.WithIdDocumentTextExtractionCategoryAttempts(generic, attempts)
 }
 
 // Build builds the SDKConfig struct using the supplied values
@@ -134,9 +134,9 @@ func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 		nil,
 	}
 
-	if b.idDocumentTextDataExtractionRetries != nil {
+	if b.idDocumentTextDataExtractionAttempts != nil {
 		sdkConf.AttemptsConfiguration = &AttemptsConfiguration{
-			IdDocumentTextDataExtraction: b.idDocumentTextDataExtractionRetries,
+			IdDocumentTextDataExtraction: b.idDocumentTextDataExtractionAttempts,
 		}
 	}
 	return sdkConf, nil
