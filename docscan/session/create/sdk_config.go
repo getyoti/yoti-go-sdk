@@ -4,15 +4,20 @@ import "github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 
 // SDKConfig provides configuration properties for the the web/native clients
 type SDKConfig struct {
-	AllowedCaptureMethods string `json:"allowed_capture_methods,omitempty"`
-	PrimaryColour         string `json:"primary_colour,omitempty"`
-	SecondaryColour       string `json:"secondary_colour,omitempty"`
-	FontColour            string `json:"font_colour,omitempty"`
-	Locale                string `json:"locale,omitempty"`
-	PresetIssuingCountry  string `json:"preset_issuing_country,omitempty"`
-	SuccessUrl            string `json:"success_url,omitempty"`
-	ErrorUrl              string `json:"error_url,omitempty"`
-	PrivacyPolicyUrl      string `json:"privacy_policy_url,omitempty"`
+	AllowedCaptureMethods string                 `json:"allowed_capture_methods,omitempty"`
+	PrimaryColour         string                 `json:"primary_colour,omitempty"`
+	SecondaryColour       string                 `json:"secondary_colour,omitempty"`
+	FontColour            string                 `json:"font_colour,omitempty"`
+	Locale                string                 `json:"locale,omitempty"`
+	PresetIssuingCountry  string                 `json:"preset_issuing_country,omitempty"`
+	SuccessUrl            string                 `json:"success_url,omitempty"`
+	ErrorUrl              string                 `json:"error_url,omitempty"`
+	PrivacyPolicyUrl      string                 `json:"privacy_policy_url,omitempty"`
+	AttemptsConfiguration *AttemptsConfiguration `json:"attempts_configuration,omitempty"`
+}
+
+type AttemptsConfiguration struct {
+	IdDocumentTextDataExtraction map[string]int `json:"ID_DOCUMENT_TEXT_DATA_EXTRACTION,omitempty"`
 }
 
 // NewSdkConfigBuilder creates a new SdkConfigBuilder
@@ -22,15 +27,16 @@ func NewSdkConfigBuilder() *SdkConfigBuilder {
 
 // SdkConfigBuilder builds the SDKConfig struct
 type SdkConfigBuilder struct {
-	allowedCaptureMethods string
-	primaryColour         string
-	secondaryColour       string
-	fontColour            string
-	locale                string
-	presetIssuingCountry  string
-	successUrl            string
-	errorUrl              string
-	privacyPolicyUrl      string
+	allowedCaptureMethods                string
+	primaryColour                        string
+	secondaryColour                      string
+	fontColour                           string
+	locale                               string
+	presetIssuingCountry                 string
+	successUrl                           string
+	errorUrl                             string
+	privacyPolicyUrl                     string
+	idDocumentTextDataExtractionAttempts map[string]int
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -97,9 +103,25 @@ func (b *SdkConfigBuilder) WithPrivacyPolicyUrl(url string) *SdkConfigBuilder {
 	return b
 }
 
+func (b *SdkConfigBuilder) WithIdDocumentTextExtractionCategoryAttempts(category string, attempts int) *SdkConfigBuilder {
+	if b.idDocumentTextDataExtractionAttempts == nil {
+		b.idDocumentTextDataExtractionAttempts = make(map[string]int)
+	}
+	b.idDocumentTextDataExtractionAttempts[category] = attempts
+	return b
+}
+
+func (b *SdkConfigBuilder) WithIdDocumentTextExtractionReclassificationAttempts(attempts int) *SdkConfigBuilder {
+	return b.WithIdDocumentTextExtractionCategoryAttempts(reclassification, attempts)
+}
+
+func (b *SdkConfigBuilder) WithIdDocumentTextExtractionGenericAttempts(attempts int) *SdkConfigBuilder {
+	return b.WithIdDocumentTextExtractionCategoryAttempts(generic, attempts)
+}
+
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
-	return &SDKConfig{
+	sdkConf := &SDKConfig{
 		b.allowedCaptureMethods,
 		b.primaryColour,
 		b.secondaryColour,
@@ -109,5 +131,13 @@ func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 		b.successUrl,
 		b.errorUrl,
 		b.privacyPolicyUrl,
-	}, nil
+		nil,
+	}
+
+	if b.idDocumentTextDataExtractionAttempts != nil {
+		sdkConf.AttemptsConfiguration = &AttemptsConfiguration{
+			IdDocumentTextDataExtraction: b.idDocumentTextDataExtractionAttempts,
+		}
+	}
+	return sdkConf, nil
 }

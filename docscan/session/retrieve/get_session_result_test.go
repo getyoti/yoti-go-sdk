@@ -188,3 +188,45 @@ func TestGetSessionResult_UnmarshalJSON_WithoutBiometricConsentTimestamp(t *test
 	assert.NilError(t, err)
 	assert.Check(t, result.BiometricConsentTimestamp == nil)
 }
+
+func TestGetSessionResult_UnmarshalJSON_IdentityProfile(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/GetSessionResultWithIdentityProfile.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	identityProfile := result.IdentityProfileResponse
+	assert.Assert(t, identityProfile != nil)
+
+	assert.Equal(t, identityProfile.SubjectId, "someStringHere")
+	assert.Equal(t, identityProfile.Result, "DONE")
+	assert.Equal(t, identityProfile.FailureReasonResponse, retrieve.FailureReasonResponse{ReasonCode: "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED"})
+
+	assert.NilError(t, err)
+	tf, ok := identityProfile.Report["trust_framework"].(string)
+	assert.Equal(t, ok, true)
+	assert.Equal(t, tf, "UK_TFIDA")
+	media, ok := identityProfile.Report["media"].(map[string]interface{})
+	assert.Equal(t, ok, true)
+	mid, ok := media["id"].(string)
+	assert.Equal(t, ok, true)
+	assert.Equal(t, mid, "c69ff2db-6caf-4e74-8386-037711bbc8d7")
+}
+
+func TestGetSessionResult_UnmarshalJSON_IdentityProfilePreview(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/GetSessionResultWithIdentityProfile.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	identityProfilePreview := result.IdentityProfilePreview
+	assert.Assert(t, identityProfilePreview != nil)
+
+	assert.Assert(t, identityProfilePreview.Media != nil)
+	assert.Equal(t, identityProfilePreview.Media.ID, "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+	assert.Equal(t, identityProfilePreview.Media.Type, "IMAGE")
+}

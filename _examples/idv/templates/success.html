@@ -47,6 +47,58 @@
         </div>
     </div>
 
+    {{ if .getSessionResult.IdentityProfileResponse }}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Identity Profile</h2>
+        </div>
+    </div>
+    {{ $media := index .getSessionResult.IdentityProfileResponse.Report "media"}}
+    {{ if $media }}
+    {{ $media_id := index $media "id" }}
+    {{ if $media_id }}
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>
+                        <a href='/media?mediaId={{ $media_id }}'>
+                            {{ $media_id }}
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ end }}
+    {{ end }}
+    {{ end }}
+    {{ if .getSessionResult.IdentityProfilePreview }}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Identity Profile Preview</h2>
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>
+                        <a href='/media?mediaId={{ .getSessionResult.IdentityProfilePreview.Media.ID }}'>
+                            {{ .getSessionResult.IdentityProfilePreview.Media.ID }}
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ end }}
     {{ if .getSessionResult.Checks }}
         <div class="row pt-4">
             <div class="col">

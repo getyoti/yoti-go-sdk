@@ -94,6 +94,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithSuccessUrl("https://localhost:8080/success").
 		WithErrorUrl("https://localhost:8080/error").
 		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		WithIdDocumentTextExtractionGenericAttempts(2).
 		Build()
 	if err != nil {
 		return nil, err
@@ -147,6 +148,51 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequiredDocument(passportDoc).
 		WithRequiredDocument(idDoc).
 		WithRequiredDocument(supplementaryDoc).
+		Build()
+
+	if err != nil {
+		return nil, err
+	}
+	return sessionSpec, nil
+}
+
+func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
+	var sdkConfig *create.SDKConfig
+	sdkConfig, err = create.NewSdkConfigBuilder().
+		WithAllowsCameraAndUpload().
+		WithPrimaryColour("#2d9fff").
+		WithSecondaryColour("#FFFFFF").
+		WithFontColour("#FFFFFF").
+		WithLocale("en-GB").
+		WithPresetIssuingCountry("GBR").
+		WithSuccessUrl("https://localhost:8080/success").
+		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	identityProfile := []byte(`{
+		"trust_framework": "UK_TFIDA",
+		"scheme": {
+    		"type": "DBS",
+    		"objective": "BASIC"
+		}
+	}`)
+
+	subject := []byte(`{
+		"subject_id": "unique-user-id-for-examples"
+	}`)
+
+	sessionSpec, err = create.NewSessionSpecificationBuilder().
+		WithClientSessionTokenTTL(6000).
+		WithResourcesTTL(900000).
+		WithUserTrackingID("some-tracking-id").
+		WithSDKConfig(sdkConfig).
+		WithIdentityProfileRequirements(identityProfile).
+		WithCreateIdentityProfilePreview(true).
+		WithSubject(subject).
 		Build()
 
 	if err != nil {
