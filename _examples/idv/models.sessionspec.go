@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
@@ -11,6 +14,14 @@ import (
 func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	var faceMatchCheck *check.RequestedFaceMatchCheck
 	faceMatchCheck, err = check.NewRequestedFaceMatchCheckBuilder().
+		WithManualCheckAlways().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var faceComparisonCheck *check.RequestedFaceComparisonCheck
+	faceComparisonCheck, err = check.NewRequestedFaceComparisonCheckBuilder().
 		WithManualCheckAlways().
 		Build()
 	if err != nil {
@@ -138,6 +149,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithResourcesTTL(90000).
 		WithUserTrackingID("some-tracking-id").
 		WithRequestedCheck(faceMatchCheck).
+		WithRequestedCheck(faceComparisonCheck).
 		WithRequestedCheck(documentAuthenticityCheck).
 		WithRequestedCheck(livenessCheck).
 		WithRequestedCheck(idDocsComparisonCheck).
@@ -152,9 +164,9 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequiredDocument(supplementaryDoc).
 		Build()
 
-	//fmt.Println("%v", sessionSpec)
-	//data, _ := json.Marshal(sessionSpec)
-	//fmt.Println(string(data))
+	fmt.Println("%v", sessionSpec)
+	data, _ := json.Marshal(sessionSpec)
+	fmt.Println(string(data))
 
 	if err != nil {
 		return nil, err
