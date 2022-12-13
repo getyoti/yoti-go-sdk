@@ -56,6 +56,11 @@ func (b *RequestedLivenessCheckBuilder) ForZoomLiveness() *RequestedLivenessChec
 	return b.ForLivenessType(zoom)
 }
 
+// ForZoomLiveness sets the liveness type to "STATIC"
+func (b *RequestedLivenessCheckBuilder) ForStaticLiveness() *RequestedLivenessCheckBuilder {
+	return b.ForLivenessType(static)
+}
+
 // ForLivenessType sets the liveness type on the builder
 func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType string) *RequestedLivenessCheckBuilder {
 	b.livenessType = livenessType
