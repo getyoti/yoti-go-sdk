@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
@@ -103,6 +106,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	passportFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
 		WithIncludedDocumentTypes(
 			[]string{"PASSPORT"}).
+		WithExpiredDocuments(true).
 		Build()
 	if err != nil {
 		return nil, err
@@ -149,6 +153,10 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequiredDocument(idDoc).
 		WithRequiredDocument(supplementaryDoc).
 		Build()
+
+	fmt.Println("%v", sessionSpec)
+	data, _ := json.Marshal(sessionSpec)
+	fmt.Println(string(data))
 
 	if err != nil {
 		return nil, err
