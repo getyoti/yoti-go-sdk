@@ -1,9 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
@@ -107,6 +104,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithIncludedDocumentTypes(
 			[]string{"PASSPORT"}).
 		WithExpiredDocuments(true).
+		WithNonLatinDocuments(true).
 		Build()
 	if err != nil {
 		return nil, err
@@ -154,9 +152,9 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequiredDocument(supplementaryDoc).
 		Build()
 
-	fmt.Println("%v", sessionSpec)
-	data, _ := json.Marshal(sessionSpec)
-	fmt.Println(string(data))
+	//fmt.Println("%v", sessionSpec)
+	//data, _ := json.Marshal(sessionSpec)
+	//fmt.Println(string(data))
 
 	if err != nil {
 		return nil, err
