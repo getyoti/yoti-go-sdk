@@ -719,5 +719,61 @@
             </div>
         </div>
     {{ end }}
+
+    {{ if .getSessionResult.Resources.StaticLivenessResources}}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Static Liveness Resources</h2>
+        </div>
+    </div>
+{{ end }}
+
+{{ range $livenessNum, $liveness := .getSessionResult.Resources.StaticLivenessResources }}
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>{{ $liveness.ID }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="accordion mt-3">
+                {{ if $liveness.Frames}}
+                    <div class="card">
+                        <div class="card-header" id="liveness-{{ $livenessNum }}-frames">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-liveness-{{ $livenessNum }}-frames"
+                                        aria-expanded="true"
+                                        aria-controls="collapse-liveness-{{ $livenessNum }}-frames">
+                                    Frames
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-liveness-{{ $livenessNum }}-frames" class="collapse"
+                             aria-labelledby="liveness-{{ $livenessNum }}-frames">
+                            <div class="card-group">
+                                {{ range $frame := $liveness.Frames }}
+                                    {{ if $frame.Media }}
+                                        <div class="card">
+                                            <img class="card-img-top"
+                                                 src="/media?mediaId={{ $frame.Media.ID }}"/>
+                                            <div class="card-body">
+                                                <h5 class="card-title">Frame</h5>
+                                            </div>
+                                        </div>
+                                    {{ end }}
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+{{ end }}
 </div>
 {{ template "footer.html" .}}
