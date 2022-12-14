@@ -20,13 +20,13 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
-	var faceComparisonCheck *check.RequestedFaceComparisonCheck
+	/*var faceComparisonCheck *check.RequestedFaceComparisonCheck
 	faceComparisonCheck, err = check.NewRequestedFaceComparisonCheckBuilder().
 		WithManualCheckAlways().
 		Build()
 	if err != nil {
 		return nil, err
-	}
+	}*/
 
 	var documentAuthenticityCheck *check.RequestedDocumentAuthenticityCheck
 	documentAuthenticityCheck, err = check.NewRequestedDocumentAuthenticityCheckBuilder().
@@ -149,7 +149,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithResourcesTTL(90000).
 		WithUserTrackingID("some-tracking-id").
 		WithRequestedCheck(faceMatchCheck).
-		WithRequestedCheck(faceComparisonCheck).
+		//WithRequestedCheck(faceComparisonCheck).
 		WithRequestedCheck(documentAuthenticityCheck).
 		WithRequestedCheck(livenessCheck).
 		WithRequestedCheck(idDocsComparisonCheck).
