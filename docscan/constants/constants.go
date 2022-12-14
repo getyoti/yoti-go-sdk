@@ -11,6 +11,7 @@ const (
 	SupplementaryDocumentTextDataExtraction string = "SUPPLEMENTARY_DOCUMENT_TEXT_DATA_EXTRACTION"
 	WatchlistScreening                      string = "WATCHLIST_SCREENING"
 	WatchlistAdvancedCA                     string = "WATCHLIST_ADVANCED_CA"
+	FaceComparison                          string = "FACE_COMPARISON"
 
 	WithYotiAccounts  = "WITH_YOTI_ACCOUNT"
 	WithCustomAccount = "WITH_CUSTOM_ACCOUNT"
