@@ -21,6 +21,11 @@ func (r *ResourceContainer) ZoomLivenessResources() []*ZoomLivenessResourceRespo
 	return r.zoomLivenessResources
 }
 
+// ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources
+func (r *ResourceContainer) StaticLivenessResources() []*StaticLivenessResourceResponse {
+	return r.staticLivenessResources
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (r *ResourceContainer) UnmarshalJSON(data []byte) error {
 	type resourceContainer ResourceContainer
