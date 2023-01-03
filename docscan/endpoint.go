@@ -25,3 +25,7 @@ func deleteMediaPath(sessionID string, mediaID string) string {
 func getSupportedDocumentsPath() string {
 	return "/supported-documents"
 }
+
+func getFaceCaptureResourcePath(sessionID string) string {
+	return fmt.Sprintf("/sessions/%s/resources/face-capture", sessionID)
+}

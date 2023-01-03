@@ -242,6 +242,31 @@ func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
 	return nil
 }
 
+// DeleteSession deletes a previously created Yoti Doc Scan (IDV) session and all of its related resources
+func (c *Client) CreateFaceCaptureResource(sessionID string) error {
+	if sessionID == "" {
+		return fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	request, err := (&requests.SignedRequest{
+		Key:        c.Key,
+		HTTPMethod: http.MethodPost,
+		BaseURL:    c.apiURL,
+		Endpoint:   getFaceCaptureResourcePath(sessionID),
+		Params:     map[string]string{"sdkID": c.SdkID},
+	}).Request()
+	if err != nil {
+		return err
+	}
+
+	_, err = requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetSupportedDocuments gets a slice of supported documents
 func (c *Client) GetSupportedDocuments(isStrictlyLatin bool) (*supported.DocumentsResponse, error) {
 	includeNonLatin := "0"
