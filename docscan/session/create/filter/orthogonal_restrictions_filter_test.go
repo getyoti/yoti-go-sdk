@@ -80,3 +80,41 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_WithExcludedCountries()
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","country_restriction":{"inclusion":"BLACKLIST","country_codes":["CAN","FJI"]}}
 }
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withExpiredDocuments() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithExpiredDocuments(true).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_expired_documents":true}
+}
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyExpiredDocuments() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithExpiredDocuments(false).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_expired_documents":false}
+}
