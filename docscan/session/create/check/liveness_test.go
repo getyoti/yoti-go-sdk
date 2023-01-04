@@ -28,6 +28,26 @@ func ExampleRequestedLivenessCheckBuilder() {
 	// Output: {"type":"LIVENESS","config":{"max_retries":9,"liveness_type":"ZOOM"}}
 }
 
+func ExampleRequestedStaticLivenessCheckBuilder() {
+	check, err := NewRequestedLivenessCheckBuilder().
+		ForStaticLiveness().
+		WithMaxRetries(5).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(check)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"LIVENESS","config":{"max_retries":5,"liveness_type":"STATIC"}}
+}
+
 func TestRequestedLivenessCheckBuilder_MaxRetriesIsOmittedIfNotSet(t *testing.T) {
 	check, err := NewRequestedLivenessCheckBuilder().
 		ForLivenessType("LIVENESS_TYPE").

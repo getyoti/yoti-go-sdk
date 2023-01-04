@@ -26,7 +26,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var livenessCheck *check.RequestedLivenessCheck
 	livenessCheck, err = check.NewRequestedLivenessCheckBuilder().
-		ForZoomLiveness().
+		ForStaticLiveness().
 		WithMaxRetries(5).
 		Build()
 	if err != nil {
