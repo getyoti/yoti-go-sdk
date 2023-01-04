@@ -416,13 +416,15 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 
 	countryCodeUSA := "USA"
 	documentTypePassport := "PASSPORT"
+	isStrictlyLatin := true
 	documentsResponse := supported.DocumentsResponse{
 		SupportedCountries: []*supported.Country{
 			{
 				Code: countryCodeUSA,
 				SupportedDocuments: []*supported.Document{
 					{
-						Type: documentTypePassport,
+						Type:            documentTypePassport,
+						IsStrictlyLatin: isStrictlyLatin,
 					},
 				},
 			},
@@ -453,6 +455,7 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 
 	assert.Equal(t, result.SupportedCountries[0].Code, countryCodeUSA)
 	assert.Equal(t, result.SupportedCountries[0].SupportedDocuments[0].Type, documentTypePassport)
+	assert.Equal(t, result.SupportedCountries[0].SupportedDocuments[0].IsStrictlyLatin, isStrictlyLatin)
 }
 
 func TestClient_GetSupportedDocuments_ShouldReturnMissingKeyError(t *testing.T) {

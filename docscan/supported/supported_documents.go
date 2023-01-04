@@ -13,5 +13,6 @@ type Country struct {
 
 // Document is the document type that is supported
 type Document struct {
-	Type string `json:"type"`
+	Type            string `json:"type"`
+	IsStrictlyLatin bool   `json:"is_strictly_latin"`
 }
