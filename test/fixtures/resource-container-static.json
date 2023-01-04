@@ -1,29 +1,52 @@
 {
-    "liveness_capture": [{
-        "id": "a831bc40-e3c2-11ea-87d0-0242ac130003",
-        "liveness_type": "ZOOM",
-        "facemap": {
+    "liveness_capture": [
+    {
+        "id": "1bf432f3-63fd-4fa7-b243-84adc305dd5f",
+        "tasks": [],
+        "source": {
+            "type": "END_USER"
+        },
+        "image": {
             "media": {
-                "id": "abd059e2-e3c2-11ea-87d0-0242ac130003",
-                "type": "BINARY",
-                "created": "2020-08-21T16:25:00Z",
-                "last_updated": "2020-08-21T16:25:00Z"
+                "id": "b73c5b58-cd54-4784-8a58-af936f31994f",
+                "type": "IMAGE",
+                "created": "2023-01-04T13:42:34Z",
+                "last_updated": "2023-01-04T13:42:34Z"
             }
         },
-        "frames": [{
+        "liveness_type": "STATIC"
+    },
+    {
+        "id": "1fb5120f-7e50-4c48-8753-8311f4a96ed4",
+        "tasks": [],
+        "source": {
+            "type": "END_USER"
+        },
+        "image": {
             "media": {
-                "id": "b1177368-e3c2-11ea-87d0-0242ac130003",
+                "id": "72bfb8eb-2333-4c24-8e39-cd67c408e68c",
                 "type": "IMAGE",
-                "created": "2020-08-21T16:25:00Z",
-                "last_updated": "2020-08-21T16:25:00Z"
+                "created": "2023-01-04T13:42:25Z",
+                "last_updated": "2023-01-04T13:42:25Z"
             }
-        }, {
-            "media": null
-        }
-        ]
-    }, {
-        "id": "d2677368-e3c2-11ea-87d0-0242ac139182",
-        "liveness_type": "OTHER_LIVENESS_TYPE"
+        },
+        "liveness_type": "STATIC"
+    },
+    {
+        "id": "ea28dd83-c273-4d59-a91f-fd2d0df06640",
+        "tasks": [],
+        "source": {
+            "type": "END_USER"
+        },
+        "image": {
+            "media": {
+                "id": "e95bc897-a8cf-4c21-ba87-4415571d1a55",
+                "type": "IMAGE",
+                "created": "2023-01-04T13:42:15Z",
+                "last_updated": "2023-01-04T13:42:15Z"
+            }
+        },
+        "liveness_type": "STATIC"
     }
-    ]
+]
 }

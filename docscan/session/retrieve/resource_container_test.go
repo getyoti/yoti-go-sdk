@@ -32,7 +32,7 @@ func TestStaticLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
 	err = json.Unmarshal(bytes, &result)
 	assert.NilError(t, err)
 
-	assert.Equal(t, 2, len(result.LivenessCapture))
+	assert.Equal(t, 3, len(result.LivenessCapture))
 	assert.Equal(t, "STATIC", result.LivenessCapture[0].LivenessType)
 }
 
