@@ -28,7 +28,7 @@ func ExampleRequestedLivenessCheckBuilder() {
 	// Output: {"type":"LIVENESS","config":{"max_retries":9,"liveness_type":"ZOOM"}}
 }
 
-func ExampleRequestedStaticLivenessCheckBuilder() {
+func TestExampleRequestedStaticLivenessCheckBuilder() {
 	check, err := NewRequestedLivenessCheckBuilder().
 		ForStaticLiveness().
 		WithMaxRetries(5).
