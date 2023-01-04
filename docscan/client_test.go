@@ -416,15 +416,13 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 
 	countryCodeUSA := "USA"
 	documentTypePassport := "PASSPORT"
-	isStrictlyLatin := true
 	documentsResponse := supported.DocumentsResponse{
 		SupportedCountries: []*supported.Country{
 			{
 				Code: countryCodeUSA,
 				SupportedDocuments: []*supported.Document{
 					{
-						Type:            documentTypePassport,
-						IsStrictlyLatin: isStrictlyLatin,
+						Type: documentTypePassport,
 					},
 				},
 			},
@@ -450,17 +448,16 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	result, err := client.GetSupportedDocuments(false)
+	result, err := client.GetSupportedDocuments()
 	assert.NilError(t, err)
 
 	assert.Equal(t, result.SupportedCountries[0].Code, countryCodeUSA)
 	assert.Equal(t, result.SupportedCountries[0].SupportedDocuments[0].Type, documentTypePassport)
-	assert.Equal(t, result.SupportedCountries[0].SupportedDocuments[0].IsStrictlyLatin, isStrictlyLatin)
 }
 
 func TestClient_GetSupportedDocuments_ShouldReturnMissingKeyError(t *testing.T) {
 	client := Client{}
-	_, err := client.GetSupportedDocuments(false)
+	_, err := client.GetSupportedDocuments()
 	assert.ErrorContains(t, err, "missing private key")
 }
 
@@ -483,7 +480,7 @@ func TestClient_GetSupportedDocuments_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err = client.GetSupportedDocuments(false)
+	_, err = client.GetSupportedDocuments()
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 

@@ -243,17 +243,12 @@ func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
 }
 
 // GetSupportedDocuments gets a slice of supported documents
-func (c *Client) GetSupportedDocuments(isStrictlyLatin bool) (*supported.DocumentsResponse, error) {
-	includeNonLatin := "0"
-	if isStrictlyLatin {
-		includeNonLatin = "1"
-	}
+func (c *Client) GetSupportedDocuments() (*supported.DocumentsResponse, error) {
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodGet,
 		BaseURL:    c.apiURL,
 		Endpoint:   getSupportedDocumentsPath(),
-		Params:     map[string]string{"includeNonLatin": includeNonLatin},
 	}).Request()
 	if err != nil {
 		return nil, err
