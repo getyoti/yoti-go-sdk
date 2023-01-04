@@ -97,7 +97,7 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withExpiredDocuments() 
 	}
 
 	fmt.Println(string(data))
-	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","type_restriction": {"inclusion": "WHITELIST","document_types": ["PASSPORT"]},"allow_expired_documents": true}
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_expired_documents":true}
 
 }
 
@@ -117,7 +117,7 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyExpiredDocument
 	}
 
 	fmt.Println(string(data))
-	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","type_restriction": {"inclusion": "WHITELIST","document_types": ["PASSPORT"]},"allow_expired_documents": false}
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_expired_documents":false}
 }
 
 func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withNonLatinDocuments() {
@@ -136,7 +136,8 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withNonLatinDocuments()
 	}
 
 	fmt.Println(string(data))
-	// Output: {"type": "ORTHOGONAL_RESTRICTIONS","type_restriction": {"inclusion": "WHITELIST","document_types": ["PASSPORT","DRIVING_LICENCE"]},"allow_non_latin_documents": true}
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":true}
+
 }
 
 func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocuments() {
@@ -155,5 +156,5 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocumen
 	}
 
 	fmt.Println(string(data))
-	// Output: {"type": "ORTHOGONAL_RESTRICTIONS","type_restriction": {"inclusion": "WHITELIST","document_types": ["PASSPORT","DRIVING_LICENCE"]},"allow_non_latin_documents": false}
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":false}
 }
