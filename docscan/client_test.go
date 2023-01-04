@@ -450,7 +450,7 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	result, err := client.GetSupportedDocuments()
+	result, err := client.GetSupportedDocuments(false)
 	assert.NilError(t, err)
 
 	assert.Equal(t, result.SupportedCountries[0].Code, countryCodeUSA)
@@ -460,7 +460,7 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 
 func TestClient_GetSupportedDocuments_ShouldReturnMissingKeyError(t *testing.T) {
 	client := Client{}
-	_, err := client.GetSupportedDocuments()
+	_, err := client.GetSupportedDocuments(false)
 	assert.ErrorContains(t, err, "missing private key")
 }
 
@@ -483,7 +483,7 @@ func TestClient_GetSupportedDocuments_ShouldReturnResponseError(t *testing.T) {
 		apiURL:     "https://apiurl.com",
 	}
 
-	_, err = client.GetSupportedDocuments()
+	_, err = client.GetSupportedDocuments(false)
 	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
 
