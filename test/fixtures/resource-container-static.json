@@ -1,0 +1,29 @@
+{
+    "liveness_capture": [{
+        "id": "a831bc40-e3c2-11ea-87d0-0242ac130003",
+        "liveness_type": "ZOOM",
+        "facemap": {
+            "media": {
+                "id": "abd059e2-e3c2-11ea-87d0-0242ac130003",
+                "type": "BINARY",
+                "created": "2020-08-21T16:25:00Z",
+                "last_updated": "2020-08-21T16:25:00Z"
+            }
+        },
+        "frames": [{
+            "media": {
+                "id": "b1177368-e3c2-11ea-87d0-0242ac130003",
+                "type": "IMAGE",
+                "created": "2020-08-21T16:25:00Z",
+                "last_updated": "2020-08-21T16:25:00Z"
+            }
+        }, {
+            "media": null
+        }
+        ]
+    }, {
+        "id": "d2677368-e3c2-11ea-87d0-0242ac139182",
+        "liveness_type": "OTHER_LIVENESS_TYPE"
+    }
+    ]
+}
