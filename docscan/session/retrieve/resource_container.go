@@ -2,7 +2,6 @@ package retrieve
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
@@ -24,8 +23,6 @@ func (r *ResourceContainer) ZoomLivenessResources() []*ZoomLivenessResourceRespo
 
 // ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources
 func (r *ResourceContainer) StaticLivenessResources() []*StaticLivenessResourceResponse {
-	datas, _ := json.Marshal(r.staticLivenessResources)
-	fmt.Println(string(datas))
 	return r.staticLivenessResources
 }
 

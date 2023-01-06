@@ -38,6 +38,7 @@ func (c *RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
 type RequestedLivenessConfig struct {
 	MaxRetries   int    `json:"max_retries,omitempty"`
 	LivenessType string `json:"liveness_type,omitempty"`
+	ManualCheck  string `json:"manual_check,omitempty"`
 }
 
 // NewRequestedLivenessCheckBuilder creates a new RequestedLivenessCheckBuilder
@@ -49,6 +50,7 @@ func NewRequestedLivenessCheckBuilder() *RequestedLivenessCheckBuilder {
 type RequestedLivenessCheckBuilder struct {
 	livenessType string
 	maxRetries   int
+	manualCheck  string
 }
 
 // ForZoomLiveness sets the liveness type to "ZOOM"
@@ -78,6 +80,7 @@ func (b *RequestedLivenessCheckBuilder) Build() (*RequestedLivenessCheck, error)
 	config := RequestedLivenessConfig{
 		MaxRetries:   b.maxRetries,
 		LivenessType: b.livenessType,
+		ManualCheck:  "NEVER",
 	}
 
 	return &RequestedLivenessCheck{
