@@ -25,7 +25,8 @@ func ExampleRequestedLivenessCheckBuilder() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"type":"LIVENESS","config":{"max_retries":9,"liveness_type":"ZOOM"}}
+	// Output: {"type":"LIVENESS","config":{"max_retries":9,"liveness_type":"ZOOM","manual_check":"NEVER"}}
+
 }
 
 func TestExampleRequestedStaticLivenessCheckBuilder(t *testing.T) {
@@ -58,7 +59,6 @@ func TestRequestedLivenessCheckBuilder_MaxRetriesIsOmittedIfNotSet(t *testing.T)
 	result, err := json.Marshal(check)
 	assert.NilError(t, err)
 
-	expected := "{\"type\":\"LIVENESS\",\"config\":{\"liveness_type\":\"LIVENESS_TYPE\"}}"
-
+	expected := "{\"type\":\"LIVENESS\",\"config\":{\"liveness_type\":\"LIVENESS_TYPE\",\"manual_check\":\"NEVER\"}}"
 	assert.Equal(t, expected, string(result))
 }
