@@ -5,7 +5,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/sandbox/request/check/report"
 )
 
-// StaticLivenessCheckBuilder builds a "ZOOM" LivenessCheck
+// StaticLivenessCheckBuilder builds a Static LivenessCheck
 type StaticLivenessCheckBuilder struct {
 	livenessCheckBuilder
 }
