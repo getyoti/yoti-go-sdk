@@ -86,11 +86,13 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExcludedDocumentTypes
 	return b
 }
 
+// WithNonLatinDocuments sets a bool value to allowNonDocuments on filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithNonLatinDocuments(allowNonLatinDocuments bool) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.allowNonLatinDocuments = &allowNonLatinDocuments
 	return b
 }
 
+// WithExpiredDocuments sets a bool value to allowExpiredDocuments on filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExpiredDocuments(allowExpiredDocuments bool) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.allowExpiredDocuments = &allowExpiredDocuments
 	return b
