@@ -66,6 +66,9 @@ func (b *RequestedLivenessCheckBuilder) ForStaticLiveness() *RequestedLivenessCh
 // ForLivenessType sets the liveness type on the builder
 func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType string) *RequestedLivenessCheckBuilder {
 	b.livenessType = livenessType
+	// if livenessType == constants.Static {
+	// 	b.WithManualCheckNever()
+	// }
 	return b
 }
 
@@ -75,12 +78,18 @@ func (b *RequestedLivenessCheckBuilder) WithMaxRetries(maxRetries int) *Requeste
 	return b
 }
 
+// WithManualCheckNever sets the value of manual check to "NEVER"
+func (b *RequestedLivenessCheckBuilder) WithManualCheckNever() *RequestedLivenessCheckBuilder {
+	b.manualCheck = constants.Never
+	return b
+}
+
 // Build builds the RequestedLivenessCheck
 func (b *RequestedLivenessCheckBuilder) Build() (*RequestedLivenessCheck, error) {
 	config := RequestedLivenessConfig{
 		MaxRetries:   b.maxRetries,
 		LivenessType: b.livenessType,
-		ManualCheck:  "NEVER",
+		ManualCheck:  b.manualCheck,
 	}
 
 	return &RequestedLivenessCheck{
