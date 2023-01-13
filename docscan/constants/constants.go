@@ -21,6 +21,7 @@ const (
 
 	Liveness string = "LIVENESS"
 	Zoom     string = "ZOOM"
+	Static   string = "STATIC"
 
 	Camera          string = "CAMERA"
 	CameraAndUpload string = "CAMERA_AND_UPLOAD"

@@ -1,0 +1,52 @@
+{
+    "liveness_capture": [
+    {
+        "id": "1bf432f3-63fd-4fa7-b243-84adc305dd5f",
+        "tasks": [],
+        "source": {
+            "type": "END_USER"
+        },
+        "image": {
+            "media": {
+                "id": "b73c5b58-cd54-4784-8a58-af936f31994f",
+                "type": "IMAGE",
+                "created": "2023-01-04T13:42:34Z",
+                "last_updated": "2023-01-04T13:42:34Z"
+            }
+        },
+        "liveness_type": "STATIC"
+    },
+    {
+        "id": "1fb5120f-7e50-4c48-8753-8311f4a96ed4",
+        "tasks": [],
+        "source": {
+            "type": "END_USER"
+        },
+        "image": {
+            "media": {
+                "id": "72bfb8eb-2333-4c24-8e39-cd67c408e68c",
+                "type": "IMAGE",
+                "created": "2023-01-04T13:42:25Z",
+                "last_updated": "2023-01-04T13:42:25Z"
+            }
+        },
+        "liveness_type": "STATIC"
+    },
+    {
+        "id": "ea28dd83-c273-4d59-a91f-fd2d0df06640",
+        "tasks": [],
+        "source": {
+            "type": "END_USER"
+        },
+        "image": {
+            "media": {
+                "id": "e95bc897-a8cf-4c21-ba87-4415571d1a55",
+                "type": "IMAGE",
+                "created": "2023-01-04T13:42:15Z",
+                "last_updated": "2023-01-04T13:42:15Z"
+            }
+        },
+        "liveness_type": "STATIC"
+    }
+]
+}

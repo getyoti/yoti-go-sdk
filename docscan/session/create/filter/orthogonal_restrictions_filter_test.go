@@ -98,7 +98,6 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withExpiredDocuments() 
 
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_expired_documents":true}
-
 }
 
 func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyExpiredDocuments() {
@@ -158,3 +157,4 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocumen
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":false}
 }
+
