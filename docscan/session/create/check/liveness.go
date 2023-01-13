@@ -38,6 +38,7 @@ func (c *RequestedLivenessCheck) MarshalJSON() ([]byte, error) {
 type RequestedLivenessConfig struct {
 	MaxRetries   int    `json:"max_retries,omitempty"`
 	LivenessType string `json:"liveness_type,omitempty"`
+	ManualCheck  string `json:"manual_check,omitempty"`
 }
 
 // NewRequestedLivenessCheckBuilder creates a new RequestedLivenessCheckBuilder
@@ -49,6 +50,7 @@ func NewRequestedLivenessCheckBuilder() *RequestedLivenessCheckBuilder {
 type RequestedLivenessCheckBuilder struct {
 	livenessType string
 	maxRetries   int
+	manualCheck  string
 }
 
 // ForZoomLiveness sets the liveness type to "ZOOM"
@@ -56,9 +58,17 @@ func (b *RequestedLivenessCheckBuilder) ForZoomLiveness() *RequestedLivenessChec
 	return b.ForLivenessType(zoom)
 }
 
+// ForStaticLiveness sets the liveness type to "STATIC"
+func (b *RequestedLivenessCheckBuilder) ForStaticLiveness() *RequestedLivenessCheckBuilder {
+	return b.ForLivenessType(static)
+}
+
 // ForLivenessType sets the liveness type on the builder
 func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType string) *RequestedLivenessCheckBuilder {
 	b.livenessType = livenessType
+	if livenessType == constants.Static {
+		b.WithManualCheckNever()
+	}
 	return b
 }
 
@@ -68,11 +78,18 @@ func (b *RequestedLivenessCheckBuilder) WithMaxRetries(maxRetries int) *Requeste
 	return b
 }
 
+// WithManualCheckNever sets the value of manual check to "NEVER"
+func (b *RequestedLivenessCheckBuilder) WithManualCheckNever() *RequestedLivenessCheckBuilder {
+	b.manualCheck = constants.Never
+	return b
+}
+
 // Build builds the RequestedLivenessCheck
 func (b *RequestedLivenessCheckBuilder) Build() (*RequestedLivenessCheck, error) {
 	config := RequestedLivenessConfig{
 		MaxRetries:   b.maxRetries,
 		LivenessType: b.livenessType,
+		ManualCheck:  b.manualCheck,
 	}
 
 	return &RequestedLivenessCheck{

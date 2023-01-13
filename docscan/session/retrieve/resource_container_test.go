@@ -24,6 +24,18 @@ func TestLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, "BINARY", result.ZoomLivenessResources()[0].FaceMap.Media.Type)
 }
 
+func TestStaticLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/resource-container-static.json")
+	assert.NilError(t, err)
+
+	var result ResourceContainer
+	err = json.Unmarshal(bytes, &result)
+	assert.NilError(t, err)
+
+	assert.Equal(t, 3, len(result.LivenessCapture))
+	assert.Equal(t, "STATIC", result.LivenessCapture[0].LivenessType)
+}
+
 func TestLivenessResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
 	var result ResourceContainer
 	err := result.UnmarshalJSON([]byte("some-invalid-json"))

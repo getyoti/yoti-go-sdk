@@ -8,16 +8,22 @@ import (
 
 // ResourceContainer contains different resources that are part of the Yoti IDV session
 type ResourceContainer struct {
-	IDDocuments            []*IDDocumentResourceResponse            `json:"id_documents"`
-	SupplementaryDocuments []*SupplementaryDocumentResourceResponse `json:"supplementary_documents"`
-	LivenessCapture        []*LivenessResourceResponse
-	RawLivenessCapture     []json.RawMessage `json:"liveness_capture"`
-	zoomLivenessResources  []*ZoomLivenessResourceResponse
+	IDDocuments             []*IDDocumentResourceResponse            `json:"id_documents"`
+	SupplementaryDocuments  []*SupplementaryDocumentResourceResponse `json:"supplementary_documents"`
+	LivenessCapture         []*LivenessResourceResponse
+	RawLivenessCapture      []json.RawMessage `json:"liveness_capture"`
+	zoomLivenessResources   []*ZoomLivenessResourceResponse
+	staticLivenessResources []*StaticLivenessResourceResponse
 }
 
 // ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources
 func (r *ResourceContainer) ZoomLivenessResources() []*ZoomLivenessResourceResponse {
 	return r.zoomLivenessResources
+}
+
+// ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources
+func (r *ResourceContainer) StaticLivenessResources() []*StaticLivenessResourceResponse {
+	return r.staticLivenessResources
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
@@ -43,6 +49,13 @@ func (r *ResourceContainer) UnmarshalJSON(data []byte) error {
 				return err
 			}
 			r.zoomLivenessResources = append(r.zoomLivenessResources, &zoom)
+		case constants.Static:
+			var static StaticLivenessResourceResponse
+			err = json.Unmarshal(raw, &static)
+			if err != nil {
+				return err
+			}
+			r.staticLivenessResources = append(r.staticLivenessResources, &static)
 		default:
 			err = json.Unmarshal(raw, &LivenessResourceResponse{})
 			if err != nil {
