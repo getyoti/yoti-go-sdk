@@ -66,9 +66,9 @@ func (b *RequestedLivenessCheckBuilder) ForStaticLiveness() *RequestedLivenessCh
 // ForLivenessType sets the liveness type on the builder
 func (b *RequestedLivenessCheckBuilder) ForLivenessType(livenessType string) *RequestedLivenessCheckBuilder {
 	b.livenessType = livenessType
-	// if livenessType == constants.Static {
-	// 	b.WithManualCheckNever()
-	// }
+	if livenessType == constants.Static {
+		b.WithManualCheckNever()
+	}
 	return b
 }
 
