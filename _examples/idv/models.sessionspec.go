@@ -103,6 +103,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	passportFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
 		WithIncludedDocumentTypes(
 			[]string{"PASSPORT"}).
+		WithNonLatinDocuments(true).
 		WithExpiredDocuments(false).
 		Build()
 	if err != nil {

@@ -118,3 +118,43 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyExpiredDocument
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_expired_documents":false}
 }
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withNonLatinDocuments() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithNonLatinDocuments(true).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":true}
+
+}
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocuments() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithNonLatinDocuments(false).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":false}
+}
+
