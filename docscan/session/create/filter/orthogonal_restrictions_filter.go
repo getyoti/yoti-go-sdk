@@ -8,7 +8,6 @@ type RequestedOrthogonalRestrictionsFilter struct {
 	typeRestriction        *TypeRestriction
 	allowExpiredDocuments  *bool
 	allowNonLatinDocuments *bool
-
 }
 
 // Type returns the type of the RequestedOrthogonalRestrictionsFilter

@@ -136,7 +136,6 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withNonLatinDocuments()
 
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":true}
-
 }
 
 func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocuments() {
@@ -157,4 +156,3 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocumen
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":false}
 }
-
