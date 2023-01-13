@@ -86,7 +86,7 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExcludedDocumentTypes
 	return b
 }
 
-// WithNonLatinDocuments sets a bool value to allowNonDocuments on filter
+// WithNonLatinDocuments sets a bool value to allowNonLatinDocuments on filter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithNonLatinDocuments(allowNonLatinDocuments bool) *RequestedOrthogonalRestrictionsFilterBuilder {
 	b.allowNonLatinDocuments = &allowNonLatinDocuments
 	return b
