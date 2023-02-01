@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
@@ -242,13 +243,20 @@ func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
 	return nil
 }
 
-// GetSupportedDocuments gets a slice of supported documents
+// GetSupportedDocuments gets a slice of supported documents (defaults includeNonLatin to false)
 func (c *Client) GetSupportedDocuments() (*supported.DocumentsResponse, error) {
+	return c.GetSupportedDocumentsWithNonLatin(false)
+}
+
+// GetSupportedDocuments gets a slice of supported documents with bool param includeNonLatin
+func (c *Client) GetSupportedDocumentsWithNonLatin(includeNonLatin bool) (*supported.DocumentsResponse, error) {
+
 	request, err := (&requests.SignedRequest{
 		Key:        c.Key,
 		HTTPMethod: http.MethodGet,
 		BaseURL:    c.apiURL,
 		Endpoint:   getSupportedDocumentsPath(),
+		Params:     map[string]string{"includeNonLatin": strconv.FormatBool(includeNonLatin)},
 	}).Request()
 	if err != nil {
 		return nil, err

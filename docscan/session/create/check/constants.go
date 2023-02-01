@@ -1,5 +1,6 @@
 package check
 
 const (
-	zoom = "ZOOM"
+	zoom   = "ZOOM"
+	static = "STATIC"
 )

@@ -719,5 +719,60 @@
             </div>
         </div>
     {{ end }}
+
+    {{ if .getSessionResult.Resources.StaticLivenessResources}}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Static Liveness Resources</h2>
+        </div>
+    </div>
+{{ end }}
+
+{{ range $livenessNum, $liveness := .getSessionResult.Resources.StaticLivenessResources }}
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>{{ $liveness.ID }}
+                        
+                    </td>
+                </tr>
+                 
+                </tbody>
+            </table>
+
+            <div class="accordion mt-3">
+                
+                    <div class="card">
+                        <div class="card-header" id="liveness-{{ $livenessNum }}-frames">
+                            <h3 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-liveness-{{ $livenessNum }}-frames"
+                                        aria-expanded="true"
+                                        aria-controls="collapse-liveness-{{ $livenessNum }}-frames">
+                                    Photo
+                                </button>
+                            </h3>
+                        </div>
+                        <div id="collapse-liveness-{{ $livenessNum }}-frames" class="collapse"
+                             aria-labelledby="liveness-{{ $livenessNum }}-frames">
+                            <div class="card-group">
+                                
+                                        <div class="card">
+                                            <img class="card-img-top"
+                    src="/media?mediaId={{ $liveness.Image.Media.ID }}"/>
+                                        </div>
+                                 
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+            
+        </div>
+    </div>
+{{ end }}
 </div>
 {{ template "footer.html" .}}
