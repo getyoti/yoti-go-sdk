@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
@@ -181,6 +183,14 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 		}
 	}`)
 
+	ttl := time.Hour * 24 * 30
+	importToken, err := create.NewImportTokenBuilder().
+		WithTTL(int(ttl.Seconds())).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
 	subject := []byte(`{
 		"subject_id": "unique-user-id-for-examples"
 	}`)
@@ -193,6 +203,7 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 		WithIdentityProfileRequirements(identityProfile).
 		WithCreateIdentityProfilePreview(true).
 		WithSubject(subject).
+		WithImportToken(importToken).
 		Build()
 
 	if err != nil {
