@@ -47,6 +47,9 @@ type SessionSpecification struct {
 	// Subject provides information on the subject allowing to track the same user across multiple sessions.
 	// Should not contain any personal identifiable information.
 	Subject *json.RawMessage `json:"subject,omitempty"`
+
+	// ImportToken requests the creation of an import_token.
+	ImportToken *ImportToken `json:"import_token,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -63,6 +66,7 @@ type SessionSpecificationBuilder struct {
 	identityProfileRequirements  *json.RawMessage
 	createIdentityProfilePreview bool
 	subject                      *json.RawMessage
+	importToken                  *ImportToken
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -140,6 +144,12 @@ func (b *SessionSpecificationBuilder) WithSubject(subject json.RawMessage) *Sess
 	return b
 }
 
+// WithImportToken sets whether an ImportToken is to be generated.
+func (b *SessionSpecificationBuilder) WithImportToken(importToken *ImportToken) *SessionSpecificationBuilder {
+	b.importToken = importToken
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -155,5 +165,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.identityProfileRequirements,
 		b.createIdentityProfilePreview,
 		b.subject,
+		b.importToken,
 	}, nil
 }

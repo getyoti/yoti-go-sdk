@@ -19,6 +19,7 @@ type GetSessionResult struct {
 	BiometricConsentTimestamp           *time.Time               `json:"biometric_consent"`
 	IdentityProfileResponse             *IdentityProfileResponse `json:"identity_profile"`
 	IdentityProfilePreview              *IdentityProfilePreview  `json:"identity_profile_preview"`
+	ImportTokenResponse                 *ImportTokenResponse     `json:"import_token"`
 	authenticityChecks                  []*AuthenticityCheckResponse
 	faceMatchChecks                     []*FaceMatchCheckResponse
 	textDataChecks                      []*TextDataCheckResponse
