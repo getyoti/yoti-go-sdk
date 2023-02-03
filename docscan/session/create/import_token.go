@@ -7,7 +7,7 @@ type ImportToken struct {
 }
 
 // defaultImportTokenTTL is 12 Months
-const defaultImportTokenTTL = time.Hour * 24 * 30 * 12
+const defaultImportTokenTTL = time.Hour * 24 * 365
 
 // NewImportTokenBuilder creates a new ImportTokenBuilder
 func NewImportTokenBuilder() *ImportTokenBuilder {

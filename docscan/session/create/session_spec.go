@@ -144,7 +144,7 @@ func (b *SessionSpecificationBuilder) WithSubject(subject json.RawMessage) *Sess
 	return b
 }
 
-// WithImportToken sets whether of not an ImportToken is to be generated.
+// WithImportToken sets whether an ImportToken is to be generated.
 func (b *SessionSpecificationBuilder) WithImportToken(importToken *ImportToken) *SessionSpecificationBuilder {
 	b.importToken = importToken
 	return b
