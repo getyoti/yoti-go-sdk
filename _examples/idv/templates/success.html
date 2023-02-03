@@ -123,15 +123,15 @@
             </div>
         </div>
         {{ end }}
-        {{ if .getSessionResult.ImportTokenResponse.FailureReasonResponse.ReasonCode }}
+        {{ if .getSessionResult.ImportTokenResponse.FailureReason }}
             <div class="row pt-4">
                 <div class="col">
                     <table class="table table-striped table-light">
                         <tbody>
                         <tr>
-                            <td>ID</td>
+                            <td><span class="badge badge-secondary">Error</span></td>
                             <td>
-                                    {{ .getSessionResult.ImportTokenResponse.FailureReasonResponse.ReasonCode }}
+                                    {{ .getSessionResult.ImportTokenResponse.FailureReason }}
                             </td>
                         </tr>
                         </tbody>

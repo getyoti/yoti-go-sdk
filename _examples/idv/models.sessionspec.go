@@ -178,8 +178,7 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	identityProfile := []byte(`{
 		"trust_framework": "UK_TFIDA",
 		"scheme": {
-    		"type": "DBS",
-    		"objective": "BASIC"
+    		"type": "RTW"
 		}
 	}`)
 
