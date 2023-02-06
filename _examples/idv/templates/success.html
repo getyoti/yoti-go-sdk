@@ -99,6 +99,47 @@
         </div>
     </div>
     {{ end }}
+    {{ if .getSessionResult.ImportTokenResponse }}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Import token</h2>
+        </div>
+    </div>
+        {{ if .getSessionResult.ImportTokenResponse.Media }}
+        <div class="row pt-4">
+            <div class="col">
+                <table class="table table-striped table-light">
+                    <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>
+                            <a href='/media?mediaId={{ .getSessionResult.ImportTokenResponse.Media.ID }}'>
+                                {{ .getSessionResult.ImportTokenResponse.Media.ID }}
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{ end }}
+        {{ if .getSessionResult.ImportTokenResponse.FailureReason }}
+            <div class="row pt-4">
+                <div class="col">
+                    <table class="table table-striped table-light">
+                        <tbody>
+                        <tr>
+                            <td><span class="badge badge-secondary">Error</span></td>
+                            <td>
+                                    {{ .getSessionResult.ImportTokenResponse.FailureReason }}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {{ end }}
+    {{ end }}
     {{ if .getSessionResult.Checks }}
         <div class="row pt-4">
             <div class="col">
