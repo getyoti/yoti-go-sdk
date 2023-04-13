@@ -16,7 +16,7 @@ type ShareSession struct {
 	redirectUri              string
 	extensions               []interface{}
 	subject                  *json.RawMessage
-	shareSessionNotification *ShareSessionNotification
+	shareSessionNotification ShareSessionNotification
 }
 
 // WithPolicy attaches a DynamicPolicy to the DynamicScenario
@@ -33,7 +33,7 @@ func (builder *ShareSessionBuilder) WithExtension(extension interface{}) *ShareS
 
 // WithCallbackEndpoint sets the callback URL
 func (builder *ShareSessionBuilder) WithNotification(notification ShareSessionNotification) *ShareSessionBuilder {
-	builder.shareSession.shareSessionNotification = &notification
+	builder.shareSession.shareSessionNotification = notification
 	return builder
 }
 
@@ -71,12 +71,12 @@ func (shareSesssion ShareSession) MarshalJSON() ([]byte, error) {
 		Extensions   []interface{}            `json:"extensions"`
 		RedirectUri  string                   `json:"redirectUri"`
 		Subject      *json.RawMessage         `json:"subject,omitempty"`
-		Notification ShareSessionNotification `json:"notification,omitempty"`
+		Notification ShareSessionNotification `json:"notification"`
 	}{
 		Policy:       *shareSesssion.policy,
 		Extensions:   shareSesssion.extensions,
 		RedirectUri:  shareSesssion.redirectUri,
 		Subject:      shareSesssion.subject,
-		Notification: *shareSesssion.shareSessionNotification,
+		Notification: shareSesssion.shareSessionNotification,
 	})
 }
