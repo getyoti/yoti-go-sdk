@@ -37,7 +37,7 @@ func (builder *ShareSessionBuilder) WithNotification(notification ShareSessionNo
 	return builder
 }
 
-// WithRedirectUri
+// WithRedirectUri sets redirectUri
 func (builder *ShareSessionBuilder) WithRedirectUri(redirectUri string) *ShareSessionBuilder {
 	builder.shareSession.redirectUri = redirectUri
 	return builder
