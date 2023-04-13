@@ -17,25 +17,25 @@ type ShareSessionNotificationBuilder struct {
 	shareSessionNotification ShareSessionNotification
 }
 
-// WithUrl
+// WithUrl setsUrl
 func (b *ShareSessionNotificationBuilder) WithUrl(url string) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.url = url
 	return b
 }
 
-// WithMethod
+// WithMethod set method
 func (b *ShareSessionNotificationBuilder) WithMethod(method string) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.method = method
 	return b
 }
 
-// WithVerifyTls
+// WithVerifyTls set bool value verifyTls
 func (b *ShareSessionNotificationBuilder) WithVerifyTls(verifyTls bool) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.verifyTls = verifyTls
 	return b
 }
 
-// WithHeaders
+// WithHeaders set headers
 func (b *ShareSessionNotificationBuilder) WithHeaders(headers map[string][]string) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.Headers = headers
 	return b
