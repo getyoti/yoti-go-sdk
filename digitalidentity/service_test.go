@@ -40,13 +40,13 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	scenario, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	result, err := CreateShareSession(client, &scenario, "sdkId", "https://apiurl", key)
+	result, err := CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
