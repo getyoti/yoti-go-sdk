@@ -21,7 +21,7 @@ type SessionResult struct {
 	Expiry string `json:"expiry"`
 }
 
-// CreateShareURL creates a QR code for a dynamic scenario
+// CreateShareSession
 func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSession, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
 	endpoint := getIdentitySesssionCreationEndpoint()
 
