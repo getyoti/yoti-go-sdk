@@ -46,7 +46,7 @@ func (b *ShareSessionNotificationBuilder) Build() (ShareSessionNotification, err
 	return b.shareSessionNotification, nil
 }
 
-// MarshalJSON ...
+// MarshalJSON returns the JSON encoding
 func (a *ShareSessionNotification) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Url       string              `json:"url"`
