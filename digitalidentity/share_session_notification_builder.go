@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-// WantedAnchor specifies a preferred anchor for a user's details
+// ShareSessionNotification specifies a ShareSessionNotification for ShareSession
 type ShareSessionNotification struct {
 	url       string
 	method    string
@@ -12,36 +12,36 @@ type ShareSessionNotification struct {
 	Headers   map[string][]string
 }
 
-// ShareSessionNotificationBuilder
+// ShareSessionNotificationBuilder builds Share Session Notification
 type ShareSessionNotificationBuilder struct {
 	shareSessionNotification ShareSessionNotification
 }
 
-// WithUrl setsUrl
+// WithUrl setsUrl  to Share Session Notification
 func (b *ShareSessionNotificationBuilder) WithUrl(url string) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.url = url
 	return b
 }
 
-// WithMethod set method
+// WithMethod set method to Share Session Notification
 func (b *ShareSessionNotificationBuilder) WithMethod(method string) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.method = method
 	return b
 }
 
-// WithVerifyTls set bool value verifyTls
+// WithVerifyTls set verifyTls to Share Session Notification
 func (b *ShareSessionNotificationBuilder) WithVerifyTls(verifyTls bool) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.verifyTls = verifyTls
 	return b
 }
 
-// WithHeaders set headers
+// WithHeaders set headers to Share Session Notification
 func (b *ShareSessionNotificationBuilder) WithHeaders(headers map[string][]string) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.Headers = headers
 	return b
 }
 
-// Build
+// Build constructs the Share Session Notification Builder
 func (b *ShareSessionNotificationBuilder) Build() (ShareSessionNotification, error) {
 	return b.shareSessionNotification, nil
 }
