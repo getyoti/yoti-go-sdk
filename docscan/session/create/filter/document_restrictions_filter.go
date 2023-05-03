@@ -20,7 +20,7 @@ func (r *RequestedDocumentRestrictionsFilter) MarshalJSON() ([]byte, error) {
 		Type                  string                          `json:"type"`
 		Inclusion             string                          `json:"inclusion"`
 		Documents             []*RequestedDocumentRestriction `json:"documents"`
-		AllowExpiredDocuments *bool                           `json:"allow_expired_documents,omitempty"`
+		AllowExpiredDocuments *bool                           `json:"allow_expired_documents"`
 	}{
 		Type:                  r.Type(),
 		Inclusion:             r.inclusion,
