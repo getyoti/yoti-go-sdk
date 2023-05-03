@@ -62,3 +62,41 @@ func ExampleRequestedDocumentRestrictionsFilterBuilder_ForExcludeList() {
 	fmt.Println(string(data))
 	// Output: {"type":"DOCUMENT_RESTRICTIONS","inclusion":"BLACKLIST","documents":[{"document_types":["PASSPORT"]}]}
 }
+
+func ExampleRequestedDocumentRestrictionsFilterBuilder_withExpiredDocuments() {
+	restriction, err := NewRequestedDocumentRestrictionsFilterBuilder().
+		WithExpiredDocuments(true).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"DOCUMENT_RESTRICTIONS","inclusion":"","documents":[],"allow_expired_documents":true}
+}
+
+func ExampleRequestedDocumentRestrictionsFilterBuilder_withDenyExpiredDocuments() {
+	restriction, err := NewRequestedDocumentRestrictionsFilterBuilder().
+		WithExpiredDocuments(false).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"DOCUMENT_RESTRICTIONS","inclusion":"","documents":[],"allow_expired_documents":false}
+}
