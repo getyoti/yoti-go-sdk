@@ -62,7 +62,7 @@ func (client *DigitalIdentityClient) GetSdkID() string {
 	return client.SdkID
 }
 
-// CreateShareURL creates a QR code for a specified dynamic scenario
+// CreateShareURL creates a QR code for a specified share session configuration.
 func (client *DigitalIdentityClient) CreateShareURL(shareSession *digitalidentity.ShareSession) (share digitalidentity.ShareURL, err error) {
 	return digitalidentity.CreateShareSession(client.HTTPClient, shareSession, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
