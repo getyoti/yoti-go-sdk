@@ -26,8 +26,8 @@ type DigitalIdentityClient struct {
 	HTTPClient requests.HttpClient // Mockable HTTP Client Interface
 }
 
-// NewClient constructs a Client object
-func DigitalIDClient(sdkID string, key []byte) (*Client, error) {
+// NewDigitalIdentityClient constructs a Client object
+func NewDigitalIdentityClient(sdkID string, key []byte) (*Client, error) {
 	decodedKey, err := cryptoutil.ParseRSAKey(key)
 
 	if err != nil {
