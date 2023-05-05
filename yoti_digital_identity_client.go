@@ -11,7 +11,7 @@ import (
 
 const DefaultURL = "https://api.yoti.com/api/"
 
-// Client represents a client that can communicate with yoti and return information about Yoti users.
+// DigitalIdentityClient represents a client that can communicate with yoti and return information about Yoti users.
 type DigitalIdentityClient struct {
 	// SdkID represents the SDK ID and NOT the App ID. This can be found in the integration section of your
 	// application hub at https://hub.yoti.com/
