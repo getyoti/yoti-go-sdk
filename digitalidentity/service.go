@@ -47,7 +47,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 		return share, err
 	}
 
-	responseBytes, err := ioutil.ReadAll(response.Body)
+	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
