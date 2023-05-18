@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-// ShareSessionNotification specifies a ShareSessionNotification for ShareSession
+// ShareSessionNotification specifies the session notification configuration.
 type ShareSessionNotification struct {
 	url       string
 	method    string
