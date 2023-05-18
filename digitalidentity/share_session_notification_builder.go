@@ -8,7 +8,7 @@ import (
 type ShareSessionNotification struct {
 	url       string
 	method    string
-	verifyTls bool
+	verifyTLS bool
 	Headers   map[string][]string
 }
 
