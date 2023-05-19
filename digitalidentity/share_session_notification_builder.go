@@ -29,7 +29,7 @@ func (b *ShareSessionNotificationBuilder) WithMethod(method string) *ShareSessio
 	return b
 }
 
-// WithVerifyTls set verifyTls to Share Session Notification
+// WithVerifyTLS sets whether TLS should be verified for notifications.
 func (b *ShareSessionNotificationBuilder) WithVerifyTls(verifyTls *bool) *ShareSessionNotificationBuilder {
 	b.shareSessionNotification.verifyTLS = verifyTls
 	return b
