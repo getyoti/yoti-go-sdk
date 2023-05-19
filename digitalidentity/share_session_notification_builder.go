@@ -29,9 +29,9 @@ func (b *ShareSessionNotificationBuilder) WithMethod(method string) *ShareSessio
 	return b
 }
 
-// WithVerifyTls set verifyTls to Share Session Notification
-func (b *ShareSessionNotificationBuilder) WithVerifyTls(verifyTls *bool) *ShareSessionNotificationBuilder {
-	b.shareSessionNotification.verifyTLS = verifyTls
+// WithVerifyTLS sets whether TLS should be verified for notifications.
+func (b *ShareSessionNotificationBuilder) WithVerifyTLS(verify bool) *ShareSessionNotificationBuilder {
+	b.shareSessionNotification.verifyTLS = &verify
 	return b
 }
 
@@ -51,7 +51,7 @@ func (a *ShareSessionNotification) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Url       string              `json:"url"`
 		Method    string              `json:"method"`
-		VerifyTls *bool                `json:"verifyTls"`
+		VerifyTls *bool               `json:"verifyTls"`
 		Headers   map[string][]string `json:"headers"`
 	}{
 		Url:       a.url,
