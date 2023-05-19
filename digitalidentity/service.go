@@ -3,7 +3,7 @@ package digitalidentity
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
@@ -43,6 +43,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 	}
 
 	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	defer response.Body.Close()
 	if err != nil {
 		return share, err
 	}
