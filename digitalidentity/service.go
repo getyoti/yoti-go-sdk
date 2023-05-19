@@ -21,7 +21,7 @@ type SessionResult struct {
 	Expiry string `json:"expiry"`
 }
 
-// CreateShareSession
+// CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSession, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
 	endpoint := getIdentitySesssionCreationEndpoint()
 

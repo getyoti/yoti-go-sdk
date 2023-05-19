@@ -12,9 +12,11 @@ debug
 # Report files
 sonar-report.json
 coverage.out
+report.json
 
 # idea files
 .idea
 
 # Generated binaries
 /_examples/docscan/docscan
+
