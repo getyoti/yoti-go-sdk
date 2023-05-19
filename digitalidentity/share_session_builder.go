@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 )
 
-// ScenarioBuilder builds a dynamic scenario
+// ShareSessionBuilder builds a session
 type ShareSessionBuilder struct {
 	shareSession ShareSession
 	err          error
 }
 
-// Scenario represents a dynamic scenario
+// ShareSession represents a sharesession
 type ShareSession struct {
 	policy                   *Policy
 	redirectUri              string
@@ -19,25 +19,25 @@ type ShareSession struct {
 	shareSessionNotification ShareSessionNotification
 }
 
-// WithPolicy attaches a DynamicPolicy to the DynamicScenario
+// WithPolicy attaches a Policy to the ShareSession
 func (builder *ShareSessionBuilder) WithPolicy(policy Policy) *ShareSessionBuilder {
 	builder.shareSession.policy = &policy
 	return builder
 }
 
-// WithExtension adds an extension to the scenario
+// WithExtension adds an extension to the ShareSession
 func (builder *ShareSessionBuilder) WithExtension(extension interface{}) *ShareSessionBuilder {
 	builder.shareSession.extensions = append(builder.shareSession.extensions, extension)
 	return builder
 }
 
-// WithCallbackEndpoint sets the callback URL
+// WithNotification sets the callback URL
 func (builder *ShareSessionBuilder) WithNotification(notification ShareSessionNotification) *ShareSessionBuilder {
 	builder.shareSession.shareSessionNotification = notification
 	return builder
 }
 
-// WithRedirectUri sets redirectUri
+// WithRedirectUri sets redirectUri to the ShareSession
 func (builder *ShareSessionBuilder) WithRedirectUri(redirectUri string) *ShareSessionBuilder {
 	builder.shareSession.redirectUri = redirectUri
 	return builder
@@ -49,7 +49,7 @@ func (builder *ShareSessionBuilder) WithSubject(subject json.RawMessage) *ShareS
 	return builder
 }
 
-// Build constructs the DynamicScenario
+// Build constructs the ShareSession
 func (builder *ShareSessionBuilder) Build() (ShareSession, error) {
 	if builder.shareSession.extensions == nil {
 		builder.shareSession.extensions = make([]interface{}, 0)

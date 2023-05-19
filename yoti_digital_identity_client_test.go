@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"gotest.tools/v3/assert"
@@ -16,7 +15,7 @@ func TestDigitalIDClient(t *testing.T) {
 	key, readErr := ioutil.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
-	_, err := DigitalIDClient("some-sdk-id", key)
+	_, err := NewDigitalIdentityClient("some-sdk-id", key)
 	assert.NilError(t, err)
 }
 
@@ -32,36 +31,6 @@ func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
 		Temporary() bool
 	})
 	assert.Check(t, !temporary || !tempError.Temporary())
-}
-
-func TestDigitalIDClient_PerformAmlCheck(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
-	assert.NilError(t, readErr)
-
-	client, clientErr := DigitalIDClient("some-sdk-id", key)
-	assert.NilError(t, clientErr)
-
-	client.HTTPClient = &mockHTTPClient{
-		do: func(*http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
-			}, nil
-		},
-	}
-
-	var amlAddress = aml.Address{
-		Country: "GBR"}
-
-	var amlProfile = aml.Profile{
-		GivenNames: "Edward Richard George",
-		FamilyName: "Heath",
-		Address:    amlAddress}
-
-	result, err := client.PerformAmlCheck(amlProfile)
-	assert.NilError(t, err)
-
-	assert.Check(t, result.OnFraudList)
 }
 
 func TestDigitalIDClient_CreateShareURL(t *testing.T) {

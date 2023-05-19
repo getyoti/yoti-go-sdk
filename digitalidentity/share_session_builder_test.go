@@ -30,13 +30,13 @@ func ExampleShareSessionBuilder_WithPolicy() {
 		return
 	}
 
-	scenario, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	data, err := scenario.MarshalJSON()
+	data, err := session.MarshalJSON()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -61,13 +61,13 @@ func ExampleShareSessionBuilder_WithExtension() {
 		return
 	}
 
-	scenario, err := (&ShareSessionBuilder{}).WithExtension(builtExtension).WithPolicy(policy).Build()
+	session, err := (&ShareSessionBuilder{}).WithExtension(builtExtension).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	data, err := scenario.MarshalJSON()
+	data, err := session.MarshalJSON()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -82,13 +82,13 @@ func ExampleShareSessionBuilder_WithSubject() {
 		"subject_id": "some_subject_id_string"
 	}`)
 
-	scenario, err := (&ShareSessionBuilder{}).WithSubject(subject).Build()
+	session, err := (&ShareSessionBuilder{}).WithSubject(subject).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	data, err := scenario.MarshalJSON()
+	data, err := session.MarshalJSON()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
