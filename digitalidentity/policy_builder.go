@@ -59,7 +59,7 @@ func (b *PolicyBuilder) WithWantedAttributeByName(name string, options ...interf
 		case constraintInterface:
 			attributeBuilder.WithConstraint(value)
 		default:
-			panic(fmt.Sprintf("Not a valid option type, %v", value))
+			panic(fmt.Sprintf("not a valid option type, %v", value))
 		}
 	}
 
@@ -152,7 +152,7 @@ func (b *PolicyBuilder) WithAgeDerivedAttribute(derivation string, options ...in
 		case constraintInterface:
 			attributeBuilder.WithConstraint(value)
 		default:
-			panic(fmt.Sprintf("Not a valid option type, %v", value))
+			panic(fmt.Sprintf("not a valid option type, %v", value))
 		}
 	}
 

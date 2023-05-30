@@ -57,7 +57,7 @@ func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
 
 	var err error
 	if len(builder.attr.name) == 0 {
-		err = errors.New("Wanted attribute names must not be empty")
+		err = errors.New("wanted attribute names must not be empty")
 	}
 
 	return builder.attr, err
