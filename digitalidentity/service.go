@@ -10,9 +10,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
-func getIdentitySesssionCreationEndpoint() string {
-	return "/v2/sessions"
-}
+const identitySesssionCreationEndpoint = "/v2/sessions"
 
 // SessionResult contains the information about a created session
 type SessionResult struct {
@@ -23,7 +21,7 @@ type SessionResult struct {
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSession, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
-	endpoint := getIdentitySesssionCreationEndpoint()
+	endpoint := identitySesssionCreationEndpoint
 
 	payload, err := shareSession.MarshalJSON()
 	if err != nil {
