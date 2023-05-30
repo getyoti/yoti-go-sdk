@@ -338,7 +338,7 @@ func TestDigitalIdentityBuilder_WithWantedAttributeByName_InvalidOptionsShouldPa
 
 	defer func() {
 		r := recover().(string)
-		assert.Check(t, strings.Contains(r, "Not a valid option type"))
+		assert.Check(t, strings.Contains(r, "not a valid option type"))
 	}()
 
 	builder.WithWantedAttributeByName(
@@ -358,8 +358,8 @@ func TestDigitalIdentityBuilder_WithWantedAttributeByName_ShouldPropagateErrors(
 
 	_, err := builder.Build()
 
-	assert.Error(t, err, "Wanted attribute names must not be empty, Wanted attribute names must not be empty")
-	assert.Error(t, err.(yotierror.MultiError).Unwrap(), "Wanted attribute names must not be empty")
+	assert.Error(t, err, "wanted attribute names must not be empty, wanted attribute names must not be empty")
+	assert.Error(t, err.(yotierror.MultiError).Unwrap(), "wanted attribute names must not be empty")
 }
 
 func TestDigitalIdentityBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *testing.T) {
@@ -404,7 +404,7 @@ func TestDigitalIdentityBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPani
 
 	defer func() {
 		r := recover().(string)
-		assert.Check(t, strings.Contains(r, "Not a valid option type"))
+		assert.Check(t, strings.Contains(r, "not a valid option type"))
 	}()
 
 	builder.WithAgeDerivedAttribute(

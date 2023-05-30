@@ -338,7 +338,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPani
 
 	defer func() {
 		r := recover().(string)
-		assert.Check(t, strings.Contains(r, "Not a valid option type"))
+		assert.Check(t, strings.Contains(r, "not a valid option type"))
 	}()
 
 	builder.WithWantedAttributeByName(
@@ -404,7 +404,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(
 
 	defer func() {
 		r := recover().(string)
-		assert.Check(t, strings.Contains(r, "Not a valid option type"))
+		assert.Check(t, strings.Contains(r, "not a valid option type"))
 	}()
 
 	builder.WithAgeDerivedAttribute(
