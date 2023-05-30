@@ -43,10 +43,10 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 	}
 
 	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
-	defer response.Body.Close()
 	if err != nil {
 		return share, err
 	}
+	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
