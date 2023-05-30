@@ -3,7 +3,6 @@ package digitalidentity
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -26,7 +25,6 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 
 	payload, err := shareSession.MarshalJSON()
 	if err != nil {
-		fmt.Errorf("failed to marshal session request: %v", err)
 		return share, err
 	}
 
@@ -39,20 +37,17 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 		Body:       payload,
 	}.Request()
 	if err != nil {
-		fmt.Errorf("failed to generate signed session request: %v", err)
 		return
 	}
 
 	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
-		fmt.Errorf("failed to execute request: %v", err)
 		return share, err
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		fmt.Errorf("failed to read response body: %v", err)
 		return share, err
 	}
 
