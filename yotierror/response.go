@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -65,8 +65,8 @@ func formatResponseMessage(response *http.Response, httpErrorMessages ...map[int
 		return defaultMessage
 	}
 
-	body, _ := ioutil.ReadAll(response.Body)
-	response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	body, _ := io.ReadAll(response.Body)
+	response.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	var errorDO DataObject
 	jsonError := json.Unmarshal(body, &errorDO)
@@ -104,8 +104,8 @@ func formatHTTPError(message string, statusCode int, body []byte) string {
 func handleHTTPError(response *http.Response, errorMessages ...map[int]string) string {
 	var body []byte
 	if response.Body != nil {
-		body, _ = ioutil.ReadAll(response.Body)
-		response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		body, _ = io.ReadAll(response.Body)
+		response.Body = io.NopCloser(bytes.NewBuffer(body))
 	} else {
 		body = make([]byte, 0)
 	}

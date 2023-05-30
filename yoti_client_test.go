@@ -2,7 +2,7 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -26,7 +26,7 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 }
 
 func TestNewClient(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	key, readErr := os.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
 	_, err := NewClient("some-sdk-id", key)
@@ -34,7 +34,7 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, err := ioutil.ReadFile("test/test-key-invalid-format.pem")
+	key, err := os.ReadFile("test/test-key-invalid-format.pem")
 	assert.NilError(t, err)
 
 	_, err = NewClient("", key)
@@ -48,7 +48,7 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestYotiClient_PerformAmlCheck(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	key, readErr := os.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
 	client, clientErr := NewClient("some-sdk-id", key)
@@ -58,7 +58,7 @@ func TestYotiClient_PerformAmlCheck(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
 			}, nil
 		},
 	}
@@ -78,7 +78,7 @@ func TestYotiClient_PerformAmlCheck(t *testing.T) {
 }
 
 func TestYotiClient_CreateShareURL(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	key, readErr := os.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
 	client, clientErr := NewClient("some-sdk-id", key)
@@ -88,7 +88,7 @@ func TestYotiClient_CreateShareURL(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
 			}, nil
 		},
 	}

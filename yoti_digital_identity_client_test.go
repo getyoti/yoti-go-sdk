@@ -1,8 +1,9 @@
 package yoti
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func TestDigitalIDClient(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	key, readErr := os.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
 	_, err := NewDigitalIdentityClient("some-sdk-id", key)
@@ -19,7 +20,7 @@ func TestDigitalIDClient(t *testing.T) {
 }
 
 func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
-	key, err := ioutil.ReadFile("test/test-key-invalid-format.pem")
+	key, err := os.ReadFile("test/test-key-invalid-format.pem")
 	assert.NilError(t, err)
 
 	_, err = NewDigitalIdentityClient("", key)
@@ -33,7 +34,7 @@ func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestDigitalIDClient_CreateShareURL(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
+	key, readErr := os.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
 	client, clientErr := NewDigitalIdentityClient("some-sdk-id", key)
@@ -43,7 +44,7 @@ func TestDigitalIDClient_CreateShareURL(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
 			}, nil
 		},
 	}

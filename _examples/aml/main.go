@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -19,7 +18,7 @@ var (
 
 func main() {
 	var err error
-	key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	key, err = os.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	if err != nil {
