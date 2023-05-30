@@ -20,7 +20,7 @@ func ExampleShareSessionBuilder() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[],"redirectUri":"","notification":{"url":"","method":"","verifyTls":false,"headers":null}}
+	// Output: {"policy":{"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[],"redirectUri":"","notification":{"url":"","method":"","verifyTls":null,"headers":null}}
 }
 
 func ExampleShareSessionBuilder_WithPolicy() {
@@ -43,7 +43,7 @@ func ExampleShareSessionBuilder_WithPolicy() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[{"name":"email_address","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":false},"extensions":[],"redirectUri":"","notification":{"url":"","method":"","verifyTls":false,"headers":null}}
+	// Output: {"policy":{"wanted":[{"name":"email_address","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":false},"extensions":[],"redirectUri":"","notification":{"url":"","method":"","verifyTls":null,"headers":null}}
 }
 
 func ExampleShareSessionBuilder_WithExtension() {
@@ -74,7 +74,7 @@ func ExampleShareSessionBuilder_WithExtension() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"redirectUri":"","notification":{"url":"","method":"","verifyTls":false,"headers":null}}
+	// Output: {"policy":{"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"redirectUri":"","notification":{"url":"","method":"","verifyTls":null,"headers":null}}
 }
 
 func ExampleShareSessionBuilder_WithSubject() {
@@ -95,5 +95,5 @@ func ExampleShareSessionBuilder_WithSubject() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[],"redirectUri":"","subject":{"subject_id":"some_subject_id_string"},"notification":{"url":"","method":"","verifyTls":false,"headers":null}}
+	// Output: {"policy":{"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[],"redirectUri":"","subject":{"subject_id":"some_subject_id_string"},"notification":{"url":"","method":"","verifyTls":null,"headers":null}}
 }
