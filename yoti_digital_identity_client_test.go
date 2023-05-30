@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
-	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"gotest.tools/v3/assert"
 )
 
@@ -23,7 +22,7 @@ func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
 	key, err := ioutil.ReadFile("test/test-key-invalid-format.pem")
 	assert.NilError(t, err)
 
-	_, err = NewClient("", key)
+	_, err = NewDigitalIdentityClient("", key)
 
 	assert.ErrorContains(t, err, "invalid key: not PEM-encoded")
 
@@ -37,7 +36,7 @@ func TestDigitalIDClient_CreateShareURL(t *testing.T) {
 	key, readErr := ioutil.ReadFile("./test/test-key.pem")
 	assert.NilError(t, readErr)
 
-	client, clientErr := NewClient("some-sdk-id", key)
+	client, clientErr := NewDigitalIdentityClient("some-sdk-id", key)
 	assert.NilError(t, clientErr)
 
 	client.HTTPClient = &mockHTTPClient{
@@ -58,29 +57,4 @@ func TestDigitalIDClient_CreateShareURL(t *testing.T) {
 	result, err := client.CreateShareURL(&scenario)
 	assert.NilError(t, err)
 	assert.Equal(t, result.ShareURL, "https://code.yoti.com/some-qr")
-}
-
-func TestDigitalIDClient_HttpFailure_ReturnsFailure(t *testing.T) {
-	key := getValidKey()
-
-	client := Client{
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 500,
-				}, nil
-			},
-		},
-		Key: key,
-	}
-
-	_, err := client.GetActivityDetails(test.EncryptedToken)
-
-	assert.Check(t, err != nil)
-	assert.ErrorContains(t, err, "unknown HTTP error")
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, temporary)
-	assert.Check(t, tempError.Temporary())
 }

@@ -8,7 +8,7 @@ import (
 type ShareSessionNotification struct {
 	url       string
 	method    string
-	verifyTLS bool
+	verifyTLS *bool
 	headers   map[string][]string
 }
 
@@ -31,7 +31,7 @@ func (b *ShareSessionNotificationBuilder) WithMethod(method string) *ShareSessio
 
 // WithVerifyTLS sets whether TLS should be verified for notifications.
 func (b *ShareSessionNotificationBuilder) WithVerifyTls(verifyTls bool) *ShareSessionNotificationBuilder {
-	b.shareSessionNotification.verifyTLS = verifyTls
+	b.shareSessionNotification.verifyTLS = &verifyTls
 	return b
 }
 
@@ -51,7 +51,7 @@ func (a *ShareSessionNotification) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Url       string              `json:"url"`
 		Method    string              `json:"method"`
-		VerifyTls bool                `json:"verifyTls"`
+		VerifyTls *bool               `json:"verifyTls"`
 		Headers   map[string][]string `json:"headers"`
 	}{
 		Url:       a.url,
