@@ -12,7 +12,7 @@ The YotiClient is the SDK entry point. To initialise it you need include the fol
 
 ```Go
 clientSdkID := "your-client-sdk-id"
-key, err := ioutil.ReadFile("path/to/your-application-pem-file.pem")
+key, err := os.ReadFile("path/to/your-application-pem-file.pem")
 if err != nil {
     // handle key load error
 }

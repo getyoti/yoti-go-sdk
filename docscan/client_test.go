@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -44,7 +44,7 @@ func TestClient_CreateSession(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusCreated,
-				Body:       ioutil.NopCloser(strings.NewReader(jsonResponse)),
+				Body:       io.NopCloser(strings.NewReader(jsonResponse)),
 			}, nil
 		},
 	}
@@ -122,7 +122,7 @@ func TestClient_GetSession(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       ioutil.NopCloser(strings.NewReader(jsonResponse)),
+				Body:       io.NopCloser(strings.NewReader(jsonResponse)),
 			}, nil
 		},
 	}
@@ -181,7 +181,7 @@ func TestClient_GetSession_ShouldReturnJsonError(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       ioutil.NopCloser(strings.NewReader("some-invalid-json")),
+				Body:       io.NopCloser(strings.NewReader("some-invalid-json")),
 			}, nil
 		},
 	}
@@ -258,7 +258,7 @@ func TestClient_GetMediaContent(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       ioutil.NopCloser(bytes.NewReader(jpegImage)),
+				Body:       io.NopCloser(bytes.NewReader(jpegImage)),
 				Header:     map[string][]string{"Content-Type": {media.ImageTypeJPEG}},
 			}, nil
 		},
@@ -312,7 +312,7 @@ func TestClient_GetMediaContent_NoContentType(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       ioutil.NopCloser(bytes.NewReader(jpegImage)),
+				Body:       io.NopCloser(bytes.NewReader(jpegImage)),
 				Header:     map[string][]string{},
 			}, nil
 		},
@@ -438,7 +438,7 @@ func TestClient_GetSupportedDocuments(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
+				Body:       io.NopCloser(bytes.NewReader(jsonBytes)),
 			}, nil
 		},
 	}
@@ -488,7 +488,7 @@ func TestClient_GetSupportedDocuments_ShouldReturnResponseError(t *testing.T) {
 }
 
 func TestNewClient(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -504,7 +504,7 @@ func TestNewClient_EmptySdkID(t *testing.T) {
 }
 
 func TestClient_GetSession_EmptySessionID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -515,7 +515,7 @@ func TestClient_GetSession_EmptySessionID(t *testing.T) {
 }
 
 func TestClient_DeleteSession_EmptySessionID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -526,7 +526,7 @@ func TestClient_DeleteSession_EmptySessionID(t *testing.T) {
 }
 
 func TestClient_GetMediaContent_EmptySessionID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -537,7 +537,7 @@ func TestClient_GetMediaContent_EmptySessionID(t *testing.T) {
 }
 
 func TestClient_GetMediaContent_EmptyMediaID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -548,7 +548,7 @@ func TestClient_GetMediaContent_EmptyMediaID(t *testing.T) {
 }
 
 func TestClient_DeleteMediaContent_EmptySessionID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -559,7 +559,7 @@ func TestClient_DeleteMediaContent_EmptySessionID(t *testing.T) {
 }
 
 func TestClient_DeleteMediaContent_EmptyMediaID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -570,7 +570,7 @@ func TestClient_DeleteMediaContent_EmptyMediaID(t *testing.T) {
 }
 
 func Test_EmptySdkID(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -581,7 +581,7 @@ func Test_EmptySdkID(t *testing.T) {
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key-invalid-format.pem")
+	key, err := os.ReadFile("../test/test-key-invalid-format.pem")
 	assert.NilError(t, err)
 
 	_, err = NewClient("sdkID", key)
@@ -595,7 +595,7 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestClient_UsesDefaultApiUrl(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("sdkID", key)
@@ -605,7 +605,7 @@ func TestClient_UsesDefaultApiUrl(t *testing.T) {
 }
 
 func TestClient_UsesEnvVariable(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")
@@ -617,7 +617,7 @@ func TestClient_UsesEnvVariable(t *testing.T) {
 }
 
 func TestClient_UsesOverrideApiUrlOverEnvVariable(t *testing.T) {
-	key, err := ioutil.ReadFile("../test/test-key.pem")
+	key, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	os.Setenv("YOTI_DOC_SCAN_API_URL", "envBaseUrl")

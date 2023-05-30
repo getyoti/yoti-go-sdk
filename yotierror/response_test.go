@@ -3,7 +3,7 @@ package yotierror
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -27,7 +27,7 @@ func TestError_ShouldReturnFormattedError(t *testing.T) {
 	err = NewResponseError(
 		&http.Response{
 			StatusCode: 401,
-			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
+			Body:       io.NopCloser(bytes.NewReader(jsonBytes)),
 		},
 	)
 
@@ -44,7 +44,7 @@ func TestError_ShouldReturnFormattedErrorCodeAndMessageOnly(t *testing.T) {
 	err = NewResponseError(
 		&http.Response{
 			StatusCode: 400,
-			Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
+			Body:       io.NopCloser(bytes.NewReader(jsonBytes)),
 		},
 	)
 
@@ -64,7 +64,7 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorByDefault(t *testing
 func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *testing.T) {
 	response := &http.Response{
 		StatusCode: 400,
-		Body:       ioutil.NopCloser(strings.NewReader("some invalid JSON")),
+		Body:       io.NopCloser(strings.NewReader("some invalid JSON")),
 	}
 	err := NewResponseError(
 		response,
@@ -75,7 +75,7 @@ func TestError_ShouldReturnFormattedError_ReturnWrappedErrorWhenInvalidJSON(t *t
 	errorResponse := err.Response
 	assert.Equal(t, response, errorResponse)
 
-	body, readErr := ioutil.ReadAll(errorResponse.Body)
+	body, readErr := io.ReadAll(errorResponse.Body)
 	assert.NilError(t, readErr)
 
 	assert.Equal(t, string(body), "some invalid JSON")
@@ -85,7 +85,7 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 	jsonString := "{\"message\": \"some message\", \"code\": \"SOME_CODE\", \"error\": [{\"some_key\": \"some value\"}]}"
 	response := &http.Response{
 		StatusCode: 400,
-		Body:       ioutil.NopCloser(strings.NewReader(jsonString)),
+		Body:       io.NopCloser(strings.NewReader(jsonString)),
 	}
 	err := NewResponseError(
 		response,
@@ -96,7 +96,7 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 	errorResponse := err.Response
 	assert.Equal(t, response, errorResponse)
 
-	body, readErr := ioutil.ReadAll(errorResponse.Body)
+	body, readErr := io.ReadAll(errorResponse.Body)
 	assert.NilError(t, readErr)
 
 	assert.Equal(t, string(body), jsonString)
@@ -105,7 +105,7 @@ func TestError_ShouldReturnFormattedError_IgnoreUnknownErrorItems(t *testing.T) 
 func TestError_ShouldReturnCustomErrorForCode(t *testing.T) {
 	response := &http.Response{
 		StatusCode: 404,
-		Body:       ioutil.NopCloser(strings.NewReader("some body")),
+		Body:       io.NopCloser(strings.NewReader("some body")),
 	}
 	err := NewResponseError(
 		response,
@@ -118,7 +118,7 @@ func TestError_ShouldReturnCustomErrorForCode(t *testing.T) {
 func TestError_ShouldReturnCustomDefaultError(t *testing.T) {
 	response := &http.Response{
 		StatusCode: 500,
-		Body:       ioutil.NopCloser(strings.NewReader("some body")),
+		Body:       io.NopCloser(strings.NewReader("some body")),
 	}
 	err := NewResponseError(
 		response,
