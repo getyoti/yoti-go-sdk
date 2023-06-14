@@ -16,9 +16,10 @@ type IDDocumentResourceResponse struct {
 	// Pages are the individual pages of the identity document
 	Pages []*PageResponse `json:"pages"`
 	// DocumentFields are the associated document fields of a document
-	DocumentFields      *DocumentFieldsResponse  `json:"document_fields"`
-	DocumentIDPhoto     *DocumentIDPhotoResponse `json:"document_id_photo"`
-	textExtractionTasks []*TextExtractionTaskResponse
+	DocumentFields         *DocumentFieldsResponse         `json:"document_fields"`
+	ExpandedDocumentFields *ExpandedDocumentFieldsResponse `json:"expanded_document_fields"`
+	DocumentIDPhoto        *DocumentIDPhotoResponse        `json:"document_id_photo"`
+	textExtractionTasks    []*TextExtractionTaskResponse
 }
 
 // TextExtractionTasks returns a slice of text extraction tasks associated with the ID document
