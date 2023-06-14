@@ -102,7 +102,8 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
-	passportFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
+	//This section is used for Orthogonal Restriction
+	/*passportFilter, err := filter.NewRequestedOrthogonalRestrictionsFilterBuilder().
 		WithIncludedDocumentTypes(
 			[]string{"PASSPORT"}).
 		WithNonLatinDocuments(true).
@@ -110,15 +111,34 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		Build()
 	if err != nil {
 		return nil, err
-	}
-	passportDoc, err := filter.NewRequiredIDDocumentBuilder().
-		WithFilter(passportFilter).
+	}*/
+
+	docRestriction, err := filter.NewRequestedDocumentRestrictionBuilder().
+		WithDocumentTypes([]string{"PASSPORT"}).
+		WithCountryCodes([]string{"GBR"}).
 		Build()
 	if err != nil {
 		return nil, err
 	}
 
-	idDoc, err := filter.NewRequiredIDDocumentBuilder().Build()
+	/*passportDoc, err := filter.NewRequiredIDDocumentBuilder().
+		WithFilter(passportFilter).
+		Build()
+	if err != nil {
+		return nil, err
+	}*/
+
+	docFilter, err := filter.NewRequestedDocumentRestrictionsFilterBuilder().
+		ForIncludeList().
+		WithDocumentRestriction(docRestriction).
+		WithAllowNonLatinDocuments(true).
+		WithExpiredDocuments(false).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	idDoc, err := filter.NewRequiredIDDocumentBuilder().WithFilter(docFilter).Build()
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +169,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedTask(textExtractionTask).
 		WithRequestedTask(supplementaryDocTextExtractionTask).
 		WithSDKConfig(sdkConfig).
-		WithRequiredDocument(passportDoc).
+		//WithRequiredDocument(passportDoc).
 		WithRequiredDocument(idDoc).
 		WithRequiredDocument(supplementaryDoc).
 		Build()
@@ -157,6 +177,11 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if err != nil {
+		return nil, err
+	}
+
 	return sessionSpec, nil
 }
 
@@ -207,8 +232,5 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 		WithImportToken(importToken).
 		Build()
 
-	if err != nil {
-		return nil, err
-	}
 	return sessionSpec, nil
 }
