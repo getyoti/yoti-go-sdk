@@ -72,6 +72,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	var textExtractionTask *task.RequestedTextExtractionTask
 	textExtractionTask, err = task.NewRequestedTextExtractionTaskBuilder().
 		WithManualCheckAlways().
+		WithExpandedDocumentFields(true).
 		Build()
 	if err != nil {
 		return nil, err
@@ -169,6 +170,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithRequestedTask(textExtractionTask).
 		WithRequestedTask(supplementaryDocTextExtractionTask).
 		WithSDKConfig(sdkConfig).
+		//Below line will be enabled when orthogonal Restriction is Needed
 		//WithRequiredDocument(passportDoc).
 		WithRequiredDocument(idDoc).
 		WithRequiredDocument(supplementaryDoc).
