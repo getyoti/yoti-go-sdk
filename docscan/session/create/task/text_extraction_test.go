@@ -101,3 +101,15 @@ func TestRequestedTextExtractionTaskBuilder_WithChipDataIgnore(t *testing.T) {
 	config := task.Config().(RequestedTextExtractionTaskConfig)
 	assert.Equal(t, "IGNORE", config.ChipData)
 }
+
+func TestRequestedTextExtractionTaskBuilder_WithExpandedDocumentFields(t *testing.T) {
+	task, err := NewRequestedTextExtractionTaskBuilder().
+		WithExpandedDocumentFields(true).
+		Build()
+	if err != nil {
+		t.Fail()
+	}
+
+	config := task.Config().(RequestedTextExtractionTaskConfig)
+	assert.Equal(t, true, config.CreateExpandedDocumentFields)
+}
