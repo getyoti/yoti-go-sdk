@@ -39,8 +39,9 @@ func NewRequestedTextExtractionTask(config RequestedTextExtractionTaskConfig) *R
 
 // RequestedTextExtractionTaskConfig is the configuration applied when creating a Text Extraction Task
 type RequestedTextExtractionTaskConfig struct {
-	ManualCheck string `json:"manual_check,omitempty"`
-	ChipData    string `json:"chip_data,omitempty"`
+	ManualCheck                  string `json:"manual_check,omitempty"`
+	ChipData                     string `json:"chip_data,omitempty"`
+	CreateExpandedDocumentFields bool   `json:"create_expanded_document_fields,omitempty"`
 }
 
 // NewRequestedTextExtractionTaskBuilder creates a new RequestedTextExtractionTaskBuilder
@@ -50,8 +51,9 @@ func NewRequestedTextExtractionTaskBuilder() *RequestedTextExtractionTaskBuilder
 
 // RequestedTextExtractionTaskBuilder builds a RequestedTextExtractionTask
 type RequestedTextExtractionTaskBuilder struct {
-	manualCheck string
-	chipData    string
+	manualCheck                  string
+	chipData                     string
+	createExpandedDocumentFields bool
 }
 
 // WithManualCheckAlways sets the value of manual check to "ALWAYS"
@@ -84,11 +86,18 @@ func (builder *RequestedTextExtractionTaskBuilder) WithChipDataIgnore() *Request
 	return builder
 }
 
+// withExpandedDocumentFields sets the value of expanded document fields whether its true or false
+func (builder *RequestedTextExtractionTaskBuilder) WithExpandedDocumentFields(expandedDocumentFields bool) *RequestedTextExtractionTaskBuilder {
+	builder.createExpandedDocumentFields = expandedDocumentFields
+	return builder
+}
+
 // Build builds the RequestedTextExtractionTask
 func (builder *RequestedTextExtractionTaskBuilder) Build() (*RequestedTextExtractionTask, error) {
 	config := RequestedTextExtractionTaskConfig{
 		builder.manualCheck,
 		builder.chipData,
+		builder.createExpandedDocumentFields,
 	}
 
 	return NewRequestedTextExtractionTask(config), nil
