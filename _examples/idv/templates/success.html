@@ -389,6 +389,41 @@
                         </div>
                     {{ end }}
 
+                    {{ if $doc.ExpandedDocumentFields }}
+                    <div class="card">
+                        <div class="card-header" id="document-fields-{{ $key }}">
+                            <h4 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse-document-fields-{{ $key }}"
+                                        aria-expanded="true"
+                                        aria-controls="collapse-document-fields-{{ $key }}">
+                                    Expanded Document Fields
+                                </button>
+                            </h4>
+                        </div>
+                        <div id="collapse-document-fields-{{ $key }}" class="collapse"
+                             aria-labelledby="document-fields-{{ $key }}">
+                            <div class="card-body">
+                                {{ if $doc.ExpandedDocumentFields.Media }}
+                                    <h5>Media</h5>
+                                    <table class="table table-striped table-light">
+                                        <tbody>
+                                        <tr>
+                                            <td>ID</td>
+                                            <td>
+                                                <a href="/media?mediaId={{ $doc.ExpandedDocumentFields.Media.ID }}">
+                                                    {{ $doc.ExpandedDocumentFields.Media.ID }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                {{ end }}
+
                     {{ if $doc.DocumentIDPhoto }}
                     <div class="card">
                         <div class="card-header" id="document-id-photo-{{ $key }}">

@@ -180,10 +180,6 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
 	return sessionSpec, nil
 }
 
