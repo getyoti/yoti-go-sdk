@@ -1,4 +1,4 @@
-package dynamic
+package digitalidentity
 
 import (
 	"encoding/json"

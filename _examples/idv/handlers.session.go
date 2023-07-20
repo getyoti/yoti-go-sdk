@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -157,7 +156,7 @@ func initialiseDocScanClient() error {
 	var err error
 	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 	keyFilePath := os.Getenv("YOTI_KEY_FILE_PATH")
-	key, err = ioutil.ReadFile(keyFilePath)
+	key, err = os.ReadFile(keyFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to get key from YOTI_KEY_FILE_PATH :: %w", err)
 	}

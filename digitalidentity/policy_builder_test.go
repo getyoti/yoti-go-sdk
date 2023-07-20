@@ -1,4 +1,4 @@
-package dynamic
+package digitalidentity
 
 import (
 	"encoding/json"
@@ -313,7 +313,7 @@ func ExamplePolicyBuilder_WithPhoneNumber() {
 	// Output: {"wanted":[{"name":"phone_number","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
 }
 
-func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *testing.T) {
+func TestDigitalIdentityBuilder_WithWantedAttributeByName_WithSourceConstraint(t *testing.T) {
 	attributeName := "attributeName"
 	builder := &PolicyBuilder{}
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
@@ -331,7 +331,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_WithSourceConstraint(t *
 	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
-func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPanic(t *testing.T) {
+func TestDigitalIdentityBuilder_WithWantedAttributeByName_InvalidOptionsShouldPanic(t *testing.T) {
 	attributeName := "attributeName"
 	builder := &PolicyBuilder{}
 	invalidOption := "invalidOption"
@@ -350,7 +350,7 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_InvalidOptionsShouldPani
 
 }
 
-func TestDynamicPolicyBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t *testing.T) {
+func TestDigitalIdentityBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t *testing.T) {
 	builder := &PolicyBuilder{}
 
 	builder.WithWantedAttributeByName("")
@@ -358,11 +358,11 @@ func TestDynamicPolicyBuilder_WithWantedAttributeByName_ShouldPropagateErrors(t 
 
 	_, err := builder.Build()
 
-	assert.Error(t, err, "Wanted attribute names must not be empty, Wanted attribute names must not be empty")
-	assert.Error(t, err.(yotierror.MultiError).Unwrap(), "Wanted attribute names must not be empty")
+	assert.Error(t, err, "wanted attribute names must not be empty, wanted attribute names must not be empty")
+	assert.Error(t, err.(yotierror.MultiError).Unwrap(), "wanted attribute names must not be empty")
 }
 
-func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *testing.T) {
+func TestDigitalIdentityBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *testing.T) {
 	builder := &PolicyBuilder{}
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
@@ -379,7 +379,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithSourceConstraint(t *te
 	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
-func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t *testing.T) {
+func TestDigitalIdentityBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t *testing.T) {
 	builder := &PolicyBuilder{}
 	var constraint constraintInterface
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
@@ -398,7 +398,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_WithConstraintInterface(t 
 	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
-func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(t *testing.T) {
+func TestDigitalIdentityBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(t *testing.T) {
 	builder := &PolicyBuilder{}
 	invalidOption := "invalidOption"
 
@@ -416,32 +416,7 @@ func TestDynamicPolicyBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPanic(
 
 }
 
-func ExamplePolicyBuilder_WithIdentityProfileRequirements() {
-	identityProfile := []byte(`{
-		"trust_framework": "UK_TFIDA",
-		"scheme": {
-			"type":      "DBS",
-			"objective": "STANDARD"
-		}
-	}`)
-
-	policy, err := (&PolicyBuilder{}).WithIdentityProfileRequirements(identityProfile).Build()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	data, err := policy.MarshalJSON()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	fmt.Println(string(data))
-	// Output: {"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false,"identity_profile_requirements":{"trust_framework":"UK_TFIDA","scheme":{"type":"DBS","objective":"STANDARD"}}}
-}
-
-func TestPolicyBuilder_WithIdentityProfileRequirements_ShouldFailForInvalidJSON(t *testing.T) {
+func TestDigitalIdentityBuilder_WithIdentityProfileRequirements_ShouldFailForInvalidJSON(t *testing.T) {
 	identityProfile := []byte(`{
 		"trust_framework": UK_TFIDA",
 		,

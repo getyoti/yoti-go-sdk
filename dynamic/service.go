@@ -4,7 +4,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
@@ -44,7 +44,7 @@ func CreateShareURL(httpClient requests.HttpClient, scenario *Scenario, clientSd
 		return share, err
 	}
 
-	responseBytes, err := ioutil.ReadAll(response.Body)
+	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return
 	}

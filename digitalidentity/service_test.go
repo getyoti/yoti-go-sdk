@@ -1,4 +1,4 @@
-package dynamic
+package digitalidentity
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func ExampleCreateShareURL() {
+func ExampleCreateShareSession() {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
@@ -40,13 +40,13 @@ func ExampleCreateShareURL() {
 		return
 	}
 
-	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	result, err := CreateShareURL(client, &scenario, "sdkId", "https://apiurl", key)
+	result, err := CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -106,10 +106,10 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 	if err != nil {
 		return
 	}
-	scenario, err := (&ScenarioBuilder{}).WithPolicy(policy).Build()
+	scenario, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
 
-	return CreateShareURL(client, &scenario, "sdkId", "https://apiurl", key)
+	return CreateShareSession(client, &scenario, "sdkId", "https://apiurl", key)
 }

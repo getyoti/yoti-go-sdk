@@ -4,7 +4,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 
@@ -65,7 +65,7 @@ func (client *Client) SetupSharingProfile(tokenRequest TokenRequest) (token stri
 		return
 	}
 	if response.StatusCode != http.StatusCreated {
-		body, _ := ioutil.ReadAll(response.Body)
+		body, _ := io.ReadAll(response.Body)
 		return "", fmt.Errorf("Sharing Profile not created (HTTP %d) %s", response.StatusCode, string(body))
 	}
 
