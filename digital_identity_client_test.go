@@ -12,10 +12,10 @@ import (
 )
 
 func TestDigitalIDClient(t *testing.T) {
-	key, readErr := os.ReadFile("./test/test-key.pem")
-	assert.NilError(t, readErr)
+	key, err := os.ReadFile("./test/test-key.pem")
+	assert.NilError(t, err)
 
-	_, err := NewDigitalIdentityClient("some-sdk-id", key)
+	_, err = NewDigitalIdentityClient("some-sdk-id", key)
 	assert.NilError(t, err)
 }
 
@@ -34,11 +34,11 @@ func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestDigitalIDClient_CreateShareURL(t *testing.T) {
-	key, readErr := os.ReadFile("./test/test-key.pem")
-	assert.NilError(t, readErr)
+	key, err := os.ReadFile("./test/test-key.pem")
+	assert.NilError(t, err)
 
-	client, clientErr := NewDigitalIdentityClient("some-sdk-id", key)
-	assert.NilError(t, clientErr)
+	client, err := NewDigitalIdentityClient("some-sdk-id", key)
+	assert.NilError(t, err)
 
 	client.HTTPClient = &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -49,11 +49,11 @@ func TestDigitalIDClient_CreateShareURL(t *testing.T) {
 		},
 	}
 
-	policy, policyErr := (&dynamic.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
-	assert.NilError(t, policyErr)
+	policy, err := (&dynamic.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	assert.NilError(t, err)
 
-	scenario, scenarioErr := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).Build()
-	assert.NilError(t, scenarioErr)
+	scenario, err := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).Build()
+	assert.NilError(t, err)
 
 	result, err := client.CreateShareURL(&scenario)
 	assert.NilError(t, err)
