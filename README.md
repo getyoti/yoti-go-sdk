@@ -58,7 +58,7 @@ For each service you will need:
 
 ## Support
 
-For any questions or support please email [clientsupport@yoti.com](mailto:clientsupport@yoti.com).
+For any questions or support please contact us here: https://support.yoti.com
 Please provide the following to get you up and working as quickly as possible:
 
 * Computer type
