@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -11,6 +12,20 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+/*
+import (
+
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"testing"
+
+	"github.com/getyoti/yoti-go-sdk/v3/test"
+	"gotest.tools/v3/assert"
+
+)
+*/
 type mockHTTPClient struct {
 	do func(*http.Request) (*http.Response, error)
 }
@@ -29,7 +44,7 @@ func ExampleCreateShareSession() {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"status":"success","ref_id":"0"}`)),
 			}, nil
 		},
 	}
@@ -53,8 +68,8 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	fmt.Printf("QR code: %s", result.ShareURL)
-	// Output: QR code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
+	fmt.Printf("Status code: %s", result.Status)
+	// Output: Status code: success
 }
 
 func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
@@ -90,7 +105,7 @@ func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share ShareURL, err error) {
+func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share SessionResult, err error) {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
@@ -112,4 +127,49 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 	}
 
 	return CreateShareSession(client, &scenario, "sdkId", "https://apiurl", key)
+}
+
+type MockHttpClient struct{}
+
+func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
+	// Simulate a successful response
+	mockResponse := httptest.NewRecorder()
+	mockResponse.WriteString(`{
+		"id": "SOME_ID",
+		"status": "SOME_STATUS",
+		"expiry": "SOME_EXPIRY",
+		"created": "SOME_CREATED",
+		"updated": "SOME_UPDATED",
+		"qrCode": {"id": "SOME_QRCODE_ID"},
+		"receipt": {"id": "SOME_RECEIPT_ID"}
+	}`)
+	return mockResponse.Result(), nil
+}
+
+func TestGetSession(t *testing.T) {
+	mockPrivateKey := test.GetValidKey("../test/test-key.pem")
+	// Create a mock RSA private key (you can replace this with your actual key creation logic)
+
+	// Create a mock HttpClient
+	mockHttpClient := &MockHttpClient{}
+
+	// Define test input values
+	mockSessionID := "SOME_SESSION_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+
+	// Call the function being tested
+	result, err := GetSession(mockHttpClient, mockSessionID, mockClientSdkId, mockApiUrl, mockPrivateKey)
+
+	// Assert that there is no error
+	assert.NilError(t, err)
+
+	// Assert that the result fields match the expected values
+	assert.Equal(t, "SOME_ID", result.Id)
+	assert.Equal(t, "SOME_STATUS", result.Status)
+	assert.Equal(t, "SOME_EXPIRY", result.Expiry)
+	assert.Equal(t, "SOME_CREATED", result.Created)
+	assert.Equal(t, "SOME_UPDATED", result.Updated)
+	assert.Equal(t, "SOME_QRCODE_ID", result.QrCode.Id)
+	assert.Equal(t, "SOME_RECEIPT_ID", result.Receipt.Id)
 }

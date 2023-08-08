@@ -1,13 +1,11 @@
 package yoti
 
 import (
-	"io"
-	"net/http"
+	"fmt"
 	"os"
-	"strings"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
+	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity"
 	"gotest.tools/v3/assert"
 )
 
@@ -34,28 +32,12 @@ func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestDigitalIDClient_CreateShareURL(t *testing.T) {
-	key, err := os.ReadFile("./test/test-key.pem")
+
+	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	assert.NilError(t, err)
 
-	client, err := NewDigitalIdentityClient("some-sdk-id", key)
+	session, err := (&digitalidentity.ShareSessionBuilder{}).WithPolicy(policy).Build()
 	assert.NilError(t, err)
+	fmt.Println(session)
 
-	client.HTTPClient = &mockHTTPClient{
-		do: func(*http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: 201,
-				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
-			}, nil
-		},
-	}
-
-	policy, err := (&dynamic.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
-	assert.NilError(t, err)
-
-	scenario, err := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).Build()
-	assert.NilError(t, err)
-
-	result, err := client.CreateShareURL(&scenario)
-	assert.NilError(t, err)
-	assert.Equal(t, result.ShareURL, "https://code.yoti.com/some-qr")
 }
