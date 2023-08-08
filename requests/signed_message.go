@@ -41,6 +41,13 @@ func JSONHeaders() map[string][]string {
 	}
 }
 
+// Auth Header for X-Yoti-Auth-Id
+func AuthHeader(clientSdkId string) map[string][]string {
+	return map[string][]string{
+		"X-Yoti-Auth-Id": {clientSdkId},
+	}
+}
+
 // AuthKeyHeader is a header prototype including an encoded RSA PublicKey
 func AuthKeyHeader(key *rsa.PublicKey) map[string][]string {
 	return map[string][]string{

@@ -10,7 +10,8 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
-const identitySesssionCreationEndpoint = "/v2/sessions"
+const identitySesssionCreationEndpoint = "v2/sessions"
+const identitySessionRetrieval = "v2/sessions/%s"
 
 // SessionResult contains the information about a created session
 type SessionResult struct {
@@ -20,7 +21,7 @@ type SessionResult struct {
 }
 
 // CreateShareSession creates session using the supplied session specification
-func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSession, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareURL, err error) {
+func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSession, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share SessionResult, err error) {
 	endpoint := identitySesssionCreationEndpoint
 
 	payload, err := shareSession.MarshalJSON()
@@ -28,13 +29,48 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 		return share, err
 	}
 
+	headers := requests.AuthHeader(clientSdkId)
+
 	request, err := requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: http.MethodPost,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    nil,
+		Headers:    headers,
 		Body:       payload,
+	}.Request()
+	if err != nil {
+		return share, err
+	}
+
+	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		//fmt.Printf("err 2:=> %s\n\r", err)
+		return share, err
+	}
+
+	defer response.Body.Close()
+
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return share, err
+	}
+
+	err = json.Unmarshal(responseBytes, &share)
+
+	return share, err
+}
+
+// GetSession get session info using the supplied sessionID
+func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSessionResult, err error) {
+	endpoint := identitySesssionCreationEndpoint
+	headers := requests.AuthHeader(clientSdkId)
+	request, err := requests.SignedRequest{
+		Key:        key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    apiUrl,
+		Endpoint:   endpoint,
+		Headers:    headers,
 	}.Request()
 	if err != nil {
 		return share, err
