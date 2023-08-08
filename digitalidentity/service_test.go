@@ -148,23 +148,17 @@ func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
 
 func TestGetSession(t *testing.T) {
 	mockPrivateKey := test.GetValidKey("../test/test-key.pem")
-	// Create a mock RSA private key (you can replace this with your actual key creation logic)
 
-	// Create a mock HttpClient
 	mockHttpClient := &MockHttpClient{}
 
-	// Define test input values
 	mockSessionID := "SOME_SESSION_ID"
 	mockClientSdkId := "SOME_CLIENT_SDK_ID"
 	mockApiUrl := "https://example.com/api"
 
-	// Call the function being tested
 	result, err := GetSession(mockHttpClient, mockSessionID, mockClientSdkId, mockApiUrl, mockPrivateKey)
 
-	// Assert that there is no error
 	assert.NilError(t, err)
 
-	// Assert that the result fields match the expected values
 	assert.Equal(t, "SOME_ID", result.Id)
 	assert.Equal(t, "SOME_STATUS", result.Status)
 	assert.Equal(t, "SOME_EXPIRY", result.Expiry)
