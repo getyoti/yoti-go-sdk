@@ -31,7 +31,7 @@ func TestDigitalIDClient_KeyLoad_Failure(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func TestDigitalIDClient_CreateShareURL(t *testing.T) {
+func TestDigitalIDClient_CreateShare(t *testing.T) {
 
 	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	assert.NilError(t, err)
@@ -39,5 +39,4 @@ func TestDigitalIDClient_CreateShareURL(t *testing.T) {
 	session, err := (&digitalidentity.ShareSessionBuilder{}).WithPolicy(policy).Build()
 	assert.NilError(t, err)
 	fmt.Println(session)
-
 }

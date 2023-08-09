@@ -1,14 +1,5 @@
 package digitalidentity
 
-var (
-	// ShareURLHTTPErrorMessages specifies the HTTP error status codes used
-	// by the Share URL API
-	ShareSessionHTTPErrorMessages = map[int]string{
-		400: "JSON is incorrect, contains invalid data",
-		404: "Application was not found",
-	}
-)
-
 // ShareSessionResult contains a dynamic share QR code
 type ShareSessionResult struct {
 	Id      string  `json:"id"`

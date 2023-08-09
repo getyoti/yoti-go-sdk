@@ -167,3 +167,30 @@ func TestGetSession(t *testing.T) {
 	assert.Equal(t, "SOME_QRCODE_ID", result.QrCode.Id)
 	assert.Equal(t, "SOME_RECEIPT_ID", result.Receipt.Id)
 }
+
+type HttpClientMock struct{}
+
+func (c *HttpClientMock) Do(req *http.Request) (*http.Response, error) {
+	recorder := httptest.NewRecorder()
+	recorder.WriteString(`{"some": "json"}`)
+	return recorder.Result(), nil
+}
+
+func TestGetShareQr(t *testing.T) {
+	httpClient := &HttpClientMock{}
+	sessionID := "testSessionID"
+	clientSdkId := "testClientSdkId"
+	apiUrl := "http://test.api"
+	privateKey := test.GetValidKey("../test/test-key.pem")
+
+	share, err := GetShareQr(httpClient, sessionID, clientSdkId, apiUrl, privateKey)
+
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
+
+	if &share == nil {
+		t.Error("Expected a non-nil share, but got nil")
+	}
+
+}

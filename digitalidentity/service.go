@@ -3,6 +3,7 @@ package digitalidentity
 import (
 	"crypto/rsa"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -47,9 +48,8 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 		return share, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
-		//fmt.Printf("err 2:=> %s\n\r", err)
 		return share, err
 	}
 
@@ -67,7 +67,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 
 // GetSession get session info using the supplied sessionID
 func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSessionResult, err error) {
-	endpoint := identitySesssionCreationEndpoint
+	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
 	headers := requests.AuthHeader(clientSdkId)
 	request, err := requests.SignedRequest{
 		Key:        key,
@@ -80,7 +80,7 @@ func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 		return share, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return share, err
 	}
@@ -96,7 +96,7 @@ func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 	return share, err
 }
 
-// GetSession get session info using the supplied sessionID
+// Create Share QR using the supplied sessionID
 func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (qrCode CreateShareQrCodeResult, err error) {
 	endpoint := identitySessionQrCodeCreation
 	headers := requests.AuthHeader(clientSdkId)
@@ -112,7 +112,7 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 		return qrCode, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return qrCode, err
 	}
@@ -126,4 +126,35 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 	err = json.Unmarshal(responseBytes, &qrCode)
 
 	return qrCode, err
+}
+
+// Get Share QR info using the supplied sessionID
+func GetShareQr(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSessionFetchedQrCode, err error) {
+	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, sessionID)
+	headers := requests.AuthHeader(clientSdkId)
+	request, err := requests.SignedRequest{
+		Key:        key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    apiUrl,
+		Endpoint:   endpoint,
+		Headers:    headers,
+	}.Request()
+	if err != nil {
+		return share, err
+	}
+
+	response, err := requests.Execute(httpClient, request, ShareHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return share, err
+	}
+	defer response.Body.Close()
+
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return share, err
+	}
+
+	err = json.Unmarshal(responseBytes, &share)
+
+	return share, err
 }
