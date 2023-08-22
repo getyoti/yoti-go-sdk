@@ -62,12 +62,12 @@ func (client *DigitalIdentityClient) GetSdkID() string {
 	return client.SdkID
 }
 
-// CreateShareURL creates a QR code for a specified share session configuration.
-func (client *DigitalIdentityClient) CreateShareSession(shareSession *digitalidentity.ShareSession) (share digitalidentity.SessionResult, err error) {
+// CreateShareSession creates a sharing session to initiate a sharing process based on a policy
+func (client *DigitalIdentityClient) CreateShareSession(shareSession *digitalidentity.ShareSessionRequest) (share digitalidentity.ShareSession, err error) {
 	return digitalidentity.CreateShareSession(client.HTTPClient, shareSession, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
-// getSession creates a QR code for a specified share session configuration.
-func (client *DigitalIdentityClient) GetSession(sessionID string) (share digitalidentity.ShareSessionResult, err error) {
+// GetSession Retrieve the sharing session
+func (client *DigitalIdentityClient) GetSession(sessionID string) (share digitalidentity.ShareSession, err error) {
 	return digitalidentity.GetSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
 }

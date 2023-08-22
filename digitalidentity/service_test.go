@@ -12,20 +12,6 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-/*
-import (
-
-	"fmt"
-	"io"
-	"net/http"
-	"strings"
-	"testing"
-
-	"github.com/getyoti/yoti-go-sdk/v3/test"
-	"gotest.tools/v3/assert"
-
-)
-*/
 type mockHTTPClient struct {
 	do func(*http.Request) (*http.Response, error)
 }

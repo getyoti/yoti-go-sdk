@@ -6,12 +6,12 @@ import (
 
 // ShareSessionBuilder builds a session
 type ShareSessionBuilder struct {
-	shareSession ShareSession
-	err          error
+	shareSessionRequest ShareSessionRequest
+	err                 error
 }
 
 // ShareSession represents a sharesession
-type ShareSession struct {
+type ShareSessionRequest struct {
 	policy                   *Policy
 	redirectUri              string
 	extensions               []interface{}
@@ -21,51 +21,51 @@ type ShareSession struct {
 
 // WithPolicy attaches a Policy to the ShareSession
 func (builder *ShareSessionBuilder) WithPolicy(policy Policy) *ShareSessionBuilder {
-	builder.shareSession.policy = &policy
+	builder.shareSessionRequest.policy = &policy
 	return builder
 }
 
 // WithExtension adds an extension to the ShareSession
 func (builder *ShareSessionBuilder) WithExtension(extension interface{}) *ShareSessionBuilder {
-	builder.shareSession.extensions = append(builder.shareSession.extensions, extension)
+	builder.shareSessionRequest.extensions = append(builder.shareSessionRequest.extensions, extension)
 	return builder
 }
 
 // WithNotification sets the callback URL
 func (builder *ShareSessionBuilder) WithNotification(notification ShareSessionNotification) *ShareSessionBuilder {
-	builder.shareSession.shareSessionNotification = notification
+	builder.shareSessionRequest.shareSessionNotification = notification
 	return builder
 }
 
 // WithRedirectUri sets redirectUri to the ShareSession
 func (builder *ShareSessionBuilder) WithRedirectUri(redirectUri string) *ShareSessionBuilder {
-	builder.shareSession.redirectUri = redirectUri
+	builder.shareSessionRequest.redirectUri = redirectUri
 	return builder
 }
 
 // WithSubject adds a subject to the ShareSession. Must be valid JSON.
 func (builder *ShareSessionBuilder) WithSubject(subject json.RawMessage) *ShareSessionBuilder {
-	builder.shareSession.subject = &subject
+	builder.shareSessionRequest.subject = &subject
 	return builder
 }
 
 // Build constructs the ShareSession
-func (builder *ShareSessionBuilder) Build() (ShareSession, error) {
-	if builder.shareSession.extensions == nil {
-		builder.shareSession.extensions = make([]interface{}, 0)
+func (builder *ShareSessionBuilder) Build() (ShareSessionRequest, error) {
+	if builder.shareSessionRequest.extensions == nil {
+		builder.shareSessionRequest.extensions = make([]interface{}, 0)
 	}
-	if builder.shareSession.policy == nil {
+	if builder.shareSessionRequest.policy == nil {
 		policy, err := (&PolicyBuilder{}).Build()
 		if err != nil {
-			return builder.shareSession, err
+			return builder.shareSessionRequest, err
 		}
-		builder.shareSession.policy = &policy
+		builder.shareSessionRequest.policy = &policy
 	}
-	return builder.shareSession, builder.err
+	return builder.shareSessionRequest, builder.err
 }
 
 // MarshalJSON returns the JSON encoding
-func (shareSesssion ShareSession) MarshalJSON() ([]byte, error) {
+func (shareSesssion ShareSessionRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Policy       Policy                   `json:"policy"`
 		Extensions   []interface{}            `json:"extensions"`

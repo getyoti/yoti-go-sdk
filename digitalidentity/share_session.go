@@ -9,23 +9,23 @@ var (
 	}
 )
 
-// ShareSessionResult contains a dynamic share QR code
-type ShareSessionResult struct {
-	Id      string  `json:"id"`
-	Status  string  `json:"status"`
-	Expiry  string  `json:"expiry"`
-	Created string  `json:"created"`
-	Updated string  `json:"updated"`
-	QrCode  qrCode  `json:"qrCode"`
-	Receipt receipt `json:"receipt"`
+// ShareSession object
+type ShareSession struct {
+	Id      string   `json:"id"`
+	Status  string   `json:"status"`
+	Expiry  string   `json:"expiry"`
+	Created string   `json:"created"`
+	Updated string   `json:"updated"`
+	QrCode  qrCode   `json:"qrCode"`
+	Receipt *receipt `json:"receipt"`
 }
 
-// ShareSessionResult contains a dynamic share QR code
+// ShareSession contains QR code as string
 type qrCode struct {
 	Id string `json:"id"`
 }
 
-// ShareSessionResult contains a dynamic share QR code
+// receipt containin id as string
 type receipt struct {
 	Id string `json:"id"`
 }
