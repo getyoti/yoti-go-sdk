@@ -47,7 +47,7 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	result, err := CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
+	result, err := CreateShareSession(client, session, "sdkId", "https://apiurl", key)
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -91,7 +91,7 @@ func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share SessionResult, err error) {
+func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share ShareSession, err error) {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
@@ -107,12 +107,12 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 	if err != nil {
 		return
 	}
-	scenario, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
 
-	return CreateShareSession(client, &scenario, "sdkId", "https://apiurl", key)
+	return CreateShareSession(client, session, "sdkId", "https://apiurl", key)
 }
 
 type MockHttpClient struct{}
