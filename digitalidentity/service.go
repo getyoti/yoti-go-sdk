@@ -14,38 +14,37 @@ const identitySesssionCreationEndpoint = "v2/sessions"
 const identitySessionRetrieval = "v2/sessions/%s"
 
 // SessionResult contains the information about a created session
-type SessionResult struct {
+
+/*type SessionResult struct {
 	Id     int    `json:"id"`
 	Status string `json:"status"`
 	Expiry string `json:"expiry"`
 }
+*/
 
 // CreateShareSession creates session using the supplied session specification
-func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSession, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share SessionResult, err error) {
+func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
 	endpoint := identitySesssionCreationEndpoint
 
-	payload, err := shareSession.MarshalJSON()
+	payload, err := shareSessionRequest.MarshalJSON()
 	if err != nil {
 		return share, err
 	}
-
-	headers := requests.AuthHeader(clientSdkId)
 
 	request, err := requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: http.MethodPost,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    headers,
+		Headers:    requests.AuthHeader(clientSdkId),
 		Body:       payload,
 	}.Request()
 	if err != nil {
 		return share, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareSessionHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
-		//fmt.Printf("err 2:=> %s\n\r", err)
 		return share, err
 	}
 
@@ -62,7 +61,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSession *ShareSessi
 }
 
 // GetSession get session info using the supplied sessionID
-func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSessionResult, err error) {
+func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
 	endpoint := identitySesssionCreationEndpoint
 	headers := requests.AuthHeader(clientSdkId)
 	request, err := requests.SignedRequest{
@@ -76,7 +75,7 @@ func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 		return share, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareURLHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request, ShareSessionHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return share, err
 	}
