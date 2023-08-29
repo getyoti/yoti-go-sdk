@@ -76,6 +76,7 @@ func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 	}
 
 	response, err := requests.Execute(httpClient, request, ShareSessionHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+
 	if err != nil {
 		return share, err
 	}
