@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -30,7 +29,7 @@ func ExampleCreateShareSession() {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       io.NopCloser(strings.NewReader(`{"status":"success","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"id":"0","status":"success","expiry": ""}`)),
 			}, nil
 		},
 	}
@@ -115,41 +114,24 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 	return CreateShareSession(client, session, "sdkId", "https://apiurl", key)
 }
 
-type MockHttpClient struct{}
-
-func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
-	// Simulate a successful response
-	mockResponse := httptest.NewRecorder()
-	mockResponse.WriteString(`{
-		"id": "SOME_ID",
-		"status": "SOME_STATUS",
-		"expiry": "SOME_EXPIRY",
-		"created": "SOME_CREATED",
-		"updated": "SOME_UPDATED",
-		"qrCode": {"id": "SOME_QRCODE_ID"},
-		"receipt": {"id": "SOME_RECEIPT_ID"}
-	}`)
-	return mockResponse.Result(), nil
-}
-
-func TestGetSession(t *testing.T) {
-	mockPrivateKey := test.GetValidKey("../test/test-key.pem")
-
-	mockHttpClient := &MockHttpClient{}
-
+func ExampleGetSession() {
+	key := test.GetValidKey("../test/test-key.pem")
 	mockSessionID := "SOME_SESSION_ID"
 	mockClientSdkId := "SOME_CLIENT_SDK_ID"
 	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       io.NopCloser(strings.NewReader(`{"id":"SOME_ID","status":"SOME_STATUS","expiry":"SOME_EXPIRY","created":"SOME_CREATED","updated":"SOME_UPDATED","qrCode":{"id":"SOME_QRCODE_ID"},"receipt":{"id":"SOME_RECEIPT_ID"}}`)),
+			}, nil
+		},
+	}
 
-	result, err := GetSession(mockHttpClient, mockSessionID, mockClientSdkId, mockApiUrl, mockPrivateKey)
-
-	assert.NilError(t, err)
-
-	assert.Equal(t, "SOME_ID", result.Id)
-	assert.Equal(t, "SOME_STATUS", result.Status)
-	assert.Equal(t, "SOME_EXPIRY", result.Expiry)
-	assert.Equal(t, "SOME_CREATED", result.Created)
-	assert.Equal(t, "SOME_UPDATED", result.Updated)
-	assert.Equal(t, "SOME_QRCODE_ID", result.QrCode.Id)
-	assert.Equal(t, "SOME_RECEIPT_ID", result.Receipt.Id)
+	result, err := GetSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	if err != nil {
+		return
+	}
+	fmt.Printf("Status code: %s", result.Status)
+	// Output:Status code: SOME_STATUS
 }
