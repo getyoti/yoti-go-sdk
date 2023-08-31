@@ -25,7 +25,7 @@ type qrCode struct {
 	Id string `json:"id"`
 }
 
-// receipt containin id as string
+// receipt containing the receipt id as a string.
 type receipt struct {
 	Id string `json:"id"`
 }
