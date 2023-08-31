@@ -90,7 +90,7 @@ func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share ShareSession, err error) {
+func createShareSessionWithErrorResponse(statusCode int, responseBody string) (share *ShareSession, err error) {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
