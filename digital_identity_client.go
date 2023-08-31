@@ -67,7 +67,7 @@ func (client *DigitalIdentityClient) CreateShareSession(shareSession digitaliden
 	return digitalidentity.CreateShareSession(client.HTTPClient, shareSession, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
-// GetSession Retrieve the sharing session
+// GetShareSession retrieves the sharing session.
 func (client *DigitalIdentityClient) GetSession(sessionID string) (share digitalidentity.ShareSession, err error) {
 	return digitalidentity.GetSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
