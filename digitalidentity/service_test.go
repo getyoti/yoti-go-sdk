@@ -40,13 +40,13 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	result, err := CreateShareSession(client, session, "sdkId", "https://apiurl", key)
+	result, err := CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -58,7 +58,7 @@ func ExampleCreateShareSession() {
 }
 
 func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(503, "some service unavailable response")
+	_, err := createShareSessionWithErrorResponse(503, "some service unavailable response")
 
 	assert.ErrorContains(t, err, "503: unknown HTTP error - some service unavailable response")
 
@@ -69,7 +69,7 @@ func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
 }
 
 func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(404, "some not found response")
+	_, err := createShareSessionWithErrorResponse(404, "some not found response")
 
 	assert.ErrorContains(t, err, "404: Application was not found - some not found response")
 
@@ -80,7 +80,7 @@ func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
 }
 
 func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(400, "some invalid JSON response")
+	_, err := createShareSessionWithErrorResponse(400, "some invalid JSON response")
 
 	assert.ErrorContains(t, err, "400: JSON is incorrect, contains invalid data - some invalid JSON response")
 
@@ -90,7 +90,7 @@ func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func createShareSessionWithErrorResponse(statusCode int, responseBody string) (share *ShareSession, err error) {
+func createShareSessionWithErrorResponse(statusCode int, responseBody string) (share ShareSession, err error) {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
@@ -106,12 +106,12 @@ func createShareSessionWithErrorResponse(statusCode int, responseBody string) (s
 	if err != nil {
 		return
 	}
-	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		return
 	}
 
-	return CreateShareSession(client, session, "sdkId", "https://apiurl", key)
+	return CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
 }
 
 func ExampleGetSession() {

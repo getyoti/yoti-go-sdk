@@ -13,17 +13,8 @@ import (
 const identitySesssionCreationEndpoint = "v2/sessions"
 const identitySessionRetrieval = "v2/sessions/%s"
 
-// SessionResult contains the information about a created session
-
-/*type SessionResult struct {
-	Id     int    `json:"id"`
-	Status string `json:"status"`
-	Expiry string `json:"expiry"`
-}
-*/
-
 // CreateShareSession creates session using the supplied session specification
-func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
+func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
 	endpoint := identitySesssionCreationEndpoint
 
 	payload, err := shareSessionRequest.MarshalJSON()
