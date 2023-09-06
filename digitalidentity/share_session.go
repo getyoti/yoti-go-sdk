@@ -20,7 +20,7 @@ type ShareSession struct {
 	Receipt *receipt `json:"receipt"`
 }
 
-// ShareSession contains QR code as string
+// ShareSession contains QR code id as string
 type qrCode struct {
 	Id string `json:"id"`
 }

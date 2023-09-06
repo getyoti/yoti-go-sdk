@@ -7,7 +7,7 @@ import (
 )
 
 func ExampleShareSessionBuilder() {
-	shareSession, err := (&ShareSessionBuilder{}).Build()
+	shareSession, err := (&ShareSessionRequestBuilder{}).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -30,7 +30,7 @@ func ExampleShareSessionBuilder_WithPolicy() {
 		return
 	}
 
-	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -61,7 +61,7 @@ func ExampleShareSessionBuilder_WithExtension() {
 		return
 	}
 
-	session, err := (&ShareSessionBuilder{}).WithExtension(builtExtension).WithPolicy(policy).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithExtension(builtExtension).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -82,7 +82,7 @@ func ExampleShareSessionBuilder_WithSubject() {
 		"subject_id": "some_subject_id_string"
 	}`)
 
-	session, err := (&ShareSessionBuilder{}).WithSubject(subject).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithSubject(subject).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return

@@ -1,8 +1,6 @@
 package yoti
 
 import (
-	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -54,17 +52,10 @@ func TestYotiClient_CreateShareSession(t *testing.T) {
 	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	assert.NilError(t, err)
 
-	session, err := (&digitalidentity.ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	assert.NilError(t, err)
 
-	result, err := client.CreateShareSession(session)
-
-	b, err := json.Marshal(result)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(b))
+	result, err := client.CreateShareSession(&session)
 
 	assert.NilError(t, err)
 	assert.Equal(t, result.Status, "SOME_STATUS")
