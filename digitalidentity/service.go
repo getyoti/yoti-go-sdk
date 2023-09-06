@@ -10,7 +10,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
-const identitySesssionCreationEndpoint = "v2/sessions"
+const identitySessionCreationEndpoint = "v2/sessions"
 const identitySessionRetrieval = "v2/sessions/%s"
 
 // CreateShareSession creates session using the supplied session specification
