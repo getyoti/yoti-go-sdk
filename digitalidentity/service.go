@@ -3,6 +3,7 @@ package digitalidentity
 import (
 	"crypto/rsa"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -15,7 +16,7 @@ const identitySessionRetrieval = "v2/sessions/%s"
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
-	endpoint := identitySesssionCreationEndpoint
+	endpoint := identitySessionCreationEndpoint
 
 	payload, err := shareSessionRequest.MarshalJSON()
 	if err != nil {
@@ -51,7 +52,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 	return share, err
 }
 
-// GetSession get session info using the supplied sessionID
+// GetSession get session info using the supplied sessionID parameter
 func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share *ShareSession, err error) {
 	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
 	headers := requests.AuthHeader(clientSdkId)
