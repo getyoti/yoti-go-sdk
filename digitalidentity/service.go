@@ -52,7 +52,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 }
 
 // GetSession get session info using the supplied sessionID
-func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
+func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share *ShareSession, err error) {
 	endpoint := identitySesssionCreationEndpoint
 	headers := requests.AuthHeader(clientSdkId)
 	request, err := requests.SignedRequest{
