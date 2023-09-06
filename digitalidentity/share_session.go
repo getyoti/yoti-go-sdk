@@ -9,7 +9,7 @@ var (
 	}
 )
 
-// ShareSession object
+// ShareSession contains information about the session. 
 type ShareSession struct {
 	Id      string   `json:"id"`
 	Status  string   `json:"status"`
