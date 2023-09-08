@@ -92,15 +92,14 @@ func TestDigitalIDClient_HttpFailure_ReturnsApplicationNotFound(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func ExampleGetSession(t *testing.T) {
+func ExampleGetSession() {
 	key, err := os.ReadFile("./test/test-key.pem")
-	assert.NilError(t, err)
 
 	mockSessionID := "SOME_SESSION_ID"
 	//mockClientSdkId := "SOME_CLIENT_SDK_ID"
 	//mockApiUrl := "https://example.com/api"
 	client, err := NewDigitalIdentityClient("some-sdk-id", key)
-	assert.NilError(t, err)
+
 	client.HTTPClient = &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
