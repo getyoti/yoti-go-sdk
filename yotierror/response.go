@@ -38,6 +38,8 @@ type Error struct {
 	message  string
 	Err      error
 	Response *http.Response
+	id       string
+	status   int
 }
 
 // NewResponseError creates a new Error

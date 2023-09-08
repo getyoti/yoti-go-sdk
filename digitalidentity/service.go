@@ -56,6 +56,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share *ShareSession, err error) {
 	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
 	headers := requests.AuthHeader(clientSdkId)
+
 	request, err := requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: http.MethodGet,
