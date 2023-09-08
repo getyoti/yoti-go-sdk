@@ -1,6 +1,9 @@
 package yoti
 
 import (
+	"crypto/rsa"
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -8,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity"
+	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"gotest.tools/v3/assert"
 )
 
@@ -57,13 +61,17 @@ func TestYotiClient_CreateShareSession(t *testing.T) {
 
 	result, err := client.CreateShareSession(&session)
 
+	out, err2 := json.Marshal(result)
+	if err2 == nil {
+		fmt.Printf("OUR: %s", out)
+	}
+
 	assert.NilError(t, err)
 	assert.Equal(t, result.Status, "SOME_STATUS")
 }
 
 func TestDigitalIDClient_HttpFailure_ReturnsApplicationNotFound(t *testing.T) {
-	key := getValidKey()
-
+	key := getDigitalValidKey()
 	client := DigitalIdentityClient{
 		HTTPClient: &mockHTTPClient{
 			do: func(*http.Request) (*http.Response, error) {
@@ -82,4 +90,34 @@ func TestDigitalIDClient_HttpFailure_ReturnsApplicationNotFound(t *testing.T) {
 		Temporary() bool
 	})
 	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
+func ExampleGetSession(t *testing.T) {
+	key, err := os.ReadFile("./test/test-key.pem")
+	assert.NilError(t, err)
+
+	mockSessionID := "SOME_SESSION_ID"
+	//mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	//mockApiUrl := "https://example.com/api"
+	client, err := NewDigitalIdentityClient("some-sdk-id", key)
+	assert.NilError(t, err)
+	client.HTTPClient = &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       io.NopCloser(strings.NewReader(`{"id":"SOME_ID","status":"SOME_STATUS","expiry":"SOME_EXPIRY","created":"SOME_CREATED","updated":"SOME_UPDATED","qrCode":{"id":"SOME_QRCODE_ID"},"receipt":{"id":"SOME_RECEIPT_ID"}}`)),
+			}, nil
+		},
+	}
+
+	result, err := client.GetSession(mockSessionID)
+	if err != nil {
+		return
+	}
+	fmt.Printf("Status code: %s", result.Status)
+	// Output:Status code: SOME_STATUS
+}
+
+func getDigitalValidKey() *rsa.PrivateKey {
+	return test.GetValidKey("test/test-key.pem")
 }
