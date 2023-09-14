@@ -63,8 +63,8 @@ func (client *DigitalIdentityClient) GetSdkID() string {
 }
 
 // CreateShareSession creates a sharing session to initiate a sharing process based on a policy
-func (client *DigitalIdentityClient) CreateShareSession(shareSession *digitalidentity.ShareSessionRequest) (share digitalidentity.ShareSession, err error) {
-	return digitalidentity.CreateShareSession(client.HTTPClient, shareSession, client.GetSdkID(), client.getAPIURL(), client.Key)
+func (client *DigitalIdentityClient) CreateShareSession(shareSessionRequest *digitalidentity.ShareSessionRequest) (shareSession digitalidentity.ShareSession, err error) {
+	return digitalidentity.CreateShareSession(client.HTTPClient, shareSessionRequest, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
 // GetSession retrieves the sharing session.

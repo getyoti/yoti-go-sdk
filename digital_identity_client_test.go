@@ -2,7 +2,6 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -61,11 +60,6 @@ func TestYotiClient_CreateShareSession(t *testing.T) {
 
 	result, err := client.CreateShareSession(&session)
 
-	out, err2 := json.Marshal(result)
-	if err2 == nil {
-		fmt.Printf("OUR: %s", out)
-	}
-
 	assert.NilError(t, err)
 	assert.Equal(t, result.Status, "SOME_STATUS")
 }
@@ -96,8 +90,6 @@ func ExampleGetSession() {
 	key, err := os.ReadFile("./test/test-key.pem")
 
 	mockSessionID := "SOME_SESSION_ID"
-	//mockClientSdkId := "SOME_CLIENT_SDK_ID"
-	//mockApiUrl := "https://example.com/api"
 	client, err := NewDigitalIdentityClient("some-sdk-id", key)
 
 	client.HTTPClient = &mockHTTPClient{
