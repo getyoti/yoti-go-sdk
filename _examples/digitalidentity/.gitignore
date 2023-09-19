@@ -1,0 +1,8 @@
+/images/YotiSelfie.jpeg
+
+# Example project generated self-signed certificate
+/yotiSelfSignedCert.pem
+/yotiSelfSignedKey.pem
+
+# Compiled binary
+/profile

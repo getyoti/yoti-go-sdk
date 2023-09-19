@@ -109,6 +109,54 @@ func ExampleGetSession() {
 	// Output:Status code: SOME_STATUS
 }
 
+func TestDigitalIDClient_OverrideAPIURL_ShouldSetAPIURL(t *testing.T) {
+	client := &DigitalIdentityClient{}
+	expectedURL := "expectedurl.com"
+	client.OverrideAPIURL(expectedURL)
+	assert.Equal(t, client.getAPIURL(), expectedURL)
+}
+
+func TestDigitalIDClient_GetAPIURLUsesOverriddenBaseUrlOverEnvVariable(t *testing.T) {
+	client := DigitalIdentityClient{}
+	client.OverrideAPIURL("overridenBaseUrl")
+
+	os.Setenv("YOTI_API_URL", "envBaseUrl")
+
+	result := client.getAPIURL()
+
+	assert.Equal(t, "overridenBaseUrl", result)
+}
+
+func TestDigitalIDClient_GetAPIURLUsesEnvVariable(t *testing.T) {
+	client := DigitalIdentityClient{}
+
+	os.Setenv("YOTI_API_URL", "envBaseUrl")
+
+	result := client.getAPIURL()
+
+	assert.Equal(t, "envBaseUrl", result)
+}
+
+func TestDigitalIDClient_GetAPIURLUsesDefaultUrlAsFallbackWithEmptyEnvValue(t *testing.T) {
+	client := DigitalIdentityClient{}
+
+	os.Setenv("YOTI_API_URL", "")
+
+	result := client.getAPIURL()
+
+	assert.Equal(t, "https://api.yoti.com/share/", result)
+}
+
+func TestDigitalIDClient_GetAPIURLUsesDefaultUrlAsFallbackWithNoEnvValue(t *testing.T) {
+	client := DigitalIdentityClient{}
+
+	os.Unsetenv("YOTI_API_URL")
+
+	result := client.getAPIURL()
+
+	assert.Equal(t, "https://api.yoti.com/share/", result)
+}
+
 func getDigitalValidKey() *rsa.PrivateKey {
 	return test.GetValidKey("test/test-key.pem")
 }
