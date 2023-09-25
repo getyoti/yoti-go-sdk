@@ -39,7 +39,7 @@ func main() {
 	router.Static("/static", "./static")
 
 	// Start serving the application
-	err := router.RunTLS(":8080", "yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem")
+	err := router.RunTLS(":3000", "yotiSelfSignedCert.pem", "yotiSelfSignedKey.pem")
 	if err != nil {
 		panic(err)
 	}
