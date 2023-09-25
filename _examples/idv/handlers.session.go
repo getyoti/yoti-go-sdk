@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -216,6 +217,10 @@ func showPrivacyPolicyPage(c *gin.Context) {
 
 func showDigitalPage(c *gin.Context) {
 	sessionReq, err := buildDigitalIdentitySessionReq()
+	out, err := json.Marshal(sessionReq)
+	if err == nil {
+		fmt.Println(string(out))
+	}
 	if err != nil {
 		c.HTML(
 			http.StatusInternalServerError,
@@ -242,7 +247,7 @@ func initialiseDigitalIdentityClient() error {
 	if err != nil {
 		return fmt.Errorf("failed to initialise Share client :: %w", err)
 	}
-	didClient.OverrideAPIURL("https://connect.public.stg1.dmz.yoti.com/share/")
+	didClient.OverrideAPIURL("https://connect.public.stg1.dmz.yoti.com/share")
 
 	return nil
 }
@@ -270,5 +275,7 @@ func pageFromShareSessionReq(c *gin.Context, sessionReq *digitalidentity.ShareSe
 	}
 
 	c.SetCookie("session_id", shareSession.Id, 60*20, "/", "localhost", true, false)
+	c.SetCookie("status", shareSession.Status, 60*20, "/", "localhost", true, false)
+	c.SetCookie("expiry", shareSession.Expiry, 60*20, "/", "localhost", true, false)
 	return
 }
