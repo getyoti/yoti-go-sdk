@@ -309,7 +309,7 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 		"subject_id": "unique-user-id-for-examples"
 	}`)
 
-	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithSubject(subject).Build()
+	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithSubject(subject).WithRedirectUri("/profile").Build()
 	if err != nil {
 		return nil, err
 	}
