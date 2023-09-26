@@ -11,8 +11,8 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
 )
 
-const identitySessionCreationEndpoint = "v2/sessions"
-const identitySessionRetrieval = "v2/sessions/%s"
+const identitySessionCreationEndpoint = "/v2/sessions"
+const identitySessionRetrieval = "/v2/sessions/%s"
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
@@ -28,8 +28,9 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		HTTPMethod: http.MethodPost,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    requests.AuthHeader(clientSdkId),
+		Headers:    requests.JSONHeaders(), //requests.AuthHeader(clientSdkId, &key.PublicKey),
 		Body:       payload,
+		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
 		return share, err
@@ -55,14 +56,14 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 // GetSession get session info using the supplied sessionID parameter
 func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share *ShareSession, err error) {
 	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
-	headers := requests.AuthHeader(clientSdkId)
+	//headers := requests.AuthHeader(clientSdkId, &key.PublicKey)
 
 	request, err := requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: http.MethodGet,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    headers,
+		Headers:    nil,
 	}.Request()
 	if err != nil {
 		return share, err

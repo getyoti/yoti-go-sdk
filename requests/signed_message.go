@@ -41,13 +41,6 @@ func JSONHeaders() map[string][]string {
 	}
 }
 
-// AuthHeader is a header prototype including the App/SDK ID
-func AuthHeader(clientSdkId string) map[string][]string {
-	return map[string][]string{
-		"X-Yoti-Auth-Id": {clientSdkId},
-	}
-}
-
 // AuthKeyHeader is a header prototype including an encoded RSA PublicKey
 func AuthKeyHeader(key *rsa.PublicKey) map[string][]string {
 	return map[string][]string{
@@ -183,6 +176,8 @@ func (msg *SignedRequest) checkMandatories() error {
 
 // Request builds a http.Request with signature headers
 func (msg SignedRequest) Request() (request *http.Request, err error) {
+	msg.Body = []byte(`{"policy":{"wanted":[{"name":"full_name","optional":false},{"name":"email_address","optional":false},{"name":"phone_number","optional":false},{"name":"selfie","optional":false},{"name":"structured_postal_address","optional":false},{"name":"date_of_birth","optional":false,"derivation":"age_over:18"},{"name":"nationality","optional":false},{"name":"gender","optional":false},{"name":"document_details","optional":false},{"name":"document_images","optional":false}],"wanted_auth_types":[],"wanted_remember_me":true,"wanted_remember_me_optional":false},"extensions":[],"subject":{"subject_id":"some_subject_id_string"},"redirectUri":"/profile"}`)
+
 	err = msg.checkMandatories()
 	if err != nil {
 		return
@@ -192,6 +187,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	if err != nil {
 		return
 	}
+
 	signedDigest, err := msg.signDigest([]byte(msg.generateDigest(endpoint)))
 	if err != nil {
 		return
@@ -206,6 +202,9 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	if err != nil {
 		return
 	}
+
+	request.Header.Add("X-Yoti-Auth-Id", "bb5eddbc-65a4-42f9-8aa6-513acca9472b")
+
 	request.Header.Add("X-Yoti-Auth-Digest", signedDigest)
 	request.Header.Add("X-Yoti-SDK", consts.SDKIdentifier)
 	request.Header.Add("X-Yoti-SDK-Version", consts.SDKVersionIdentifier)
@@ -215,5 +214,6 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 			request.Header.Add(key, value)
 		}
 	}
+
 	return request, err
 }
