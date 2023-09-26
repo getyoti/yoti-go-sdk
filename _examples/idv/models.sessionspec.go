@@ -235,5 +235,6 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 	if err != nil {
 		return nil, err
 	}
+
 	return &sessionReq, nil
 }

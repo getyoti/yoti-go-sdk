@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -217,10 +216,7 @@ func showPrivacyPolicyPage(c *gin.Context) {
 
 func showDigitalPage(c *gin.Context) {
 	sessionReq, err := buildDigitalIdentitySessionReq()
-	out, err := json.Marshal(sessionReq)
-	if err == nil {
-		fmt.Println(string(out))
-	}
+
 	if err != nil {
 		c.HTML(
 			http.StatusInternalServerError,
@@ -237,7 +233,6 @@ func initialiseDigitalIdentityClient() error {
 	var err error
 	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 	keyFilePath := os.Getenv("YOTI_KEY_FILE_PATH")
-	fmt.Printf("KEY: %s", keyFilePath)
 	key, err = os.ReadFile(keyFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to get key from YOTI_KEY_FILE_PATH :: %w", err)
