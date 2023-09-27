@@ -294,12 +294,38 @@ func buildAdvancedIdentityProfileSessionSpec() (sessionSpec *create.SessionSpeci
 }
 
 func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
+
+	// policyType := "RTW!";
+	// policy = (&digitalidentity.PolicyBuilder{}).Build()
+
+	// if policyType == "RTW" {
+	// 	identityProfile := json.RawMessage(`{
+	// 		"trust_framework": "UK_TFIDA",
+	// 		"scheme": {
+	// 			"type": "RTW"
+	// 		}
+	// 	}`)
+	// 	policy, err := (&digitalidentity.PolicyBuilder{}).WithIdentityProfileRequirements(identityProfile).Build()
+	// } else {
+	// 	policy = (&digitalidentity.PolicyBuilder{})
+	// 	.withFullName()
+	// 	  .withEmail()
+	// 	  .withPhoneNumber()
+	// 	  .withSelfie()
+	// 	  .withStructuredPostalAddress()
+	// 	  .withAgeOver(18)
+	// 	  .withNationality()
+	// 	  .withGender()
+	// 	  .withDocumentDetails()
+	// 	  .withDocumentImages()
+	// 	  .withWantedRememberMe().Build()
+	// }
 	identityProfile := json.RawMessage(`{
-		"trust_framework": "UK_TFIDA",
-		"scheme": {
-    		"type": "RTW"
-		}
-	}`)
+				"trust_framework": "UK_TFIDA",
+				"scheme": {
+					"type": "RTW"
+				}
+			}`)
 	policy, err := (&digitalidentity.PolicyBuilder{}).WithIdentityProfileRequirements(identityProfile).Build()
 	if err != nil {
 		return nil, err
