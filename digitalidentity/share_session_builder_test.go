@@ -20,7 +20,7 @@ func ExampleShareSessionRequestBuilder() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":null,"wanted_auth_types":null,"wanted_remember_me":false},"extensions":[],"redirectUri":"","notification":{"url":"","method":"","verifyTls":null,"headers":null}}
+	// Output: {"policy":{"wanted":null,"wanted_auth_types":null,"wanted_remember_me":false},"extensions":[],"redirectUri":""}
 }
 
 func ExampleShareSessionRequestBuilder_WithPolicy() {
@@ -43,7 +43,7 @@ func ExampleShareSessionRequestBuilder_WithPolicy() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[{"name":"email_address","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":false},"extensions":[],"redirectUri":"","notification":{"url":"","method":"","verifyTls":null,"headers":null}}
+	// Output: {"policy":{"wanted":[{"name":"email_address","accept_self_asserted":false}],"wanted_auth_types":[2],"wanted_remember_me":false},"extensions":[],"redirectUri":""}
 }
 
 func ExampleShareSessionRequestBuilder_WithExtension() {
@@ -74,7 +74,7 @@ func ExampleShareSessionRequestBuilder_WithExtension() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"redirectUri":"","notification":{"url":"","method":"","verifyTls":null,"headers":null}}
+	// Output: {"policy":{"wanted":[{"name":"full_name","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false},"extensions":[{"type":"TRANSACTIONAL_FLOW","content":"Transactional Flow Extension"}],"redirectUri":""}
 }
 
 func ExampleShareSessionRequestBuilder_WithSubject() {
@@ -95,5 +95,5 @@ func ExampleShareSessionRequestBuilder_WithSubject() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"policy":{"wanted":null,"wanted_auth_types":null,"wanted_remember_me":false},"extensions":[],"redirectUri":"","subject":{"subject_id":"some_subject_id_string"},"notification":{"url":"","method":"","verifyTls":null,"headers":null}}
+	// Output: {"policy":{"wanted":null,"wanted_auth_types":null,"wanted_remember_me":false},"extensions":[],"redirectUri":"","subject":{"subject_id":"some_subject_id_string"}}
 }
