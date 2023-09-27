@@ -42,6 +42,14 @@ type Error struct {
 	status   int
 }
 
+// Error indicates errors related to the Yoti API.
+type ErrorMessageShareV2 struct {
+	Id      string
+	Status  int
+	Error   string
+	Message string
+}
+
 // NewResponseError creates a new Error
 func NewResponseError(response *http.Response, httpErrorMessages ...map[int]string) *Error {
 	return &Error{
@@ -74,6 +82,7 @@ func formatResponseMessage(response *http.Response, httpErrorMessages ...map[int
 	jsonError := json.Unmarshal(body, &errorDO)
 
 	if jsonError != nil || errorDO.Code == "" || errorDO.Message == "" {
+
 		return defaultMessage
 	}
 
@@ -97,6 +106,15 @@ func formatResponseMessage(response *http.Response, httpErrorMessages ...map[int
 }
 
 func formatHTTPError(message string, statusCode int, body []byte) string {
+
+	data := ErrorMessageShareV2{}
+
+	err := json.Unmarshal(body, &data)
+
+	if err == nil {
+		return fmt.Sprintf("%d: %s", data.Status, data.Message)
+	}
+
 	if len(body) == 0 {
 		return fmt.Sprintf("%d: %s", statusCode, message)
 	}

@@ -2,7 +2,6 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -86,7 +85,7 @@ func TestDigitalIDClient_HttpFailure_ReturnsApplicationNotFound(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func ExampleGetSession() {
+func TestDigitalIDClient_GetSession(t *testing.T) {
 	key, err := os.ReadFile("./test/test-key.pem")
 
 	mockSessionID := "SOME_SESSION_ID"
@@ -105,8 +104,11 @@ func ExampleGetSession() {
 	if err != nil {
 		return
 	}
-	fmt.Printf("Status code: %s", result.Status)
-	// Output:Status code: SOME_STATUS
+
+	assert.Equal(t, result.Id, "SOME_ID")
+	assert.Equal(t, result.Status, "SOME_STATUS")
+	assert.Equal(t, result.Created, "SOME_CREATED")
+
 }
 
 func TestDigitalIDClient_OverrideAPIURL_ShouldSetAPIURL(t *testing.T) {
