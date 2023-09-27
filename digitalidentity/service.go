@@ -28,7 +28,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		HTTPMethod: http.MethodPost,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    requests.JSONHeaders(), //requests.AuthHeader(clientSdkId, &key.PublicKey),
+		Headers:    requests.AuthHeader(clientSdkId, &key.PublicKey),
 		Body:       payload,
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
@@ -37,6 +37,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 	}
 
 	response, err := requests.Execute(httpClient, request, ShareSessionHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+
 	if err != nil {
 		return share, err
 	}
@@ -56,14 +57,13 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 // GetSession get session info using the supplied sessionID parameter
 func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share *ShareSession, err error) {
 	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
-	//headers := requests.AuthHeader(clientSdkId, &key.PublicKey)
 
 	request, err := requests.SignedRequest{
 		Key:        key,
 		HTTPMethod: http.MethodGet,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    nil,
+		Headers:    requests.AuthHeader(clientSdkId, &key.PublicKey),
 	}.Request()
 	if err != nil {
 		return share, err

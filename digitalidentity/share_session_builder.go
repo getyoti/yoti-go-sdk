@@ -13,10 +13,10 @@ type ShareSessionRequestBuilder struct {
 // ShareSession represents a sharesession
 type ShareSessionRequest struct {
 	policy                   Policy
-	redirectUri              string
 	extensions               []interface{}
 	subject                  *json.RawMessage
-	shareSessionNotification ShareSessionNotification
+	shareSessionNotification *ShareSessionNotification
+	redirectUri              string
 }
 
 // WithPolicy attaches a Policy to the ShareSession
@@ -33,7 +33,7 @@ func (builder *ShareSessionRequestBuilder) WithExtension(extension interface{}) 
 
 // WithNotification sets the callback URL
 func (builder *ShareSessionRequestBuilder) WithNotification(notification ShareSessionNotification) *ShareSessionRequestBuilder {
-	builder.shareSessionRequest.shareSessionNotification = notification
+	builder.shareSessionRequest.shareSessionNotification = &notification
 	return builder
 }
 
@@ -60,11 +60,11 @@ func (builder *ShareSessionRequestBuilder) Build() (ShareSessionRequest, error) 
 // MarshalJSON returns the JSON encoding
 func (shareSesssion ShareSessionRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Policy       Policy                   `json:"policy"`
-		Extensions   []interface{}            `json:"extensions"`
-		RedirectUri  string                   `json:"redirectUri"`
-		Subject      *json.RawMessage         `json:"subject,omitempty"`
-		Notification ShareSessionNotification `json:"notification"`
+		Policy       Policy                    `json:"policy"`
+		Extensions   []interface{}             `json:"extensions"`
+		RedirectUri  string                    `json:"redirectUri"`
+		Subject      *json.RawMessage          `json:"subject,omitempty"`
+		Notification *ShareSessionNotification `json:"notification,omitempty"`
 	}{
 		Policy:       shareSesssion.policy,
 		Extensions:   shareSesssion.extensions,
