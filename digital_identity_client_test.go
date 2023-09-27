@@ -85,6 +85,28 @@ func TestDigitalIDClient_HttpFailure_ReturnsApplicationNotFound(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
+func TestDigitalIDClient_HttpFailure_ReturnsUnKnownHttpError(t *testing.T) {
+	key := getDigitalValidKey()
+	client := DigitalIdentityClient{
+		HTTPClient: &mockHTTPClient{
+			do: func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 401,
+				}, nil
+			},
+		},
+		Key: key,
+	}
+
+	_, err := client.GetSession("SOME ID")
+
+	assert.ErrorContains(t, err, "unknown HTTP error")
+	tempError, temporary := err.(interface {
+		Temporary() bool
+	})
+	assert.Check(t, !temporary || !tempError.Temporary())
+}
+
 func TestDigitalIDClient_GetSession(t *testing.T) {
 	key, err := os.ReadFile("./test/test-key.pem")
 
