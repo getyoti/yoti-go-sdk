@@ -66,6 +66,7 @@ func pageFromSessionSpec(c *gin.Context, sessionSpec *create.SessionSpecificatio
 		return
 	}
 	createSessionResult, err = client.CreateSession(sessionSpec)
+
 	if err != nil {
 		c.HTML(
 			http.StatusInternalServerError,
@@ -259,6 +260,8 @@ func pageFromShareSessionReq(c *gin.Context, sessionReq *digitalidentity.ShareSe
 		return
 	}
 	shareSession, err := didClient.CreateShareSession(sessionReq)
+	//sessionResult, err := didClient.GetSession(shareSession.Id)
+
 	if err != nil {
 		c.HTML(
 			http.StatusInternalServerError,
@@ -272,5 +275,6 @@ func pageFromShareSessionReq(c *gin.Context, sessionReq *digitalidentity.ShareSe
 	c.SetCookie("session_id", shareSession.Id, 60*20, "/", "localhost", true, false)
 	c.SetCookie("status", shareSession.Status, 60*20, "/", "localhost", true, false)
 	c.SetCookie("expiry", shareSession.Expiry, 60*20, "/", "localhost", true, false)
+	//c.SetCookie("getSession", string(out), 60*20, "/", "localhost", true, false)
 	return
 }
