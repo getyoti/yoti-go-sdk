@@ -64,6 +64,7 @@ func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
 		Headers:    requests.AuthHeader(clientSdkId, &key.PublicKey),
+		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
 		return share, err
