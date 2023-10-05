@@ -14,7 +14,7 @@ type SDKConfig struct {
 	ErrorUrl              string                 `json:"error_url,omitempty"`
 	PrivacyPolicyUrl      string                 `json:"privacy_policy_url,omitempty"`
 	AttemptsConfiguration *AttemptsConfiguration `json:"attempts_configuration,omitempty"`
-	AllowHandoff          bool                   `json:"allow_handoff,omitempty"`
+	AllowHandOff          bool                   `json:"allow_handoff,omitempty"`
 }
 
 type AttemptsConfiguration struct {
@@ -38,7 +38,7 @@ type SdkConfigBuilder struct {
 	errorUrl                             string
 	privacyPolicyUrl                     string
 	idDocumentTextDataExtractionAttempts map[string]int
-	allowHandoff                         bool
+	allowHandOff                         bool
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -122,7 +122,7 @@ func (b *SdkConfigBuilder) WithIdDocumentTextExtractionGenericAttempts(attempts 
 }
 
 func (b *SdkConfigBuilder) WithAllowHandOff(allowHandOff bool) *SdkConfigBuilder {
-	b.allowHandoff = allowHandOff
+	b.allowHandOff = allowHandOff
 	return b
 }
 
@@ -139,7 +139,7 @@ func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 		b.errorUrl,
 		b.privacyPolicyUrl,
 		nil,
-		b.allowHandoff,
+		b.allowHandOff,
 	}
 
 	if b.idDocumentTextDataExtractionAttempts != nil {
