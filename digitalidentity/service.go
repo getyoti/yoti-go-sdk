@@ -7,20 +7,19 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/getyoti/yoti-go-sdk/v3/requests"
-	"github.com/getyoti/yoti-go-sdk/v3/yotierror"
+	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity/requests"
 )
 
 const identitySessionCreationEndpoint = "/v2/sessions"
 const identitySessionRetrieval = "/v2/sessions/%s"
 
 // CreateShareSession creates session using the supplied session specification
-func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSession, err error) {
+func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
 	endpoint := identitySessionCreationEndpoint
 
 	payload, err := shareSessionRequest.MarshalJSON()
 	if err != nil {
-		return share, err
+		return nil, err
 	}
 
 	request, err := requests.SignedRequest{
@@ -28,34 +27,31 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		HTTPMethod: http.MethodPost,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    requests.AuthHeader(clientSdkId, &key.PublicKey),
+		Headers:    requests.AuthHeader(clientSdkId),
 		Body:       payload,
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return share, err
+		return nil, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareSessionHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
-
+	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return share, err
+		return nil, err
 	}
 
 	defer response.Body.Close()
-
+	shareSession := &ShareSession{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return share, err
+		return nil, err
 	}
-
-	err = json.Unmarshal(responseBytes, &share)
-
-	return share, err
+	err = json.Unmarshal(responseBytes, shareSession)
+	return shareSession, err
 }
 
-// GetSession get session info using the supplied sessionID parameter
-func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share *ShareSession, err error) {
+// GetShareSession get session info using the supplied sessionID parameter
+func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
 	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
 
 	request, err := requests.SignedRequest{
@@ -63,26 +59,24 @@ func GetSession(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 		HTTPMethod: http.MethodGet,
 		BaseURL:    apiUrl,
 		Endpoint:   endpoint,
-		Headers:    requests.AuthHeader(clientSdkId, &key.PublicKey),
+		Headers:    requests.AuthHeader(clientSdkId),
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return share, err
+		return nil, err
 	}
 
-	response, err := requests.Execute(httpClient, request, ShareSessionHTTPErrorMessages, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(httpClient, request)
 
 	if err != nil {
-		return share, err
+		return nil, err
 	}
 	defer response.Body.Close()
-
+	shareSession := &ShareSession{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return share, err
+		return nil, err
 	}
-
-	err = json.Unmarshal(responseBytes, &share)
-
-	return share, err
+	err = json.Unmarshal(responseBytes, shareSession)
+	return shareSession, err
 }

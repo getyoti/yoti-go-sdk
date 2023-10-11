@@ -9,7 +9,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
-const DefaultURL = "https://api.yoti.com/share/"
+const DefaultURL = "https://api.yoti.com/share"
 
 // DigitalIdentityClient represents a client that can communicate with yoti and return information about Yoti users.
 type DigitalIdentityClient struct {
@@ -63,11 +63,11 @@ func (client *DigitalIdentityClient) GetSdkID() string {
 }
 
 // CreateShareSession creates a sharing session to initiate a sharing process based on a policy
-func (client *DigitalIdentityClient) CreateShareSession(shareSessionRequest *digitalidentity.ShareSessionRequest) (shareSession digitalidentity.ShareSession, err error) {
+func (client *DigitalIdentityClient) CreateShareSession(shareSessionRequest *digitalidentity.ShareSessionRequest) (shareSession *digitalidentity.ShareSession, err error) {
 	return digitalidentity.CreateShareSession(client.HTTPClient, shareSessionRequest, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
-// GetSession retrieves the sharing session.
-func (client *DigitalIdentityClient) GetSession(sessionID string) (*digitalidentity.ShareSession, error) {
-	return digitalidentity.GetSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
+// GetShareSession retrieves the sharing session.
+func (client *DigitalIdentityClient) GetShareSession(sessionID string) (*digitalidentity.ShareSession, error) {
+	return digitalidentity.GetShareSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
