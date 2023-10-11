@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -38,16 +38,6 @@ type Error struct {
 	message  string
 	Err      error
 	Response *http.Response
-	id       string
-	status   int
-}
-
-// Error indicates errors related to the Yoti API.
-type ErrorMessageShareV2 struct {
-	Id      string
-	Status  int
-	Error   string
-	Message string
 }
 
 // NewResponseError creates a new Error
@@ -75,14 +65,13 @@ func formatResponseMessage(response *http.Response, httpErrorMessages ...map[int
 		return defaultMessage
 	}
 
-	body, _ := io.ReadAll(response.Body)
-	response.Body = io.NopCloser(bytes.NewBuffer(body))
+	body, _ := ioutil.ReadAll(response.Body)
+	response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 
 	var errorDO DataObject
 	jsonError := json.Unmarshal(body, &errorDO)
 
 	if jsonError != nil || errorDO.Code == "" || errorDO.Message == "" {
-
 		return defaultMessage
 	}
 
@@ -106,15 +95,6 @@ func formatResponseMessage(response *http.Response, httpErrorMessages ...map[int
 }
 
 func formatHTTPError(message string, statusCode int, body []byte) string {
-
-	data := ErrorMessageShareV2{}
-
-	err := json.Unmarshal(body, &data)
-
-	if err == nil {
-		return fmt.Sprintf("%d: %s", data.Status, data.Message)
-	}
-
 	if len(body) == 0 {
 		return fmt.Sprintf("%d: %s", statusCode, message)
 	}
@@ -124,8 +104,8 @@ func formatHTTPError(message string, statusCode int, body []byte) string {
 func handleHTTPError(response *http.Response, errorMessages ...map[int]string) string {
 	var body []byte
 	if response.Body != nil {
-		body, _ = io.ReadAll(response.Body)
-		response.Body = io.NopCloser(bytes.NewBuffer(body))
+		body, _ = ioutil.ReadAll(response.Body)
+		response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 	} else {
 		body = make([]byte, 0)
 	}

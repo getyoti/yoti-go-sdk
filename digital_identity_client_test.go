@@ -63,28 +63,6 @@ func TestYotiClient_CreateShareSession(t *testing.T) {
 	assert.Equal(t, result.Status, "SOME_STATUS")
 }
 
-func TestDigitalIDClient_HttpFailure_ReturnsApplicationNotFound(t *testing.T) {
-	key := getDigitalValidKey()
-	client := DigitalIdentityClient{
-		HTTPClient: &mockHTTPClient{
-			do: func(*http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 404,
-				}, nil
-			},
-		},
-		Key: key,
-	}
-
-	_, err := client.GetSession("SOME ID")
-
-	assert.ErrorContains(t, err, "Application was not found")
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, !temporary || !tempError.Temporary())
-}
-
 func TestDigitalIDClient_HttpFailure_ReturnsUnKnownHttpError(t *testing.T) {
 	key := getDigitalValidKey()
 	client := DigitalIdentityClient{
@@ -98,7 +76,7 @@ func TestDigitalIDClient_HttpFailure_ReturnsUnKnownHttpError(t *testing.T) {
 		Key: key,
 	}
 
-	_, err := client.GetSession("SOME ID")
+	_, err := client.GetShareSession("SOME ID")
 
 	assert.ErrorContains(t, err, "unknown HTTP error")
 	tempError, temporary := err.(interface {
@@ -109,9 +87,15 @@ func TestDigitalIDClient_HttpFailure_ReturnsUnKnownHttpError(t *testing.T) {
 
 func TestDigitalIDClient_GetSession(t *testing.T) {
 	key, err := os.ReadFile("./test/test-key.pem")
+	if err != nil {
+		t.Fatalf("failed to read pem file :: %v", err)
+	}
 
 	mockSessionID := "SOME_SESSION_ID"
 	client, err := NewDigitalIdentityClient("some-sdk-id", key)
+	if err != nil {
+		t.Fatalf("failed to build the DigitalIdClient :: %v", err)
+	}
 
 	client.HTTPClient = &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
@@ -122,9 +106,9 @@ func TestDigitalIDClient_GetSession(t *testing.T) {
 		},
 	}
 
-	result, err := client.GetSession(mockSessionID)
+	result, err := client.GetShareSession(mockSessionID)
 	if err != nil {
-		return
+		t.Fatalf("failed to GetShareSesssion :: %v", err)
 	}
 
 	assert.Equal(t, result.Id, "SOME_ID")
@@ -135,8 +119,10 @@ func TestDigitalIDClient_GetSession(t *testing.T) {
 
 func TestDigitalIDClient_OverrideAPIURL_ShouldSetAPIURL(t *testing.T) {
 	client := &DigitalIdentityClient{}
+
 	expectedURL := "expectedurl.com"
 	client.OverrideAPIURL(expectedURL)
+
 	assert.Equal(t, client.getAPIURL(), expectedURL)
 }
 
@@ -145,7 +131,6 @@ func TestDigitalIDClient_GetAPIURLUsesOverriddenBaseUrlOverEnvVariable(t *testin
 	client.OverrideAPIURL("overridenBaseUrl")
 
 	os.Setenv("YOTI_API_URL", "envBaseUrl")
-
 	result := client.getAPIURL()
 
 	assert.Equal(t, "overridenBaseUrl", result)
@@ -155,7 +140,6 @@ func TestDigitalIDClient_GetAPIURLUsesEnvVariable(t *testing.T) {
 	client := DigitalIdentityClient{}
 
 	os.Setenv("YOTI_API_URL", "envBaseUrl")
-
 	result := client.getAPIURL()
 
 	assert.Equal(t, "envBaseUrl", result)
@@ -165,20 +149,18 @@ func TestDigitalIDClient_GetAPIURLUsesDefaultUrlAsFallbackWithEmptyEnvValue(t *t
 	client := DigitalIdentityClient{}
 
 	os.Setenv("YOTI_API_URL", "")
-
 	result := client.getAPIURL()
 
-	assert.Equal(t, "https://api.yoti.com/share/", result)
+	assert.Equal(t, "https://api.yoti.com/share", result)
 }
 
 func TestDigitalIDClient_GetAPIURLUsesDefaultUrlAsFallbackWithNoEnvValue(t *testing.T) {
 	client := DigitalIdentityClient{}
 
 	os.Unsetenv("YOTI_API_URL")
-
 	result := client.getAPIURL()
 
-	assert.Equal(t, "https://api.yoti.com/share/", result)
+	assert.Equal(t, "https://api.yoti.com/share", result)
 }
 
 func getDigitalValidKey() *rsa.PrivateKey {

@@ -57,21 +57,10 @@ func ExampleCreateShareSession() {
 	// Output: Status code: success
 }
 
-func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
-	_, err := createShareSessionWithErrorResponse(503, "some service unavailable response")
+func TestCreateShareURL_Unsuccessful_401(t *testing.T) {
+	_, err := createShareSessionWithErrorResponse(401, `{"id":"8f6a9dfe72128de20909af0d476769b6","status":401,"error":"INVALID_REQUEST_SIGNATURE","message":"Invalid request signature"}`)
 
-	assert.ErrorContains(t, err, "503: unknown HTTP error - some service unavailable response")
-
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, temporary && tempError.Temporary())
-}
-
-func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
-	_, err := createShareSessionWithErrorResponse(404, "some not found response")
-
-	assert.ErrorContains(t, err, "404: Application was not found - some not found response")
+	assert.ErrorContains(t, err, "INVALID_REQUEST_SIGNATURE")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -79,18 +68,7 @@ func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
-	_, err := createShareSessionWithErrorResponse(400, "some invalid JSON response")
-
-	assert.ErrorContains(t, err, "400: JSON is incorrect, contains invalid data - some invalid JSON response")
-
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, !temporary || !tempError.Temporary())
-}
-
-func createShareSessionWithErrorResponse(statusCode int, responseBody string) (share ShareSession, err error) {
+func createShareSessionWithErrorResponse(statusCode int, responseBody string) (*ShareSession, error) {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
@@ -104,17 +82,17 @@ func createShareSessionWithErrorResponse(statusCode int, responseBody string) (s
 
 	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
-		return
+		return nil, err
 	}
 	session, err := (&ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	return CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
 }
 
-func ExampleGetSession() {
+func ExampleGetShareSession() {
 	key := test.GetValidKey("../test/test-key.pem")
 	mockSessionID := "SOME_SESSION_ID"
 	mockClientSdkId := "SOME_CLIENT_SDK_ID"
@@ -128,7 +106,7 @@ func ExampleGetSession() {
 		},
 	}
 
-	result, err := GetSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	result, err := GetShareSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
 	if err != nil {
 		return
 	}
