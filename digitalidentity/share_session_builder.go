@@ -32,8 +32,8 @@ func (builder *ShareSessionRequestBuilder) WithExtension(extension interface{}) 
 }
 
 // WithNotification sets the callback URL
-func (builder *ShareSessionRequestBuilder) WithNotification(notification ShareSessionNotification) *ShareSessionRequestBuilder {
-	builder.shareSessionRequest.shareSessionNotification = &notification
+func (builder *ShareSessionRequestBuilder) WithNotification(notification *ShareSessionNotification) *ShareSessionRequestBuilder {
+	builder.shareSessionRequest.shareSessionNotification = notification
 	return builder
 }
 
