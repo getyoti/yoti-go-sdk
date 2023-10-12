@@ -45,13 +45,6 @@ func JSONHeaders() map[string][]string {
 func AuthHeader(clientSdkId string, key *rsa.PublicKey) map[string][]string {
 	return map[string][]string{
 		"X-Yoti-Auth-Id": {clientSdkId},
-		/*"X-Yoti-Auth-Key": {
-			base64.StdEncoding.EncodeToString(
-				func(a []byte, _ error) []byte {
-					return a
-				}(x509.MarshalPKIXPublicKey(key)),
-			),
-		},*/
 	}
 }
 
