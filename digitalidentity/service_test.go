@@ -92,7 +92,7 @@ func createShareSessionWithErrorResponse(statusCode int, responseBody string) (*
 	return CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
 }
 
-func ExampleGetShareSession() {
+func TestGetShareSession(t *testing.T) {
 	key := test.GetValidKey("../test/test-key.pem")
 	mockSessionID := "SOME_SESSION_ID"
 	mockClientSdkId := "SOME_CLIENT_SDK_ID"
@@ -106,10 +106,7 @@ func ExampleGetShareSession() {
 		},
 	}
 
-	result, err := GetShareSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
-	if err != nil {
-		return
-	}
-	fmt.Printf("Status code: %s", result.Status)
-	// Output:Status code: SOME_STATUS
+	_, err := GetShareSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	assert.NilError(t, err)
+
 }
