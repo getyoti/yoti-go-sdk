@@ -63,7 +63,6 @@ func pageFromSessionSpec(c *gin.Context, sessionSpec *create.SessionSpecificatio
 		return
 	}
 	createSessionResult, err = client.CreateSession(sessionSpec)
-
 	if err != nil {
 		c.HTML(
 			http.StatusInternalServerError,
