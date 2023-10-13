@@ -10,7 +10,7 @@ type ShareSessionRequestBuilder struct {
 	err                 error
 }
 
-// ShareSession represents a sharesession
+// ShareSessionRequest represents a sharesession
 type ShareSessionRequest struct {
 	policy                   Policy
 	extensions               []interface{}
