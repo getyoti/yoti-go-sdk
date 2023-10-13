@@ -21,7 +21,7 @@ type Error struct {
 }
 
 func (e Error) Error() string {
-	return e.ErrorCode + " : " + e.Message
+	return e.ErrorCode + " - " + e.Message
 }
 
 // NewResponseError creates a new Error
