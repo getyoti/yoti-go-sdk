@@ -29,7 +29,7 @@ func ExampleCreateShareSession() {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"id":"0","status":"success","expiry": ""}`)),
 			}, nil
 		},
 	}
@@ -40,7 +40,7 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	session, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -53,25 +53,14 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	fmt.Printf("QR code: %s", result.ShareURL)
-	// Output: QR code: https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC
+	fmt.Printf("Status code: %s", result.Status)
+	// Output: Status code: success
 }
 
-func TestCreateShareURL_Unsuccessful_503(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(503, "some service unavailable response")
+func TestCreateShareURL_Unsuccessful_401(t *testing.T) {
+	_, err := createShareSessionWithErrorResponse(401, `{"id":"8f6a9dfe72128de20909af0d476769b6","status":401,"error":"INVALID_REQUEST_SIGNATURE","message":"Invalid request signature"}`)
 
-	assert.ErrorContains(t, err, "503: unknown HTTP error - some service unavailable response")
-
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, temporary && tempError.Temporary())
-}
-
-func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(404, "some not found response")
-
-	assert.ErrorContains(t, err, "404: Application was not found - some not found response")
+	assert.ErrorContains(t, err, "INVALID_REQUEST_SIGNATURE")
 
 	tempError, temporary := err.(interface {
 		Temporary() bool
@@ -79,18 +68,7 @@ func TestCreateShareURL_Unsuccessful_404(t *testing.T) {
 	assert.Check(t, !temporary || !tempError.Temporary())
 }
 
-func TestCreateShareURL_Unsuccessful_400(t *testing.T) {
-	_, err := createShareUrlWithErrorResponse(400, "some invalid JSON response")
-
-	assert.ErrorContains(t, err, "400: JSON is incorrect, contains invalid data - some invalid JSON response")
-
-	tempError, temporary := err.(interface {
-		Temporary() bool
-	})
-	assert.Check(t, !temporary || !tempError.Temporary())
-}
-
-func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share ShareURL, err error) {
+func createShareSessionWithErrorResponse(statusCode int, responseBody string) (*ShareSession, error) {
 	key := test.GetValidKey("../test/test-key.pem")
 
 	client := &mockHTTPClient{
@@ -104,12 +82,31 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 
 	policy, err := (&PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
 	if err != nil {
-		return
+		return nil, err
 	}
-	scenario, err := (&ShareSessionBuilder{}).WithPolicy(policy).Build()
+	session, err := (&ShareSessionRequestBuilder{}).WithPolicy(policy).Build()
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	return CreateShareSession(client, &scenario, "sdkId", "https://apiurl", key)
+	return CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
+}
+
+func TestGetShareSession(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+	mockSessionID := "SOME_SESSION_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       io.NopCloser(strings.NewReader(`{"id":"SOME_ID","status":"SOME_STATUS","expiry":"SOME_EXPIRY","created":"SOME_CREATED","updated":"SOME_UPDATED","qrCode":{"id":"SOME_QRCODE_ID"},"receipt":{"id":"SOME_RECEIPT_ID"}}`)),
+			}, nil
+		},
+	}
+
+	_, err := GetShareSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	assert.NilError(t, err)
+
 }

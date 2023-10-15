@@ -18,7 +18,7 @@ func ExampleShareSessionNotificationBuilder() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"url":"","method":"","verifyTls":null,"headers":null}
+	// Output: {"url":""}
 }
 
 func ExampleShareSessionNotificationBuilder_WithUrl() {
@@ -35,7 +35,7 @@ func ExampleShareSessionNotificationBuilder_WithUrl() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"url":"Custom_Url","method":"","verifyTls":null,"headers":null}
+	// Output: {"url":"Custom_Url"}
 }
 
 func ExampleShareSessionNotificationBuilder_WithMethod() {
@@ -52,7 +52,7 @@ func ExampleShareSessionNotificationBuilder_WithMethod() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"url":"","method":"CUSTOMMETHOD","verifyTls":null,"headers":null}
+	// Output: {"url":"","method":"CUSTOMMETHOD"}
 }
 
 func ExampleShareSessionNotificationBuilder_WithVerifyTls() {
@@ -70,7 +70,7 @@ func ExampleShareSessionNotificationBuilder_WithVerifyTls() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"url":"","method":"","verifyTls":true,"headers":null}
+	// Output: {"url":"","verifyTls":true}
 }
 
 func ExampleShareSessionNotificationBuilder_WithHeaders() {
@@ -91,5 +91,5 @@ func ExampleShareSessionNotificationBuilder_WithHeaders() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"url":"","method":"","verifyTls":null,"headers":{"key":["value"]}}
+	// Output: {"url":"","headers":{"key":["value"]}}
 }

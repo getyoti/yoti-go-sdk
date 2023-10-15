@@ -9,7 +9,7 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
-const DefaultURL = "https://api.yoti.com/api/"
+const DefaultURL = "https://api.yoti.com/share"
 
 // DigitalIdentityClient represents a client that can communicate with yoti and return information about Yoti users.
 type DigitalIdentityClient struct {
@@ -27,14 +27,14 @@ type DigitalIdentityClient struct {
 }
 
 // NewDigitalIdentityClient constructs a Client object
-func NewDigitalIdentityClient(sdkID string, key []byte) (*Client, error) {
+func NewDigitalIdentityClient(sdkID string, key []byte) (*DigitalIdentityClient, error) {
 	decodedKey, err := cryptoutil.ParseRSAKey(key)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &Client{
+	return &DigitalIdentityClient{
 		SdkID: sdkID,
 		Key:   decodedKey,
 	}, err
@@ -54,7 +54,7 @@ func (client *DigitalIdentityClient) getAPIURL() string {
 		return value
 	}
 
-	return apiDefaultURL
+	return DefaultURL
 }
 
 // GetSdkID gets the Client SDK ID attached to this client instance
@@ -62,7 +62,12 @@ func (client *DigitalIdentityClient) GetSdkID() string {
 	return client.SdkID
 }
 
-// CreateShareURL creates a QR code for a specified share session configuration.
-func (client *DigitalIdentityClient) CreateShareURL(shareSession *digitalidentity.ShareSession) (share digitalidentity.ShareURL, err error) {
-	return digitalidentity.CreateShareSession(client.HTTPClient, shareSession, client.GetSdkID(), client.getAPIURL(), client.Key)
+// CreateShareSession creates a sharing session to initiate a sharing process based on a policy
+func (client *DigitalIdentityClient) CreateShareSession(shareSessionRequest *digitalidentity.ShareSessionRequest) (shareSession *digitalidentity.ShareSession, err error) {
+	return digitalidentity.CreateShareSession(client.HTTPClient, shareSessionRequest, client.GetSdkID(), client.getAPIURL(), client.Key)
+}
+
+// GetShareSession retrieves the sharing session.
+func (client *DigitalIdentityClient) GetShareSession(sessionID string) (*digitalidentity.ShareSession, error) {
+	return digitalidentity.GetShareSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
 }

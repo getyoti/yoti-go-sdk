@@ -7,7 +7,7 @@ import (
 // ShareSessionNotification specifies the session notification configuration.
 type ShareSessionNotification struct {
 	url       string
-	method    string
+	method    *string
 	verifyTLS *bool
 	headers   map[string][]string
 }
@@ -25,7 +25,7 @@ func (b *ShareSessionNotificationBuilder) WithUrl(url string) *ShareSessionNotif
 
 // WithMethod set method to Share Session Notification
 func (b *ShareSessionNotificationBuilder) WithMethod(method string) *ShareSessionNotificationBuilder {
-	b.shareSessionNotification.method = method
+	b.shareSessionNotification.method = &method
 	return b
 }
 
@@ -50,9 +50,9 @@ func (b *ShareSessionNotificationBuilder) Build() (ShareSessionNotification, err
 func (a *ShareSessionNotification) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Url       string              `json:"url"`
-		Method    string              `json:"method"`
-		VerifyTls *bool               `json:"verifyTls"`
-		Headers   map[string][]string `json:"headers"`
+		Method    *string             `json:"method,omitempty"`
+		VerifyTls *bool               `json:"verifyTls,omitempty"`
+		Headers   map[string][]string `json:"headers,omitempty"`
 	}{
 		Url:       a.url,
 		Method:    a.method,
