@@ -13,7 +13,7 @@ import (
 func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	var faceMatchCheck *check.RequestedFaceMatchCheck
 	faceMatchCheck, err = check.NewRequestedFaceMatchCheckBuilder().
-		WithManualCheckAlways().
+		WithManualCheckFallback().
 		Build()
 	if err != nil {
 		return nil, err
@@ -28,8 +28,8 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var livenessCheck *check.RequestedLivenessCheck
 	livenessCheck, err = check.NewRequestedLivenessCheckBuilder().
-		ForZoomLiveness().
-		WithMaxRetries(5).
+		ForStaticLiveness().
+		WithMaxRetries(3).
 		Build()
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var textExtractionTask *task.RequestedTextExtractionTask
 	textExtractionTask, err = task.NewRequestedTextExtractionTaskBuilder().
-		WithManualCheckAlways().
+		WithManualCheckFallback().
 		WithExpandedDocumentFields(true).
 		Build()
 	if err != nil {
@@ -80,7 +80,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var supplementaryDocTextExtractionTask *task.RequestedSupplementaryDocTextExtractionTask
 	supplementaryDocTextExtractionTask, err = task.NewRequestedSupplementaryDocTextExtractionTaskBuilder().
-		WithManualCheckAlways().
+		WithManualCheckFallback().
 		Build()
 	if err != nil {
 		return nil, err
@@ -158,7 +158,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
-		WithResourcesTTL(90000).
+		WithResourcesTTL(86400).
 		WithUserTrackingID("some-tracking-id").
 		WithRequestedCheck(faceMatchCheck).
 		WithRequestedCheck(documentAuthenticityCheck).
@@ -220,8 +220,8 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	}`)
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
-		WithClientSessionTokenTTL(6000).
-		WithResourcesTTL(900000).
+		WithClientSessionTokenTTL(600).
+		WithResourcesTTL(86400).
 		WithUserTrackingID("some-tracking-id").
 		WithSDKConfig(sdkConfig).
 		WithIdentityProfileRequirements(identityProfile).
