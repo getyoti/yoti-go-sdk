@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/getyoti/yoti-go-sdk/v3"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,7 @@ var (
 	key                 []byte
 	client              *docscan.Client
 	createSessionResult *create.SessionResult
+	didClient           *yoti.DigitalIdentityClient
 )
 
 func showIndexPage(c *gin.Context) {

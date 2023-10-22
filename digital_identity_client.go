@@ -71,3 +71,8 @@ func (client *DigitalIdentityClient) CreateShareSession(shareSessionRequest *dig
 func (client *DigitalIdentityClient) GetShareSession(sessionID string) (*digitalidentity.ShareSession, error) {
 	return digitalidentity.GetShareSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
+
+// Create a sharing session QR code to initiate a sharing process based on session ID
+func (client *DigitalIdentityClient) CreateShareQrCode(sessionID string) (share *digitalidentity.QrCode, err error) {
+	return digitalidentity.CreateShareQrCode(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
+}
