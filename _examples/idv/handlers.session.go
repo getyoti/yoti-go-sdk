@@ -270,7 +270,9 @@ func pageFromShareSessionReq(c *gin.Context, sessionReq *digitalidentity.ShareSe
 
 	createQr, err := didClient.CreateShareQrCode(shareSession.Id)
 
-	b, err = json.Marshal(createQr)
+	getQr, err := didClient.GetQrCode(createQr.Id)
+
+	b, err = json.Marshal(getQr)
 	if err != nil {
 		fmt.Println(err)
 		return

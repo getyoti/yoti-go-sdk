@@ -13,6 +13,7 @@ import (
 const identitySessionCreationEndpoint = "/v2/sessions"
 const identitySessionRetrieval = "/v2/sessions/%s"
 const identitySessionQrCodeCreation = "/v2/sessions/%s/qr-codes"
+const identitySessionQrCodeRetrieval = "/v2/qr-codes/%s"
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
@@ -112,4 +113,35 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 	}
 	err = json.Unmarshal(responseBytes, qrCode)
 	return qrCode, err
+}
+
+// Get Share QR info using the supplied sessionID
+func GetShareQr(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSessionFetchedQrCode, err error) {
+	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, sessionID)
+	headers := requests.AuthHeader(clientSdkId)
+	request, err := requests.SignedRequest{
+		Key:        key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    apiUrl,
+		Endpoint:   endpoint,
+		Headers:    headers,
+	}.Request()
+	if err != nil {
+		return share, err
+	}
+
+	response, err := requests.Execute(httpClient, request)
+	if err != nil {
+		return share, err
+	}
+	defer response.Body.Close()
+
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return share, err
+	}
+
+	err = json.Unmarshal(responseBytes, &share)
+
+	return share, err
 }
