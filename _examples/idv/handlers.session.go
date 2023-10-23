@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -242,8 +241,8 @@ func initialiseDigitalIdentityClient() error {
 	if err != nil {
 		return fmt.Errorf("failed to initialise Share client :: %w", err)
 	}
-	//didClient.OverrideAPIURL("https://connect.public.stg1.dmz.yoti.com/share/")
-	didClient.OverrideAPIURL("https://api.yoti.com/share")
+	didClient.OverrideAPIURL("https://connect.public.stg1.dmz.yoti.com/share")
+	//didClient.OverrideAPIURL("https://api.yoti.com/share")
 
 	return nil
 }
@@ -259,26 +258,27 @@ func pageFromShareSessionReq(c *gin.Context, sessionReq *digitalidentity.ShareSe
 				"ErrorMessage": errors.Unwrap(err)})
 		return
 	}
-	b, err := json.Marshal(sessionReq)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(b))
 
 	shareSession, err := didClient.CreateShareSession(sessionReq)
 
-	createQr, err := didClient.CreateShareQrCode(shareSession.Id)
-
-	getQr, err := didClient.GetQrCode(createQr.Id)
-
-	b, err = json.Marshal(getQr)
+	/*b, err := json.Marshal(err)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println(string(b))
+	*/
+	//fmt.Printf("\n\r %s  ", shareSession.Receipt.Id)
 
+	/*getReceipt, err := didClient.GetShareReceipt(shareSession.Receipt.Id)
+
+	b, err = json.Marshal(getReceipt)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(b))
+	*/
 	if err != nil {
 		c.HTML(
 			http.StatusInternalServerError,
