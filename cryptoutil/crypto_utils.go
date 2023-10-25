@@ -6,11 +6,14 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/v3/util"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
+	"google.golang.org/protobuf/proto"
 )
 
 // ParseRSAKey parses a PKCS1 private key from bytes
@@ -113,4 +116,149 @@ func UnwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error
 		return nil, err
 	}
 	return decryptRsa(cipherBytes, key)
+}
+
+func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
+	block, err := aes.NewCipher(secret)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(tag) != 16 {
+		return nil, errors.New("Invalid tag length")
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+
+	plainText, err := gcm.Open(nil, iv, cipherText, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if !bytesEqual(tag, plainText[len(plainText)-16:]) {
+		return nil, errors.New("Tag doesn't match")
+	}
+
+	return plainText[:len(plainText)-16], nil
+}
+
+func bytesEqual(a, b []byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func decomposeAESGCMCipherText(secret []byte, tagSize int) (cipherText, tag []byte) {
+	if tagSize <= 0 || tagSize > len(secret) {
+		return nil, nil
+	}
+
+	cipherText = secret[:len(secret)-tagSize]
+	tag = secret[len(secret)-tagSize:]
+
+	return cipherText, tag
+}
+
+func UnwrapReceiptKey(wrappedReceiptKey string, encryptedItemKey string, itemKeyIv string, key *rsa.PrivateKey) ([]byte, error) {
+
+	itemKeyIvBuffer, err := base64.StdEncoding.DecodeString(string(itemKeyIv))
+	if err != nil {
+		return nil, err
+	}
+
+	encryptedItemKeyBuffer, err := base64.StdEncoding.DecodeString(string(encryptedItemKey))
+	if err != nil {
+		return nil, err
+	}
+
+	wrappedReceiptKeyBuffer, err := base64.StdEncoding.DecodeString(string(wrappedReceiptKey))
+	if err != nil {
+		return nil, err
+	}
+
+	decryptedItemKey, err := decryptRsa(encryptedItemKeyBuffer, key)
+	if err != nil {
+		return nil, err
+	}
+
+	cipherText, tag := decomposeAESGCMCipherText(wrappedReceiptKeyBuffer, 16)
+
+	plainText, err := decryptAESGCM(cipherText, tag, itemKeyIvBuffer, decryptedItemKey)
+	if err != nil {
+		return nil, err
+	}
+	return plainText, nil
+}
+
+func decryptAESCBC(cipherText, iv, secret []byte) ([]byte, error) {
+	block, err := aes.NewCipher(secret)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(cipherText) < aes.BlockSize {
+		return nil, errors.New("cipherText is too short")
+	}
+
+	if len(cipherText)%aes.BlockSize != 0 {
+		return nil, errors.New("cipherText is not a multiple of the block size")
+	}
+
+	mode := cipher.NewCBCDecrypter(block, iv)
+
+	decrypted := make([]byte, len(cipherText))
+	mode.CryptBlocks(decrypted, cipherText)
+
+	return decrypted, nil
+}
+
+func DecryptReceiptContent(content, receiptContentKey []byte) ([]byte, error) {
+	if content == nil {
+		return nil, nil
+	}
+
+	contentBuffer, err := base64.StdEncoding.DecodeString(string(content))
+	if err != nil {
+		return nil, err
+	}
+
+	decodedData, err := decodeEncryptedData(contentBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	cipherTextBuffer, err := base64.StdEncoding.DecodeString(string(decodedData.CipherText))
+	if err != nil {
+		return nil, err
+	}
+
+	ivBuffer, err := base64.StdEncoding.DecodeString(string(decodedData.Iv))
+	if err != nil {
+		return nil, err
+	}
+
+	return decryptAESCBC(cipherTextBuffer, ivBuffer, receiptContentKey)
+}
+
+func decodeEncryptedData(binaryData []byte) (*yotiprotocom.EncryptedData, error) {
+
+	decodedData := &yotiprotocom.EncryptedData{}
+	if err := proto.Unmarshal(binaryData, decodedData); err != nil {
+		return nil, err
+	}
+
+	decodedData.CipherText = []byte(base64.StdEncoding.EncodeToString(decodedData.CipherText))
+	decodedData.Iv = []byte(base64.StdEncoding.EncodeToString(decodedData.Iv))
+	return decodedData, nil
 }

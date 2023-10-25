@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/getyoti/yoti-go-sdk/v3"
-	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/gin-gonic/gin"
@@ -23,7 +21,6 @@ var (
 	key                 []byte
 	client              *docscan.Client
 	createSessionResult *create.SessionResult
-	didClient           *yoti.DigitalIdentityClient
 )
 
 func showIndexPage(c *gin.Context) {
@@ -211,86 +208,3 @@ func showPrivacyPolicyPage(c *gin.Context) {
 	render(c, gin.H{}, "privacy.html")
 	return
 }
-
-/* For Testing */
-
-func showDigitalPage(c *gin.Context) {
-	sessionReq, err := buildDigitalIdentitySessionReq()
-	if err != nil {
-		c.HTML(
-			http.StatusInternalServerError,
-			"error.html",
-			gin.H{
-				"ErrorTitle":   "Error when building sessions spec",
-				"ErrorMessage": err.Error()})
-		return
-	}
-	pageFromShareSessionReq(c, sessionReq)
-}
-
-func initialiseDigitalIdentityClient() error {
-	var err error
-	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
-	keyFilePath := os.Getenv("YOTI_KEY_FILE_PATH")
-	key, err = os.ReadFile(keyFilePath)
-	if err != nil {
-		return fmt.Errorf("failed to get key from YOTI_KEY_FILE_PATH :: %w", err)
-	}
-
-	didClient, err = yoti.NewDigitalIdentityClient(sdkID, key)
-	if err != nil {
-		return fmt.Errorf("failed to initialise Share client :: %w", err)
-	}
-	didClient.OverrideAPIURL("https://connect.public.stg1.dmz.yoti.com/share")
-	//didClient.OverrideAPIURL("https://api.yoti.com/share")
-
-	return nil
-}
-
-func pageFromShareSessionReq(c *gin.Context, sessionReq *digitalidentity.ShareSessionRequest) {
-	err := initialiseDigitalIdentityClient()
-	if err != nil {
-		c.HTML(
-			http.StatusUnprocessableEntity,
-			"error.html",
-			gin.H{
-				"ErrorTitle":   "Error initialising DID Client",
-				"ErrorMessage": errors.Unwrap(err)})
-		return
-	}
-
-	shareSession, err := didClient.CreateShareSession(sessionReq)
-
-	/*b, err := json.Marshal(err)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(b))
-	*/
-	//fmt.Printf("\n\r %s  ", shareSession.Receipt.Id)
-
-	/*getReceipt, err := didClient.GetShareReceipt(shareSession.Receipt.Id)
-
-	b, err = json.Marshal(getReceipt)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(b))
-	*/
-	if err != nil {
-		c.HTML(
-			http.StatusInternalServerError,
-			"error.html",
-			gin.H{
-				"ErrorTitle":   "Error when creating Share session",
-				"ErrorMessage": err.Error()})
-		return
-	}
-
-	c.SetCookie("session_id", shareSession.Id, 60*20, "/", "localhost", true, false)
-	return
-}
-
-/* For Testing */
