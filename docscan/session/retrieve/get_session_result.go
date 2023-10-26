@@ -9,17 +9,18 @@ import (
 
 // GetSessionResult contains the information about a created session
 type GetSessionResult struct {
-	ClientSessionTokenTTL               int                      `json:"client_session_token_ttl"`
-	ClientSessionToken                  string                   `json:"client_session_token"`
-	SessionID                           string                   `json:"session_id"`
-	UserTrackingID                      string                   `json:"user_tracking_id"`
-	State                               string                   `json:"state"`
-	Checks                              []*CheckResponse         `json:"checks"`
-	Resources                           *ResourceContainer       `json:"resources"`
-	BiometricConsentTimestamp           *time.Time               `json:"biometric_consent"`
-	IdentityProfileResponse             *IdentityProfileResponse `json:"identity_profile"`
-	IdentityProfilePreview              *IdentityProfilePreview  `json:"identity_profile_preview"`
-	ImportTokenResponse                 *ImportTokenResponse     `json:"import_token"`
+	ClientSessionTokenTTL               int                              `json:"client_session_token_ttl"`
+	ClientSessionToken                  string                           `json:"client_session_token"`
+	SessionID                           string                           `json:"session_id"`
+	UserTrackingID                      string                           `json:"user_tracking_id"`
+	State                               string                           `json:"state"`
+	Checks                              []*CheckResponse                 `json:"checks"`
+	Resources                           *ResourceContainer               `json:"resources"`
+	BiometricConsentTimestamp           *time.Time                       `json:"biometric_consent"`
+	IdentityProfileResponse             *IdentityProfileResponse         `json:"identity_profile"`
+	AdvancedIdentityProfileResponse     *AdvancedIdentityProfileResponse `json:"advanced_identity_profile"`
+	IdentityProfilePreview              *IdentityProfilePreview          `json:"identity_profile_preview"`
+	ImportTokenResponse                 *ImportTokenResponse             `json:"import_token"`
 	authenticityChecks                  []*AuthenticityCheckResponse
 	faceMatchChecks                     []*FaceMatchCheckResponse
 	textDataChecks                      []*TextDataCheckResponse

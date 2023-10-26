@@ -219,6 +219,82 @@ func TestExampleSessionSpecificationBuilder_Build_WithIdentityProfileRequirement
 	}
 }
 
+func ExampleSessionSpecificationBuilder_Build_withAdvancedIdentityProfileRequirements() {
+	advancedIdentityProfile := []byte(`{
+		"profiles": [
+			{
+				"trust_framework": "UK_TFIDA",
+				"schemes": [
+					{
+						"label": "LB912",
+						"type": "RTW"
+					},
+					{
+						"label": "LB777",
+						"type": "DBS",
+						"objective": "BASIC"
+					}
+				]
+			},
+			{
+				"trust_framework": "YOTI_GLOBAL",
+				"schemes": [
+					{
+						"label": "LB321",
+						"type": "IDENTITY",
+						"objective": "AL_L1",
+						"config": {}
+					}
+				]
+			}
+		]
+	}`)
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithAdvancedIdentityProfileRequirements(advancedIdentityProfile).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"advanced_identity_profile_requirements":{"profiles":[{"trust_framework":"UK_TFIDA","schemes":[{"label":"LB912","type":"RTW"},{"label":"LB777","type":"DBS","objective":"BASIC"}]},{"trust_framework":"YOTI_GLOBAL","schemes":[{"label":"LB321","type":"IDENTITY","objective":"AL_L1","config":{}}]}]}}
+}
+
+func TestExampleSessionSpecificationBuilder_Build_WithAdvancedIdentityProfileRequirements_InvalidJSON(t *testing.T) {
+	advancedIdentityProfile := []byte(`{
+		"trust_framework": UK_TFIDA",
+		,
+	}`)
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithAdvancedIdentityProfileRequirements(advancedIdentityProfile).
+		Build()
+
+	if err != nil {
+		t.Errorf("error: %s", err.Error())
+		return
+	}
+
+	_, err = json.Marshal(sessionSpecification)
+	if err == nil {
+		t.Error("expected an error")
+		return
+	}
+	var marshallerErr *json.MarshalerError
+	if !errors.As(err, &marshallerErr) {
+		t.Errorf("wanted err to be of type '%v', got: '%v'", reflect.TypeOf(marshallerErr), reflect.TypeOf(err))
+	}
+}
+
 func ExampleSessionSpecificationBuilder_Build_withSubject() {
 	subject := []byte(`{
 		"subject_id": "Original subject ID"
