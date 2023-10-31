@@ -253,7 +253,6 @@ func ExampleSessionSpecificationBuilder_Build_withAdvancedIdentityProfileRequire
 	sessionSpecification, err := NewSessionSpecificationBuilder().
 		WithAdvancedIdentityProfileRequirements(advancedIdentityProfile).
 		Build()
-
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return

@@ -646,27 +646,6 @@ func TestProfile_IdentityProfileReport_RetrievesAttribute(t *testing.T) {
 	assert.Equal(t, gotProof, "<signature provided here>")
 }
 
-func TestProfile_AdvancedIdentityProfileReport_RetrievesAttribute(t *testing.T) {
-	advancedIdentityProfileReportJSON, err := file.ReadFile("../test/fixtures/AdvancedIdentityProfileReport.json")
-	assert.NilError(t, err)
-
-	var attr = &yotiprotoattr.Attribute{
-		Name:        consts.AttrAdvancedIdentityProfileReport,
-		Value:       advancedIdentityProfileReportJSON,
-		ContentType: yotiprotoattr.ContentType_JSON,
-		Anchors:     []*yotiprotoattr.Anchor{},
-	}
-
-	result := createProfileWithSingleAttribute(attr)
-	att, err := result.AdvancedIdentityProfileReport()
-	assert.NilError(t, err)
-
-	retrievedAdvancedIdentityProfile := att.Value()
-	gotProof := retrievedAdvancedIdentityProfile["proof"]
-
-	assert.Equal(t, gotProof, "<signature provided here>")
-}
-
 func TestProfileAllowsMultipleAttributesWithSameName(t *testing.T) {
 	firstAttribute := createStringAttribute("full_name", []byte("some_value"), []*yotiprotoattr.Anchor{}, "id")
 	secondAttribute := createStringAttribute("full_name", []byte("some_other_value"), []*yotiprotoattr.Anchor{}, "id")

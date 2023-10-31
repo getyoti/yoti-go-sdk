@@ -20,6 +20,7 @@ type GetSessionResult struct {
 	IdentityProfileResponse             *IdentityProfileResponse         `json:"identity_profile"`
 	AdvancedIdentityProfileResponse     *AdvancedIdentityProfileResponse `json:"advanced_identity_profile"`
 	IdentityProfilePreview              *IdentityProfilePreview          `json:"identity_profile_preview"`
+	AdvancedIdentityProfilePreview      *AdvancedIdentityProfilePreview  `json:"advanced_identity_profile_preview"`
 	ImportTokenResponse                 *ImportTokenResponse             `json:"import_token"`
 	authenticityChecks                  []*AuthenticityCheckResponse
 	faceMatchChecks                     []*FaceMatchCheckResponse

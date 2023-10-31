@@ -128,6 +128,29 @@
         </div>
     </div>
     {{ end }}
+    {{ if .getSessionResult.AdvancedIdentityProfilePreview }}
+        <div class="row pt-4">
+            <div class="col">
+                <h2>Advanced Identity Profile Preview</h2>
+            </div>
+        </div>
+        <div class="row pt-4">
+            <div class="col">
+                <table class="table table-striped table-light">
+                    <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>
+                            <a href='/media?mediaId={{ .getSessionResult.AdvancedIdentityProfilePreview.Media.ID }}'>
+                                {{ .getSessionResult.AdvancedIdentityProfilePreview.Media.ID }}
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {{ end }}
     {{ if .getSessionResult.ImportTokenResponse }}
     <div class="row pt-4">
         <div class="col">

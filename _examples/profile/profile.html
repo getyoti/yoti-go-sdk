@@ -55,15 +55,6 @@
                         </tr>
                         {{ end }}
                     </table>
-                    {{ else if eq .Prop.Name "advanced_identity_profile_report" }}
-                    <table>
-                        {{ range $key, $value := .Prop.Value }}
-                        <tr>
-                            <td>{{ $key }}</td>
-                            <td>{{ jsonMarshallIndent $value }}</td>
-                        </tr>
-                        {{ end }}
-                    </table>
                     {{ else }}
                         {{ .Prevalue }}
                         {{ .Prop.Value }}
