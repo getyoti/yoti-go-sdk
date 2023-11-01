@@ -111,7 +111,7 @@ func TestGetShareSession(t *testing.T) {
 
 }
 
-func TestCreateQrCode(t *testing.T) {
+func TestCreateShareQrCode(t *testing.T) {
 	key := test.GetValidKey("../test/test-key.pem")
 	mockSessionID := "SOME_SESSION_ID"
 
