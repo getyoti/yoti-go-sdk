@@ -17,4 +17,6 @@ report.json
 # idea files
 .idea
 
-
+# Generated binaries
+/_examples/docscan/docscan
+/_examples/idv

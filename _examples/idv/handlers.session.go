@@ -6,6 +6,10 @@ import (
 	"net/http"
 	"os"
 
+<<<<<<< HEAD
+=======
+	"github.com/getyoti/yoti-go-sdk/v3"
+>>>>>>> SDK-2254 Resolved pr comments
 	"github.com/getyoti/yoti-go-sdk/v3/docscan"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/gin-gonic/gin"
