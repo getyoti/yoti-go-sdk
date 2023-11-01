@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"time"
 
-	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/check"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/filter"
@@ -214,29 +212,3 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	}
 	return sessionSpec, nil
 }
-
-/* For Testing */
-func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
-	identityProfile := json.RawMessage(`{
-		"trust_framework": "UK_TFIDA",
-		"scheme": {
-    		"type": "RTW"
-		}
-	}`)
-	policy, err := (&digitalidentity.PolicyBuilder{}).WithIdentityProfileRequirements(identityProfile).Build()
-	if err != nil {
-		return nil, err
-	}
-
-	subject := []byte(`{
-		"subject_id": "unique-user-id-for-examples"
-	}`)
-
-	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithRedirectUri("https:/www.yoti.com").WithSubject(subject).Build()
-	if err != nil {
-		return nil, err
-	}
-	return &sessionReq, nil
-}
-
-/* For Testing */

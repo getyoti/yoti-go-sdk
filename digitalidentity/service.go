@@ -82,7 +82,7 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 	return shareSession, err
 }
 
-// CreateQrCode using the supplied sessionID parameter
+// CreateShareQrCode generates a sharing qr code using the supplied sessionID parameter
 func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*QrCode, error) {
 	endpoint := fmt.Sprintf(identitySessionQrCodeCreation, sessionID)
 
