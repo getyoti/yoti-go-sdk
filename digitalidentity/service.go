@@ -122,9 +122,9 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 	return qrCode, err
 }
 
-// Get Share QR info using the supplied sessionID
-func GetShareQr(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ShareSessionFetchedQrCode, err error) {
-	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, sessionID)
+// GetShareSessionQrCode is used to fetch the qr code by id.
+func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (fetchedQrCode ShareSessionQrCode, err error) {
+	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, qrCodeId)
 	headers := requests.AuthHeader(clientSdkId)
 	request, err := requests.SignedRequest{
 		Key:        key,
@@ -134,23 +134,23 @@ func GetShareQr(httpClient requests.HttpClient, sessionID string, clientSdkId, a
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return share, err
+		return fetchedQrCode, err
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return share, err
+		return fetchedQrCode, err
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return share, err
+		return fetchedQrCode, err
 	}
 
-	err = json.Unmarshal(responseBytes, &share)
+	err = json.Unmarshal(responseBytes, &fetchedQrCode)
 
-	return share, err
+	return fetchedQrCode, err
 }
 
 // Get Receipt info using the supplied receiptId

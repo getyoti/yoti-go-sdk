@@ -130,7 +130,7 @@ func TestCreateShareQrCode(t *testing.T) {
 
 func TestGetQrCode(t *testing.T) {
 	key := test.GetValidKey("../test/test-key.pem")
-	mockQrId := "SOME_SESSION_ID"
+	mockQrId := "SOME_QR_CODE_ID"
 	mockClientSdkId := "SOME_CLIENT_SDK_ID"
 	mockApiUrl := "https://example.com/api"
 	client := &mockHTTPClient{
@@ -142,7 +142,7 @@ func TestGetQrCode(t *testing.T) {
 		},
 	}
 
-	_, err := GetShareQr(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	_, err := GetShareSessionQrCode(client, mockQrId, mockClientSdkId, mockApiUrl, key)
 	assert.NilError(t, err)
 
 }
