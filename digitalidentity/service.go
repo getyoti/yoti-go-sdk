@@ -115,7 +115,7 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 	return qrCode, err
 }
 
-// GetShareSessionQrCode is used to fetch the qr code by id.
+// GetShareSessionQrCode is used to fetch the qr code by  id.
 func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (fetchedQrCode ShareSessionQrCode, err error) {
 	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, qrCodeId)
 	headers := requests.AuthHeader(clientSdkId)
