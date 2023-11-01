@@ -12,7 +12,4 @@ func initializeRoutes() {
 	router.GET("/success", showSuccessPage)
 	router.GET("/media", getMedia)
 	router.GET("/privacy-policy", showPrivacyPolicyPage)
-	/* For Testing */
-	router.GET("/digital-identity", showDigitalPage)
-	/* For Testing */
 }
