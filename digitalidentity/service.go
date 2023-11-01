@@ -217,6 +217,37 @@ func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, 
 	return receiptItemKey, err
 }
 
+// GetShareSessionQrCode is used to fetch the qr code by id.
+func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (fetchedQrCode ShareSessionQrCode, err error) {
+	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, qrCodeId)
+	headers := requests.AuthHeader(clientSdkId)
+	request, err := requests.SignedRequest{
+		Key:        key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    apiUrl,
+		Endpoint:   endpoint,
+		Headers:    headers,
+	}.Request()
+	if err != nil {
+		return fetchedQrCode, err
+	}
+
+	response, err := requests.Execute(httpClient, request)
+	if err != nil {
+		return fetchedQrCode, err
+	}
+	defer response.Body.Close()
+
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return fetchedQrCode, err
+	}
+
+	err = json.Unmarshal(responseBytes, &fetchedQrCode)
+
+	return fetchedQrCode, err
+}
+
 func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt SharedReceiptResponse, err error) {
 	receiptResponse, err := getReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
 	if err != nil {
