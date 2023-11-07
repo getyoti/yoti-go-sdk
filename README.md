@@ -9,7 +9,7 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=code_smells)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=getyoti%3Ago&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=getyoti%3Ago)
 
-Welcome to the Yoti Go SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Go back-end with Yoti so that your users can share their identity details with your application in a secure and trusted way.
+Welcome to the Yoti Go SDK. This repo contains the tools and step by step instructions you need to quickly integrate your Go back-end with Yoti so that your users can receipt their identity details with your application in a secure and trusted way.
 
 ## Table of Contents
 

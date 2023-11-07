@@ -153,8 +153,8 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 	return fetchedQrCode, err
 }
 
-// Get Receipt info using the supplied receiptId
-func GetReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ReceiptResponse, err error) {
+// GetReceipt fetches receipt info using a receipt id.
+func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt ReceiptResponse, err error) {
 	receiptUrl := requests.Base64ToBase64URL(receiptId)
 	endpoint := fmt.Sprintf(identitySessionReceiptRetrieval, receiptUrl)
 
@@ -167,27 +167,27 @@ func GetReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
-	err = json.Unmarshal(responseBytes, &share)
+	err = json.Unmarshal(responseBytes, &receipt)
 
-	return share, err
+	return receipt, err
 }
 
-// Get Receipt info using the supplied receiptId
-func GetFetchReceiptItemKey(httpClient requests.HttpClient, fetchReceiptItemKeyId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share ReceiptItemKeyResponse, err error) {
+// Get Receipt Item Key using the supplied receiptId Item Key ID
+func getFetchReceiptItemKey(httpClient requests.HttpClient, fetchReceiptItemKeyId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receiptItemKey ReceiptItemKeyResponse, err error) {
 
 	endpoint := fmt.Sprintf(identitySessionReceiptKeyRetrieval, fetchReceiptItemKeyId)
 	headers := requests.AuthHeader(clientSdkId)
@@ -199,37 +199,52 @@ func GetFetchReceiptItemKey(httpClient requests.HttpClient, fetchReceiptItemKeyI
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return share, err
+		return receiptItemKey, err
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return share, err
+		return receiptItemKey, err
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return share, err
+		return receiptItemKey, err
 	}
 
-	err = json.Unmarshal(responseBytes, &share)
+	err = json.Unmarshal(responseBytes, &receiptItemKey)
 
-	return share, err
+	return receiptItemKey, err
 }
 
 func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share SharedReceiptResponse, err error) {
-	receiptResponse, err := GetReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
+	receiptResponse, err := getReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
+	if err != nil {
+		return share, err
+	}
 
 	itemKeyId := receiptResponse.WrappedItemKeyId
 
-	encryptedItemKeyResponse, err := GetFetchReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
+	encryptedItemKeyResponse, err := getFetchReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
+	if err != nil {
+		return share, err
+	}
 
 	receiptContentKey, err := cryptoutil.UnwrapReceiptKey(receiptResponse.WrappedKey, encryptedItemKeyResponse.Value, encryptedItemKeyResponse.Iv, key)
+	if err != nil {
+		return share, err
+	}
 
-	//App Content
 	aattr, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.Content.Profile), receiptContentKey)
+	if err != nil {
+		return share, err
+	}
+
 	aextra, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.Content.ExtraData), receiptContentKey)
+	if err != nil {
+		return share, err
+	}
 
 	attrData := &yotiprotoattr.AttributeList{}
 	if err := proto.Unmarshal(aattr, attrData); err != nil {
@@ -244,7 +259,6 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	applicationContent := ApplicationContent{applicationProfile, extraDataValue}
 
-	//UserContent
 	uattr, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.OtherPartyContent.Profile), receiptContentKey)
 	uextra, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.OtherPartyContent.ExtraData), receiptContentKey)
 
