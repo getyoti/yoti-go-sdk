@@ -24,7 +24,7 @@
         <h1 class="yoti-top-header">{{.pageTitle}}</h1>
 
         <div class="yoti-sdk-integration-section">
-            <div id="yoti-share-button"></div>
+            <div id="yoti-receipt-button"></div>
         </div>
 
         <div class="yoti-login-or-separator">or</div>
@@ -66,11 +66,11 @@
     </section>
 </main>
 
-<script src="https://www.yoti.com/share/client/"></script>
+<script src="https://www.yoti.com/receipt/client/"></script>
 <script>
     window.Yoti.Share.init({
         "elements": [{
-            "domId": "yoti-share-button",
+            "domId": "yoti-receipt-button",
             "shareUrl": "{{.yotiShareURL}}",
             "clientSdkId": "{{.yotiClientSdkID}}",
             "button": {

@@ -82,7 +82,7 @@ func (client *DigitalIdentityClient) GetQrCode(qrCodeId string) (share digitalid
 	return digitalidentity.GetShareSessionQrCode(client.HTTPClient, qrCodeId, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
-// Get Share Receipt based on receiptId
+// GetShareReceipt fetches the receipt of the share given a receipt id.
 func (client *DigitalIdentityClient) GetShareReceipt(receiptId string) (share digitalidentity.SharedReceiptResponse, err error) {
 	return digitalidentity.GetShareReceipt(client.HTTPClient, receiptId, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
