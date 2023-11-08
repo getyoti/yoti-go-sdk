@@ -186,10 +186,9 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 	return receipt, err
 }
 
-// Get Receipt Item Key using the supplied receiptId Item Key ID
-func getFetchReceiptItemKey(httpClient requests.HttpClient, fetchReceiptItemKeyId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receiptItemKey ReceiptItemKeyResponse, err error) {
-
-	endpoint := fmt.Sprintf(identitySessionReceiptKeyRetrieval, fetchReceiptItemKeyId)
+// GetReceiptItemKey retrieves the receipt item key for a receipt item key id.
+func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receiptItemKey ReceiptItemKeyResponse, err error) {
+	endpoint := fmt.Sprintf(identitySessionReceiptKeyRetrieval, receiptItemKeyId)
 	headers := requests.AuthHeader(clientSdkId)
 	request, err := requests.SignedRequest{
 		Key:        key,
@@ -218,68 +217,88 @@ func getFetchReceiptItemKey(httpClient requests.HttpClient, fetchReceiptItemKeyI
 	return receiptItemKey, err
 }
 
-func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (share SharedReceiptResponse, err error) {
+func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt SharedReceiptResponse, err error) {
 	receiptResponse, err := getReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	itemKeyId := receiptResponse.WrappedItemKeyId
 
-	encryptedItemKeyResponse, err := getFetchReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
+	encryptedItemKeyResponse, err := getReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	receiptContentKey, err := cryptoutil.UnwrapReceiptKey(receiptResponse.WrappedKey, encryptedItemKeyResponse.Value, encryptedItemKeyResponse.Iv, key)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	aattr, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.Content.Profile), receiptContentKey)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	aextra, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.Content.ExtraData), receiptContentKey)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	attrData := &yotiprotoattr.AttributeList{}
 	if err := proto.Unmarshal(aattr, attrData); err != nil {
-		return share, err
+		return receipt, err
 	}
 
 	applicationProfile := newApplicationProfile(attrData)
 	extraDataValue, err := extra.NewExtraData(aextra)
 	if err != nil {
-		return share, err
+		return receipt, err
 	}
 
-	applicationContent := ApplicationContent{applicationProfile, extraDataValue}
+	//applicationContent := ApplicationContent{applicationProfile, extraDataValue}
 
 	uattr, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.OtherPartyContent.Profile), receiptContentKey)
+	if err != nil {
+		return receipt, err
+	}
 	uextra, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.OtherPartyContent.ExtraData), receiptContentKey)
-
+	if err != nil {
+		return receipt, err
+	}
 	aattrData := &yotiprotoattr.AttributeList{}
 	if err := proto.Unmarshal(uattr, aattrData); err != nil {
-		return share, err
+		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
 
 	userProfile := newUserProfile(aattrData)
 	userExtraDataValue, err := extra.NewExtraData(uextra)
 	if err != nil {
-		return share, err
+		return receipt, fmt.Errorf("failed to build other party extra data: %v", err)
 	}
 
-	userContent := UserContent{userProfile, userExtraDataValue}
+	/*userContent := UserContent{userProfile, userExtraDataValue}
 
 	share.ApplicationContent = applicationContent
 	share.UserContent = userContent
 	share.ID = receiptResponse.ID
 	share.SessionID = receiptResponse.ID
 	share.UserContent = userContent
-
-	return share, err
+	*/
+	return SharedReceiptResponse{
+		ID:                 receiptResponse.ID,
+		SessionID:          receiptResponse.SessionID,
+		RememberMeID:       receiptResponse.RememberMeID,
+		ParentRememberMeID: receiptResponse.ParentRememberMeID,
+		Timestamp:          receiptResponse.Timestamp,
+		UserContent: UserContent{
+			userProfile: userProfile,
+			extraData:   userExtraDataValue,
+		},
+		ApplicationContent: ApplicationContent{
+			applicationProfile: applicationProfile,
+			extraData:          extraDataValue,
+		},
+		Error: receiptResponse.Error,
+	}, nil
 }

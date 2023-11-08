@@ -1,6 +1,7 @@
 package cryptoutil
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -138,14 +139,14 @@ func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	if !bytesEqual(tag, plainText[len(plainText)-16:]) {
+	if !bytes.Equal(tag, plainText[len(plainText)-16:]) {
 		return nil, errors.New("Tag doesn't match")
 	}
 
 	return plainText[:len(plainText)-16], nil
 }
 
-func bytesEqual(a, b []byte) bool {
+/*func bytesEqual(a, b []byte) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -157,7 +158,7 @@ func bytesEqual(a, b []byte) bool {
 	}
 
 	return true
-}
+}*/
 
 func decomposeAESGCMCipherText(secret []byte, tagSize int) (cipherText, tag []byte) {
 	if tagSize <= 0 || tagSize > len(secret) {
@@ -170,33 +171,33 @@ func decomposeAESGCMCipherText(secret []byte, tagSize int) (cipherText, tag []by
 	return cipherText, tag
 }
 
-func UnwrapReceiptKey(wrappedReceiptKey string, encryptedItemKey string, itemKeyIv string, key *rsa.PrivateKey) ([]byte, error) {
+func UnwrapReceiptKey(wrappedReceiptKey string, encryptedItemKey []byte, itemKeyIv []byte, key *rsa.PrivateKey) ([]byte, error) {
 
 	itemKeyIvBuffer, err := base64.StdEncoding.DecodeString(string(itemKeyIv))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to base64 decode item key iv: %v", err)
 	}
 
 	encryptedItemKeyBuffer, err := base64.StdEncoding.DecodeString(string(encryptedItemKey))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to base64 decode encrypted item key: %v", err)
 	}
 
 	wrappedReceiptKeyBuffer, err := base64.StdEncoding.DecodeString(string(wrappedReceiptKey))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to base64 decode wrapped receipt key: %v", err)
 	}
 
 	decryptedItemKey, err := decryptRsa(encryptedItemKeyBuffer, key)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decrypt item key: %v", err)
 	}
 
 	cipherText, tag := decomposeAESGCMCipherText(wrappedReceiptKeyBuffer, 16)
 
 	plainText, err := decryptAESGCM(cipherText, tag, itemKeyIvBuffer, decryptedItemKey)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
 	}
 	return plainText, nil
 }

@@ -142,8 +142,8 @@ func main() {
 	}
 
 	http.HandleFunc("/", home)
-	http.HandleFunc("/v2/generateShare", generateSession)
-	http.HandleFunc("/v2/receiptInfo", getReceipt)
+	http.HandleFunc("/v2/generate-share", generateSession)
+	http.HandleFunc("/v2/receipt-info", getReceipt)
 
 	rootdir, err := os.Getwd()
 	if err != nil {
