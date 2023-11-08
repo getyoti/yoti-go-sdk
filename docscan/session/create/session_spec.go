@@ -41,6 +41,10 @@ type SessionSpecification struct {
 	// within the scope of a trust framework and scheme.
 	IdentityProfileRequirements *json.RawMessage `json:"identity_profile_requirements,omitempty"`
 
+	// AdvancedIdentityProfileRequirements is a JSON object for defining a required advanced identity profile
+	// within the scope of specified trust frameworks and schemes.
+	AdvancedIdentityProfileRequirements *json.RawMessage `json:"advanced_identity_profile_requirements,omitempty"`
+
 	// CreateIdentityProfilePreview is a bool for enabling the creation of the IdentityProfilePreview
 	CreateIdentityProfilePreview bool `json:"create_identity_profile_preview,omitempty"`
 
@@ -54,19 +58,20 @@ type SessionSpecification struct {
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
 type SessionSpecificationBuilder struct {
-	clientSessionTokenTTL        int
-	resourcesTTL                 int
-	userTrackingID               string
-	notifications                *NotificationConfig
-	requestedChecks              []check.RequestedCheck
-	requestedTasks               []task.RequestedTask
-	sdkConfig                    *SDKConfig
-	requiredDocuments            []filter.RequiredDocument
-	blockBiometricConsent        *bool
-	identityProfileRequirements  *json.RawMessage
-	createIdentityProfilePreview bool
-	subject                      *json.RawMessage
-	importToken                  *ImportToken
+	clientSessionTokenTTL               int
+	resourcesTTL                        int
+	userTrackingID                      string
+	notifications                       *NotificationConfig
+	requestedChecks                     []check.RequestedCheck
+	requestedTasks                      []task.RequestedTask
+	sdkConfig                           *SDKConfig
+	requiredDocuments                   []filter.RequiredDocument
+	blockBiometricConsent               *bool
+	identityProfileRequirements         *json.RawMessage
+	advancedIdentityProfileRequirements *json.RawMessage
+	createIdentityProfilePreview        bool
+	subject                             *json.RawMessage
+	importToken                         *ImportToken
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -128,6 +133,7 @@ func (b *SessionSpecificationBuilder) WithBlockBiometricConsent(blockBiometricCo
 	return b
 }
 
+// WithCreateIdentityProfilePreview sets whether or not an Identity Profile Preview will be created.
 func (b *SessionSpecificationBuilder) WithCreateIdentityProfilePreview(createIdentityProfilePreview bool) *SessionSpecificationBuilder {
 	b.createIdentityProfilePreview = createIdentityProfilePreview
 	return b
@@ -139,6 +145,13 @@ func (b *SessionSpecificationBuilder) WithIdentityProfileRequirements(identityPr
 	return b
 }
 
+// WithAdvancedIdentityProfileRequirements adds Advanced Identity Profile Requirements to the session. Must be valid JSON.
+func (b *SessionSpecificationBuilder) WithAdvancedIdentityProfileRequirements(advancedIdentityProfile json.RawMessage) *SessionSpecificationBuilder {
+	b.advancedIdentityProfileRequirements = &advancedIdentityProfile
+	return b
+}
+
+// WithSubject adds Subject to the session. Must be valid JSON.
 func (b *SessionSpecificationBuilder) WithSubject(subject json.RawMessage) *SessionSpecificationBuilder {
 	b.subject = &subject
 	return b
@@ -163,6 +176,7 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.requiredDocuments,
 		b.blockBiometricConsent,
 		b.identityProfileRequirements,
+		b.advancedIdentityProfileRequirements,
 		b.createIdentityProfilePreview,
 		b.subject,
 		b.importToken,

@@ -52,6 +52,20 @@ func showDBSPage(c *gin.Context) {
 	pageFromSessionSpec(c, sessionSpec)
 }
 
+func showAdvancedIdentityProfilePage(c *gin.Context) {
+	sessionSpec, err := buildAdvancedIdentityProfileSessionSpec()
+	if err != nil {
+		c.HTML(
+			http.StatusInternalServerError,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "Error when building sessions spec",
+				"ErrorMessage": err.Error()})
+		return
+	}
+	pageFromSessionSpec(c, sessionSpec)
+}
+
 func pageFromSessionSpec(c *gin.Context, sessionSpec *create.SessionSpecification) {
 	err := initialiseDocScanClient()
 	if err != nil {
