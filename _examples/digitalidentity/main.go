@@ -18,17 +18,8 @@ import (
 type contextKey string
 
 var (
-	sdkID                        string
-	key                          []byte
-	client                       *yoti.Client
-	selfSignedCertName           = "yotiSelfSignedCert.pem"
-	selfSignedKeyName            = "yotiSelfSignedKey.pem"
-	portNumber                   = "8080"
 	errApplyingTheParsedTemplate = "Error applying the parsed template: "
 	errParsingTheTemplate        = "Error parsing the template: "
-	profileEndpoint              = "/profile"
-	scenarioBuilderErr           = "Scenario Builder Error: `%s`"
-	didClient                    *yoti.DigitalIdentityClient
 )
 
 func home(w http.ResponseWriter, req *http.Request) {
@@ -58,9 +49,8 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
 	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithEmail().WithPhoneNumber().WithSelfie().WithAgeOver(18).WithNationality().WithGender().WithDocumentDetails().WithDocumentImages().WithWantedRememberMe().Build()
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to build policy: %v", err)
 	}
 
 	subject := []byte(`{
@@ -69,70 +59,84 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithRedirectUri("https:/www.yoti.com").WithSubject(subject).Build()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to build create session request: %v", err)
 	}
 	return &sessionReq, nil
 }
 
 func generateSession(w http.ResponseWriter, r *http.Request) {
+	didClient, err := initialiseDigitalIdentityClient()
+	if err != nil {
+		fmt.Fprintf(w, string("Client could't be generated"))
+	}
 
-	initialiseDigitalIdentityClient()
 	sessionReq, err := buildDigitalIdentitySessionReq()
 	if err != nil {
-		fmt.Fprintf(w, string(""))
+		fmt.Fprintf(w, "failed to build session request: %v", err)
+		return
 	}
 
 	shareSession, err := didClient.CreateShareSession(sessionReq)
 	if err != nil {
-		fmt.Fprintf(w, string(""))
+		fmt.Fprintf(w, "failed to create share session: %v", err)
+		return
 	}
 
 	output, err := json.Marshal(shareSession)
+	if err != nil {
+		fmt.Fprintf(w, "failed to marshall share session: %v", err)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(output))
+
 }
 
 func getReceipt(w http.ResponseWriter, r *http.Request) {
-	initialiseDigitalIdentityClient()
+	didClient, err := initialiseDigitalIdentityClient()
+	if err != nil {
+		fmt.Fprintf(w, "Client could't be generated")
+		return
+	}
 	receiptID := r.URL.Query().Get("ReceiptID")
-
-	//urlQUery, err := url.QueryUnescape(receiptID)
-	//if err != nil {
-	//	fmt.Fprintf(w, string(""))
-	//}
 
 	receiptValue, err := didClient.GetShareReceipt(receiptID)
 	if err != nil {
-		fmt.Fprintf(w, string("Receipt not found"))
+		fmt.Fprintf(w, "failed to get share receipt: %v", err)
+		return
 	}
 	output, err := json.Marshal(receiptValue)
 	if err != nil {
-		fmt.Fprintf(w, string("Receipt value cannot be marshalled"))
+		fmt.Fprintf(w, "failed to marshal receipt: %v", err)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(output))
 }
 
-func initialiseDigitalIdentityClient() error {
+func initialiseDigitalIdentityClient() (*yoti.DigitalIdentityClient, error) {
 	var err error
-	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
+	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
 	keyFilePath := os.Getenv("YOTI_KEY_FILE_PATH")
-	key, err = os.ReadFile(keyFilePath)
+	key, err := os.ReadFile(keyFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to get key from YOTI_KEY_FILE_PATH :: %w", err)
+		return nil, fmt.Errorf("failed to get key from YOTI_KEY_FILE_PATH :: %w", err)
 	}
 
-	didClient, err = yoti.NewDigitalIdentityClient(sdkID, key)
+	didClient, err := yoti.NewDigitalIdentityClient(sdkID, key)
 	if err != nil {
-		return fmt.Errorf("failed to initialise Share client :: %w", err)
+		return nil, fmt.Errorf("failed to initialise Share client :: %w", err)
 	}
 	didClient.OverrideAPIURL("https://api.yoti.com/share")
 
-	return nil
+	return didClient, nil
 }
 func main() {
 	// Check if the cert files are available.
+	selfSignedCertName := "yotiSelfSignedCert.pem"
+	selfSignedKeyName := "yotiSelfSignedKey.pem"
 	certificatePresent := certificatePresenceCheck(selfSignedCertName, selfSignedKeyName)
+	portNumber := "8080"
 	// If they are not available, generate new ones.
 	if !certificatePresent {
 		err := generateSelfSignedCertificate(selfSignedCertName, selfSignedKeyName, "127.0.0.1:"+portNumber)

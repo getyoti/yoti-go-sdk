@@ -7,7 +7,6 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
-	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"fmt"
@@ -136,7 +135,7 @@ func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
 
 	plainText, err := gcm.Open(nil, iv, cipherText, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
 	}
 
 	if !bytes.Equal(tag, plainText[len(plainText)-16:]) {
@@ -145,20 +144,6 @@ func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
 
 	return plainText[:len(plainText)-16], nil
 }
-
-/*func bytesEqual(a, b []byte) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-
-	return true
-}*/
 
 func decomposeAESGCMCipherText(secret []byte, tagSize int) (cipherText, tag []byte) {
 	if tagSize <= 0 || tagSize > len(secret) {
@@ -171,95 +156,39 @@ func decomposeAESGCMCipherText(secret []byte, tagSize int) (cipherText, tag []by
 	return cipherText, tag
 }
 
-func UnwrapReceiptKey(wrappedReceiptKey string, encryptedItemKey []byte, itemKeyIv []byte, key *rsa.PrivateKey) ([]byte, error) {
-
-	itemKeyIvBuffer, err := base64.StdEncoding.DecodeString(string(itemKeyIv))
-	if err != nil {
-		return nil, fmt.Errorf("failed to base64 decode item key iv: %v", err)
-	}
-
-	encryptedItemKeyBuffer, err := base64.StdEncoding.DecodeString(string(encryptedItemKey))
-	if err != nil {
-		return nil, fmt.Errorf("failed to base64 decode encrypted item key: %v", err)
-	}
-
-	wrappedReceiptKeyBuffer, err := base64.StdEncoding.DecodeString(string(wrappedReceiptKey))
-	if err != nil {
-		return nil, fmt.Errorf("failed to base64 decode wrapped receipt key: %v", err)
-	}
-
-	decryptedItemKey, err := decryptRsa(encryptedItemKeyBuffer, key)
+func UnwrapReceiptKey(wrappedReceiptKey []byte, encryptedItemKey []byte, itemKeyIv []byte, key *rsa.PrivateKey) ([]byte, error) {
+	decryptedItemKey, err := decryptRsa(encryptedItemKey, key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt item key: %v", err)
 	}
 
-	cipherText, tag := decomposeAESGCMCipherText(wrappedReceiptKeyBuffer, 16)
+	cipherText, tag := decomposeAESGCMCipherText(wrappedReceiptKey, 16)
 
-	plainText, err := decryptAESGCM(cipherText, tag, itemKeyIvBuffer, decryptedItemKey)
+	plainText, err := decryptAESGCM(cipherText, tag, itemKeyIv, decryptedItemKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
 	}
 	return plainText, nil
 }
 
-func decryptAESCBC(cipherText, iv, secret []byte) ([]byte, error) {
-	block, err := aes.NewCipher(secret)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(cipherText) < aes.BlockSize {
-		return nil, errors.New("cipherText is too short")
-	}
-
-	if len(cipherText)%aes.BlockSize != 0 {
-		return nil, errors.New("cipherText is not a multiple of the block size")
-	}
-
-	mode := cipher.NewCBCDecrypter(block, iv)
-
-	decrypted := make([]byte, len(cipherText))
-	mode.CryptBlocks(decrypted, cipherText)
-
-	return decrypted, nil
-}
-
 func DecryptReceiptContent(content, receiptContentKey []byte) ([]byte, error) {
 	if content == nil {
-		return nil, nil
+		return nil, fmt.Errorf("failed to decrypt receipt content is nil")
 	}
 
-	contentBuffer, err := base64.StdEncoding.DecodeString(string(content))
+	decodedData, err := decodeEncryptedData(content)
 	if err != nil {
 		return nil, err
 	}
 
-	decodedData, err := decodeEncryptedData(contentBuffer)
-	if err != nil {
-		return nil, err
-	}
-
-	cipherTextBuffer, err := base64.StdEncoding.DecodeString(string(decodedData.CipherText))
-	if err != nil {
-		return nil, err
-	}
-
-	ivBuffer, err := base64.StdEncoding.DecodeString(string(decodedData.Iv))
-	if err != nil {
-		return nil, err
-	}
-
-	return decryptAESCBC(cipherTextBuffer, ivBuffer, receiptContentKey)
+	return DecipherAes(decodedData.CipherText, decodedData.Iv, receiptContentKey)
 }
 
 func decodeEncryptedData(binaryData []byte) (*yotiprotocom.EncryptedData, error) {
-
 	decodedData := &yotiprotocom.EncryptedData{}
 	if err := proto.Unmarshal(binaryData, decodedData); err != nil {
 		return nil, err
 	}
 
-	decodedData.CipherText = []byte(base64.StdEncoding.EncodeToString(decodedData.CipherText))
-	decodedData.Iv = []byte(base64.StdEncoding.EncodeToString(decodedData.Iv))
 	return decodedData, nil
 }

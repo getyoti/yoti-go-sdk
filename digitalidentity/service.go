@@ -235,12 +235,12 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 		return receipt, err
 	}
 
-	aattr, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.Content.Profile), receiptContentKey)
+	aattr, err := cryptoutil.DecryptReceiptContent(receiptResponse.Content.Profile, receiptContentKey)
 	if err != nil {
 		return receipt, err
 	}
 
-	aextra, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.Content.ExtraData), receiptContentKey)
+	aextra, err := cryptoutil.DecryptReceiptContent(receiptResponse.Content.ExtraData, receiptContentKey)
 	if err != nil {
 		return receipt, err
 	}
@@ -258,33 +258,25 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	//applicationContent := ApplicationContent{applicationProfile, extraDataValue}
 
-	uattr, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.OtherPartyContent.Profile), receiptContentKey)
+	uattr, err := cryptoutil.DecryptReceiptContent(receiptResponse.OtherPartyContent.Profile, receiptContentKey)
 	if err != nil {
 		return receipt, err
 	}
-	uextra, err := cryptoutil.DecryptReceiptContent([]byte(receiptResponse.OtherPartyContent.ExtraData), receiptContentKey)
+	uextra, err := cryptoutil.DecryptReceiptContent(receiptResponse.OtherPartyContent.ExtraData, receiptContentKey)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
-	aattrData := &yotiprotoattr.AttributeList{}
-	if err := proto.Unmarshal(uattr, aattrData); err != nil {
+	uattrData := &yotiprotoattr.AttributeList{}
+	if err := proto.Unmarshal(uattr, uattrData); err != nil {
 		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
 
-	userProfile := newUserProfile(aattrData)
+	userProfile := newUserProfile(uattrData)
 	userExtraDataValue, err := extra.NewExtraData(uextra)
 	if err != nil {
 		return receipt, fmt.Errorf("failed to build other party extra data: %v", err)
 	}
 
-	/*userContent := UserContent{userProfile, userExtraDataValue}
-
-	share.ApplicationContent = applicationContent
-	share.UserContent = userContent
-	share.ID = receiptResponse.ID
-	share.SessionID = receiptResponse.ID
-	share.UserContent = userContent
-	*/
 	return SharedReceiptResponse{
 		ID:                 receiptResponse.ID,
 		SessionID:          receiptResponse.SessionID,
@@ -292,12 +284,12 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 		ParentRememberMeID: receiptResponse.ParentRememberMeID,
 		Timestamp:          receiptResponse.Timestamp,
 		UserContent: UserContent{
-			userProfile: userProfile,
-			extraData:   userExtraDataValue,
+			UserProfile: userProfile,
+			ExtraData:   userExtraDataValue,
 		},
 		ApplicationContent: ApplicationContent{
-			applicationProfile: applicationProfile,
-			extraData:          extraDataValue,
+			ApplicationProfile: applicationProfile,
+			ExtraData:          extraDataValue,
 		},
 		Error: receiptResponse.Error,
 	}, nil

@@ -14,11 +14,11 @@ type SharedReceiptResponse struct {
 }
 
 type ApplicationContent struct {
-	applicationProfile ApplicationProfile
-	extraData          *extra.Data
+	ApplicationProfile ApplicationProfile
+	ExtraData          *extra.Data
 }
 
 type UserContent struct {
-	userProfile UserProfile
-	extraData   *extra.Data
+	UserProfile UserProfile
+	ExtraData   *extra.Data
 }
