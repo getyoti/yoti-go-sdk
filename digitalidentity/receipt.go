@@ -14,6 +14,6 @@ type ReceiptResponse struct {
 	Content            *Content `json:"content,omitempty"`
 	OtherPartyContent  *Content `json:"otherPartyContent,omitempty"`
 	WrappedItemKeyId   string   `json:"wrappedItemKeyId"`
-	WrappedKey         string   `json:"wrappedKey"`
+	WrappedKey         []byte   `json:"wrappedKey"`
 	Error              string   `json:"error"`
 }
