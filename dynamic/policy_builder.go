@@ -16,19 +16,21 @@ const (
 // PolicyBuilder constructs a json payload specifying the dynamic policy
 // for a dynamic scenario
 type PolicyBuilder struct {
-	wantedAttributes            map[string]WantedAttribute
-	wantedAuthTypes             map[int]bool
-	isWantedRememberMe          bool
-	err                         error
-	identityProfileRequirements *json.RawMessage
+	wantedAttributes                    map[string]WantedAttribute
+	wantedAuthTypes                     map[int]bool
+	isWantedRememberMe                  bool
+	err                                 error
+	identityProfileRequirements         *json.RawMessage
+	advancedIdentityProfileRequirements *json.RawMessage
 }
 
 // Policy represents a dynamic policy for a share
 type Policy struct {
-	attributes                  []WantedAttribute
-	authTypes                   []int
-	rememberMeID                bool
-	identityProfileRequirements *json.RawMessage
+	attributes                          []WantedAttribute
+	authTypes                           []int
+	rememberMeID                        bool
+	identityProfileRequirements         *json.RawMessage
+	advancedIdentityProfileRequirements *json.RawMessage
 }
 
 // WithWantedAttribute adds an attribute from WantedAttributeBuilder to the policy
@@ -206,13 +208,20 @@ func (b *PolicyBuilder) WithIdentityProfileRequirements(identityProfile json.Raw
 	return b
 }
 
+// WithAdvancedIdentityProfileRequirements adds Advanced Identity Profile Requirements to the policy. Must be valid JSON.
+func (b *PolicyBuilder) WithAdvancedIdentityProfileRequirements(advancedIdentityProfile json.RawMessage) *PolicyBuilder {
+	b.advancedIdentityProfileRequirements = &advancedIdentityProfile
+	return b
+}
+
 // Build constructs a dynamic policy object
 func (b *PolicyBuilder) Build() (Policy, error) {
 	return Policy{
-		attributes:                  b.attributesAsList(),
-		authTypes:                   b.authTypesAsList(),
-		rememberMeID:                b.isWantedRememberMe,
-		identityProfileRequirements: b.identityProfileRequirements,
+		attributes:                          b.attributesAsList(),
+		authTypes:                           b.authTypesAsList(),
+		rememberMeID:                        b.isWantedRememberMe,
+		identityProfileRequirements:         b.identityProfileRequirements,
+		advancedIdentityProfileRequirements: b.advancedIdentityProfileRequirements,
 	}, b.err
 }
 
@@ -237,14 +246,16 @@ func (b *PolicyBuilder) authTypesAsList() []int {
 // MarshalJSON returns the JSON encoding
 func (policy *Policy) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Wanted                      []WantedAttribute `json:"wanted"`
-		WantedAuthTypes             []int             `json:"wanted_auth_types"`
-		WantedRememberMe            bool              `json:"wanted_remember_me"`
-		IdentityProfileRequirements *json.RawMessage  `json:"identity_profile_requirements,omitempty"`
+		Wanted                              []WantedAttribute `json:"wanted"`
+		WantedAuthTypes                     []int             `json:"wanted_auth_types"`
+		WantedRememberMe                    bool              `json:"wanted_remember_me"`
+		IdentityProfileRequirements         *json.RawMessage  `json:"identity_profile_requirements,omitempty"`
+		AdvancedIdentityProfileRequirements *json.RawMessage  `json:"advanced_identity_profile_requirements,omitempty"`
 	}{
-		Wanted:                      policy.attributes,
-		WantedAuthTypes:             policy.authTypes,
-		WantedRememberMe:            policy.rememberMeID,
-		IdentityProfileRequirements: policy.identityProfileRequirements,
+		Wanted:                              policy.attributes,
+		WantedAuthTypes:                     policy.authTypes,
+		WantedRememberMe:                    policy.rememberMeID,
+		IdentityProfileRequirements:         policy.identityProfileRequirements,
+		AdvancedIdentityProfileRequirements: policy.advancedIdentityProfileRequirements,
 	})
 }

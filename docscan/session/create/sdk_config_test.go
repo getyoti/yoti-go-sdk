@@ -97,3 +97,23 @@ func ExampleSdkConfigBuilder_WithAllowsCameraAndUpload() {
 	fmt.Println(string(data))
 	// Output: {"allowed_capture_methods":"CAMERA_AND_UPLOAD"}
 }
+
+func ExampleSdkConfigBuilder_WithAllowHandOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithAllowHandOff(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"allow_handoff":true}
+}
