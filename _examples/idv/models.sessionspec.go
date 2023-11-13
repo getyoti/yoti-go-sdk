@@ -98,6 +98,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithErrorUrl("https://localhost:8080/error").
 		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
 		WithIdDocumentTextExtractionGenericAttempts(2).
+		WithAllowHandOff(true).
 		Build()
 	if err != nil {
 		return nil, err
@@ -158,7 +159,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
-		WithResourcesTTL(86400).
+		WithResourcesTTL(87000).
 		WithUserTrackingID("some-tracking-id").
 		WithRequestedCheck(faceMatchCheck).
 		WithRequestedCheck(documentAuthenticityCheck).
@@ -203,7 +204,8 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	identityProfile := []byte(`{
 		"trust_framework": "UK_TFIDA",
 		"scheme": {
-    		"type": "RTW"
+    		"type": "DBS",
+    		"objective": "BASIC"
 		}
 	}`)
 
@@ -221,7 +223,7 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
-		WithResourcesTTL(86400).
+		WithResourcesTTL(87000).
 		WithUserTrackingID("some-tracking-id").
 		WithSDKConfig(sdkConfig).
 		WithIdentityProfileRequirements(identityProfile).

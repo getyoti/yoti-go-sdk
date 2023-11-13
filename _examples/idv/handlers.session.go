@@ -223,3 +223,11 @@ func showPrivacyPolicyPage(c *gin.Context) {
 	render(c, gin.H{}, "privacy.html")
 	return
 }
+
+func showErrorPage(c *gin.Context) {
+	render(c, gin.H{
+		"ErrorTitle":   "Error Code",
+		"ErrorMessage": c.Request.URL.Query().Get("yotiErrorCode")},
+		"error.html")
+	return
+}
