@@ -462,3 +462,72 @@ func TestPolicyBuilder_WithIdentityProfileRequirements_ShouldFailForInvalidJSON(
 		t.Errorf("wanted err to be of type '%v', got: '%v'", reflect.TypeOf(marshallerErr), reflect.TypeOf(err))
 	}
 }
+
+func ExamplePolicyBuilder_WithAdvancedIdentityProfileRequirements() {
+	advancedIdentityProfile := []byte(`{
+		"profiles": [
+			{
+				"trust_framework": "UK_TFIDA",
+				"schemes": [
+					{
+						"label": "LB912",
+						"type": "RTW"
+					},
+					{
+						"label": "LB777",
+						"type": "DBS",
+						"objective": "BASIC"
+					}
+				]
+			},
+			{
+				"trust_framework": "YOTI_GLOBAL",
+				"schemes": [
+					{
+						"label": "LB321",
+						"type": "IDENTITY",
+						"objective": "AL_L1",
+						"config": {}
+					}
+				]
+			}
+		]
+	}`)
+
+	policy, err := (&PolicyBuilder{}).WithAdvancedIdentityProfileRequirements(advancedIdentityProfile).Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := policy.MarshalJSON()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"wanted":[],"wanted_auth_types":[],"wanted_remember_me":false,"advanced_identity_profile_requirements":{"profiles":[{"trust_framework":"UK_TFIDA","schemes":[{"label":"LB912","type":"RTW"},{"label":"LB777","type":"DBS","objective":"BASIC"}]},{"trust_framework":"YOTI_GLOBAL","schemes":[{"label":"LB321","type":"IDENTITY","objective":"AL_L1","config":{}}]}]}}
+}
+
+func TestPolicyBuilder_WithAdvancedIdentityProfileRequirements_ShouldFailForInvalidJSON(t *testing.T) {
+	advancedIdentityProfile := []byte(`{
+		"trust_framework": UK_TFIDA",
+		,
+	}`)
+
+	policy, err := (&PolicyBuilder{}).WithAdvancedIdentityProfileRequirements(advancedIdentityProfile).Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	_, err = policy.MarshalJSON()
+	if err == nil {
+		t.Error("expected an error")
+	}
+	var marshallerErr *json.MarshalerError
+	if !errors.As(err, &marshallerErr) {
+		t.Errorf("wanted err to be of type '%v', got: '%v'", reflect.TypeOf(marshallerErr), reflect.TypeOf(err))
+	}
+}

@@ -13,7 +13,7 @@ import (
 func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 	var faceMatchCheck *check.RequestedFaceMatchCheck
 	faceMatchCheck, err = check.NewRequestedFaceMatchCheckBuilder().
-		WithManualCheckAlways().
+		WithManualCheckFallback().
 		Build()
 	if err != nil {
 		return nil, err
@@ -28,8 +28,8 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var livenessCheck *check.RequestedLivenessCheck
 	livenessCheck, err = check.NewRequestedLivenessCheckBuilder().
-		ForZoomLiveness().
-		WithMaxRetries(5).
+		ForStaticLiveness().
+		WithMaxRetries(3).
 		Build()
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var textExtractionTask *task.RequestedTextExtractionTask
 	textExtractionTask, err = task.NewRequestedTextExtractionTaskBuilder().
-		WithManualCheckAlways().
+		WithManualCheckFallback().
 		WithExpandedDocumentFields(true).
 		Build()
 	if err != nil {
@@ -80,7 +80,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	var supplementaryDocTextExtractionTask *task.RequestedSupplementaryDocTextExtractionTask
 	supplementaryDocTextExtractionTask, err = task.NewRequestedSupplementaryDocTextExtractionTaskBuilder().
-		WithManualCheckAlways().
+		WithManualCheckFallback().
 		Build()
 	if err != nil {
 		return nil, err
@@ -98,6 +98,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithErrorUrl("https://localhost:8080/error").
 		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
 		WithIdDocumentTextExtractionGenericAttempts(2).
+		WithAllowHandOff(true).
 		Build()
 	if err != nil {
 		return nil, err
@@ -158,7 +159,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
-		WithResourcesTTL(90000).
+		WithResourcesTTL(87000).
 		WithUserTrackingID("some-tracking-id").
 		WithRequestedCheck(faceMatchCheck).
 		WithRequestedCheck(documentAuthenticityCheck).
@@ -203,7 +204,8 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	identityProfile := []byte(`{
 		"trust_framework": "UK_TFIDA",
 		"scheme": {
-    		"type": "RTW"
+    		"type": "DBS",
+    		"objective": "BASIC"
 		}
 	}`)
 
@@ -220,8 +222,8 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 	}`)
 
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
-		WithClientSessionTokenTTL(6000).
-		WithResourcesTTL(900000).
+		WithClientSessionTokenTTL(600).
+		WithResourcesTTL(87000).
 		WithUserTrackingID("some-tracking-id").
 		WithSDKConfig(sdkConfig).
 		WithIdentityProfileRequirements(identityProfile).
@@ -231,4 +233,60 @@ func buildDBSSessionSpec() (sessionSpec *create.SessionSpecification, err error)
 		Build()
 
 	return sessionSpec, nil
+}
+
+func buildAdvancedIdentityProfileSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
+	var sdkConfig *create.SDKConfig
+	sdkConfig, err = create.NewSdkConfigBuilder().
+		WithAllowsCameraAndUpload().
+		WithPrimaryColour("#2d9fff").
+		WithSecondaryColour("#FFFFFF").
+		WithFontColour("#FFFFFF").
+		WithLocale("en-GB").
+		WithPresetIssuingCountry("GBR").
+		WithSuccessUrl("https://localhost:8080/success").
+		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	advancedIdentityProfile := []byte(`{
+		"profiles": [
+			{
+				"trust_framework": "UK_TFIDA",
+				"schemes": [
+					{
+						"label": "LB912",
+						"type": "RTW"
+					}
+				]
+			},
+			{
+				"trust_framework": "YOTI_GLOBAL",
+				"schemes": [
+					{
+						"label": "LB321",
+						"type": "IDENTITY",
+						"objective": "AL_L1"
+					}
+				]
+			}
+		]
+	}`)
+
+	subject := []byte(`{
+		"subject_id": "unique-user-id-for-examples"
+	}`)
+
+	return create.NewSessionSpecificationBuilder().
+		WithClientSessionTokenTTL(6000).
+		WithResourcesTTL(900000).
+		WithUserTrackingID("some-tracking-id").
+		WithSDKConfig(sdkConfig).
+		WithAdvancedIdentityProfileRequirements(advancedIdentityProfile).
+		WithCreateIdentityProfilePreview(true).
+		WithSubject(subject).
+		Build()
 }

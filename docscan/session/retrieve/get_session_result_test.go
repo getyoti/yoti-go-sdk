@@ -215,6 +215,36 @@ func TestGetSessionResult_UnmarshalJSON_IdentityProfile(t *testing.T) {
 	assert.Equal(t, mid, "c69ff2db-6caf-4e74-8386-037711bbc8d7")
 }
 
+func TestGetSessionResult_UnmarshalJSON_AdvancedIdentityProfile(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/GetSessionResultWithAdvancedIdentityProfile.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	identityProfile := result.AdvancedIdentityProfileResponse
+	assert.Assert(t, identityProfile != nil)
+
+	assert.Equal(t, identityProfile.SubjectId, "someStringHere")
+	assert.Equal(t, identityProfile.Result, "DONE")
+	assert.Equal(t, identityProfile.FailureReasonResponse, retrieve.FailureReasonResponse{ReasonCode: "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED"})
+
+	compliances, ok := identityProfile.Report["compliance"].([]interface{})
+	assert.Equal(t, ok, true)
+	assert.Equal(t, len(compliances), 1)
+
+	compliance, ok := compliances[0].(map[string]interface{})
+	assert.Equal(t, ok, true)
+	assert.Equal(t, compliance["trust_framework"], "UK_TFIDA")
+
+	media, ok := identityProfile.Report["media"].(map[string]interface{})
+	assert.Equal(t, ok, true)
+	mid, ok := media["id"].(string)
+	assert.Equal(t, ok, true)
+	assert.Equal(t, mid, "c69ff2db-6caf-4e74-8386-037711bbc8d7")
+}
+
 func TestGetSessionResult_UnmarshalJSON_IdentityProfilePreview(t *testing.T) {
 	bytes, err := file.ReadFile("../../../test/fixtures/GetSessionResultWithIdentityProfile.json")
 	assert.NilError(t, err)
@@ -224,6 +254,22 @@ func TestGetSessionResult_UnmarshalJSON_IdentityProfilePreview(t *testing.T) {
 	assert.NilError(t, err)
 
 	identityProfilePreview := result.IdentityProfilePreview
+	assert.Assert(t, identityProfilePreview != nil)
+
+	assert.Assert(t, identityProfilePreview.Media != nil)
+	assert.Equal(t, identityProfilePreview.Media.ID, "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+	assert.Equal(t, identityProfilePreview.Media.Type, "IMAGE")
+}
+
+func TestGetSessionResult_UnmarshalJSON_AdvancedIdentityProfilePreview(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/GetSessionResultWithAdvancedIdentityProfile.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	identityProfilePreview := result.AdvancedIdentityProfilePreview
 	assert.Assert(t, identityProfilePreview != nil)
 
 	assert.Assert(t, identityProfilePreview.Media != nil)
