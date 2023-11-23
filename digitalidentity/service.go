@@ -232,7 +232,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	receiptContentKey, err := cryptoutil.UnwrapReceiptKey(receiptResponse.WrappedKey, encryptedItemKeyResponse.Value, encryptedItemKeyResponse.Iv, key)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unwrap receipt content key: %v", err)
 	}
 
 	aattr, err := cryptoutil.DecryptReceiptContent(receiptResponse.Content.Profile, receiptContentKey)
