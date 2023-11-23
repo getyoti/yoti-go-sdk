@@ -130,7 +130,7 @@ func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
 
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create new gcm cipher: %v", err)
 	}
 
 	plainText, err := gcm.Open(nil, iv, cipherText, nil)
