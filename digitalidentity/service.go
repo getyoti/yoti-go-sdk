@@ -247,7 +247,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	attrData := &yotiprotoattr.AttributeList{}
 	if err := proto.Unmarshal(aattr, attrData); err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unmarshal application attribute list: %v", err)
 	}
 
 	applicationProfile := newApplicationProfile(attrData)
