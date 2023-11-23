@@ -121,7 +121,7 @@ func UnwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error
 func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
 	block, err := aes.NewCipher(secret)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create new aes cipher: %v", err)
 	}
 
 	if len(tag) != 16 {
