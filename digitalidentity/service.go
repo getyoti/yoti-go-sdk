@@ -253,7 +253,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 	applicationProfile := newApplicationProfile(attrData)
 	extraDataValue, err := extra.NewExtraData(aextra)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to build application extra data: %v", err)
 	}
 
 
