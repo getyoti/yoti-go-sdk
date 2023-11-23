@@ -242,7 +242,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	aextra, err := cryptoutil.DecryptReceiptContent(receiptResponse.Content.ExtraData, receiptContentKey)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to decrypt receipt content extra data: %v", err)
 	}
 
 	attrData := &yotiprotoattr.AttributeList{}
