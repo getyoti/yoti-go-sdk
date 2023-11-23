@@ -263,7 +263,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 	}
 	uextra, err := cryptoutil.DecryptReceiptContent(receiptResponse.OtherPartyContent.ExtraData, receiptContentKey)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
+		return receipt, fmt.Errorf("failed to decrypt other party receipt content extra data: %v", err)
 	}
 	uattrData := &yotiprotoattr.AttributeList{}
 	if err := proto.Unmarshal(uattr, uattrData); err != nil {
