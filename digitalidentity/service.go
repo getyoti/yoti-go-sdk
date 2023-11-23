@@ -259,7 +259,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	uattr, err := cryptoutil.DecryptReceiptContent(receiptResponse.OtherPartyContent.Profile, receiptContentKey)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to decrypt other party receipt content profile: %v", err)
 	}
 	uextra, err := cryptoutil.DecryptReceiptContent(receiptResponse.OtherPartyContent.ExtraData, receiptContentKey)
 	if err != nil {
