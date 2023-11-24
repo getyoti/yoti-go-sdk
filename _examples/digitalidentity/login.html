@@ -44,7 +44,7 @@
 <script>
     async function onSessionIdResolver() {
         console.log('sessioning')
-        const response = await fetch('https://localhost:8080/v2/generateShare', {method: 'GET'})
+        const response = await fetch('https://localhost:8080/v2/generate-share', {method: 'GET'})
         const data = await response.json()
         console.log('data: %s', data.id)
         return data.id
@@ -52,7 +52,7 @@
 
     async function completionHandler(receivedReceiptId) {
         console.log('completion handler:', receivedReceiptId)
-        const response = await fetch('/v2/receiptInfo?ReceiptID=' + encodeURIComponent(receivedReceiptId) , {method: 'GET'})
+        const response = await fetch('/v2/receipt-info?ReceiptID=' + encodeURIComponent(receivedReceiptId) , {method: 'GET'})
     }
 
     function onErrorListener(...data) {
@@ -80,6 +80,6 @@
       await onReadyToStart()
     }
   </script>
-  <script src="https://www.yoti.com/receipt/client/v2" onload="onClientLoaded()"></script>
+  <script src="https://www.yoti.com/share/client/v2" onload="onClientLoaded()"></script>
 </body>
 </html>

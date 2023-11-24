@@ -176,19 +176,11 @@ func DecryptReceiptContent(content, receiptContentKey []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to decrypt receipt content is nil")
 	}
 
-	decodedData, err := decodeEncryptedData(content)
+	decodedData := &yotiprotocom.EncryptedData{}
+	err := proto.Unmarshal(content, decodedData) //decodeEncryptedData(content)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshall content: %v", content)
 	}
 
 	return DecipherAes(decodedData.CipherText, decodedData.Iv, receiptContentKey)
-}
-
-func decodeEncryptedData(binaryData []byte) (*yotiprotocom.EncryptedData, error) {
-	decodedData := &yotiprotocom.EncryptedData{}
-	if err := proto.Unmarshal(binaryData, decodedData); err != nil {
-		return nil, err
-	}
-
-	return decodedData, nil
 }

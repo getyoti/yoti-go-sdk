@@ -127,7 +127,6 @@ func initialiseDigitalIdentityClient() (*yoti.DigitalIdentityClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialise Share client :: %w", err)
 	}
-	didClient.OverrideAPIURL("https://api.yoti.com/share")
 
 	return didClient, nil
 }
