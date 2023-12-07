@@ -68,6 +68,7 @@ func generateSession(w http.ResponseWriter, r *http.Request) {
 	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
 		fmt.Fprintf(w, string("Client could't be generated"))
+		return
 	}
 
 	sessionReq, err := buildDigitalIdentitySessionReq()
