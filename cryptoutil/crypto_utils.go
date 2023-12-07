@@ -177,7 +177,7 @@ func DecryptReceiptContent(content, receiptContentKey []byte) ([]byte, error) {
 	}
 
 	decodedData := &yotiprotocom.EncryptedData{}
-	err := proto.Unmarshal(content, decodedData) //decodeEncryptedData(content)
+	err := proto.Unmarshal(content, decodedData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshall content: %v", content)
 	}
