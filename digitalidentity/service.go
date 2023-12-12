@@ -3,7 +3,6 @@ package digitalidentity
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -221,18 +220,14 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt SharedReceiptResponse, err error) {
 	receiptResponse, err := getReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
 	if err != nil {
-		return receipt, err
-	}
-
-	if err := validateReceiptResponse(receiptResponse); err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
 
 	itemKeyId := receiptResponse.WrappedItemKeyId
 
 	encryptedItemKeyResponse, err := getReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
 
 	receiptContentKey, err := cryptoutil.UnwrapReceiptKey(receiptResponse.WrappedKey, encryptedItemKeyResponse.Value, encryptedItemKeyResponse.Iv, key)
@@ -242,7 +237,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	attrData, aextra, err := decryptReceiptContent(receiptResponse.Content, receiptContentKey)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
 
 	applicationProfile := newApplicationProfile(attrData)
@@ -253,7 +248,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	uattrData, uextra, err := decryptReceiptContent(receiptResponse.OtherPartyContent, receiptContentKey)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 	}
 
 	userProfile := newUserProfile(uattrData)
@@ -280,20 +275,18 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 	}, nil
 }
 
-func validateReceiptResponse(receiptResponse ReceiptResponse) error {
-	if receiptResponse.Content == nil || len(receiptResponse.Content.Profile) == 0 {
-		return errors.New("received unexpectedly empty content or profile")
-	}
-	return nil
-}
-
 func decryptReceiptContent(content *Content, key []byte) (attrData *yotiprotoattr.AttributeList, aextra []byte, err error) {
-	aattr := []byte{}
+
 	if content != nil {
 		if len(content.Profile) > 0 {
-			aattr, err = cryptoutil.DecryptReceiptContent(content.Profile, key)
+			aattr, err := cryptoutil.DecryptReceiptContent(content.Profile, key)
 			if err != nil {
 				return nil, nil, fmt.Errorf("failed to decrypt receipt content profile: %v", err)
+			}
+
+			attrData = &yotiprotoattr.AttributeList{}
+			if err := proto.Unmarshal(aattr, attrData); err != nil {
+				return nil, nil, fmt.Errorf("failed to unmarshal attribute list: %v", err)
 			}
 		}
 
@@ -304,10 +297,6 @@ func decryptReceiptContent(content *Content, key []byte) (attrData *yotiprotoatt
 			}
 		}
 
-		attrData = &yotiprotoattr.AttributeList{}
-		if err := proto.Unmarshal(aattr, attrData); err != nil {
-			return nil, nil, fmt.Errorf("failed to unmarshal attribute list: %v", err)
-		}
 	}
 
 	return attrData, aextra, nil
