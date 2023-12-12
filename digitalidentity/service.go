@@ -40,12 +40,12 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get signed request: %v", err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute request: %v", err)
 	}
 
 	defer response.Body.Close()
@@ -53,7 +53,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get read response body: %v", err)
 	}
 	err = json.Unmarshal(responseBytes, shareSession)
 	return shareSession, err
@@ -72,19 +72,19 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get signed request: %v", err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute request: %v", err)
 	}
 	defer response.Body.Close()
 	shareSession := &ShareSession{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get read response body: %v", err)
 	}
 	err = json.Unmarshal(responseBytes, shareSession)
 	return shareSession, err
@@ -104,19 +104,19 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get signed request: %v", err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute request: %v", err)
 	}
 
 	defer response.Body.Close()
 	qrCode := &QrCode{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get read response body: %v", err)
 	}
 	err = json.Unmarshal(responseBytes, qrCode)
 	return qrCode, err
@@ -136,18 +136,18 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to get signed request: %v", err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to execute request: %v", err)
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return receipt, err
+		return receipt, fmt.Errorf("failed to get read response body: %v", err)
 	}
 
 	err = json.Unmarshal(responseBytes, &receipt)
@@ -167,7 +167,7 @@ func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, 
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receiptItemKey, err
+		return receiptItemKey, fmt.Errorf("failed to get signed request: %v", err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -198,18 +198,18 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return fetchedQrCode, err
+		return fetchedQrCode, fmt.Errorf("failed to get signed request: %v", err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return fetchedQrCode, err
+		return fetchedQrCode, fmt.Errorf("failed to execute request: %v", err)
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return fetchedQrCode, err
+		return fetchedQrCode, fmt.Errorf("failed to get read response body: %v", err)
 	}
 
 	err = json.Unmarshal(responseBytes, &fetchedQrCode)
@@ -220,14 +220,14 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt SharedReceiptResponse, err error) {
 	receiptResponse, err := getReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
+		return receipt, fmt.Errorf("failed to get receipt: %v", err)
 	}
 
 	itemKeyId := receiptResponse.WrappedItemKeyId
 
 	encryptedItemKeyResponse, err := getReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
+		return receipt, fmt.Errorf("failed to get receipt item key: %v", err)
 	}
 
 	receiptContentKey, err := cryptoutil.UnwrapReceiptKey(receiptResponse.WrappedKey, encryptedItemKeyResponse.Value, encryptedItemKeyResponse.Iv, key)
@@ -237,7 +237,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	attrData, aextra, err := decryptReceiptContent(receiptResponse.Content, receiptContentKey)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
+		return receipt, fmt.Errorf("failed to decrypt extra data: %v", err)
 	}
 
 	applicationProfile := newApplicationProfile(attrData)
@@ -248,7 +248,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	uattrData, uextra, err := decryptReceiptContent(receiptResponse.OtherPartyContent, receiptContentKey)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to unmarshal attribute list: %v", err)
+		return receipt, fmt.Errorf("failed to decrypt extra content data: %v", err)
 	}
 
 	userProfile := newUserProfile(uattrData)
@@ -281,7 +281,7 @@ func decryptReceiptContent(content *Content, key []byte) (attrData *yotiprotoatt
 		if len(content.Profile) > 0 {
 			aattr, err := cryptoutil.DecryptReceiptContent(content.Profile, key)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to decrypt receipt content profile: %v", err)
+				return nil, nil, fmt.Errorf("failed to decrypt content profile: %v", err)
 			}
 
 			attrData = &yotiprotoattr.AttributeList{}
