@@ -53,7 +53,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get read response body: %v", err)
+		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 	err = json.Unmarshal(responseBytes, shareSession)
 	return shareSession, err
@@ -84,7 +84,7 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 	shareSession := &ShareSession{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get read response body: %v", err)
+		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 	err = json.Unmarshal(responseBytes, shareSession)
 	return shareSession, err
@@ -116,7 +116,7 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 	qrCode := &QrCode{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get read response body: %v", err)
+		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 	err = json.Unmarshal(responseBytes, qrCode)
 	return qrCode, err
@@ -145,7 +145,7 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return fetchedQrCode, fmt.Errorf("failed to get read response body: %v", err)
+		return fetchedQrCode, fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	err = json.Unmarshal(responseBytes, &fetchedQrCode)
@@ -178,7 +178,7 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to get read response body: %v", err)
+		return receipt, fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	err = json.Unmarshal(responseBytes, &receipt)
