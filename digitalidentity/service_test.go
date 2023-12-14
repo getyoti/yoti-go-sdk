@@ -127,3 +127,22 @@ func TestCreateShareQrCode(t *testing.T) {
 	_, err := CreateShareQrCode(client, mockSessionID, "sdkId", "https://apiurl", key)
 	assert.NilError(t, err)
 }
+
+func TestGetQrCode(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+	mockQrId := "SOME_QR_CODE_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       io.NopCloser(strings.NewReader(`{}`)),
+			}, nil
+		},
+	}
+
+	_, err := GetShareSessionQrCode(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	assert.NilError(t, err)
+
+}
