@@ -9,7 +9,9 @@ import (
 
 // Execute makes a request to the specified endpoint, with an optional payload
 func Execute(httpClient HttpClient, request *http.Request) (response *http.Response, err error) {
+
 	if response, err = doRequest(request, httpClient); err != nil {
+
 		return
 	}
 

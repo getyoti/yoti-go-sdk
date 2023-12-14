@@ -220,3 +220,14 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 
 	return request, err
 }
+
+func Base64ToBase64URL(base64Str string) string {
+	decoded, err := base64.StdEncoding.DecodeString(base64Str)
+	if err != nil {
+		return ""
+	}
+
+	base64URL := base64.URLEncoding.EncodeToString(decoded)
+
+	return base64URL
+}
