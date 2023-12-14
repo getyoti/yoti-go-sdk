@@ -81,3 +81,8 @@ func (client *DigitalIdentityClient) CreateShareQrCode(sessionID string) (share 
 func (client *DigitalIdentityClient) GetQrCode(qrCodeId string) (share digitalidentity.ShareSessionQrCode, err error) {
 	return digitalidentity.GetShareSessionQrCode(client.HTTPClient, qrCodeId, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
+
+// GetShareReceipt fetches the receipt of the share given a receipt id.
+func (client *DigitalIdentityClient) GetShareReceipt(receiptId string) (share digitalidentity.SharedReceiptResponse, err error) {
+	return digitalidentity.GetShareReceipt(client.HTTPClient, receiptId, client.GetSdkID(), client.getAPIURL(), client.Key)
+}
