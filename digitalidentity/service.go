@@ -237,7 +237,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	attrData, aextra, err := decryptReceiptContent(receiptResponse.Content, receiptContentKey)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to decrypt extra data: %v", err)
+		return receipt, fmt.Errorf("failed to decrypt receipt content: %v", err)
 	}
 
 	applicationProfile := newApplicationProfile(attrData)
