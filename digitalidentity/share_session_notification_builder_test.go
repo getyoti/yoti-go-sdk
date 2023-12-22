@@ -57,7 +57,7 @@ func ExampleShareSessionNotificationBuilder_WithMethod() {
 
 func ExampleShareSessionNotificationBuilder_WithVerifyTls() {
 
-	shareSessionNotify, err := (&ShareSessionNotificationBuilder{}).WithVerifyTls(true).Build()
+	shareSessionNotify, err := (&ShareSessionNotificationBuilder{}).WithVerifyTLS(true).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
