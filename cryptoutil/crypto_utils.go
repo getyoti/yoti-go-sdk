@@ -1,7 +1,6 @@
 package cryptoutil
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -118,14 +117,10 @@ func UnwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error
 	return decryptRsa(cipherBytes, key)
 }
 
-func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
+func decryptAESGCM(cipherText, iv, secret []byte) ([]byte, error) {
 	block, err := aes.NewCipher(secret)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new aes cipher: %v", err)
-	}
-
-	if len(tag) != 16 {
-		return nil, errors.New("Invalid tag length")
 	}
 
 	gcm, err := cipher.NewGCM(block)
@@ -138,22 +133,7 @@ func decryptAESGCM(cipherText, tag, iv, secret []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
 	}
 
-	if !bytes.Equal(tag, plainText[len(plainText)-16:]) {
-		return nil, errors.New("Tag doesn't match")
-	}
-
-	return plainText[:len(plainText)-16], nil
-}
-
-func decomposeAESGCMCipherText(secret []byte, tagSize int) (cipherText, tag []byte) {
-	if tagSize <= 0 || tagSize > len(secret) {
-		return nil, nil
-	}
-
-	cipherText = secret[:len(secret)-tagSize]
-	tag = secret[len(secret)-tagSize:]
-
-	return cipherText, tag
+	return plainText, nil
 }
 
 func UnwrapReceiptKey(wrappedReceiptKey []byte, encryptedItemKey []byte, itemKeyIv []byte, key *rsa.PrivateKey) ([]byte, error) {
@@ -162,9 +142,7 @@ func UnwrapReceiptKey(wrappedReceiptKey []byte, encryptedItemKey []byte, itemKey
 		return nil, fmt.Errorf("failed to decrypt item key: %v", err)
 	}
 
-	cipherText, tag := decomposeAESGCMCipherText(wrappedReceiptKey, 16)
-
-	plainText, err := decryptAESGCM(cipherText, tag, itemKeyIv, decryptedItemKey)
+	plainText, err := decryptAESGCM(wrappedReceiptKey, itemKeyIv, decryptedItemKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
 	}
@@ -182,5 +160,5 @@ func DecryptReceiptContent(content, receiptContentKey []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to unmarshall content: %v", content)
 	}
 
-	return DecipherAes(decodedData.CipherText, decodedData.Iv, receiptContentKey)
+	return DecipherAes(receiptContentKey, decodedData.Iv, decodedData.CipherText)
 }
