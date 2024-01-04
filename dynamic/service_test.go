@@ -2,7 +2,7 @@ package dynamic
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -29,7 +29,7 @@ func ExampleCreateShareURL() {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/CAEaJDQzNzllZDc0LTU0YjItNDkxMy04OTE4LTExYzM2ZDU2OTU3ZDAC","ref_id":"0"}`)),
 			}, nil
 		},
 	}
@@ -97,7 +97,7 @@ func createShareUrlWithErrorResponse(statusCode int, responseBody string) (share
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: statusCode,
-				Body:       ioutil.NopCloser(strings.NewReader(responseBody)),
+				Body:       io.NopCloser(strings.NewReader(responseBody)),
 			}, nil
 		},
 	}

@@ -1,1 +1,9 @@
 .env
+# Generated binaries
+docscan/docscan
+idv/idv
+aml/aml
+docscansandbox/docscansandbox
+profile/profile
+profilesandbox/profilesandbox
+digitalidentity/digitalidentity

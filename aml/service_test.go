@@ -4,7 +4,7 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -50,7 +50,7 @@ func TestPerformCheck_WithInvalidJSON(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader("Not a JSON document")),
+				Body:       io.NopCloser(strings.NewReader("Not a JSON document")),
 			}, nil
 		},
 	}
@@ -66,7 +66,7 @@ func TestPerformCheck_Success(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"on_fraud_list":true,"on_pep_list":true,"on_watch_list":true}`)),
 			}, nil
 		},
 	}
@@ -87,7 +87,7 @@ func TestPerformCheck_Unsuccessful(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 503,
-				Body:       ioutil.NopCloser(strings.NewReader(responseBody)),
+				Body:       io.NopCloser(strings.NewReader(responseBody)),
 			}, nil
 		},
 	}

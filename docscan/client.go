@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -96,7 +96,7 @@ func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*creat
 	}
 
 	var responseBytes []byte
-	responseBytes, err = ioutil.ReadAll(response.Body)
+	responseBytes, err = io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error
 	}
 
 	var responseBytes []byte
-	responseBytes, err = ioutil.ReadAll(response.Body)
+	responseBytes, err = io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 	}
 
 	var responseBytes []byte
-	responseBytes, err = ioutil.ReadAll(response.Body)
+	responseBytes, err = io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +269,7 @@ func (c *Client) GetSupportedDocumentsWithNonLatin(includeNonLatin bool) (*suppo
 	}
 
 	var responseBytes []byte
-	responseBytes, err = ioutil.ReadAll(response.Body)
+	responseBytes, err = io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}

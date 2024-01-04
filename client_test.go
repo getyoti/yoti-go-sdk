@@ -2,7 +2,7 @@ package yoti
 
 import (
 	"crypto/rsa"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -26,15 +26,15 @@ func (mock *mockHTTPClient) Do(request *http.Request) (*http.Response, error) {
 }
 
 func TestNewClient(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
-	assert.NilError(t, readErr)
+	key, err := os.ReadFile("./test/test-key.pem")
+	assert.NilError(t, err)
 
-	_, err := NewClient("some-sdk-id", key)
+	_, err = NewClient("some-sdk-id", key)
 	assert.NilError(t, err)
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, err := ioutil.ReadFile("test/test-key-invalid-format.pem")
+	key, err := os.ReadFile("test/test-key-invalid-format.pem")
 	assert.NilError(t, err)
 
 	_, err = NewClient("", key)
@@ -48,17 +48,17 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 }
 
 func TestYotiClient_PerformAmlCheck(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
-	assert.NilError(t, readErr)
+	key, err := os.ReadFile("./test/test-key.pem")
+	assert.NilError(t, err)
 
-	client, clientErr := NewClient("some-sdk-id", key)
-	assert.NilError(t, clientErr)
+	client, err := NewClient("some-sdk-id", key)
+	assert.NilError(t, err)
 
 	client.HTTPClient = &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
 			}, nil
 		},
 	}
@@ -78,26 +78,26 @@ func TestYotiClient_PerformAmlCheck(t *testing.T) {
 }
 
 func TestYotiClient_CreateShareURL(t *testing.T) {
-	key, readErr := ioutil.ReadFile("./test/test-key.pem")
-	assert.NilError(t, readErr)
+	key, err := os.ReadFile("./test/test-key.pem")
+	assert.NilError(t, err)
 
-	client, clientErr := NewClient("some-sdk-id", key)
-	assert.NilError(t, clientErr)
+	client, err := NewClient("some-sdk-id", key)
+	assert.NilError(t, err)
 
 	client.HTTPClient = &mockHTTPClient{
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"qrcode":"https://code.yoti.com/some-qr","ref_id":"0"}`)),
 			}, nil
 		},
 	}
 
-	policy, policyErr := (&dynamic.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
-	assert.NilError(t, policyErr)
+	policy, err := (&dynamic.PolicyBuilder{}).WithFullName().WithWantedRememberMe().Build()
+	assert.NilError(t, err)
 
-	scenario, scenarioErr := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).Build()
-	assert.NilError(t, scenarioErr)
+	scenario, err := (&dynamic.ScenarioBuilder{}).WithPolicy(policy).Build()
+	assert.NilError(t, err)
 
 	result, err := client.CreateShareURL(&scenario)
 	assert.NilError(t, err)

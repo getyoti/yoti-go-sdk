@@ -1,7 +1,7 @@
 package file
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -12,7 +12,7 @@ func ReadFile(filename string) ([]byte, error) {
 		return nil, err
 	}
 
-	buffer, err := ioutil.ReadAll(file)
+	buffer, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}

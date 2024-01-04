@@ -1,6 +1,6 @@
 module profilesandbox
 
-go 1.17
+go 1.19
 
 require (
 	github.com/getyoti/yoti-go-sdk/v3 v3.0.0
