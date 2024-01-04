@@ -93,6 +93,28 @@ func generateSession(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getReceipt(w http.ResponseWriter, r *http.Request) {
+	didClient, err := initialiseDigitalIdentityClient()
+	if err != nil {
+		fmt.Fprintf(w, "Client could't be generated")
+		return
+	}
+	receiptID := r.URL.Query().Get("ReceiptID")
+
+	receiptValue, err := didClient.GetShareReceipt(receiptID)
+	if err != nil {
+		fmt.Fprintf(w, "failed to get share receipt: %v", err)
+		return
+	}
+	output, err := json.Marshal(receiptValue)
+	if err != nil {
+		fmt.Fprintf(w, "failed to marshal receipt: %v", err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, string(output))
+}
+
 func initialiseDigitalIdentityClient() (*yoti.DigitalIdentityClient, error) {
 	var err error
 	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
@@ -126,7 +148,7 @@ func main() {
 	http.HandleFunc("/", home)
 	http.HandleFunc("/v2/generate-share", generateSession)
 	http.HandleFunc("/v2/generate-advanced-identity-share", generateAdvancedIdentitySession)
-	http.HandleFunc("/v2/receipt-info", receipt)
+	http.HandleFunc("/v2/receipt-info", getReceipt)
 
 	rootdir, err := os.Getwd()
 	if err != nil {
