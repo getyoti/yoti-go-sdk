@@ -52,7 +52,9 @@
 
     async function completionHandler(receivedReceiptId) {
         console.log('completion handler:', receivedReceiptId)
-        const response = await fetch('/v2/receipt-info?ReceiptID=' + encodeURIComponent(receivedReceiptId) , {method: 'GET'})
+        const url = '/v2/receipt-info?ReceiptID=' + encodeURIComponent(receivedReceiptId);
+        // Navigate to the Receipt page
+        window.location.href = url;
     }
 
     function onErrorListener(...data) {

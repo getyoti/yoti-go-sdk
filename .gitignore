@@ -17,4 +17,7 @@ report.json
 # idea files
 .idea
 
+# DS_Store files
+.DS_Store
+
 
