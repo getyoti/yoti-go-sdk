@@ -11,46 +11,23 @@ import (
 	"io"
 	"net/http"
 	"os"
-
-	"github.com/getyoti/yoti-go-sdk/v3"
 )
 
-func profile(w http.ResponseWriter, r *http.Request) {
-	var err error
-	key, err = os.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
-	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
-
+func receipt(w http.ResponseWriter, r *http.Request) {
+	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
-		errorPage(w, r.WithContext(context.WithValue(
-			r.Context(),
-			contextKey("yotiError"),
-			fmt.Sprintf("Unable to retrieve `YOTI_KEY_FILE_PATH`. Error: `%s`", err.Error()),
-		)))
+		fmt.Fprintf(w, "Client could't be generated")
+		return
+	}
+	receiptID := r.URL.Query().Get("ReceiptID")
+
+	receiptValue, err := didClient.GetShareReceipt(receiptID)
+	if err != nil {
+		fmt.Fprintf(w, "failed to get share receipt: %v", err)
 		return
 	}
 
-	client, err = yoti.NewClient(sdkID, key)
-	if err != nil {
-		errorPage(w, r.WithContext(context.WithValue(
-			r.Context(),
-			contextKey("yotiError"),
-			fmt.Sprintf("%s", err),
-		)))
-	}
-
-	yotiOneTimeUseToken := r.URL.Query().Get("token")
-
-	activityDetails, err := client.GetActivityDetails(yotiOneTimeUseToken)
-	if err != nil {
-		errorPage(w, r.WithContext(context.WithValue(
-			r.Context(),
-			contextKey("yotiError"),
-			err.Error(),
-		)))
-		return
-	}
-
-	userProfile := activityDetails.UserProfile
+	userProfile := receiptValue.UserContent.UserProfile
 
 	selfie := userProfile.Selfie()
 	var base64URL string
@@ -80,12 +57,12 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	templateVars := map[string]interface{}{
 		"profile":         userProfile,
 		"selfieBase64URL": template.URL(base64URL),
-		"rememberMeID":    activityDetails.RememberMeID(),
+		"rememberMeID":    receiptValue.RememberMeID,
 		"dateOfBirth":     dateOfBirthString,
 	}
 
 	var t *template.Template
-	t, err = template.New("profile.html").
+	t, err = template.New("receipt.html").
 		Funcs(template.FuncMap{
 			"escapeURL": func(s string) template.URL {
 				return template.URL(s)
@@ -111,7 +88,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 				return string(json)
 			},
 		}).
-		ParseFiles("profile.html")
+		ParseFiles("receipt.html")
 	if err != nil {
 		fmt.Println(err)
 		return
