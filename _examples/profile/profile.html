@@ -51,7 +51,7 @@
                         {{ range $key, $value := .Prop.Value }}
                         <tr>
                             <td>{{ $key }}</td>
-                            <td>{{ jsonMarshallIndent $value }}</td>
+                            <td>{{ jsonMarshalIndent $value }}</td>
                         </tr>
                         {{ end }}
                     </table>

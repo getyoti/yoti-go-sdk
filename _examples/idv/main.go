@@ -21,7 +21,7 @@ func main() {
 	router = gin.Default()
 
 	router.SetFuncMap(template.FuncMap{
-		"jsonMarshallIndent": func(data interface{}) string {
+		"jsonMarshalIndent": func(data interface{}) string {
 			json, err := json.MarshalIndent(data, "", "\t")
 			if err != nil {
 				fmt.Println(err)
