@@ -44,7 +44,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
+		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -76,7 +76,7 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
+		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -171,7 +171,7 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receipt, fmt.Errorf(errorFailedToGetSignedReceipt, err)
+		return receipt, fmt.Errorf(errorFailedToGetSignedRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -202,7 +202,7 @@ func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, 
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receiptItemKey, fmt.Errorf(errorFailedToGetSignedReceipt, err)
+		return receiptItemKey, fmt.Errorf(errorFailedToGetSignedRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
