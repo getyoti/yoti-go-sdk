@@ -20,9 +20,10 @@ const identitySessionQrCodeCreation = "/v2/sessions/%s/qr-codes"
 const identitySessionQrCodeRetrieval = "/v2/qr-codes/%s"
 const identitySessionReceiptRetrieval = "/v2/receipts/%s"
 const identitySessionReceiptKeyRetrieval = "/v2/wrapped-item-keys/%s"
-const errorFailedToGetSignedRequest = "failed to get signed request: %v"
+const errorFailedToGetSignedReceipt = "failed to get signed request: %v"
 const errorFailedToExecuteRequest = "failed to execute request: %v"
 const errorFailedToReadBody = "failed to read response body: %v"
+const errorFailedToGetSignedRequest = "failed to get signed request: %v"
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
@@ -43,7 +44,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -75,7 +76,7 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -170,7 +171,7 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receipt, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return receipt, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -201,7 +202,7 @@ func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, 
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receiptItemKey, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return receiptItemKey, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
