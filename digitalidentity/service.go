@@ -20,6 +20,9 @@ const identitySessionQrCodeCreation = "/v2/sessions/%s/qr-codes"
 const identitySessionQrCodeRetrieval = "/v2/qr-codes/%s"
 const identitySessionReceiptRetrieval = "/v2/receipts/%s"
 const identitySessionReceiptKeyRetrieval = "/v2/wrapped-item-keys/%s"
+const errorFailedToGetSignedReceipt = "failed to get signed request: %v"
+const errorFailedToExecuteRequest = "failed to execute request: %v"
+const errorFailedToReadBody = "failed to read response body: %v"
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
@@ -40,12 +43,12 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get signed request: %v", err)
+		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute request: %v", err)
+		return nil, fmt.Errorf(errorFailedToExecuteRequest, err)
 	}
 
 	defer response.Body.Close()
@@ -53,7 +56,7 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
+		return nil, fmt.Errorf(errorFailedToReadBody, err)
 	}
 	err = json.Unmarshal(responseBytes, shareSession)
 	return shareSession, err
@@ -72,19 +75,19 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get signed request: %v", err)
+		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute request: %v", err)
+		return nil, fmt.Errorf(errorFailedToExecuteRequest, err)
 	}
 	defer response.Body.Close()
 	shareSession := &ShareSession{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
+		return nil, fmt.Errorf(errorFailedToReadBody, err)
 	}
 	err = json.Unmarshal(responseBytes, shareSession)
 	return shareSession, err
@@ -104,19 +107,19 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 		Params:     map[string]string{"sdkID": clientSdkId},
 	}.Request()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get signed request: %v", err)
+		return nil, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute request: %v", err)
+		return nil, fmt.Errorf(errorFailedToExecuteRequest, err)
 	}
 
 	defer response.Body.Close()
 	qrCode := &QrCode{}
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
+		return nil, fmt.Errorf(errorFailedToReadBody, err)
 	}
 	err = json.Unmarshal(responseBytes, qrCode)
 	return qrCode, err
@@ -134,18 +137,18 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return fetchedQrCode, fmt.Errorf("failed to get signed request: %v", err)
+		return fetchedQrCode, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return fetchedQrCode, fmt.Errorf("failed to execute request: %v", err)
+		return fetchedQrCode, fmt.Errorf(errorFailedToExecuteRequest, err)
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return fetchedQrCode, fmt.Errorf("failed to read response body: %v", err)
+		return fetchedQrCode, fmt.Errorf(errorFailedToReadBody, err)
 	}
 
 	err = json.Unmarshal(responseBytes, &fetchedQrCode)
@@ -167,18 +170,18 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receipt, fmt.Errorf("failed to get signed request: %v", err)
+		return receipt, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to execute request: %v", err)
+		return receipt, fmt.Errorf(errorFailedToExecuteRequest, err)
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return receipt, fmt.Errorf("failed to read response body: %v", err)
+		return receipt, fmt.Errorf(errorFailedToReadBody, err)
 	}
 
 	err = json.Unmarshal(responseBytes, &receipt)
@@ -198,7 +201,7 @@ func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, 
 		Headers:    headers,
 	}.Request()
 	if err != nil {
-		return receiptItemKey, fmt.Errorf("failed to get signed request: %v", err)
+		return receiptItemKey, fmt.Errorf(errorFailedToGetSignedReceipt, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
