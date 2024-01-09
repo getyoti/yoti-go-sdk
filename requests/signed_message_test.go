@@ -167,3 +167,35 @@ func TestSignedRequest_WithPemFile_NotRSAKeyShouldError(t *testing.T) {
 -----END RSA PUBLIC KEY-----`))
 	assert.ErrorContains(t, msg.Error, "not an RSA Private Key")
 }
+
+// TestAuthHeader tests the AuthHeader function.
+func TestAuthHeader(t *testing.T) {
+	tests := []struct {
+		name        string
+		clientSdkId string
+		expected    map[string][]string
+	}{
+		{
+			name:        "valid client SDK ID",
+			clientSdkId: "testSdkId",
+			expected:    map[string][]string{"X-Yoti-Auth-Id": {"testSdkId"}},
+		},
+		{
+			name:        "empty client SDK ID",
+			clientSdkId: "",
+			expected:    map[string][]string{"X-Yoti-Auth-Id": {""}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			got := AuthHeader(tt.clientSdkId, &privateKey.PublicKey)
+
+			for key, value := range tt.expected {
+				if gotValue, exists := got[key]; !exists || len(gotValue) != 1 || gotValue[0] != value[0] {
+					t.Errorf("AuthHeader() = %v, want %v", got, tt.expected)
+				}
+			}
+		})
+	}
+}
