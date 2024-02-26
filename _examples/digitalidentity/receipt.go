@@ -30,13 +30,10 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 	userProfile := receiptValue.UserContent.UserProfile
 
 	selfie := userProfile.Selfie()
+
 	var base64URL string
 	if selfie != nil {
 		base64URL = selfie.Value().Base64URL()
-
-		decodedImage := decodeImage(selfie.Value().Data())
-		file := createImage()
-		saveImage(decodedImage, file)
 	}
 
 	dob, err := userProfile.DateOfBirth()
