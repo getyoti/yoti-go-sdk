@@ -6,7 +6,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -163,7 +162,7 @@ func TestCryptoutil_UnwrapKey_InvalidBase64ShouldError(t *testing.T) {
 }
 
 func getKey() (key *rsa.PrivateKey) {
-	keyBytes, err := ioutil.ReadFile("../test/test-key.pem")
+	keyBytes, err := os.ReadFile("../test/test-key.pem")
 	if err != nil {
 		panic("Error reading the test key: " + err.Error())
 	}

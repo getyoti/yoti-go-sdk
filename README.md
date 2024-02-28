@@ -42,7 +42,7 @@ import "github.com/getyoti/yoti-go-sdk/v3"
 or add the following line to your go.mod file (check https://github.com/getyoti/yoti-go-sdk/releases for the latest version)
 ```
 
-require github.com/getyoti/yoti-go-sdk/v3 v3.11.0
+require github.com/getyoti/yoti-go-sdk/v3 v3.12.0
 ```
 
 ## Setup
@@ -59,7 +59,7 @@ For each service you will need:
 
 ## Support
 
-For any questions or support please email [clientsupport@yoti.com](mailto:clientsupport@yoti.com).
+For any questions or support please contact us here: https://support.yoti.com
 Please provide the following to get you up and working as quickly as possible:
 
 * Computer type

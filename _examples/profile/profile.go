@@ -9,7 +9,6 @@ import (
 	"image"
 	"image/jpeg"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -18,7 +17,7 @@ import (
 
 func profile(w http.ResponseWriter, r *http.Request) {
 	var err error
-	key, err = ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	key, err = os.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	sdkID = os.Getenv("YOTI_CLIENT_SDK_ID")
 
 	if err != nil {
@@ -104,7 +103,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 					prevalue,
 				}
 			},
-			"jsonMarshallIndent": func(data interface{}) string {
+			"jsonMarshalIndent": func(data interface{}) string {
 				json, err := json.MarshalIndent(data, "", "\t")
 				if err != nil {
 					fmt.Println(err)

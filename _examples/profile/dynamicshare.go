@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -38,7 +37,7 @@ func dynamicShare(w http.ResponseWriter, req *http.Request) {
 func pageFromScenario(w http.ResponseWriter, req *http.Request, title string, scenario dynamic.Scenario) {
 	sdkID := os.Getenv("YOTI_CLIENT_SDK_ID")
 
-	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	key, err := os.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	if err != nil {
 		errorPage(w, req.WithContext(context.WithValue(
 			req.Context(),

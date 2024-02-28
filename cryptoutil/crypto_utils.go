@@ -11,6 +11,8 @@ import (
 	"fmt"
 
 	"github.com/getyoti/yoti-go-sdk/v3/util"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotocom"
+	"google.golang.org/protobuf/proto"
 )
 
 // ParseRSAKey parses a PKCS1 private key from bytes
@@ -113,4 +115,50 @@ func UnwrapKey(wrappedKey string, key *rsa.PrivateKey) (result []byte, err error
 		return nil, err
 	}
 	return decryptRsa(cipherBytes, key)
+}
+
+func decryptAESGCM(cipherText, iv, secret []byte) ([]byte, error) {
+	block, err := aes.NewCipher(secret)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new aes cipher: %v", err)
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new gcm cipher: %v", err)
+	}
+
+	plainText, err := gcm.Open(nil, iv, cipherText, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
+	}
+
+	return plainText, nil
+}
+
+func UnwrapReceiptKey(wrappedReceiptKey []byte, encryptedItemKey []byte, itemKeyIv []byte, key *rsa.PrivateKey) ([]byte, error) {
+	decryptedItemKey, err := decryptRsa(encryptedItemKey, key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decrypt item key: %v", err)
+	}
+
+	plainText, err := decryptAESGCM(wrappedReceiptKey, itemKeyIv, decryptedItemKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decrypt receipt key: %v", err)
+	}
+	return plainText, nil
+}
+
+func DecryptReceiptContent(content, receiptContentKey []byte) ([]byte, error) {
+	if content == nil {
+		return nil, fmt.Errorf("failed to decrypt receipt content is nil")
+	}
+
+	decodedData := &yotiprotocom.EncryptedData{}
+	err := proto.Unmarshal(content, decodedData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshall content: %v", content)
+	}
+
+	return DecipherAes(receiptContentKey, decodedData.Iv, decodedData.CipherText)
 }

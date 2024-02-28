@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"strings"
@@ -61,7 +60,7 @@ func startWebDriver() selenium.WebDriver {
 }
 
 func newSandboxClient() (*sandbox.Client, error) {
-	key, err := ioutil.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
+	key, err := os.ReadFile(os.Getenv("YOTI_KEY_FILE_PATH"))
 	if err != nil {
 		return nil, err
 	}

@@ -7,4 +7,4 @@ require (
 
 require github.com/google/go-cmp v0.5.5 // indirect
 
-go 1.17
+go 1.19

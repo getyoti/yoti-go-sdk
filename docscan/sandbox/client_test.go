@@ -6,7 +6,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -33,7 +33,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnErrorIfNotCreated(t *testin
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 400,
-					Body:       ioutil.NopCloser(strings.NewReader("")),
+					Body:       io.NopCloser(strings.NewReader("")),
 				}, nil
 			},
 		},
@@ -54,7 +54,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 
 	response := &http.Response{
 		StatusCode: 400,
-		Body:       ioutil.NopCloser(bytes.NewReader(jsonBytes)),
+		Body:       io.NopCloser(bytes.NewReader(jsonBytes)),
 	}
 
 	client := Client{
@@ -71,7 +71,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnFormattedErrorWithResponse(
 	errorResponse := err.(*yotierror.Error).Response
 	assert.Equal(t, response, errorResponse)
 
-	body, err := ioutil.ReadAll(errorResponse.Body)
+	body, err := io.ReadAll(errorResponse.Body)
 	assert.NilError(t, err)
 	assert.Equal(t, string(body), string(jsonBytes))
 }
@@ -95,7 +95,7 @@ func TestClient_ConfigureSessionResponse_ShouldReturnJsonError(t *testing.T) {
 }
 
 func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
-	key, err := ioutil.ReadFile("../../test/test-key.pem")
+	key, err := os.ReadFile("../../test/test-key.pem")
 	assert.NilError(t, err)
 
 	client, err := NewClient("ClientSDKID", key)
@@ -114,7 +114,7 @@ func TestNewClient_ConfigureSessionResponse_Success(t *testing.T) {
 }
 
 func TestNewClient_KeyLoad_Failure(t *testing.T) {
-	key, err := ioutil.ReadFile("../../test/test-key-invalid-format.pem")
+	key, err := os.ReadFile("../../test/test-key-invalid-format.pem")
 	assert.NilError(t, err)
 
 	_, err = NewClient("", key)
@@ -171,7 +171,7 @@ func TestClient_ConfigureApplicationResponse_ShouldReturnErrorIfNotCreated(t *te
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 401,
-					Body:       ioutil.NopCloser(strings.NewReader("")),
+					Body:       io.NopCloser(strings.NewReader("")),
 				}, nil
 			},
 		},
@@ -287,7 +287,7 @@ func TestClient_ConfigureSessionResponseUsesDefaultUrlAsFallbackWithNoEnvValue(t
 }
 
 func createSandboxClient(t *testing.T, constructorApiURL string) (client Client) {
-	keyBytes, fileErr := ioutil.ReadFile("../../test/test-key.pem")
+	keyBytes, fileErr := os.ReadFile("../../test/test-key.pem")
 	assert.NilError(t, fileErr)
 
 	pemFile, parseErr := cryptoutil.ParseRSAKey(keyBytes)

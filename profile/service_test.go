@@ -7,9 +7,10 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -109,7 +110,7 @@ func TestProfileService_GetActivityDetails(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 			}, nil
 		},
 	}
@@ -164,7 +165,7 @@ func TestProfileService_SharingFailure_ReturnsSpecificFailure(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{"error_code":"SOME_ERROR","description":"SOME_DESCRIPTION"}}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{"error_code":"SOME_ERROR","description":"SOME_DESCRIPTION"}}`)),
 			}, nil
 		},
 	}
@@ -197,7 +198,7 @@ func TestProfileService_SharingFailure_ReturnsGenericErrorWhenErrorCodeIsNull(t 
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{}}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"},"error_details":{}}`)),
 			}, nil
 		},
 	}
@@ -226,7 +227,7 @@ func TestProfileService_SharingFailure_ReturnsGenericFailure(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"}}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"session_data":"session_data","receipt":{"receipt_id": null,"other_party_profile_content": null,"policy_uri":null,"personal_key":null,"remember_me_id":null, "sharing_outcome":"FAILURE","timestamp":"2016-09-23T13:04:11Z"}}`)),
 			}, nil
 		},
 	}
@@ -276,7 +277,7 @@ func TestProfileService_ParentRememberMeID(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey +
+				Body: io.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey +
 					`","other_party_profile_content": "` + otherPartyProfileContent +
 					`","parent_remember_me_id":"` + parentRememberMeID +
 					`", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
@@ -310,7 +311,7 @@ func TestProfileService_ParseWithoutProfile_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
-					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
+					Body: io.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
 						otherPartyProfileContent + `"remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"` + timestampString + `", "receipt_id":"` + receiptID + `"}}`)),
 				}, nil
 			},
@@ -329,7 +330,7 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 	otherPartyProfileContent := "ChCZAib1TBm9Q5GYfFrS1ep9EnAwQB5shpAPWLBgZgFgt6bCG3S5qmZHhrqUbQr3yL6yeLIDwbM7x4nuT/MYp+LDXgmFTLQNYbDTzrEzqNuO2ZPn9Kpg+xpbm9XtP7ZLw3Ep2BCmSqtnll/OdxAqLb4DTN4/wWdrjnFC+L/oQEECu646"
 	rememberMeID := "remember_me_id0123456789"
 
-	pemBytes, err := ioutil.ReadFile("../test/test-key.pem")
+	pemBytes, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	dataEntries := make([]*yotiprotoshare.DataEntry, 0)
@@ -347,7 +348,7 @@ func TestProfileService_ShouldParseAndDecryptExtraDataContent(t *testing.T) {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
+				Body: io.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
 					test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
 					extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 			}, nil
@@ -374,7 +375,7 @@ func TestProfileService_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *te
 		List: dataEntries,
 	}
 
-	pemBytes, err := ioutil.ReadFile("../test/test-key.pem")
+	pemBytes, err := os.ReadFile("../test/test-key.pem")
 	assert.NilError(t, err)
 
 	extraDataContent := createExtraDataContent(t, protoExtraData)
@@ -387,7 +388,7 @@ func TestProfileService_ShouldCarryOnProcessingIfIssuanceTokenIsNotPresent(t *te
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 200,
-				Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
+				Body: io.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` +
 					test.WrappedReceiptKey + `","other_party_profile_content": "` + otherPartyProfileContent + `","extra_data_content": "` +
 					extraDataContent + `","remember_me_id":"` + rememberMeID + `", "sharing_outcome":"SUCCESS"}}`)),
 			}, nil
@@ -417,7 +418,7 @@ func TestProfileService_ParseWithoutRememberMeID_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 200,
-					Body: ioutil.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
+					Body: io.NopCloser(strings.NewReader(`{"receipt":{"wrapped_receipt_key": "` + test.WrappedReceiptKey + `",` +
 						otherPartyProfileContent + `"sharing_outcome":"SUCCESS", "timestamp":"2006-01-02T15:04:05.999999Z"}}`)),
 				}, nil
 			},

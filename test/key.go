@@ -2,14 +2,14 @@ package test
 
 import (
 	"crypto/rsa"
-	"io/ioutil"
+	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 )
 
 // GetValidKey returns a parsed RSA Private Key from a test key
 func GetValidKey(filepath string) (key *rsa.PrivateKey) {
-	keyBytes, err := ioutil.ReadFile(filepath)
+	keyBytes, err := os.ReadFile(filepath)
 	if err != nil {
 		panic("Error reading the test key: " + err.Error())
 	}

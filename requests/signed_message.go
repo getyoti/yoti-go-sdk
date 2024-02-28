@@ -185,6 +185,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	if err != nil {
 		return
 	}
+
 	signedDigest, err := msg.signDigest([]byte(msg.generateDigest(endpoint)))
 	if err != nil {
 		return
@@ -199,6 +200,7 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 	if err != nil {
 		return
 	}
+
 	request.Header.Add("X-Yoti-Auth-Digest", signedDigest)
 	request.Header.Add("X-Yoti-SDK", consts.SDKIdentifier)
 	request.Header.Add("X-Yoti-SDK-Version", consts.SDKVersionIdentifier)
@@ -208,5 +210,6 @@ func (msg SignedRequest) Request() (request *http.Request, err error) {
 			request.Header.Add(key, value)
 		}
 	}
+
 	return request, err
 }

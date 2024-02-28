@@ -3,7 +3,7 @@ package sandbox
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -24,7 +24,7 @@ func TestClient_SetupSharingProfile_ShouldReturnErrorIfProfileNotCreated(t *test
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 401,
-					Body:       ioutil.NopCloser(strings.NewReader("")),
+					Body:       io.NopCloser(strings.NewReader("")),
 				}, nil
 			},
 		},
@@ -45,7 +45,7 @@ func TestClient_SetupSharingProfile_Success(t *testing.T) {
 			do: func(*http.Request) (*http.Response, error) {
 				return &http.Response{
 					StatusCode: 201,
-					Body:       ioutil.NopCloser(strings.NewReader(`{"token":"` + expectedToken + `"}`)),
+					Body:       io.NopCloser(strings.NewReader(`{"token":"` + expectedToken + `"}`)),
 				}, nil
 			},
 		},
@@ -99,7 +99,7 @@ func TestClient_SetupSharingProfileUsesDefaultUrlAsFallbackWithNoEnvValue(t *tes
 }
 
 func createSandboxClient(t *testing.T, constructorBaseUrl string) (client Client) {
-	keyBytes, fileErr := ioutil.ReadFile("../../test/test-key.pem")
+	keyBytes, fileErr := os.ReadFile("../../test/test-key.pem")
 	assert.NilError(t, fileErr)
 
 	pemFile, parseErr := cryptoutil.ParseRSAKey(keyBytes)
@@ -138,7 +138,7 @@ func mockHttpClientCreatedResponse() *mockHTTPClient {
 		do: func(*http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: 201,
-				Body:       ioutil.NopCloser(strings.NewReader(`{"token":"tokenValue"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"token":"tokenValue"}`)),
 			}, nil
 		},
 	}
