@@ -99,6 +99,7 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
 		WithIdDocumentTextExtractionGenericAttempts(2).
 		WithAllowHandOff(true).
+		WithBrandId("some_brand_id").
 		WithEarlyBiometricConsentFlow().
 		Build()
 	if err != nil {
