@@ -202,7 +202,18 @@ func TestGetSessionResult_UnmarshalJSON_IdentityProfile(t *testing.T) {
 
 	assert.Equal(t, identityProfile.SubjectId, "someStringHere")
 	assert.Equal(t, identityProfile.Result, "DONE")
-	assert.Equal(t, identityProfile.FailureReasonResponse, retrieve.FailureReasonResponse{ReasonCode: "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED"})
+	assert.DeepEqual(t, identityProfile.FailureReasonResponse, retrieve.FailureReasonResponse{
+		ReasonCode: "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED",
+		RequirementsNotMetDetails: []retrieve.RequirementsNotMetDetail{
+			{
+				FailureType:            "ID_DOCUMENT_AUTHENTICITY",
+				DocumentType:           "PASSPORT",
+				DocumentCountryIsoCode: "GBR",
+				AuditId:                "a526df5f-a9c1-4e57-8aa3-919256d8e280",
+				Details:                "INCORRECT_DOCUMENT_TYPE",
+			},
+		},
+	})
 
 	assert.NilError(t, err)
 	tf, ok := identityProfile.Report["trust_framework"].(string)
@@ -228,7 +239,19 @@ func TestGetSessionResult_UnmarshalJSON_AdvancedIdentityProfile(t *testing.T) {
 
 	assert.Equal(t, identityProfile.SubjectId, "someStringHere")
 	assert.Equal(t, identityProfile.Result, "DONE")
-	assert.Equal(t, identityProfile.FailureReasonResponse, retrieve.FailureReasonResponse{ReasonCode: "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED"})
+	assert.DeepEqual(t, identityProfile.FailureReasonResponse,
+		retrieve.FailureReasonResponse{
+			ReasonCode: "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED",
+			RequirementsNotMetDetails: []retrieve.RequirementsNotMetDetail{
+				{
+					FailureType:            "ID_DOCUMENT_AUTHENTICITY",
+					DocumentType:           "PASSPORT",
+					DocumentCountryIsoCode: "GBR",
+					AuditId:                "a526df5f-a9c1-4e57-8aa3-919256d8e280",
+					Details:                "INCORRECT_DOCUMENT_TYPE",
+				}},
+		},
+	)
 
 	compliances, ok := identityProfile.Report["compliance"].([]interface{})
 	assert.Equal(t, ok, true)
