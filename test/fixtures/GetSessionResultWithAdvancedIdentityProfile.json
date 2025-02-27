@@ -9,7 +9,16 @@
     "subject_id": "someStringHere",
     "result": "DONE",
     "failure_reason": {
-      "reason_code": "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED"
+      "reason_code": "MANDATORY_DOCUMENT_COULD_NOT_BE_PROVIDED",
+      "requirements_not_met_details" : [
+        {
+          "failure_type": "ID_DOCUMENT_AUTHENTICITY",
+          "document_type" : "PASSPORT",
+          "document_country_iso_code":"GBR",
+          "audit_id":"a526df5f-a9c1-4e57-8aa3-919256d8e280",
+          "details":	"INCORRECT_DOCUMENT_TYPE"
+        }
+      ]
     },
     "identity_profile_report": {
       "compliance": [{

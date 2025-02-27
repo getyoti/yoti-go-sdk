@@ -53,6 +53,28 @@
             <h2>Identity Profile</h2>
         </div>
     </div>
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>
+                        <span class="badge badge-{{ if eq .getSessionResult.IdentityProfileResponse.Result "ABORTED"}}secondary{{ else }}success{{ end }}">
+                            {{ .getSessionResult.IdentityProfileResponse.Result }}
+                        </span>
+                    </td>
+                    <td>
+                        {{ if eq .getSessionResult.IdentityProfileResponse.Result "ABORTED"}}
+                            {{ range $detail := .getSessionResult.IdentityProfileResponse.FailureReasonResponse.RequirementsNotMetDetails }}
+                                {{ template "requirements_not_met_detail.html" $detail }}
+                            {{ end }}
+                        {{ end }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     {{ $media := index .getSessionResult.IdentityProfileResponse.Report "media"}}
     {{ if $media }}
     {{ $media_id := index $media "id" }}
@@ -80,6 +102,28 @@
     <div class="row pt-4">
         <div class="col">
             <h2>Advanced Identity Profile</h2>
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col">
+            <table class="table table-striped table-light">
+                <tbody>
+                <tr>
+                    <td>
+                        <span class="badge badge-{{ if eq .getSessionResult.AdvancedIdentityProfileResponse.Result "ABORTED"}}secondary{{ else }}success{{ end }}">
+                        {{ .getSessionResult.AdvancedIdentityProfileResponse.Result }}
+                        </span>
+                    </td>
+                    <td>
+                        {{ if eq .getSessionResult.AdvancedIdentityProfileResponse.Result "ABORTED"}}
+                        {{ range $detail := .getSessionResult.AdvancedIdentityProfileResponse.FailureReasonResponse.RequirementsNotMetDetails }}
+                        {{ template "requirements_not_met_detail.html" $detail }}
+                        {{ end }}
+                        {{ end }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     {{ $media := index .getSessionResult.AdvancedIdentityProfileResponse.Report "media"}}

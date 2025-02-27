@@ -1,0 +1,36 @@
+<table class="table table-striped">
+    <tbody>
+    {{ if .FailureType }}
+    <tr>
+        <td>FailureType</td>
+        <td>
+            {{ .FailureType }}
+        </td>
+    </tr>
+    {{ end }}
+    {{ if .DocumentType }}
+    <tr>
+        <td>DocumentType</td>
+        <td>{{ .DocumentType }}</td>
+    </tr>
+    {{ end }}
+    {{ if .DocumentCountryIsoCode }}
+    <tr>
+        <td>DocumentCountryIsoCode</td>
+        <td>{{ .DocumentCountryIsoCode }}</td>
+    </tr>
+    {{ end }}
+    {{ if .AuditId }}
+    <tr>
+        <td>AuditId</td>
+        <td>{{ .AuditId }}</td>
+    </tr>
+    {{ end }}
+    {{ if .Details }}
+    <tr>
+        <td>Details</td>
+        <td>{{ .Details }}</td>
+    </tr>
+    {{ end }}
+    </tbody>
+</table>
