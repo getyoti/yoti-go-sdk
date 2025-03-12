@@ -37,6 +37,9 @@ func ParseRSAKey(keyBytes []byte) (*rsa.PrivateKey, error) {
 }
 
 func decryptRsa(cipherBytes []byte, key *rsa.PrivateKey) ([]byte, error) {
+	// SonarQube Justification: The backend encrypts using PKCS#1 v1.5,
+	// so we must use DecryptPKCS1v15 for compatibility.
+	// The risk is accepted as we cannot modify the backend yet.
 	return rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
 }
 
