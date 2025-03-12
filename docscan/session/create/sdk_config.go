@@ -15,6 +15,7 @@ type SDKConfig struct {
 	PrivacyPolicyUrl      string                 `json:"privacy_policy_url,omitempty"`
 	AttemptsConfiguration *AttemptsConfiguration `json:"attempts_configuration,omitempty"`
 	AllowHandOff          bool                   `json:"allow_handoff,omitempty"`
+	BiometricConsentFlow  string                 `json:"biometric_consent_flow,omitempty"`
 }
 
 type AttemptsConfiguration struct {
@@ -39,6 +40,7 @@ type SdkConfigBuilder struct {
 	privacyPolicyUrl                     string
 	idDocumentTextDataExtractionAttempts map[string]int
 	allowHandOff                         bool
+	biometricConsentFlow                 string
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -126,6 +128,19 @@ func (b *SdkConfigBuilder) WithAllowHandOff(allowHandOff bool) *SdkConfigBuilder
 	return b
 }
 
+func (b *SdkConfigBuilder) WithBiometricConsentFlow(biometricConsentFlow string) *SdkConfigBuilder {
+	b.biometricConsentFlow = biometricConsentFlow
+	return b
+}
+
+func (b *SdkConfigBuilder) WithEarlyBiometricConsentFlow() *SdkConfigBuilder {
+	return b.WithBiometricConsentFlow(constants.Early)
+}
+
+func (b *SdkConfigBuilder) WithJustInTimeBiometricConsentFlow() *SdkConfigBuilder {
+	return b.WithBiometricConsentFlow(constants.JustInTime)
+}
+
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 	sdkConf := &SDKConfig{
@@ -140,6 +155,7 @@ func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 		b.privacyPolicyUrl,
 		nil,
 		b.allowHandOff,
+		b.biometricConsentFlow,
 	}
 
 	if b.idDocumentTextDataExtractionAttempts != nil {
