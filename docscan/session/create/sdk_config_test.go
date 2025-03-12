@@ -175,5 +175,5 @@ func ExampleSdkConfigBuilder_WithDarkModeAuto() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"dark_mode":"OFF"}
+	// Output: {"dark_mode":"AUTO"}
 }
