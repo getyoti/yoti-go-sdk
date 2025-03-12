@@ -137,3 +137,43 @@ func ExampleSdkConfigBuilder_WithDarkMode() {
 	fmt.Println(string(data))
 	// Output: {"dark_mode":"ON"}
 }
+
+func ExampleSdkConfigBuilder_WithDarkModeOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithDarkModeOff().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"dark_mode":"OFF"}
+}
+
+func ExampleSdkConfigBuilder_WithDarkModeAuto() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithDarkModeAuto().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"dark_mode":"OFF"}
+}
