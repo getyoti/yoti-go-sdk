@@ -177,3 +177,23 @@ func ExampleSdkConfigBuilder_WithDarkModeAuto() {
 	fmt.Println(string(data))
 	// Output: {"dark_mode":"AUTO"}
 }
+
+func ExampleSdkConfigBuilder_WithPrimaryColourDarkMode() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithPrimaryColourDarkMode("SOME_COLOUR").
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"primary_colour_dark_mode":"SOME_COLOUR"}
+}
