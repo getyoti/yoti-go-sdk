@@ -54,6 +54,9 @@ type SessionSpecification struct {
 
 	// ImportToken requests the creation of an import_token.
 	ImportToken *ImportToken `json:"import_token,omitempty"`
+
+	//Ephemeral Media to set ephemeral or not
+	EphemeralMedia *bool `json:"ephemeral_media,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -72,6 +75,7 @@ type SessionSpecificationBuilder struct {
 	createIdentityProfilePreview        bool
 	subject                             *json.RawMessage
 	importToken                         *ImportToken
+	ephemeralMedia                      *bool
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -163,6 +167,12 @@ func (b *SessionSpecificationBuilder) WithImportToken(importToken *ImportToken) 
 	return b
 }
 
+// WithEphemeralMedia sets whether to block or not to block the collection of ephemeral media
+func (b *SessionSpecificationBuilder) WithEphemeralMedia(ephemeralMedia bool) *SessionSpecificationBuilder {
+	b.ephemeralMedia = &ephemeralMedia
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -180,5 +190,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.createIdentityProfilePreview,
 		b.subject,
 		b.importToken,
+		b.ephemeralMedia,
 	}, nil
 }

@@ -100,6 +100,8 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		WithIdDocumentTextExtractionGenericAttempts(2).
 		WithAllowHandOff(true).
 		WithDarkModeOn().
+		WithEarlyBiometricConsentFlow().
+		//WithBrandId("some_brand_id").
 		Build()
 	if err != nil {
 		return nil, err
