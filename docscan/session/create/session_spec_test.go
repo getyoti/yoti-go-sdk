@@ -363,3 +363,23 @@ func ExampleSessionSpecificationBuilder_Build_withCreateIdentityProfilePreview()
 	fmt.Println(string(data))
 	// Output: {"create_identity_profile_preview":true}
 }
+
+func ExampleSessionSpecificationBuilder_Build_withEphemeralMedia() {
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithEphemeralMedia(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"ephemeral_media":true}
+}

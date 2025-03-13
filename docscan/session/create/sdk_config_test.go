@@ -157,3 +157,23 @@ func ExampleSdkConfigBuilder_WithAllowHandOff() {
 	fmt.Println(string(data))
 	// Output: {"allow_handoff":true}
 }
+
+func ExampleSdkConfigBuilder_WithBrandId() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithBrandId("some_brand_id").
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"brand_id":"some_brand_id"}
+}
