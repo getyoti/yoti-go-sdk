@@ -130,7 +130,6 @@ func (b *SdkConfigBuilder) WithAllowHandOff(allowHandOff bool) *SdkConfigBuilder
 	return b
 }
 
-
 func (b *SdkConfigBuilder) WithBiometricConsentFlow(biometricConsentFlow string) *SdkConfigBuilder {
 	b.biometricConsentFlow = biometricConsentFlow
 	return b
@@ -144,12 +143,10 @@ func (b *SdkConfigBuilder) WithJustInTimeBiometricConsentFlow() *SdkConfigBuilde
 	return b.WithBiometricConsentFlow(constants.JustInTime)
 }
 
-
 func (b *SdkConfigBuilder) WithBrandId(brandId string) *SdkConfigBuilder {
 	b.brandId = brandId
 	return b
 }
-
 
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
