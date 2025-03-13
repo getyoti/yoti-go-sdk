@@ -98,6 +98,46 @@ func ExampleSdkConfigBuilder_WithAllowsCameraAndUpload() {
 	// Output: {"allowed_capture_methods":"CAMERA_AND_UPLOAD"}
 }
 
+func ExampleSdkConfigBuilder_WithEarlyBiometricConsentFlow() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithEarlyBiometricConsentFlow().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"biometric_consent_flow":"EARLY"}
+}
+
+func ExampleSdkConfigBuilder_WithJustInTimeBiometricConsentFlow() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithJustInTimeBiometricConsentFlow().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"biometric_consent_flow":"JUST_IN_TIME"}
+}
+
 func ExampleSdkConfigBuilder_WithAllowHandOff() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithAllowHandOff(true).

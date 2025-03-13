@@ -39,4 +39,6 @@ const (
 	Never    string = "NEVER"
 
 	ProofOfAddress string = "PROOF_OF_ADDRESS"
+	Early          string = "EARLY"
+	JustInTime     string = "JUST_IN_TIME"
 )
