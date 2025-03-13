@@ -15,8 +15,10 @@ type SDKConfig struct {
 	PrivacyPolicyUrl      string                 `json:"privacy_policy_url,omitempty"`
 	AttemptsConfiguration *AttemptsConfiguration `json:"attempts_configuration,omitempty"`
 	AllowHandOff          bool                   `json:"allow_handoff,omitempty"`
-	BrandId               string                 `json:"brand_id,omitempty"`
+	DarkMode              string                 `json:"dark_mode,omitempty"`
+	PrimaryColourDarkMode string                 `json:"primary_colour_dark_mode,omitempty"`
 	BiometricConsentFlow  string                 `json:"biometric_consent_flow,omitempty"`
+	BrandId               string                 `json:"brand_id,omitempty"`
 }
 
 type AttemptsConfiguration struct {
@@ -41,8 +43,10 @@ type SdkConfigBuilder struct {
 	privacyPolicyUrl                     string
 	idDocumentTextDataExtractionAttempts map[string]int
 	allowHandOff                         bool
-	brandId                              string
+	darkMode                             string
+	primaryColourDarkMode                string
 	biometricConsentFlow                 string
+	brandId                              string
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -130,6 +134,31 @@ func (b *SdkConfigBuilder) WithAllowHandOff(allowHandOff bool) *SdkConfigBuilder
 	return b
 }
 
+func (b *SdkConfigBuilder) WithDarkMode(darkMode string) *SdkConfigBuilder {
+	b.darkMode = darkMode
+	return b
+}
+
+func (b *SdkConfigBuilder) WithDarkModeOn() *SdkConfigBuilder {
+	b.darkMode = "ON"
+	return b
+}
+
+func (b *SdkConfigBuilder) WithDarkModeOff() *SdkConfigBuilder {
+	b.darkMode = "OFF"
+	return b
+}
+
+func (b *SdkConfigBuilder) WithDarkModeAuto() *SdkConfigBuilder {
+	b.darkMode = "AUTO"
+	return b
+}
+
+func (b *SdkConfigBuilder) WithPrimaryColourDarkMode(colour string) *SdkConfigBuilder {
+	b.primaryColourDarkMode = colour
+	return b
+}
+
 func (b *SdkConfigBuilder) WithBiometricConsentFlow(biometricConsentFlow string) *SdkConfigBuilder {
 	b.biometricConsentFlow = biometricConsentFlow
 	return b
@@ -162,8 +191,10 @@ func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 		b.privacyPolicyUrl,
 		nil,
 		b.allowHandOff,
-		b.brandId,
+		b.darkMode,
+		b.primaryColourDarkMode,
 		b.biometricConsentFlow,
+		b.brandId,
 	}
 
 	if b.idDocumentTextDataExtractionAttempts != nil {

@@ -158,6 +158,26 @@ func ExampleSdkConfigBuilder_WithAllowHandOff() {
 	// Output: {"allow_handoff":true}
 }
 
+func ExampleSdkConfigBuilder_WithDarkMode() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithDarkMode("ON").
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"dark_mode":"ON"}
+}
+
 func ExampleSdkConfigBuilder_WithBrandId() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithBrandId("some_brand_id").
@@ -176,4 +196,64 @@ func ExampleSdkConfigBuilder_WithBrandId() {
 
 	fmt.Println(string(data))
 	// Output: {"brand_id":"some_brand_id"}
+}
+
+func ExampleSdkConfigBuilder_WithDarkModeOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithDarkModeOff().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"dark_mode":"OFF"}
+}
+
+func ExampleSdkConfigBuilder_WithDarkModeAuto() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithDarkModeAuto().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"dark_mode":"AUTO"}
+}
+
+func ExampleSdkConfigBuilder_WithPrimaryColourDarkMode() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithPrimaryColourDarkMode("SOME_COLOUR").
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"primary_colour_dark_mode":"SOME_COLOUR"}
 }
