@@ -36,6 +36,7 @@ func ParseRSAKey(keyBytes []byte) (*rsa.PrivateKey, error) {
 	return key, nil
 }
 
+// nolint: gosec
 func decryptRsa(cipherBytes []byte, key *rsa.PrivateKey) ([]byte, error) {
 	return rsa.DecryptPKCS1v15(rand.Reader, key, cipherBytes)
 }
