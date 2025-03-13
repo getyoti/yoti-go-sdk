@@ -172,7 +172,6 @@ func (b *SdkConfigBuilder) WithJustInTimeBiometricConsentFlow() *SdkConfigBuilde
 	return b.WithBiometricConsentFlow(constants.JustInTime)
 }
 
-
 func (b *SdkConfigBuilder) WithBrandId(brandId string) *SdkConfigBuilder {
 	b.brandId = brandId
 	return b

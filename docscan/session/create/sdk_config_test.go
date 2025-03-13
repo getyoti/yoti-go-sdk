@@ -161,7 +161,7 @@ func ExampleSdkConfigBuilder_WithAllowHandOff() {
 func ExampleSdkConfigBuilder_WithDarkMode() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithDarkMode("ON").
-    Build()
+		Build()
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -181,7 +181,7 @@ func ExampleSdkConfigBuilder_WithDarkMode() {
 func ExampleSdkConfigBuilder_WithBrandId() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithBrandId("some_brand_id").
-    	Build()
+		Build()
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -257,4 +257,3 @@ func ExampleSdkConfigBuilder_WithPrimaryColourDarkMode() {
 	fmt.Println(string(data))
 	// Output: {"primary_colour_dark_mode":"SOME_COLOUR"}
 }
-  
