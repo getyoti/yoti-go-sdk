@@ -23,7 +23,6 @@ const identitySessionReceiptKeyRetrieval = "/v2/wrapped-item-keys/%s"
 const errorFailedToGetSignedRequest = "failed to get signed request: %v"
 const errorFailedToExecuteRequest = "failed to execute request: %v"
 const errorFailedToReadBody = "failed to read response body: %v"
-const errorFailedToGetSignedRequest = "failed to get signed request: %v"
 
 // CreateShareSession creates session using the supplied session specification
 func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
