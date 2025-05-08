@@ -5,14 +5,16 @@ type Content struct {
 	ExtraData []byte `json:"extraData"`
 }
 
+type RequirementsNotMetDetail struct {
+	Details                string `json:"details"`
+	AuditId                string `json:"audit_id"`
+	FailureType            string `json:"failure_type"`
+	DocumentType           string `json:"document_type"`
+	DocumentCountryIsoCode string `json:"document_country_iso_code"`
+}
+
 type ErrorReason struct {
-	RequirementsNotMetDetails []struct {
-		Details                string `json:"details"`
-		AuditId                string `json:"audit_id"`
-		FailureType            string `json:"failure_type"`
-		DocumentType           string `json:"document_type"`
-		DocumentCountryIsoCode string `json:"document_country_iso_code"`
-	} `json:"requirements_not_met_details"`
+	RequirementsNotMetDetails []RequirementsNotMetDetail `json:"requirements_not_met_details"`
 }
 
 type ReceiptResponse struct {

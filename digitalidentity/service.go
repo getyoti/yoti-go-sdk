@@ -228,13 +228,11 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	if receiptResponse.Error != "" {
 		return SharedReceiptResponse{
-			ID:                 receiptResponse.ID,
-			SessionID:          receiptResponse.SessionID,
-			RememberMeID:       receiptResponse.RememberMeID,
-			ParentRememberMeID: receiptResponse.ParentRememberMeID,
-			Timestamp:          receiptResponse.Timestamp,
-			Error:              receiptResponse.Error,
-			ErrorReason:        receiptResponse.ErrorReason,
+			ID:          receiptResponse.ID,
+			SessionID:   receiptResponse.SessionID,
+			Timestamp:   receiptResponse.Timestamp,
+			Error:       receiptResponse.Error,
+			ErrorReason: receiptResponse.ErrorReason,
 		}, nil
 	}
 
@@ -286,7 +284,6 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 			ApplicationProfile: applicationProfile,
 			ExtraData:          extraDataValue,
 		},
-		Error: receiptResponse.Error,
 	}, nil
 }
 
