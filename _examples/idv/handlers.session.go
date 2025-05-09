@@ -230,3 +230,30 @@ func showErrorPage(c *gin.Context) {
 		"error.html")
 	return
 }
+
+func getSessionConfigurationHandler(c *gin.Context) {
+	sessionID := c.Query("SessionID") // Get the SessionID from the query parameters
+	err := ensureDocScanClientInitialised()
+	if err != nil {
+		c.HTML(
+			http.StatusUnprocessableEntity,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "error setting the Doc Scan (IDV) Client",
+				"ErrorMessage": err.Error()})
+		return
+	}
+
+	if sessionID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing SessionID query parameter"})
+		return
+	}
+
+	sessionConfig, err := client.GetSessionConfiguration(sessionID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve session configuration", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, sessionConfig)
+}
