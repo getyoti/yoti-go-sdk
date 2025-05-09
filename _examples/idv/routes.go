@@ -14,4 +14,5 @@ func initializeRoutes() {
 	router.GET("/media", getMedia)
 	router.GET("/privacy-policy", showPrivacyPolicyPage)
 	router.GET("/error", showErrorPage)
+	router.GET("/config", getSessionConfigurationHandler)
 }
