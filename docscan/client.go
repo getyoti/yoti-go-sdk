@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/config"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/supported"
@@ -290,4 +291,41 @@ func marshalJSON(jsonMarshaler jsonMarshaler, v interface{}) ([]byte, error) {
 		return jsonMarshaler.Marshal(v)
 	}
 	return json.Marshal(v)
+}
+
+const getSessionConfigurationPath = "/sessions/%s/configuration"
+
+// GetSessionConfiguration retrieves the configuration of a previously created Yoti Doc Scan (IDV) session
+func (c *Client) GetSessionConfiguration(sessionID string) (*config.SessionConfigurationResponse, error) {
+	if sessionID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	request, err := (&requests.SignedRequest{
+		Key:        c.Key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    c.apiURL,
+		Endpoint:   fmt.Sprintf(getSessionConfigurationPath, sessionID),
+		Params:     map[string]string{"sdkID": c.SdkID},
+	}).Request()
+	if err != nil {
+		return nil, err
+	}
+
+	var response *http.Response
+	response, err = requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return nil, err
+	}
+
+	var responseBytes []byte
+	responseBytes, err = io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result config.SessionConfigurationResponse
+	err = json.Unmarshal(responseBytes, &result)
+
+	return &result, err
 }
