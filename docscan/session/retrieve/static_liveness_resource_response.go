@@ -5,7 +5,3 @@ type StaticLivenessResourceResponse struct {
 	*LivenessResourceResponse
 	Image *Image `json:"image"`
 }
-
-type Image struct {
-	Media *MediaResponse `json:"media"`
-}

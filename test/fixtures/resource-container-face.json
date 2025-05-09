@@ -1,0 +1,22 @@
+{
+  "id_documents": [],
+  "supplementary_documents": [],
+  "liveness_capture": [],
+  "face_capture": [
+    {
+      "id": "string",
+      "source": {
+        "type": "string"
+      },
+      "image": {
+        "media": {
+          "id": "string",
+          "type": "string",
+          "created": "2025-05-08T12:00:00Z",
+          "last_updated": "2025-05-08T12:05:00Z"
+        }
+      },
+      "tasks": []
+    }
+  ]
+}

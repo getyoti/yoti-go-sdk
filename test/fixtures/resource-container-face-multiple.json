@@ -1,0 +1,37 @@
+{
+  "id_documents": [],
+  "supplementary_documents": [],
+  "liveness_capture": [],
+  "face_capture": [
+    {
+      "id": "face_id_1",
+      "source": {
+        "type": "upload"
+      },
+      "image": {
+        "media": {
+          "id": "media_id_1",
+          "type": "image/jpeg",
+          "created": "2025-05-06T12:00:00Z",
+          "last_updated": "2025-05-06T12:05:00Z"
+        }
+      },
+      "tasks": ["verification", "quality_check"]
+    },
+    {
+      "id": "face_id_2",
+      "source": {
+        "type": "camera"
+      },
+      "image": {
+        "media": {
+          "id": "media_id_2",
+          "type": "image/png",
+          "created": "2025-05-05T12:10:00Z",
+          "last_updated": "2025-05-05T12:15:00Z"
+        }
+      },
+      "tasks": []
+    }
+  ]
+}

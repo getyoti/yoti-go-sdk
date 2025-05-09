@@ -14,6 +14,7 @@ type ResourceContainer struct {
 	RawLivenessCapture      []json.RawMessage `json:"liveness_capture"`
 	zoomLivenessResources   []*ZoomLivenessResourceResponse
 	staticLivenessResources []*StaticLivenessResourceResponse
+	FaceCapture             []*FaceCaptureResourceResponse `json:"face_capture"`
 }
 
 // ZoomLivenessResources  filters the liveness resources, returning only the "Zoom" liveness resources
