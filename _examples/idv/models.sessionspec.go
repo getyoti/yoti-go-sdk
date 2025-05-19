@@ -293,3 +293,49 @@ func buildAdvancedIdentityProfileSessionSpec() (sessionSpec *create.SessionSpeci
 		WithSubject(subject).
 		Build()
 }
+
+func buildFaceCaptureSessionSpec() (*create.SessionSpecification, error) {
+	sdkConfig, err := create.NewSdkConfigBuilder().
+		WithAllowsCameraAndUpload().
+		WithPrimaryColour("#2d9fff").
+		WithSecondaryColour("#FFFFFF").
+		WithFontColour("#FFFFFF").
+		WithLocale("en-GB").
+		WithPresetIssuingCountry("GBR").
+		WithSuccessUrl("https://localhost:8080/success").
+		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		WithJustInTimeBiometricConsentFlow().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	faceComparisonCheck, err := check.NewRequestedFaceComparisonCheckBuilder().
+		WithManualCheckNever().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	livenessCheck, err := check.NewRequestedLivenessCheckBuilder().
+		ForStaticLiveness().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	sessionSpec, err := create.NewSessionSpecificationBuilder().
+		WithClientSessionTokenTTL(600).
+		WithResourcesTTL(90000).
+		WithUserTrackingID("simple-face-capture-tracking-id").
+		WithRequestedCheck(livenessCheck).
+		WithRequestedCheck(faceComparisonCheck).
+		WithSDKConfig(sdkConfig).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return sessionSpec, nil
+}

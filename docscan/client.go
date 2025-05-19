@@ -2,6 +2,7 @@ package docscan
 
 import (
 	"crypto/rsa"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/supported"
 	"github.com/getyoti/yoti-go-sdk/v3/media"
@@ -290,4 +292,125 @@ func marshalJSON(jsonMarshaler jsonMarshaler, v interface{}) ([]byte, error) {
 		return jsonMarshaler.Marshal(v)
 	}
 	return json.Marshal(v)
+}
+
+func (c *Client) CreateFaceCaptureResource(sessionID string, payload *facecapture.CreateFaceCaptureResourcePayload) (*retrieve.FaceCaptureResourceResponse, error) {
+	if sessionID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	body, err := marshalJSON(c.jsonMarshaler, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := (&requests.SignedRequest{
+		Key:        c.Key,
+		HTTPMethod: http.MethodPost,
+		BaseURL:    c.apiURL,
+		Endpoint:   fmt.Sprintf("/sessions/%s/resources/face-capture", sessionID),
+		Params:     map[string]string{"sdkID": c.SdkID},
+		Headers:    requests.JSONHeaders(),
+		Body:       body,
+	}).Request()
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return nil, err
+	}
+
+	var result retrieve.FaceCaptureResourceResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (c *Client) UploadFaceCaptureImage(sessionID, resourceID string, payload *facecapture.UploadFaceCaptureImagePayload) error {
+	if sessionID == "" || resourceID == "" {
+		return fmt.Errorf("sessionID and resourceID must not be empty")
+	}
+
+	if err := payload.Prepare(); err != nil {
+		return fmt.Errorf("failed to prepare multipart payload: %w", err)
+	}
+
+	request, err := (&requests.SignedRequest{
+		Key:        c.Key,
+		HTTPMethod: http.MethodPut,
+		BaseURL:    c.apiURL,
+		Endpoint:   fmt.Sprintf("/sessions/%s/resources/face-capture/%s/image", sessionID, resourceID),
+		Params:     map[string]string{"sdkID": c.SdkID},
+		Body:       payload.MultipartFormBody().Bytes(),
+		Headers:    payload.Headers(), // ✅ Now valid
+	}).Request()
+
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	_, err = requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	return err
+}
+
+func (c *Client) GetSessionConfiguration(sessionID string) (*retrieve.GetSessionConfigurationResult, error) {
+	if sessionID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	request, err := (&requests.SignedRequest{
+		Key:        c.Key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    c.apiURL,
+		Endpoint:   fmt.Sprintf("/sessions/%s/configuration", sessionID),
+		Params:     map[string]string{"sdkID": c.SdkID},
+	}).Request()
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return nil, err
+	}
+
+	var result retrieve.GetSessionConfigurationResult
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (c *Client) AddFaceCaptureResourceToSession(sessionID string) error {
+	sessionConfig, err := c.GetSessionConfiguration(sessionID)
+	if err != nil {
+		return err
+	}
+
+	requirements := sessionConfig.GetCapture().FaceCaptureResourceRequirements
+	if len(requirements) == 0 {
+		return nil
+	}
+
+	firstRequirement := requirements[0]
+	payload := facecapture.NewCreateFaceCaptureResourcePayload(firstRequirement.ID)
+
+	resource, err := c.CreateFaceCaptureResource(sessionID, payload)
+	if err != nil {
+		return err
+	}
+
+	base64Image := "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+	imageBytes, err := base64.StdEncoding.DecodeString(base64Image)
+	if err != nil {
+		return err
+	}
+
+	imagePayload := facecapture.NewUploadFaceCaptureImagePayload("image/png", imageBytes)
+	return c.UploadFaceCaptureImage(sessionID, resource.ID, imagePayload)
 }
