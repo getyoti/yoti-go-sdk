@@ -41,4 +41,5 @@ const (
 	ProofOfAddress string = "PROOF_OF_ADDRESS"
 	Early          string = "EARLY"
 	JustInTime     string = "JUST_IN_TIME"
+	FaceComparison string = "FACE_COMPARISON"
 )
