@@ -54,7 +54,7 @@ func (p *UploadFaceCaptureImagePayload) MultipartFormBody() *bytes.Buffer {
 	return p.body
 }
 
-// ✅ Fixed return type to match SignedRequest expectations
+// Fixed return type to match SignedRequest expectations
 func (p *UploadFaceCaptureImagePayload) Headers() map[string][]string {
 	return map[string][]string{
 		"Content-Type": {p.writer.FormDataContentType()},
