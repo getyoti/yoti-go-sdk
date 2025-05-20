@@ -384,12 +384,7 @@ func (c *Client) GetSessionConfiguration(sessionID string) (*retrieve.SessionCon
 		return nil, err
 	}
 
-	fmt.Println("body")
-	fmt.Printf("%s", response.Body)
 	var result retrieve.SessionConfigurationResponse
-	//if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
-	//	return nil, err
-	//}
 
 	if err := json.Unmarshal(responseBytes, &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response: %w", err)

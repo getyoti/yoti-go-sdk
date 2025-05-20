@@ -5,9 +5,6 @@ import (
 	"errors"
 )
 
-// CaptureResponse should be defined elsewhere
-// type CaptureResponse struct { ... }
-
 type SessionConfigurationResponse struct {
 	ClientSessionTokenTtl int              `json:"client_session_token_ttl"`
 	SessionId             string           `json:"session_id"`
@@ -15,30 +12,28 @@ type SessionConfigurationResponse struct {
 	Capture               *CaptureResponse `json:"capture"`
 }
 
-// NewSessionConfigurationResponse creates a new SessionConfigurationResponse from JSON payload bytes
+// NewSessionConfigurationResponse creates a new SessionConfigurationResponse from JSON payload bytes,
+// validating mandatory fields.
 func NewSessionConfigurationResponse(payload []byte) (*SessionConfigurationResponse, error) {
 	var resp SessionConfigurationResponse
 	if err := json.Unmarshal(payload, &resp); err != nil {
 		return nil, err
 	}
 
-	// Validate required fields similar to JS Validation.isX
-	if resp.ClientSessionTokenTtl == 0 {
-		return nil, errors.New("client_session_token_ttl must be a non-zero number")
+	if resp.ClientSessionTokenTtl <= 0 {
+		return nil, errors.New("client_session_token_ttl must be a positive integer")
 	}
 	if resp.SessionId == "" {
 		return nil, errors.New("session_id must be a non-empty string")
 	}
-	if resp.RequestedChecks == nil {
-		return nil, errors.New("requested_checks must be an array")
+	if resp.RequestedChecks == nil || len(resp.RequestedChecks) == 0 {
+		return nil, errors.New("requested_checks must be a non-empty array")
 	}
-	// Assuming CaptureResponse struct has its own validation if needed
 
 	return &resp, nil
 }
 
-// Getters, matching JS class methods (optional in Go, as fields are accessible)
-// but provided here for API similarity
+// Getter methods for each field
 
 func (r *SessionConfigurationResponse) GetClientSessionTokenTtl() int {
 	return r.ClientSessionTokenTtl

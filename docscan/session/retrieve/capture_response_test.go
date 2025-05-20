@@ -2,9 +2,8 @@ package retrieve
 
 import (
 	"encoding/json"
-	"testing"
-
 	"gotest.tools/v3/assert"
+	"testing"
 )
 
 func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
@@ -47,9 +46,12 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 	assert.Assert(t, ok)
 	assert.Equal(t, "FACE_CAPTURE", c.RequiredResources[3].GetType())
 
-	_, ok = c.RequiredResources[4].(*UnknownRequiredResourceResponse)
+	unknownRes, ok := c.RequiredResources[4].(*UnknownRequiredResourceResponse)
 	assert.Assert(t, ok)
-	assert.Equal(t, "UNKNOWN_TYPE", c.RequiredResources[4].GetType())
+	assert.Equal(t, "UNKNOWN_TYPE", unknownRes.GetType())
+
+	// Test String() method of Unknown type returns non-empty
+	assert.Assert(t, unknownRes.String() != "")
 }
 
 func TestCaptureResponse_Getters(t *testing.T) {
@@ -86,4 +88,30 @@ func TestCaptureResponse_Getters(t *testing.T) {
 	faceCapture := c.GetFaceCaptureResourceRequirements()
 	assert.Equal(t, 1, len(faceCapture))
 	assert.Equal(t, "id4", faceCapture[0].ID)
+}
+
+func TestCaptureResponse_EmptyResources(t *testing.T) {
+	// Should not fail on empty required_resources
+	jsonData := []byte(`{"biometric_consent": "none", "required_resources": []}`)
+
+	var c CaptureResponse
+	err := json.Unmarshal(jsonData, &c)
+	assert.NilError(t, err)
+	assert.Equal(t, "none", c.BiometricConsent)
+	assert.Equal(t, 0, len(c.RequiredResources))
+}
+
+func TestResource_StringMethods(t *testing.T) {
+	resources := []RequiredResourceResponse{
+		&RequiredIdDocumentResourceResponse{BaseRequiredResource{"ID_DOCUMENT", "id1", "state1"}},
+		&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource{"SUPPLEMENTARY_DOCUMENT", "id2", "state2"}},
+		&RequiredZoomLivenessResourceResponse{BaseRequiredResource{"LIVENESS", "id3", "state3"}},
+		&RequiredFaceCaptureResourceResponse{BaseRequiredResource{"FACE_CAPTURE", "id4", "state4"}},
+		&UnknownRequiredResourceResponse{BaseRequiredResource{"UNKNOWN", "id5", "state5"}},
+	}
+
+	for _, r := range resources {
+		str := r.String()
+		assert.Assert(t, str != "", "String method should return non-empty string")
+	}
 }

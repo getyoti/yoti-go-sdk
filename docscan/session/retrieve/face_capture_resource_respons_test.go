@@ -1,10 +1,10 @@
+// face_capture_resource_response_test.go
 package retrieve
 
 import (
 	"encoding/json"
-	"testing"
-
 	"gotest.tools/v3/assert"
+	"testing"
 )
 
 func TestFaceCaptureResourceResponse_Getters(t *testing.T) {

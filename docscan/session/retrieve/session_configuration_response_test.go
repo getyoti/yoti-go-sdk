@@ -12,7 +12,7 @@ func TestNewSessionConfigurationResponse_Success(t *testing.T) {
 		ClientSessionTokenTtl: 3600,
 		SessionId:             "abc123",
 		RequestedChecks:       []string{"ID_DOCUMENT"},
-		Capture:               &CaptureResponse{}, // Assuming zero value is fine
+		Capture:               &CaptureResponse{}, // assuming zero value is acceptable
 	}
 
 	data, err := json.Marshal(payload)
@@ -34,7 +34,7 @@ func TestNewSessionConfigurationResponse_MissingTTL(t *testing.T) {
 	}`
 
 	_, err := NewSessionConfigurationResponse([]byte(jsonData))
-	assert.ErrorContains(t, err, "client_session_token_ttl must be a non-zero number")
+	assert.ErrorContains(t, err, "client_session_token_ttl must be a positive integer")
 }
 
 func TestNewSessionConfigurationResponse_MissingSessionID(t *testing.T) {
@@ -56,7 +56,7 @@ func TestNewSessionConfigurationResponse_MissingRequestedChecks(t *testing.T) {
 	}`
 
 	_, err := NewSessionConfigurationResponse([]byte(jsonData))
-	assert.ErrorContains(t, err, "requested_checks must be an array")
+	assert.ErrorContains(t, err, "requested_checks must be a non-empty array")
 }
 
 func TestSessionConfigurationResponse_Getters(t *testing.T) {
