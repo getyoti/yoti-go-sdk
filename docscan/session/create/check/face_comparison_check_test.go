@@ -62,3 +62,11 @@ func TestRequestedFaceComparisonCheckBuilder_WithManualCheckNever(t *testing.T) 
 	config := check.Config().(RequestedFaceComparisonConfig)
 	assert.Equal(t, "NEVER", config.ManualCheck)
 }
+
+func TestRequestedFaceComparisonCheckBuilder_DefaultManualCheckEmpty(t *testing.T) {
+	builder := NewRequestedFaceComparisonCheckBuilder()
+
+	check, err := builder.Build()
+	assert.NilError(t, err)
+	assert.Equal(t, check.config.ManualCheck, "") // default is empty string
+}
