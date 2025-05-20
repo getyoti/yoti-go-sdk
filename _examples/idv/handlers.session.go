@@ -265,9 +265,6 @@ func showFaceCaptureSessionPage(c *gin.Context) {
 	c.SetCookie("session_id", sessionID, 60*20, "/", "localhost", true, false)
 
 	err = client.AddFaceCaptureResourceToSession(sessionID)
-	fmt.Printf(sessionResult.SessionID)
-	fmt.Printf(sessionResult.ClientSessionToken)
-	fmt.Printf("Error: %+v\n", err)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"ErrorTitle":   "Add Face Capture Resource Failed",
@@ -277,7 +274,6 @@ func showFaceCaptureSessionPage(c *gin.Context) {
 	}
 
 	iframeURL := getIframeURL(sessionID, sessionToken)
-	fmt.Printf("Iframe: %s", iframeURL)
 
 	render(c, gin.H{
 		"iframeURL": iframeURL},
