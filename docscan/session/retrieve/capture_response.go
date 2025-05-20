@@ -5,80 +5,16 @@ import (
 	"fmt"
 )
 
-// RequiredResourceResponse defines interface for required resources.
-type RequiredResourceResponse interface {
-	GetType() string
-	String() string
-}
-
-// BaseRequiredResource contains common fields for all required resources.
-type BaseRequiredResource struct {
-	Type  string `json:"type"`
-	ID    string `json:"id"`
-	State string `json:"state"`
-}
-
-func (b *BaseRequiredResource) GetType() string {
-	return b.Type
-}
-
-func (b *BaseRequiredResource) String() string {
-	return fmt.Sprintf("Type: %s, ID: %s, State: %s", b.Type, b.ID, b.State)
-}
-
-type RequiredIdDocumentResourceResponse struct {
-	BaseRequiredResource
-}
-
-func (r *RequiredIdDocumentResourceResponse) String() string {
-	return fmt.Sprintf("ID Document Resource - %s", r.BaseRequiredResource.String())
-}
-
-type RequiredSupplementaryDocumentResourceResponse struct {
-	BaseRequiredResource
-}
-
-func (r *RequiredSupplementaryDocumentResourceResponse) String() string {
-	return fmt.Sprintf("Supplementary Document Resource - %s", r.BaseRequiredResource.String())
-}
-
-type RequiredZoomLivenessResourceResponse struct {
-	BaseRequiredResource
-}
-
-func (r *RequiredZoomLivenessResourceResponse) String() string {
-	return fmt.Sprintf("Zoom Liveness Resource - %s", r.BaseRequiredResource.String())
-}
-
-type RequiredFaceCaptureResourceResponse struct {
-	BaseRequiredResource
-}
-
-func (r *RequiredFaceCaptureResourceResponse) String() string {
-	return fmt.Sprintf("Face Capture Resource - %s", r.BaseRequiredResource.String())
-}
-
-type UnknownRequiredResourceResponse struct {
-	BaseRequiredResource
-}
-
-func (r *UnknownRequiredResourceResponse) String() string {
-	return fmt.Sprintf("Unknown Resource Type - %s", r.BaseRequiredResource.String())
-}
-
-// CaptureResponse holds the biometric consent and polymorphic required resources.
 type CaptureResponse struct {
 	BiometricConsent  string                     `json:"biometric_consent"`
 	RequiredResources []RequiredResourceResponse `json:"-"`
 }
 
-// captureResponseAlias used internally for unmarshaling raw JSON resources.
 type captureResponseAlias struct {
 	BiometricConsent  string            `json:"biometric_consent"`
 	RequiredResources []json.RawMessage `json:"required_resources"`
 }
 
-// UnmarshalJSON unmarshals CaptureResponse with polymorphic required resources.
 func (c *CaptureResponse) UnmarshalJSON(data []byte) error {
 	aux := captureResponseAlias{}
 	if err := json.Unmarshal(data, &aux); err != nil {
@@ -135,7 +71,7 @@ func (c *CaptureResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// filterByType filters resources by the given type T.
+// Helper generic filter function for typed filtering
 func filterByType[T RequiredResourceResponse](resources []RequiredResourceResponse) []T {
 	var filtered []T
 	for _, r := range resources {
@@ -146,7 +82,6 @@ func filterByType[T RequiredResourceResponse](resources []RequiredResourceRespon
 	return filtered
 }
 
-// GetDocumentResourceRequirements returns ID and supplementary document resources.
 func (c *CaptureResponse) GetDocumentResourceRequirements() []RequiredResourceResponse {
 	var docs []RequiredResourceResponse
 	for _, r := range c.RequiredResources {
@@ -158,22 +93,18 @@ func (c *CaptureResponse) GetDocumentResourceRequirements() []RequiredResourceRe
 	return docs
 }
 
-// GetIdDocumentResourceRequirements returns ID document resources.
 func (c *CaptureResponse) GetIdDocumentResourceRequirements() []*RequiredIdDocumentResourceResponse {
 	return filterByType[*RequiredIdDocumentResourceResponse](c.RequiredResources)
 }
 
-// GetSupplementaryResourceRequirements returns supplementary document resources.
 func (c *CaptureResponse) GetSupplementaryResourceRequirements() []*RequiredSupplementaryDocumentResourceResponse {
 	return filterByType[*RequiredSupplementaryDocumentResourceResponse](c.RequiredResources)
 }
 
-// GetZoomLivenessResourceRequirements returns Zoom liveness resources.
 func (c *CaptureResponse) GetZoomLivenessResourceRequirements() []*RequiredZoomLivenessResourceResponse {
 	return filterByType[*RequiredZoomLivenessResourceResponse](c.RequiredResources)
 }
 
-// GetFaceCaptureResourceRequirements returns face capture resources.
 func (c *CaptureResponse) GetFaceCaptureResourceRequirements() []*RequiredFaceCaptureResourceResponse {
 	return filterByType[*RequiredFaceCaptureResourceResponse](c.RequiredResources)
 }

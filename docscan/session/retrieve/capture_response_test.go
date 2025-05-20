@@ -2,8 +2,9 @@ package retrieve
 
 import (
 	"encoding/json"
-	"gotest.tools/v3/assert"
 	"testing"
+
+	"gotest.tools/v3/assert"
 )
 
 func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
@@ -22,13 +23,9 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 	err := json.Unmarshal(jsonData, &c)
 	assert.NilError(t, err)
 
-	// Check top-level field
 	assert.Equal(t, "given", c.BiometricConsent)
-
-	// Check total number of resources
 	assert.Equal(t, 5, len(c.RequiredResources))
 
-	// Check each resource type via type assertion
 	_, ok := c.RequiredResources[0].(*RequiredIdDocumentResourceResponse)
 	assert.Assert(t, ok)
 	assert.Equal(t, "ID_DOCUMENT", c.RequiredResources[0].GetType())
@@ -49,18 +46,16 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 	unknownRes, ok := c.RequiredResources[4].(*UnknownRequiredResourceResponse)
 	assert.Assert(t, ok)
 	assert.Equal(t, "UNKNOWN_TYPE", unknownRes.GetType())
-
-	// Test String() method of Unknown type returns non-empty
 	assert.Assert(t, unknownRes.String() != "")
 }
 
 func TestCaptureResponse_Getters(t *testing.T) {
 	c := CaptureResponse{
 		RequiredResources: []RequiredResourceResponse{
-			&RequiredIdDocumentResourceResponse{BaseRequiredResource: BaseRequiredResource{Type: "ID_DOCUMENT", ID: "id1"}},
-			&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource: BaseRequiredResource{Type: "SUPPLEMENTARY_DOCUMENT", ID: "id2"}},
-			&RequiredZoomLivenessResourceResponse{BaseRequiredResource: BaseRequiredResource{Type: "LIVENESS", ID: "id3"}},
-			&RequiredFaceCaptureResourceResponse{BaseRequiredResource: BaseRequiredResource{Type: "FACE_CAPTURE", ID: "id4"}},
+			&RequiredIdDocumentResourceResponse{BaseRequiredResource{Type: "ID_DOCUMENT", ID: "id1"}},
+			&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource{Type: "SUPPLEMENTARY_DOCUMENT", ID: "id2"}},
+			&RequiredZoomLivenessResourceResponse{BaseRequiredResource{Type: "LIVENESS", ID: "id3"}},
+			&RequiredFaceCaptureResourceResponse{BaseRequiredResource{Type: "FACE_CAPTURE", ID: "id4"}},
 		},
 	}
 
@@ -91,7 +86,6 @@ func TestCaptureResponse_Getters(t *testing.T) {
 }
 
 func TestCaptureResponse_EmptyResources(t *testing.T) {
-	// Should not fail on empty required_resources
 	jsonData := []byte(`{"biometric_consent": "none", "required_resources": []}`)
 
 	var c CaptureResponse
@@ -99,19 +93,4 @@ func TestCaptureResponse_EmptyResources(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Equal(t, "none", c.BiometricConsent)
 	assert.Equal(t, 0, len(c.RequiredResources))
-}
-
-func TestResource_StringMethods(t *testing.T) {
-	resources := []RequiredResourceResponse{
-		&RequiredIdDocumentResourceResponse{BaseRequiredResource{"ID_DOCUMENT", "id1", "state1"}},
-		&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource{"SUPPLEMENTARY_DOCUMENT", "id2", "state2"}},
-		&RequiredZoomLivenessResourceResponse{BaseRequiredResource{"LIVENESS", "id3", "state3"}},
-		&RequiredFaceCaptureResourceResponse{BaseRequiredResource{"FACE_CAPTURE", "id4", "state4"}},
-		&UnknownRequiredResourceResponse{BaseRequiredResource{"UNKNOWN", "id5", "state5"}},
-	}
-
-	for _, r := range resources {
-		str := r.String()
-		assert.Assert(t, str != "", "String method should return non-empty string")
-	}
 }
