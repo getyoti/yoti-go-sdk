@@ -146,3 +146,22 @@ func TestGetQrCode(t *testing.T) {
 	assert.NilError(t, err)
 
 }
+
+func TestGetFailureReceipt(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+	mockQrId := "SOME_QR_CODE_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       io.NopCloser(strings.NewReader(`{"id":"tXTQK9E22lyzyIhVZM7pY1ctI7FHelLgvrVO35RO+vWKjJJJSJhu2ZLFBCce14Xy","sessionId":"ss.v2.ChZvRm1QTG5tT1FJMjZMYm9xeC1Fdlh3EgdsZDUuZ2Jy","timestamp":"2025-05-21T11:01:07Z","error":"MANDATORY_DOCUMENT_NOT_PROVIDED","errorReason":{"requirements_not_met_details":[{"details":"NOT_APPLICABLE_FOR_SCHEME","audit_id":"97001564-a18a-4afd-bf19-3ffacc88abbb","failure_type":"ID_DOCUMENT_COUNTRY","document_type":"PASSPORT","document_country_iso_code":"IRL"}]}}`)),
+			}, nil
+		},
+	}
+
+	r, err := GetShareReceipt(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	assert.Equal(t, len(r.ErrorReason.RequirementsNotMetDetails), 1)
+	assert.NilError(t, err)
+}
