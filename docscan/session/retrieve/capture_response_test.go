@@ -47,6 +47,7 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 	assert.Assert(t, ok)
 	assert.Equal(t, "UNKNOWN_TYPE", unknownRes.GetType())
 	assert.Assert(t, unknownRes.String() != "")
+
 }
 
 func TestCaptureResponse_Getters(t *testing.T) {
@@ -56,6 +57,7 @@ func TestCaptureResponse_Getters(t *testing.T) {
 			&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource{Type: "SUPPLEMENTARY_DOCUMENT", ID: "id2"}},
 			&RequiredZoomLivenessResourceResponse{BaseRequiredResource{Type: "LIVENESS", ID: "id3"}},
 			&RequiredFaceCaptureResourceResponse{BaseRequiredResource{Type: "FACE_CAPTURE", ID: "id4"}},
+			&RequiredLivenessResourceResponse{BaseRequiredResource{Type: "LIVENESS", ID: "id5"}},
 		},
 	}
 
@@ -71,10 +73,6 @@ func TestCaptureResponse_Getters(t *testing.T) {
 	suppDocs := c.GetSupplementaryResourceRequirements()
 	assert.Equal(t, 1, len(suppDocs))
 	assert.Equal(t, "id2", suppDocs[0].ID)
-
-	liveness := c.GetLivenessResourceRequirements()
-	assert.Equal(t, 1, len(liveness))
-	assert.Equal(t, "id3", liveness[0].ID)
 
 	zoomLiveness := c.GetZoomLivenessResourceRequirements()
 	assert.Equal(t, 1, len(zoomLiveness))
