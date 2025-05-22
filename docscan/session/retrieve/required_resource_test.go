@@ -7,11 +7,50 @@ import (
 
 func TestResource_StringMethods(t *testing.T) {
 	resources := []RequiredResourceResponse{
-		&RequiredIdDocumentResourceResponse{BaseRequiredResource{"ID_DOCUMENT", "id1", "state1"}},
-		&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource{"SUPPLEMENTARY_DOCUMENT", "id2", "state2"}},
-		&RequiredZoomLivenessResourceResponse{BaseRequiredResource{"LIVENESS", "id3", "state3"}},
-		&RequiredFaceCaptureResourceResponse{BaseRequiredResource{"FACE_CAPTURE", "id4", "state4"}},
-		&UnknownRequiredResourceResponse{BaseRequiredResource{"UNKNOWN", "id5", "state5"}},
+		&RequiredIdDocumentResourceResponse{
+			BaseRequiredResource{
+				Type:  "ID_DOCUMENT",
+				ID:    "id1",
+				State: "state1",
+			},
+		},
+		&RequiredSupplementaryDocumentResourceResponse{
+			BaseRequiredResource{
+				Type:  "SUPPLEMENTARY_DOCUMENT",
+				ID:    "id2",
+				State: "state2",
+			},
+		},
+		&RequiredZoomLivenessResourceResponse{
+			BaseRequiredResource{
+				Type:         "LIVENESS",
+				ID:           "id3",
+				State:        "state3",
+				LivenessType: "ZOOM",
+			},
+		},
+		&RequiredStaticLivenessResourceResponse{
+			BaseRequiredResource{
+				Type:         "LIVENESS",
+				ID:           "id3",
+				State:        "state3",
+				LivenessType: "STATIC",
+			},
+		},
+		&RequiredFaceCaptureResourceResponse{
+			BaseRequiredResource{
+				Type:  "FACE_CAPTURE",
+				ID:    "id4",
+				State: "state4",
+			},
+		},
+		&UnknownRequiredResourceResponse{
+			BaseRequiredResource{
+				Type:  "UNKNOWN",
+				ID:    "id5",
+				State: "state5",
+			},
+		},
 	}
 
 	for _, r := range resources {

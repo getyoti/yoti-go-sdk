@@ -58,11 +58,28 @@ func unmarshalResource(raw json.RawMessage) (RequiredResourceResponse, error) {
 		return &r, nil
 
 	case "LIVENESS":
-		var r RequiredZoomLivenessResourceResponse
-		if err := json.Unmarshal(raw, &r); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal LIVENESS resource: %w", err)
+		switch base.LivenessType {
+		case "ZOOM":
+			var r RequiredZoomLivenessResourceResponse
+			if err := json.Unmarshal(raw, &r); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal ZOOM liveness resource: %w", err)
+			}
+			return &r, nil
+
+		case "STATIC":
+			var r RequiredStaticLivenessResourceResponse
+			if err := json.Unmarshal(raw, &r); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal STATIC liveness resource: %w", err)
+			}
+			return &r, nil
+
+		default:
+			var r RequiredLivenessResourceResponse
+			if err := json.Unmarshal(raw, &r); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal generic LIVENESS resource: %w", err)
+			}
+			return &r, nil
 		}
-		return &r, nil
 
 	case "FACE_CAPTURE":
 		var r RequiredFaceCaptureResourceResponse
@@ -80,7 +97,7 @@ func unmarshalResource(raw json.RawMessage) (RequiredResourceResponse, error) {
 	}
 }
 
-// Helper generic filter function for typed filtering
+// Generic filter helper
 func filterByType[T RequiredResourceResponse](resources []RequiredResourceResponse) []T {
 	var filtered []T
 	for _, r := range resources {
@@ -114,10 +131,14 @@ func (c *CaptureResponse) GetZoomLivenessResourceRequirements() []*RequiredZoomL
 	return filterByType[*RequiredZoomLivenessResourceResponse](c.RequiredResources)
 }
 
-func (c *CaptureResponse) GetFaceCaptureResourceRequirements() []*RequiredFaceCaptureResourceResponse {
-	return filterByType[*RequiredFaceCaptureResourceResponse](c.RequiredResources)
+func (c *CaptureResponse) GetStaticLivenessResourceRequirements() []*RequiredStaticLivenessResourceResponse {
+	return filterByType[*RequiredStaticLivenessResourceResponse](c.RequiredResources)
 }
 
 func (c *CaptureResponse) GetLivenessResourceRequirements() []*RequiredLivenessResourceResponse {
 	return filterByType[*RequiredLivenessResourceResponse](c.RequiredResources)
+}
+
+func (c *CaptureResponse) GetFaceCaptureResourceRequirements() []*RequiredFaceCaptureResourceResponse {
+	return filterByType[*RequiredFaceCaptureResourceResponse](c.RequiredResources)
 }

@@ -8,9 +8,10 @@ type RequiredResourceResponse interface {
 }
 
 type BaseRequiredResource struct {
-	Type  string `json:"type"`
-	ID    string `json:"id"`
-	State string `json:"state"`
+	Type         string `json:"type"`
+	ID           string `json:"id"`
+	State        string `json:"state"`
+	LivenessType string `json:"liveness_type,omitempty"`
 }
 
 func (b *BaseRequiredResource) GetType() string {

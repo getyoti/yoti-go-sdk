@@ -32,6 +32,14 @@ func (r *RequiredLivenessResourceResponse) String() string {
 	return "Liveness Resource - " + r.BaseRequiredResource.String()
 }
 
+type RequiredStaticLivenessResourceResponse struct {
+	BaseRequiredResource
+}
+
+func (r *RequiredStaticLivenessResourceResponse) String() string {
+	return "Static Liveness Resource - " + r.BaseRequiredResource.String()
+}
+
 type RequiredFaceCaptureResourceResponse struct {
 	BaseRequiredResource
 }
