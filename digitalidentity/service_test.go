@@ -1,7 +1,10 @@
 package digitalidentity
 
 import (
+	"crypto/rsa"
+	"errors"
 	"fmt"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"io"
 	"net/http"
 	"strings"
@@ -147,6 +150,59 @@ func TestGetQrCode(t *testing.T) {
 
 }
 
+// stub cryptoutil.UnwrapReceiptKey to control behaviour in tests
+var unwrapReceiptKeyStub = func(wrappedKey, encryptedValue, iv []byte, key *rsa.PrivateKey) ([]byte, error) {
+	return []byte("receiptContentKey"), nil
+}
+
+// stub decryptReceiptContent to simulate decryption
+var decryptReceiptContentStub = func(content *Content, key []byte) (*yotiprotoattr.AttributeList, []byte, error) {
+	// Return dummy attribute list and extra data bytes
+	attrList := &yotiprotoattr.AttributeList{
+		Attributes: []*yotiprotoattr.Attribute{{Name: "dummy", Value: []byte("value")}},
+	}
+	return attrList, []byte("extraData"), nil
+}
+
+func TestGetShareReceipt_GetReceiptError(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return nil, errors.New("network error")
+		},
+	}
+
+	_, err := GetShareReceipt(client, "receiptId", "sdkId", "https://apiurl", key)
+	assert.ErrorContains(t, err, "failed to get receipt")
+}
+
+func TestGetShareReceipt_GetReceiptItemKeyError(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+
+	callCount := 0
+	client := &mockHTTPClient{
+		do: func(req *http.Request) (*http.Response, error) {
+			callCount++
+			if callCount == 1 {
+				// return valid receipt JSON with WrappedItemKeyId
+				return &http.Response{
+					StatusCode: 200,
+					Body: io.NopCloser(strings.NewReader(`{
+						"WrappedItemKeyId": "itemKeyId",
+						"WrappedKey": "wrappedKeyData"
+					}`)),
+				}, nil
+			}
+			// simulate error on receipt item key request
+			return nil, errors.New("item key request error")
+		},
+	}
+
+	_, err := GetShareReceipt(client, "receiptId", "sdkId", "https://apiurl", key)
+	assert.ErrorContains(t, err, "failed to get receipt")
+}
+
 func TestGetFailureReceipt(t *testing.T) {
 	key := test.GetValidKey("../test/test-key.pem")
 	mockQrId := "SOME_QR_CODE_ID"
@@ -164,4 +220,5 @@ func TestGetFailureReceipt(t *testing.T) {
 	r, err := GetShareReceipt(client, mockQrId, mockClientSdkId, mockApiUrl, key)
 	assert.Equal(t, len(r.ErrorReason.RequirementsNotMetDetails), 1)
 	assert.NilError(t, err)
+
 }

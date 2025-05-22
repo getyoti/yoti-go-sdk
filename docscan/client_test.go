@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"io"
 	"net/http"
 	"os"
@@ -639,4 +641,87 @@ func (mock *mockJSONMarshaler) Marshal(v interface{}) ([]byte, error) {
 		return mock.marshal(v)
 	}
 	return nil, nil
+}
+
+type testJSONMarshaler struct{}
+
+func (m testJSONMarshaler) Marshal(v interface{}) ([]byte, error) {
+	return json.Marshal(v)
+}
+
+func TestClient_CreateFaceCaptureResource(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+
+	expected := &retrieve.FaceCaptureResourceResponse{ID: "resource-id"}
+	expectedBytes, _ := json.Marshal(expected)
+
+	client := Client{
+		Key: key,
+		HTTPClient: &mockHTTPClient{
+			do: func(r *http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       io.NopCloser(bytes.NewReader(expectedBytes)),
+				}, nil
+			},
+		},
+		apiURL:        "https://example.com",
+		SdkID:         "sdk-id",
+		jsonMarshaler: testJSONMarshaler{},
+	}
+
+	payload := facecapture.NewCreateFaceCaptureResourcePayload("requirement-id")
+	result, err := client.CreateFaceCaptureResource("session-id", payload)
+
+	assert.NilError(t, err)
+	assert.Equal(t, result.ID, expected.ID)
+}
+
+func TestClient_UploadFaceCaptureImage(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+
+	image := []byte("test-image")
+	payload := facecapture.NewUploadFaceCaptureImagePayload("image/png", image)
+
+	client := Client{
+		Key: key,
+		HTTPClient: &mockHTTPClient{
+			do: func(r *http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 204,
+					Body:       io.NopCloser(bytes.NewReader([]byte{})),
+				}, nil
+			},
+		},
+		apiURL: "https://example.com",
+		SdkID:  "sdk-id",
+	}
+
+	err := client.UploadFaceCaptureImage("session-id", "resource-id", payload)
+	assert.NilError(t, err)
+}
+
+func TestClient_GetSessionConfiguration(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+
+	expected := &retrieve.SessionConfigurationResponse{}
+	expectedBytes, _ := json.Marshal(expected)
+
+	client := Client{
+		Key: key,
+		HTTPClient: &mockHTTPClient{
+			do: func(r *http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       io.NopCloser(bytes.NewReader(expectedBytes)),
+				}, nil
+			},
+		},
+		apiURL: "https://example.com",
+		SdkID:  "sdk-id",
+	}
+
+	result, err := client.GetSessionConfiguration("session-id")
+	assert.NilError(t, err)
+	assert.DeepEqual(t, result, expected)
 }

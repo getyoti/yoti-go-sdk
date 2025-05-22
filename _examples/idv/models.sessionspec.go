@@ -293,3 +293,45 @@ func buildAdvancedIdentityProfileSessionSpec() (sessionSpec *create.SessionSpeci
 		WithSubject(subject).
 		Build()
 }
+
+func buildFaceCaptureSessionSpec() (*create.SessionSpecification, error) {
+	sdkConfig, err := create.NewSdkConfigBuilder().
+		WithSuccessUrl("https://localhost:8080/success").
+		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		WithJustInTimeBiometricConsentFlow().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	faceComparisonCheck, err := check.NewRequestedFaceComparisonCheckBuilder().
+		WithManualCheckNever().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	livenessCheck, err := check.NewRequestedLivenessCheckBuilder().
+		ForStaticLiveness().
+		WithMaxRetries(1).
+		WithManualCheckNever().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	sessionSpec, err := create.NewSessionSpecificationBuilder().
+		WithClientSessionTokenTTL(600).
+		WithResourcesTTL(90000).
+		WithUserTrackingID("simple-face-capture-tracking-id").
+		WithRequestedCheck(livenessCheck).
+		WithRequestedCheck(faceComparisonCheck).
+		WithSDKConfig(sdkConfig).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return sessionSpec, nil
+}
