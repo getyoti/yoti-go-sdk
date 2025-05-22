@@ -226,6 +226,16 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 		return receipt, fmt.Errorf("failed to get receipt: %v", err)
 	}
 
+	if receiptResponse.Error != "" {
+		return SharedReceiptResponse{
+			ID:          receiptResponse.ID,
+			SessionID:   receiptResponse.SessionID,
+			Timestamp:   receiptResponse.Timestamp,
+			Error:       receiptResponse.Error,
+			ErrorReason: receiptResponse.ErrorReason,
+		}, nil
+	}
+
 	itemKeyId := receiptResponse.WrappedItemKeyId
 
 	encryptedItemKeyResponse, err := getReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
@@ -274,7 +284,6 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 			ApplicationProfile: applicationProfile,
 			ExtraData:          extraDataValue,
 		},
-		Error: receiptResponse.Error,
 	}, nil
 }
 

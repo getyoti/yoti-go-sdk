@@ -27,6 +27,29 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if receiptValue.Error != "" {
+		t, err := template.ParseFiles("error_receipt.html", "requirements_not_met_detail.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		templateVars := map[string]interface{}{
+			"error":       receiptValue.Error,
+			"errorReason": receiptValue.ErrorReason,
+		}
+		err = t.Execute(w, templateVars)
+		if err != nil {
+			errorPage(w, r.WithContext(context.WithValue(
+				r.Context(),
+				contextKey("yotiError"),
+				fmt.Sprintf("Error applying the parsed error_receipt template. Error: `%s`", err),
+			)))
+			return
+		}
+		return
+	}
+
 	userProfile := receiptValue.UserContent.UserProfile
 
 	selfie := userProfile.Selfie()

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Yoti Example Project - Error</title>
+</head>
+<body style="text-align: center; margin: 200px 0">
+<h1>An Error Occurred</h1>
+<b>Error: {{.error}} </b>
+<p><b>Error Details: </b>
+    {{ range $detail := .errorReason.RequirementsNotMetDetails }}
+    {{ template "requirements_not_met_detail.html" $detail }}
+    {{ end }}</p>
+</body>
+</html>

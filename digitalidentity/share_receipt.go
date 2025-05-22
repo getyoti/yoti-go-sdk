@@ -9,6 +9,7 @@ type SharedReceiptResponse struct {
 	ParentRememberMeID string
 	Timestamp          string
 	Error              string
+	ErrorReason        ErrorReason
 	UserContent        UserContent
 	ApplicationContent ApplicationContent
 }
