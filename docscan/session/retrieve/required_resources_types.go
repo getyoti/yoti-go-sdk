@@ -24,6 +24,14 @@ func (r *RequiredZoomLivenessResourceResponse) String() string {
 	return "Zoom Liveness Resource - " + r.BaseRequiredResource.String()
 }
 
+type RequiredLivenessResourceResponse struct {
+	BaseRequiredResource
+}
+
+func (r *RequiredLivenessResourceResponse) String() string {
+	return "Liveness Resource - " + r.BaseRequiredResource.String()
+}
+
 type RequiredFaceCaptureResourceResponse struct {
 	BaseRequiredResource
 }

@@ -118,6 +118,6 @@ func (c *CaptureResponse) GetFaceCaptureResourceRequirements() []*RequiredFaceCa
 	return filterByType[*RequiredFaceCaptureResourceResponse](c.RequiredResources)
 }
 
-func (c *CaptureResponse) GetLivenessResourceRequirements() []*RequiredZoomLivenessResourceResponse {
-	return filterByType[*RequiredZoomLivenessResourceResponse](c.RequiredResources)
+func (c *CaptureResponse) GetLivenessResourceRequirements() []*RequiredLivenessResourceResponse {
+	return filterByType[*RequiredLivenessResourceResponse](c.RequiredResources)
 }

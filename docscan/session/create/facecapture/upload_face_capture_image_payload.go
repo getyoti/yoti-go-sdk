@@ -7,6 +7,9 @@ import (
 	"net/textproto"
 )
 
+// UploadFaceCaptureImagePayload represents the payload for uploading a face capture image.
+// It includes the image's content type and binary data, and provides methods to prepare
+// the payload as a multipart form body.
 type UploadFaceCaptureImagePayload struct {
 	ImageContentType string
 	ImageContents    []byte
