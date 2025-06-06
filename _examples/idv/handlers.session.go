@@ -264,7 +264,9 @@ func showFaceCaptureSessionPage(c *gin.Context) {
 	sessionToken := sessionResult.ClientSessionToken
 	c.SetCookie("session_id", sessionID, 60*20, "/", "localhost", true, false)
 
-	err = client.AddFaceCaptureResourceToSession(sessionID)
+	base64Image := "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+
+	err = client.AddFaceCaptureResourceToSession(sessionID, base64Image)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"ErrorTitle":   "Add Face Capture Resource Failed",

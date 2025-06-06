@@ -1,0 +1,26 @@
+# .golangci.yaml
+run:
+  timeout: 5m # Example: set a timeout
+  issues:
+    # Disable SA1019 directly or per linter if needed
+    # https://golangci-lint.run/usage/configuration/#issues-configuration
+    exclude-rules:
+      # Exclude all SA1019 issues globally
+      - text: "SA1019" # Match the error message part for SA1019 (e.g., "SA1019: example is deprecated")
+        linters:
+          - staticcheck # Or specific linter if SA1019 comes from multiple sources
+
+      # Alternatively, if SA1019 is specific to certain paths:
+      # - text: "SA1019"
+      #   path: "internal/deprecated_stuff/" # Exclude issues in specific directories
+      #   linters:
+      #     - staticcheck
+
+linters:
+  # Explicitly enable linters you want to use.
+  # If empty, default linters are used.
+  enable:
+    - staticcheck # Ensure staticcheck is enabled if you're trying to ignore its rules
+    # - govet
+    # - errcheck
+    # ... other linters you need

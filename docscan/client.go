@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
@@ -393,7 +394,7 @@ func (c *Client) GetSessionConfiguration(sessionID string) (*retrieve.SessionCon
 	return &result, nil
 }
 
-func (c *Client) AddFaceCaptureResourceToSession(sessionID string) error {
+func (c *Client) AddFaceCaptureResourceToSession(sessionID string, base64Image string) error {
 	sessionConfig, err := c.GetSessionConfiguration(sessionID)
 	if err != nil {
 		return err
@@ -426,7 +427,7 @@ func (c *Client) AddFaceCaptureResourceToSession(sessionID string) error {
 		return err
 	}
 
-	base64Image := "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+	// Use the base64Image passed as a parameter
 	imageBytes, err := base64.StdEncoding.DecodeString(base64Image)
 	if err != nil {
 		return err
