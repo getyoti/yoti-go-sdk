@@ -42,7 +42,7 @@ import "github.com/getyoti/yoti-go-sdk/v3"
 or add the following line to your go.mod file (check https://github.com/getyoti/yoti-go-sdk/releases for the latest version)
 ```
 
-require github.com/getyoti/yoti-go-sdk/v3 v3.12.0
+require github.com/getyoti/yoti-go-sdk/v3 v3.14.0
 ```
 
 ## Setup
