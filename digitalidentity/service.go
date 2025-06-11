@@ -284,6 +284,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 			ApplicationProfile: applicationProfile,
 			ExtraData:          extraDataValue,
 		},
+		Error: receiptResponse.Error,
 	}, nil
 }
 
