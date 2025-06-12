@@ -16,7 +16,7 @@ import (
 func receipt(w http.ResponseWriter, r *http.Request) {
 	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
-		fmt.Fprintf(w, "Client could't be generated")
+		fmt.Fprintf(w, "Client couldn't be generated")
 		return
 	}
 	receiptID := r.URL.Query().Get("ReceiptID")
@@ -24,6 +24,29 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 	receiptValue, err := didClient.GetShareReceipt(receiptID)
 	if err != nil {
 		fmt.Fprintf(w, "failed to get share receipt: %v", err)
+		return
+	}
+
+	if receiptValue.Error != "" {
+		t, err := template.ParseFiles("error_receipt.html", "requirements_not_met_detail.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		templateVars := map[string]interface{}{
+			"error":       receiptValue.Error,
+			"errorReason": receiptValue.ErrorReason,
+		}
+		err = t.Execute(w, templateVars)
+		if err != nil {
+			errorPage(w, r.WithContext(context.WithValue(
+				r.Context(),
+				contextKey("yotiError"),
+				fmt.Sprintf("Error applying the parsed error_receipt template. Error: `%s`", err),
+			)))
+			return
+		}
 		return
 	}
 

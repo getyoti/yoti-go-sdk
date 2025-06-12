@@ -57,7 +57,7 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 		"subject_id": "unique-user-id-for-examples"
 	}`)
 
-	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithRedirectUri("https:/www.yoti.com").WithSubject(subject).Build()
+	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithRedirectUri("https://www.yoti.com").WithSubject(subject).Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
 	}
@@ -67,7 +67,7 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 func generateSession(w http.ResponseWriter, r *http.Request) {
 	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
-		fmt.Fprintf(w, "Client could't be generated: %v", err)
+		fmt.Fprintf(w, "Client couldn't be generated: %v", err)
 		return
 	}
 

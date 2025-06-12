@@ -1,7 +1,10 @@
 package digitalidentity
 
 import (
+	"crypto/rsa"
+	"errors"
 	"fmt"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"io"
 	"net/http"
 	"strings"
@@ -143,6 +146,79 @@ func TestGetQrCode(t *testing.T) {
 	}
 
 	_, err := GetShareSessionQrCode(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	assert.NilError(t, err)
+
+}
+
+// stub cryptoutil.UnwrapReceiptKey to control behaviour in tests
+var unwrapReceiptKeyStub = func(wrappedKey, encryptedValue, iv []byte, key *rsa.PrivateKey) ([]byte, error) {
+	return []byte("receiptContentKey"), nil
+}
+
+// stub decryptReceiptContent to simulate decryption
+var decryptReceiptContentStub = func(content *Content, key []byte) (*yotiprotoattr.AttributeList, []byte, error) {
+	// Return dummy attribute list and extra data bytes
+	attrList := &yotiprotoattr.AttributeList{
+		Attributes: []*yotiprotoattr.Attribute{{Name: "dummy", Value: []byte("value")}},
+	}
+	return attrList, []byte("extraData"), nil
+}
+
+func TestGetShareReceipt_GetReceiptError(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return nil, errors.New("network error")
+		},
+	}
+
+	_, err := GetShareReceipt(client, "receiptId", "sdkId", "https://apiurl", key)
+	assert.ErrorContains(t, err, "failed to get receipt")
+}
+
+func TestGetShareReceipt_GetReceiptItemKeyError(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+
+	callCount := 0
+	client := &mockHTTPClient{
+		do: func(req *http.Request) (*http.Response, error) {
+			callCount++
+			if callCount == 1 {
+				// return valid receipt JSON with WrappedItemKeyId
+				return &http.Response{
+					StatusCode: 200,
+					Body: io.NopCloser(strings.NewReader(`{
+						"WrappedItemKeyId": "itemKeyId",
+						"WrappedKey": "wrappedKeyData"
+					}`)),
+				}, nil
+			}
+			// simulate error on receipt item key request
+			return nil, errors.New("item key request error")
+		},
+	}
+
+	_, err := GetShareReceipt(client, "receiptId", "sdkId", "https://apiurl", key)
+	assert.ErrorContains(t, err, "failed to get receipt")
+}
+
+func TestGetFailureReceipt(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+	mockQrId := "SOME_QR_CODE_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 201,
+				Body:       io.NopCloser(strings.NewReader(`{"id":"tXTQK9E22lyzyIhVZM7pY1ctI7FHelLgvrVO35RO+vWKjJJJSJhu2ZLFBCce14Xy","sessionId":"ss.v2.ChZvRm1QTG5tT1FJMjZMYm9xeC1Fdlh3EgdsZDUuZ2Jy","timestamp":"2025-05-21T11:01:07Z","error":"MANDATORY_DOCUMENT_NOT_PROVIDED","errorReason":{"requirements_not_met_details":[{"details":"NOT_APPLICABLE_FOR_SCHEME","audit_id":"97001564-a18a-4afd-bf19-3ffacc88abbb","failure_type":"ID_DOCUMENT_COUNTRY","document_type":"PASSPORT","document_country_iso_code":"IRL"}]}}`)),
+			}, nil
+		},
+	}
+
+	r, err := GetShareReceipt(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	assert.Equal(t, len(r.ErrorReason.RequirementsNotMetDetails), 1)
 	assert.NilError(t, err)
 
 }

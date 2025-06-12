@@ -61,3 +61,8 @@ type WatchlistScreeningCheckResponse struct {
 type WatchlistAdvancedCACheckResponse struct {
 	*CheckResponse
 }
+
+// FaceComparisonCheckResponse represents an advanced CA watchlist screening check
+type FaceComparisonCheckResponse struct {
+	*CheckResponse
+}
