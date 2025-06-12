@@ -38,6 +38,11 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 		State: "PENDING",
 	}
 
+	faceComparisonCheckResponse := &retrieve.CheckResponse{
+		Type:  constants.FaceComparison,
+		State: "PENDING",
+	}
+
 	thirdPartyIdentityCheckResponse := &retrieve.CheckResponse{
 		Type:  constants.ThirdPartyIdentityCheck,
 		State: "PENDING",
@@ -65,6 +70,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	checks = append(checks, textDataCheckResponse)
 	checks = append(checks, livenessCheckResponse)
 	checks = append(checks, idDocComparisonCheckResponse)
+	checks = append(checks, faceComparisonCheckResponse)
 	checks = append(checks, thirdPartyIdentityCheckResponse)
 	checks = append(checks, supplementaryTextDataCheckResponse)
 	checks = append(checks, watchlistScreeningCheckResponse)
@@ -83,7 +89,7 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 	err = json.Unmarshal(marshalled, &result)
 	assert.NilError(t, err)
 
-	assert.Equal(t, 10, len(result.Checks))
+	assert.Equal(t, 11, len(result.Checks))
 
 	assert.Equal(t, 1, len(result.AuthenticityChecks()))
 	assert.Equal(t, "DONE", result.AuthenticityChecks()[0].State)
@@ -102,6 +108,9 @@ func TestGetSessionResult_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 1, len(result.IDDocumentComparisonChecks()))
 	assert.Equal(t, "PENDING", result.IDDocumentComparisonChecks()[0].State)
+
+	assert.Equal(t, 1, len(result.FaceComparisonChecks()))
+	assert.Equal(t, "PENDING", result.FaceComparisonChecks()[0].State)
 
 	assert.Equal(t, 1, len(result.ThirdPartyIdentityChecks()))
 	assert.Equal(t, "PENDING", result.ThirdPartyIdentityChecks()[0].State)

@@ -7,8 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"io"
 	"net/http"
 	"os"
@@ -16,6 +14,8 @@ import (
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/supported"
 	"github.com/getyoti/yoti-go-sdk/v3/media"
 	"gotest.tools/v3/assert"
@@ -724,4 +724,166 @@ func TestClient_GetSessionConfiguration(t *testing.T) {
 	result, err := client.GetSessionConfiguration("session-id")
 	assert.NilError(t, err)
 	assert.DeepEqual(t, result, expected)
+}
+
+func TestClient_GetSessionConfiguration_FailsOnEmptySessionID(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	client := Client{Key: key}
+
+	_, err := client.GetSessionConfiguration("")
+	assert.Error(t, err, "sessionID cannot be an empty string")
+}
+
+func TestClient_CreateFaceCaptureResource_FailsOnEmptySessionID(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	client := Client{Key: key}
+
+	payload := facecapture.NewCreateFaceCaptureResourcePayload("requirement-id")
+	_, err := client.CreateFaceCaptureResource("", payload)
+	assert.Error(t, err, "sessionID cannot be an empty string")
+}
+
+func TestClient_UploadFaceCaptureImage_FailsOnEmptyIDs(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	client := Client{Key: key}
+
+	payload := facecapture.NewUploadFaceCaptureImagePayload("image/png", []byte("img"))
+
+	err := client.UploadFaceCaptureImage("", "resource-id", payload)
+	assert.Error(t, err, "sessionID and resourceID must not be empty")
+
+	err = client.UploadFaceCaptureImage("session-id", "", payload)
+	assert.Error(t, err, "sessionID and resourceID must not be empty")
+}
+
+func TestClient_AddFaceCaptureResourceToSession_HappyPath(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	mockBase64Image := "aW1hZ2U=" // "image"
+
+	mockConfig := &retrieve.SessionConfigurationResponse{
+		Capture: &retrieve.CaptureResponse{
+			RequiredResources: []retrieve.RequiredResourceResponse{
+				&retrieve.RequiredFaceCaptureResourceResponse{
+					BaseRequiredResource: retrieve.BaseRequiredResource{
+						Type: "FACE_CAPTURE",
+						ID:   "requirement-id-123",
+					},
+				},
+			},
+		},
+	}
+	configBytes, _ := json.Marshal(mockConfig)
+
+	mockResource := &retrieve.FaceCaptureResourceResponse{ID: "resource-id-456"}
+	resourceBytes, _ := json.Marshal(mockResource)
+
+	var getConfigCalled, createResourceCalled, uploadImageCalled bool
+
+	mockClient := &mockHTTPClient{
+		do: func(req *http.Request) (*http.Response, error) {
+			if strings.Contains(req.URL.Path, "/configuration") {
+				getConfigCalled = true
+				return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(configBytes))}, nil
+			}
+			if req.Method == http.MethodPost && strings.Contains(req.URL.Path, "/face-capture") {
+				createResourceCalled = true
+				return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(resourceBytes))}, nil
+			}
+			if req.Method == http.MethodPut && strings.Contains(req.URL.Path, "/image") {
+				uploadImageCalled = true
+				return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader([]byte{}))}, nil
+			}
+			return nil, fmt.Errorf("unexpected request: %s %s", req.Method, req.URL.Path)
+		},
+	}
+
+	client := Client{
+		Key:           key,
+		HTTPClient:    mockClient,
+		apiURL:        "https://example.com",
+		SdkID:         "sdk-id",
+		jsonMarshaler: testJSONMarshaler{},
+	}
+
+	err := client.AddFaceCaptureResourceToSession("session-id", mockBase64Image)
+
+	assert.NilError(t, err)
+	assert.Assert(t, getConfigCalled)
+	assert.Assert(t, createResourceCalled)
+	assert.Assert(t, uploadImageCalled)
+}
+
+func TestClient_AddFaceCaptureResourceToSession_GetConfigFails(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	expectedErr := errors.New("failed to get config")
+
+	mockClient := &mockHTTPClient{
+		do: func(req *http.Request) (*http.Response, error) {
+			return nil, expectedErr
+		},
+	}
+
+	client := Client{Key: key, HTTPClient: mockClient, apiURL: "https://example.com", SdkID: "sdk-id"}
+	err := client.AddFaceCaptureResourceToSession("session-id", "aW1hZ2U=")
+
+	assert.ErrorIs(t, err, expectedErr)
+}
+
+func TestClient_AddFaceCaptureResourceToSession_NoRequirements(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	mockConfig := &retrieve.SessionConfigurationResponse{
+		Capture: &retrieve.CaptureResponse{
+			RequiredResources: []retrieve.RequiredResourceResponse{}, // No requirements
+		},
+	}
+	configBytes, _ := json.Marshal(mockConfig)
+
+	mockClient := &mockHTTPClient{
+		do: func(req *http.Request) (*http.Response, error) {
+			// Only expect a call to the configuration endpoint
+			if strings.Contains(req.URL.Path, "/configuration") {
+				return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(configBytes))}, nil
+			}
+			return nil, fmt.Errorf("unexpected request: %s %s", req.Method, req.URL.Path)
+		},
+	}
+	client := Client{Key: key, HTTPClient: mockClient, apiURL: "https://example.com", SdkID: "sdk-id"}
+
+	err := client.AddFaceCaptureResourceToSession("session-id", "aW1hZ2U=")
+	assert.NilError(t, err)
+}
+
+func TestClient_AddFaceCaptureResourceToSession_InvalidBase64(t *testing.T) {
+	key, _ := rsa.GenerateKey(rand.Reader, 1024)
+	mockConfig := &retrieve.SessionConfigurationResponse{
+		Capture: &retrieve.CaptureResponse{
+			RequiredResources: []retrieve.RequiredResourceResponse{
+				&retrieve.RequiredFaceCaptureResourceResponse{
+					BaseRequiredResource: retrieve.BaseRequiredResource{
+						Type: "FACE_CAPTURE",
+						ID:   "requirement-id-123",
+					},
+				},
+			},
+		},
+	}
+	configBytes, _ := json.Marshal(mockConfig)
+	mockResource := &retrieve.FaceCaptureResourceResponse{ID: "resource-id-456"}
+	resourceBytes, _ := json.Marshal(mockResource)
+
+	mockClient := &mockHTTPClient{
+		do: func(req *http.Request) (*http.Response, error) {
+			if strings.Contains(req.URL.Path, "/configuration") {
+				return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(configBytes))}, nil
+			}
+			if strings.Contains(req.URL.Path, "/face-capture") {
+				return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(resourceBytes))}, nil
+			}
+			return nil, fmt.Errorf("unexpected request: %s", req.URL.Path)
+		},
+	}
+	client := Client{Key: key, HTTPClient: mockClient, apiURL: "https://example.com", SdkID: "sdk-id"}
+
+	err := client.AddFaceCaptureResourceToSession("session-id", "this is not base64")
+	assert.ErrorContains(t, err, "illegal base64 data")
 }
