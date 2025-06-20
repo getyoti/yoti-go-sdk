@@ -222,3 +222,41 @@ func TestGetFailureReceipt(t *testing.T) {
 	assert.NilError(t, err)
 
 }
+
+func TestGetSessionTrackedDevices(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+	mockSessionID := "SOME_SESSION_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 200,
+				Body: io.NopCloser(strings.NewReader(`{"devices":[{"id":"device1","type":"mobile","timestamp":"2025-06-20T12:00:00Z"}]}`)),
+			}, nil
+		},
+	}
+
+	resp, err := GetSessionTrackedDevices(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	assert.NilError(t, err)
+	assert.Equal(t, len(resp.Devices), 1)
+	assert.Equal(t, resp.Devices[0].ID, "device1")
+}
+
+func TestDeleteSessionTrackedDevices(t *testing.T) {
+	key := test.GetValidKey("../test/test-key.pem")
+	mockSessionID := "SOME_SESSION_ID"
+	mockClientSdkId := "SOME_CLIENT_SDK_ID"
+	mockApiUrl := "https://example.com/api"
+	client := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: 204,
+				Body: io.NopCloser(strings.NewReader("")),
+			}, nil
+		},
+	}
+
+	err := DeleteSessionTrackedDevices(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	assert.NilError(t, err)
+}

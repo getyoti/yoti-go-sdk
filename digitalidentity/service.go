@@ -20,6 +20,8 @@ const identitySessionQrCodeCreation = "/v2/sessions/%s/qr-codes"
 const identitySessionQrCodeRetrieval = "/v2/qr-codes/%s"
 const identitySessionReceiptRetrieval = "/v2/receipts/%s"
 const identitySessionReceiptKeyRetrieval = "/v2/wrapped-item-keys/%s"
+const identitySessionTrackedDevicesRetrieval = "/v2/sessions/%s/tracked-devices"
+const identitySessionTrackedDevicesDelete = "/v2/sessions/%s/tracked-devices"
 const errorFailedToGetSignedRequest = "failed to get signed request: %v"
 const errorFailedToExecuteRequest = "failed to execute request: %v"
 const errorFailedToReadBody = "failed to read response body: %v"
@@ -313,4 +315,64 @@ func decryptReceiptContent(content *Content, key []byte) (attrData *yotiprotoatt
 	}
 
 	return attrData, aextra, nil
+}
+
+// GetSessionTrackedDevices retrieves tracked devices for a session.
+func GetSessionTrackedDevices(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*SessionTrackedDevicesResponse, error) {
+	endpoint := fmt.Sprintf(identitySessionTrackedDevicesRetrieval, sessionID)
+
+	request, err := requests.SignedRequest{
+		Key:        key,
+		HTTPMethod: http.MethodGet,
+		BaseURL:    apiUrl,
+		Endpoint:   endpoint,
+		Headers:    requests.AuthHeader(clientSdkId),
+		Params:     map[string]string{"sdkID": clientSdkId},
+	}.Request()
+	if err != nil {
+		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
+	}
+
+	response, err := requests.Execute(httpClient, request)
+	if err != nil {
+		return nil, fmt.Errorf(errorFailedToExecuteRequest, err)
+	}
+	defer response.Body.Close()
+
+	var trackedDevices SessionTrackedDevicesResponse
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf(errorFailedToReadBody, err)
+	}
+	err = json.Unmarshal(responseBytes, &trackedDevices)
+	return &trackedDevices, err
+}
+
+// DeleteSessionTrackedDevices deletes tracked devices for a session.
+func DeleteSessionTrackedDevices(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) error {
+	endpoint := fmt.Sprintf(identitySessionTrackedDevicesDelete, sessionID)
+
+	request, err := requests.SignedRequest{
+		Key:        key,
+		HTTPMethod: http.MethodDelete,
+		BaseURL:    apiUrl,
+		Endpoint:   endpoint,
+		Headers:    requests.AuthHeader(clientSdkId),
+		Params:     map[string]string{"sdkID": clientSdkId},
+	}.Request()
+	if err != nil {
+		return fmt.Errorf(errorFailedToGetSignedRequest, err)
+	}
+
+	response, err := requests.Execute(httpClient, request)
+	if err != nil {
+		return fmt.Errorf(errorFailedToExecuteRequest, err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusNoContent && response.StatusCode != http.StatusOK {
+		responseBytes, _ := io.ReadAll(response.Body)
+		return fmt.Errorf("unexpected status: %d, body: %s", response.StatusCode, string(responseBytes))
+	}
+	return nil
 }
