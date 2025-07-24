@@ -335,3 +335,86 @@ func buildFaceCaptureSessionSpec() (*create.SessionSpecification, error) {
 
 	return sessionSpec, nil
 }
+
+// buildSessionSpecWithSuppressedScreens demonstrates how to create a session specification with suppressed screens
+func buildSessionSpecWithSuppressedScreens() (sessionSpec *create.SessionSpecification, err error) {
+	var faceMatchCheck *check.RequestedFaceMatchCheck
+	faceMatchCheck, err = check.NewRequestedFaceMatchCheckBuilder().
+		WithManualCheckFallback().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var documentAuthenticityCheck *check.RequestedDocumentAuthenticityCheck
+	documentAuthenticityCheck, err = check.NewRequestedDocumentAuthenticityCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var livenessCheck *check.RequestedLivenessCheck
+	livenessCheck, err = check.NewRequestedLivenessCheckBuilder().
+		ForStaticLiveness().
+		WithMaxRetries(3).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var idDocsComparisonCheck *check.RequestedIDDocumentComparisonCheck
+	idDocsComparisonCheck, err = check.NewRequestedIDDocumentComparisonCheckBuilder().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	var textDataExtractionTask *task.RequestedTextExtractionTask
+	textDataExtractionTask, err = task.NewRequestedTextExtractionTaskBuilder().
+		WithManualCheckFallback().
+		WithChipDataDesired().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	// Create SDK configuration with suppressed screens for a shortened flow
+	var sdkConfig *create.SDKConfig
+	sdkConfig, err = create.NewSdkConfigBuilder().
+		WithAllowsCameraAndUpload().
+		WithPrimaryColour("#2d9fff").
+		WithSecondaryColour("#FFFFFF").
+		WithFontColour("#FFFFFF").
+		WithLocale("en-GB").
+		WithPresetIssuingCountry("GBR").
+		WithSuccessUrl("https://localhost:8080/success").
+		WithErrorUrl("https://localhost:8080/error").
+		WithPrivacyPolicyUrl("https://localhost:8080/privacy-policy").
+		WithIdDocumentTextExtractionGenericAttempts(2).
+		WithAllowHandOff(true).
+		WithDarkModeOn().
+		WithEarlyBiometricConsentFlow().
+		// Use the shortened flow convenience method
+		WithShortenedFlow().
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	sessionSpec, err = create.NewSessionSpecificationBuilder().
+		WithClientSessionTokenTTL(600).
+		WithResourcesTTL(90000).
+		WithUserTrackingID("shortened-flow-tracking-id").
+		WithRequestedCheck(faceMatchCheck).
+		WithRequestedCheck(documentAuthenticityCheck).
+		WithRequestedCheck(livenessCheck).
+		WithRequestedCheck(idDocsComparisonCheck).
+		WithRequestedTask(textDataExtractionTask).
+		WithSDKConfig(sdkConfig).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return sessionSpec, nil
+}
