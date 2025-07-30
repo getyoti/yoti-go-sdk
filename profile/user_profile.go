@@ -89,6 +89,28 @@ func (p UserProfile) DateOfBirth() (*attribute.DateAttribute, error) {
 	return nil, nil
 }
 
+// EstimatedAge represents the user's estimated age. Will be nil if not provided by Yoti.
+func (p UserProfile) EstimatedAge() *attribute.StringAttribute {
+	return p.GetStringAttribute(consts.AttrEstimatedAge)
+}
+
+// EstimatedAgeWithFallback attempts to get the estimated_age attribute first,
+// and falls back to date_of_birth if estimated_age is not available.
+// Returns the found attribute and a boolean indicating which attribute was returned.
+func (p UserProfile) EstimatedAgeWithFallback() (interface{}, bool) {
+	// Try estimated_age first
+	if estimatedAge := p.EstimatedAge(); estimatedAge != nil {
+		return estimatedAge, true // true indicates estimated_age was found
+	}
+
+	// Fall back to date_of_birth
+	if dateOfBirth, err := p.DateOfBirth(); err == nil && dateOfBirth != nil {
+		return dateOfBirth, false // false indicates date_of_birth was used as fallback
+	}
+
+	return nil, false
+}
+
 // Address represents the user's address. Will be nil if not provided by Yoti.
 func (p UserProfile) Address() *attribute.StringAttribute {
 	addressAttribute := p.GetStringAttribute(consts.AttrAddress)

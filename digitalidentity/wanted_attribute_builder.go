@@ -23,6 +23,7 @@ type WantedAttribute struct {
 	constraints        []constraintInterface
 	acceptSelfAsserted bool
 	Optional           bool
+	alternativeNames   []string
 }
 
 // WithName sets the name of the wanted attribute
@@ -49,6 +50,12 @@ func (builder *WantedAttributeBuilder) WithAcceptSelfAsserted(accept bool) *Want
 	return builder
 }
 
+// WithAlternativeNames sets alternative attribute names for fallback
+func (builder *WantedAttributeBuilder) WithAlternativeNames(names []string) *WantedAttributeBuilder {
+	builder.attr.alternativeNames = names
+	return builder
+}
+
 // Build generates the wanted attribute's specification
 func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
 	if builder.attr.constraints == nil {
@@ -71,11 +78,13 @@ func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
 		Constraints        []constraintInterface `json:"constraints,omitempty"`
 		AcceptSelfAsserted bool                  `json:"accept_self_asserted"`
 		Optional           bool                  `json:"optional,omitempty"`
+		AlternativeNames   []string              `json:"alternative_names,omitempty"`
 	}{
 		Name:               attr.name,
 		Derivation:         attr.derivation,
 		Constraints:        attr.constraints,
 		AcceptSelfAsserted: attr.acceptSelfAsserted,
 		Optional:           attr.Optional,
+		AlternativeNames:   attr.alternativeNames,
 	})
 }

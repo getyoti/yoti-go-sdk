@@ -214,6 +214,59 @@ func (b *PolicyBuilder) WithAdvancedIdentityProfileRequirements(advancedIdentity
 	return b
 }
 
+// WithEstimatedAge requests the estimated_age attribute with fallback to date_of_birth
+func (b *PolicyBuilder) WithEstimatedAge(constraints ...constraintInterface) *PolicyBuilder {
+	wantedAttributeBuilder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth})
+
+	for _, constraint := range constraints {
+		wantedAttributeBuilder.WithConstraint(constraint)
+	}
+
+	wantedAttribute, err := wantedAttributeBuilder.Build()
+	if err != nil {
+		b.err = err
+	}
+	return b.WithWantedAttribute(wantedAttribute)
+}
+
+// WithEstimatedAgeOver requests the estimated_age attribute with age verification over the specified age with fallback to date_of_birth
+func (b *PolicyBuilder) WithEstimatedAgeOver(age int, constraints ...constraintInterface) *PolicyBuilder {
+	builder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
+		WithDerivation(fmt.Sprintf(consts.AttrAgeOver, age))
+
+	for _, constraint := range constraints {
+		builder = builder.WithConstraint(constraint)
+	}
+
+	wantedAttribute, err := builder.Build()
+	if err != nil {
+		b.err = err
+	}
+	return b.WithWantedAttribute(wantedAttribute)
+}
+
+// WithEstimatedAgeUnder requests the estimated_age attribute with age verification under the specified age with fallback to date_of_birth
+func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, constraints ...constraintInterface) *PolicyBuilder {
+	builder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
+		WithDerivation(fmt.Sprintf(consts.AttrAgeUnder, age))
+
+	for _, constraint := range constraints {
+		builder = builder.WithConstraint(constraint)
+	}
+
+	wantedAttribute, err := builder.Build()
+	if err != nil {
+		b.err = err
+	}
+	return b.WithWantedAttribute(wantedAttribute)
+}
+
 // Build constructs a dynamic policy object
 func (b *PolicyBuilder) Build() (Policy, error) {
 	return Policy{

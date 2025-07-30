@@ -1,19 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"image"
-	"image/jpeg"
-	"io"
 	"net/http"
-	"os"
 )
 
-func receipt(w http.ResponseWriter, r *http.Request) {
+func estimatedAgeReceipt(w http.ResponseWriter, r *http.Request) {
 	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
 		fmt.Fprintf(w, "Client couldn't be generated")
@@ -59,6 +54,27 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 		base64URL = selfie.Value().Base64URL()
 	}
 
+	// Get estimated age with fallback logic
+	estimatedAge := userProfile.EstimatedAge()
+	result, isEstimatedAge := userProfile.EstimatedAgeWithFallback()
+
+	var estimatedAgeString string
+	var usedEstimatedAge bool
+	var usedFallback bool
+
+	if result != nil {
+		if isEstimatedAge {
+			// estimated_age was returned
+			usedEstimatedAge = true
+			if estimatedAge != nil {
+				estimatedAgeString = estimatedAge.Value()
+			}
+		} else {
+			// date_of_birth was returned as fallback
+			usedFallback = true
+		}
+	}
+
 	dob, err := userProfile.DateOfBirth()
 	if err != nil {
 		errorPage(w, r.WithContext(context.WithValue(
@@ -74,15 +90,45 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 		dateOfBirthString = dob.Value().String()
 	}
 
+	// Get age verifications (e.g., age_over:18, age_under:21)
+	ageVerifications, err := userProfile.AgeVerifications()
+	if err != nil {
+		errorPage(w, r.WithContext(context.WithValue(
+			r.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error parsing Age Verifications. Error %q", err.Error()),
+		)))
+		return
+	}
+
 	templateVars := map[string]interface{}{
-		"profile":         userProfile,
-		"selfieBase64URL": template.URL(base64URL),
-		"rememberMeID":    receiptValue.RememberMeID,
-		"dateOfBirth":     dateOfBirthString,
+		"profile":          userProfile,
+		"selfieBase64URL":  template.URL(base64URL),
+		"rememberMeID":     receiptValue.RememberMeID,
+		"dateOfBirth":      dateOfBirthString,
+		"estimatedAge":     estimatedAgeString,
+		"usedEstimatedAge": usedEstimatedAge,
+		"usedFallback":     usedFallback,
+		"hasEstimatedAge":  estimatedAge != nil,
+		"hasDateOfBirth":   dob != nil,
+		"ageVerifications": ageVerifications,
+		"fullReceipt":      receiptValue, // Add full receipt for JSON display
+		"profileAttributes": map[string]interface{}{
+			"fullName":     userProfile.FullName(),
+			"givenNames":   userProfile.GivenNames(),
+			"familyName":   userProfile.FamilyName(),
+			"emailAddress": userProfile.EmailAddress(),
+			"mobileNumber": userProfile.MobileNumber(),
+			"nationality":  userProfile.Nationality(),
+			"address":      userProfile.Address(),
+			"selfie":       userProfile.Selfie(),
+			"estimatedAge": userProfile.EstimatedAge(),
+			"dateOfBirth":  dob,
+		},
 	}
 
 	var t *template.Template
-	t, err = template.New("receipt.html").
+	t, err = template.New("estimated_age_receipt.html").
 		Funcs(template.FuncMap{
 			"escapeURL": func(s string) template.URL {
 				return template.URL(s)
@@ -101,14 +147,17 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 				}
 			},
 			"jsonMarshalIndent": func(data interface{}) string {
-				json, err := json.MarshalIndent(data, "", "\t")
+				if data == nil {
+					return "null"
+				}
+				json, err := json.MarshalIndent(data, "", "  ")
 				if err != nil {
-					fmt.Println(err)
+					return fmt.Sprintf("Error marshaling JSON: %v\nData type: %T", err, data)
 				}
 				return string(json)
 			},
 		}).
-		ParseFiles("receipt.html")
+		ParseFiles("estimated_age_receipt.html")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -120,37 +169,8 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 		errorPage(w, r.WithContext(context.WithValue(
 			r.Context(),
 			contextKey("yotiError"),
-			fmt.Sprintf("Error applying the parsed profile template. Error: `%s`", err),
+			fmt.Sprintf("Error applying the parsed estimated age template. Error: `%s`", err),
 		)))
 		return
-	}
-}
-func decodeImage(imageBytes []byte) image.Image {
-	decodedImage, _, err := image.Decode(bytes.NewReader(imageBytes))
-
-	if err != nil {
-		panic("Error when decoding the image: " + err.Error())
-	}
-
-	return decodedImage
-}
-
-func createImage() (file *os.File) {
-	file, err := os.Create("./images/YotiSelfie.jpeg")
-
-	if err != nil {
-		panic("Error when creating the image: " + err.Error())
-	}
-	return
-}
-
-func saveImage(img image.Image, file io.Writer) {
-	var opt jpeg.Options
-	opt.Quality = 100
-
-	err := jpeg.Encode(file, img, &opt)
-
-	if err != nil {
-		panic("Error when saving the image: " + err.Error())
 	}
 }

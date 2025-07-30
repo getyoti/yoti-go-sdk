@@ -180,3 +180,25 @@ func (p UserProfile) AgeVerifications() (out []attribute.AgeVerification, err er
 	}
 	return out, err
 }
+
+// EstimatedAge returns the estimated age attribute. Will be nil if not provided by Yoti.
+func (p UserProfile) EstimatedAge() *attribute.StringAttribute {
+	return p.GetStringAttribute(consts.AttrEstimatedAge)
+}
+
+// EstimatedAgeWithFallback returns the estimated age attribute if available,
+// otherwise returns the date of birth as a fallback. Returns the attribute and
+// a boolean indicating if the estimated age was used (true) or fallback (false).
+func (p UserProfile) EstimatedAgeWithFallback() (interface{}, bool) {
+	estimatedAge := p.EstimatedAge()
+	if estimatedAge != nil {
+		return estimatedAge, true
+	}
+
+	dateOfBirth, _ := p.DateOfBirth()
+	if dateOfBirth != nil {
+		return dateOfBirth, false
+	}
+
+	return nil, false
+}

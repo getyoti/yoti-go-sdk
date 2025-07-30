@@ -177,6 +177,86 @@ func (b *PolicyBuilder) WithAgeUnder(age int, options ...interface{}) *PolicyBui
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeUnder, age), options...)
 }
 
+// WithEstimatedAge adds the estimated_age attribute with fallback to date_of_birth.
+// This is a helper method that implements automatic fallback logic.
+// "options" allows one or more options to be specified e.g. SourceConstraint
+func (b *PolicyBuilder) WithEstimatedAge(options ...interface{}) *PolicyBuilder {
+	attributeBuilder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth})
+
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			attributeBuilder.WithConstraint(&value)
+		case constraintInterface:
+			attributeBuilder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("not a valid option type, %v", value))
+		}
+	}
+
+	attribute, err := attributeBuilder.Build()
+	if err != nil {
+		b.err = yotierror.MultiError{This: err, Next: b.err}
+	}
+	return b.WithWantedAttribute(attribute)
+}
+
+// WithEstimatedAgeOver requests the estimated_age attribute with fallback to date_of_birth
+// for age over verification. This is a helper method that implements automatic fallback logic.
+// "options" allows one or more options to be specified e.g. SourceConstraint
+func (b *PolicyBuilder) WithEstimatedAgeOver(age int, options ...interface{}) *PolicyBuilder {
+	attributeBuilder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
+		WithDerivation(fmt.Sprintf(consts.AttrAgeOver, age))
+
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			attributeBuilder.WithConstraint(&value)
+		case constraintInterface:
+			attributeBuilder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("not a valid option type, %v", value))
+		}
+	}
+
+	attribute, err := attributeBuilder.Build()
+	if err != nil {
+		b.err = yotierror.MultiError{This: err, Next: b.err}
+	}
+	return b.WithWantedAttribute(attribute)
+}
+
+// WithEstimatedAgeUnder requests the estimated_age attribute with fallback to date_of_birth
+// for age under verification. This is a helper method that implements automatic fallback logic.
+// "options" allows one or more options to be specified e.g. SourceConstraint
+func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, options ...interface{}) *PolicyBuilder {
+	attributeBuilder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
+		WithDerivation(fmt.Sprintf(consts.AttrAgeUnder, age))
+
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			attributeBuilder.WithConstraint(&value)
+		case constraintInterface:
+			attributeBuilder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("not a valid option type, %v", value))
+		}
+	}
+
+	attribute, err := attributeBuilder.Build()
+	if err != nil {
+		b.err = yotierror.MultiError{This: err, Next: b.err}
+	}
+	return b.WithWantedAttribute(attribute)
+}
+
 // WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"
 func (b *PolicyBuilder) WithWantedRememberMe() *PolicyBuilder {
 	b.isWantedRememberMe = true
