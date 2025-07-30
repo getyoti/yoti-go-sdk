@@ -19,6 +19,7 @@ type WantedAttributeBuilder struct {
 // WantedAttribute represents a wanted attribute in a dynamic sharing policy
 type WantedAttribute struct {
 	name               string
+	alternativeNames   []string
 	derivation         string
 	constraints        []constraintInterface
 	acceptSelfAsserted bool
@@ -28,6 +29,12 @@ type WantedAttribute struct {
 // WithName sets the name of the wanted attribute
 func (builder *WantedAttributeBuilder) WithName(name string) *WantedAttributeBuilder {
 	builder.attr.name = name
+	return builder
+}
+
+// WithAlternativeNames sets alternative names for the wanted attribute
+func (builder *WantedAttributeBuilder) WithAlternativeNames(alternativeNames []string) *WantedAttributeBuilder {
+	builder.attr.alternativeNames = alternativeNames
 	return builder
 }
 
@@ -67,12 +74,14 @@ func (builder *WantedAttributeBuilder) Build() (WantedAttribute, error) {
 func (attr *WantedAttribute) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name               string                `json:"name"`
+		AlternativeNames   []string              `json:"alternative_names,omitempty"`
 		Derivation         string                `json:"derivation,omitempty"`
 		Constraints        []constraintInterface `json:"constraints,omitempty"`
 		AcceptSelfAsserted bool                  `json:"accept_self_asserted"`
 		Optional           bool                  `json:"optional,omitempty"`
 	}{
 		Name:               attr.name,
+		AlternativeNames:   attr.alternativeNames,
 		Derivation:         attr.derivation,
 		Constraints:        attr.constraints,
 		AcceptSelfAsserted: attr.acceptSelfAsserted,

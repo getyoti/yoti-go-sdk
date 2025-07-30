@@ -47,6 +47,33 @@ func home(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 }
+
+func estimatedAgeExamplesPage(w http.ResponseWriter, req *http.Request) {
+	templateVars := map[string]interface{}{
+		"yotiClientSdkID": os.Getenv("YOTI_CLIENT_SDK_ID"),
+	}
+
+	t, err := template.ParseFiles("estimated_age_examples.html")
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error parsing the template: %v", err),
+		)))
+		return
+	}
+
+	err = t.Execute(w, templateVars)
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error applying the parsed template: %v", err),
+		)))
+		return
+	}
+}
+
 func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
 	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithEmail().WithPhoneNumber().WithSelfie().WithAgeOver(18).WithNationality().WithGender().WithDocumentDetails().WithDocumentImages().WithWantedRememberMe().Build()
 	if err != nil {
@@ -124,9 +151,20 @@ func main() {
 	}
 
 	http.HandleFunc("/", home)
+	http.HandleFunc("/estimated-age-examples", estimatedAgeExamplesPage)
 	http.HandleFunc("/v2/generate-share", generateSession)
 	http.HandleFunc("/v2/generate-advanced-identity-share", generateAdvancedIdentitySession)
 	http.HandleFunc("/v2/receipt-info", receipt)
+
+	// Estimated Age Examples
+	http.HandleFunc("/v2/generate-estimated-age-share", generateEstimatedAgeSession)
+	http.HandleFunc("/v2/generate-estimated-age-over-share", generateEstimatedAgeOverSession)
+	http.HandleFunc("/v2/generate-estimated-age-under-share", generateEstimatedAgeUnderSession)
+	http.HandleFunc("/v2/generate-estimated-age-constrained-share", generateEstimatedAgeWithConstraintsSession)
+	http.HandleFunc("/v2/estimated-age-receipt", estimatedAgeReceipt)
+	http.HandleFunc("/v2/age-over-receipt", estimatedAgeReceipt)
+	http.HandleFunc("/v2/age-under-receipt", estimatedAgeReceipt)
+	http.HandleFunc("/v2/constrained-age-receipt", estimatedAgeReceipt)
 
 	rootdir, err := os.Getwd()
 	if err != nil {

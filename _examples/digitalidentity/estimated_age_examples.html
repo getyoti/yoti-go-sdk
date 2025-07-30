@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoti Digital Identity - Estimated Age Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .example-section {
+            margin-bottom: 30px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            background-color: #00A9E0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0080B8;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .yoti-target {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            min-height: 100px;
+            display: none;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .back-link a {
+            color: #00A9E0;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .active-example {
+            background-color: #e8f4fd;
+            border: 2px solid #00A9E0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Yoti Digital Identity - Estimated Age Examples</h1>
+
+        <div class="example-section">
+            <h2>Basic Estimated Age Request</h2>
+            <div class="description">
+                Request the <code>estimated_age</code> attribute with automatic fallback to <code>date_of_birth</code>.
+                This is the most basic usage of the estimated age functionality.
+            </div>
+            <button class="button" onclick="startEstimatedAgeFlow('basic')">
+                Start Basic Estimated Age Flow
+            </button>
+            <div id="basic-target" class="yoti-target"></div>
+        </div>
+
+        <div class="example-section">
+            <h2>Age Over Verification</h2>
+            <div class="description">
+                Verify that the user is 18 years old or older using <code>estimated_age</code> with fallback to <code>date_of_birth</code>.
+                This applies the <code>age_over:18</code> derivation rule to whichever attribute is available.
+            </div>
+            <button class="button" onclick="startEstimatedAgeFlow('age-over')">
+                Start Age Over 18 Flow
+            </button>
+            <div id="age-over-target" class="yoti-target"></div>
+        </div>
+
+        <div class="example-section">
+            <h2>Age Under Verification</h2>
+            <div class="description">
+                Verify that the user is under 21 years old using <code>estimated_age</code> with fallback to <code>date_of_birth</code>.
+                This applies the <code>age_under:21</code> derivation rule to whichever attribute is available.
+            </div>
+            <button class="button" onclick="startEstimatedAgeFlow('age-under')">
+                Start Age Under 21 Flow
+            </button>
+            <div id="age-under-target" class="yoti-target"></div>
+        </div>
+
+        <div class="example-section">
+            <h2>Constrained Age Verification</h2>
+            <div class="description">
+                Verify that the user is 18 years old or older with a source constraint requiring passport verification.
+                This demonstrates how to combine estimated age functionality with document type constraints.
+            </div>
+            <button class="button" onclick="startEstimatedAgeFlow('constrained')">
+                Start Constrained Age Flow
+            </button>
+            <div id="constrained-target" class="yoti-target"></div>
+        </div>
+
+
+
+        <div class="back-link">
+            <a href="/">← Back to Main Example</a>
+        </div>
+    </div>
+
+    <script>
+        let currentFlow = null;
+        const clientSdkId = '{{.yotiClientSdkID}}';
+
+        const flowEndpoints = {
+            'basic': '/v2/generate-estimated-age-share',
+            'age-over': '/v2/generate-estimated-age-over-share',
+            'age-under': '/v2/generate-estimated-age-under-share',
+            'constrained': '/v2/generate-estimated-age-constrained-share'
+        };
+
+        const receiptEndpoints = {
+            'basic': '/v2/estimated-age-receipt',
+            'age-over': '/v2/age-over-receipt',
+            'age-under': '/v2/age-under-receipt',
+            'constrained': '/v2/constrained-age-receipt'
+        };
+
+        async function startEstimatedAgeFlow(flowType) {
+            // Clear any existing flows
+            clearAllFlows();
+
+            currentFlow = flowType;
+            const targetElement = document.getElementById(flowType + '-target');
+            const sectionElement = targetElement.closest('.example-section');
+
+            // Show and highlight the target section
+            targetElement.style.display = 'block';
+            sectionElement.classList.add('active-example');
+
+            // Create session ID resolver for this flow
+            async function sessionIdResolver() {
+                console.log('Generating session for:', flowType);
+                const response = await fetch(flowEndpoints[flowType], {method: 'GET'});
+                const data = await response.json();
+                console.log('Session data:', data);
+                return data.id;
+            }
+
+            // Completion handler for this flow
+            async function completionHandler(receivedReceiptId) {
+                console.log('Completion handler for:', flowType, 'Receipt ID:', receivedReceiptId);
+                const url = receiptEndpoints[flowType] + '?ReceiptID=' + encodeURIComponent(receivedReceiptId);
+                // Navigate to the appropriate receipt page
+                window.location.href = url;
+            }
+
+            function errorListener(...data) {
+                console.warn('Error in', flowType, 'flow:', ...data);
+            }
+
+            // Initialize Yoti Web SDK for this flow
+            const {Yoti} = window;
+            await Yoti.createWebShare({
+                name: 'Use Yoti - ' + getFlowDisplayName(flowType),
+                domId: flowType + '-target',
+                sdkId: clientSdkId,
+                hooks: {
+                    sessionIdResolver: sessionIdResolver,
+                    errorListener: errorListener,
+                    completionHandler: completionHandler,
+                },
+                flow: "REVEAL_MODAL"
+            });
+        }
+
+        function getFlowDisplayName(flowType) {
+            const names = {
+                'basic': 'Estimated Age',
+                'age-over': 'Age Over 18',
+                'age-under': 'Age Under 21',
+                'constrained': 'Constrained Age'
+            };
+            return names[flowType] || flowType;
+        }
+
+        function clearAllFlows() {
+            // Hide all target elements and remove highlighting
+            ['basic', 'age-over', 'age-under', 'constrained'].forEach(flowType => {
+                const targetElement = document.getElementById(flowType + '-target');
+                const sectionElement = targetElement.closest('.example-section');
+
+                targetElement.style.display = 'none';
+                targetElement.innerHTML = '';
+                sectionElement.classList.remove('active-example');
+            });
+        }
+
+        async function onClientLoaded() {
+            const {Yoti} = window;
+            await Yoti.ready();
+            console.log('Yoti Web SDK loaded and ready');
+        }
+    </script>
+    <script src="https://www.yoti.com/share/client/v2" onload="onClientLoaded()"></script>
+</body>
+</html>
