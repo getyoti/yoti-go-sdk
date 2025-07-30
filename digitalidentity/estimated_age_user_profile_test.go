@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/getyoti/yoti-go-sdk/v3/consts"
-	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
 	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
 )
