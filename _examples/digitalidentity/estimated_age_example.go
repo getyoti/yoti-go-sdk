@@ -20,14 +20,9 @@ func buildEstimatedAgeSessionReq() (sessionSpec *digitalidentity.ShareSessionReq
 		return nil, fmt.Errorf("failed to build estimated age policy: %v", err)
 	}
 
-	subject := []byte(`{
-		"subject_id": "unique-user-id-for-estimated-age-example"
-	}`)
-
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
 		WithPolicy(policy).
 		WithRedirectUri("https://localhost:8080/v2/estimated-age-receipt").
-		WithSubject(subject).
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
@@ -41,20 +36,15 @@ func buildEstimatedAgeOverSessionReq() (sessionSpec *digitalidentity.ShareSessio
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		WithEstimatedAgeOver(18, 0). // Age verification with no buffer (fallback to date_of_birth for exact age)
+		WithEstimatedAgeOver(18, 5). // Estimated age checks for 23, date_of_birth fallback checks for 18
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build age over policy: %v", err)
 	}
 
-	subject := []byte(`{
-		"subject_id": "unique-user-id-for-age-over-example"
-	}`)
-
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
 		WithPolicy(policy).
 		WithRedirectUri("https://localhost:8080/v2/age-over-receipt").
-		WithSubject(subject).
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
@@ -74,14 +64,9 @@ func buildEstimatedAgeUnderSessionReq() (sessionSpec *digitalidentity.ShareSessi
 		return nil, fmt.Errorf("failed to build age under policy: %v", err)
 	}
 
-	subject := []byte(`{
-		"subject_id": "unique-user-id-for-age-under-example"
-	}`)
-
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
 		WithPolicy(policy).
 		WithRedirectUri("https://localhost:8080/v2/age-under-receipt").
-		WithSubject(subject).
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
@@ -103,20 +88,15 @@ func buildEstimatedAgeWithConstraintsSessionReq() (sessionSpec *digitalidentity.
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		WithEstimatedAgeOver(18, 0, &constraint). // Age verification with constraint, no buffer, and fallback
+		WithEstimatedAgeOver(18, 5, &constraint). // Estimated age checks for 23, date_of_birth fallback checks for 18
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build constrained age policy: %v", err)
 	}
 
-	subject := []byte(`{
-		"subject_id": "unique-user-id-for-constrained-age-example"
-	}`)
-
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
 		WithPolicy(policy).
 		WithRedirectUri("https://localhost:8080/v2/constrained-age-receipt").
-		WithSubject(subject).
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
@@ -137,14 +117,9 @@ func buildEstimatedAgeOverWithBufferSessionReq() (sessionSpec *digitalidentity.S
 		return nil, fmt.Errorf("failed to build age over with buffer policy: %v", err)
 	}
 
-	subject := []byte(`{
-		"subject_id": "unique-user-id-for-age-over-buffer-example"
-	}`)
-
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
 		WithPolicy(policy).
 		WithRedirectUri("https://localhost:8080/v2/age-over-buffer-receipt").
-		WithSubject(subject).
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
