@@ -232,11 +232,19 @@ func (b *PolicyBuilder) WithEstimatedAge(constraints ...constraintInterface) *Po
 }
 
 // WithEstimatedAgeOver requests the estimated_age attribute with age verification over the specified age with fallback to date_of_birth
-func (b *PolicyBuilder) WithEstimatedAgeOver(age int, constraints ...constraintInterface) *PolicyBuilder {
+// The buffer parameter adds extra years to the estimated age check (e.g., age=18, buffer=5 checks for 23 in estimated_age, falls back to exact 18 in date_of_birth)
+func (b *PolicyBuilder) WithEstimatedAgeOver(age int, buffer int, constraints ...constraintInterface) *PolicyBuilder {
+	var derivation string
+	if buffer > 0 {
+		derivation = fmt.Sprintf("age_over:%d:%d", age, buffer)
+	} else {
+		derivation = fmt.Sprintf(consts.AttrAgeOver, age)
+	}
+
 	builder := (&WantedAttributeBuilder{}).
 		WithName(consts.AttrEstimatedAge).
 		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
-		WithDerivation(fmt.Sprintf(consts.AttrAgeOver, age))
+		WithDerivation(derivation)
 
 	for _, constraint := range constraints {
 		builder = builder.WithConstraint(constraint)
@@ -250,11 +258,19 @@ func (b *PolicyBuilder) WithEstimatedAgeOver(age int, constraints ...constraintI
 }
 
 // WithEstimatedAgeUnder requests the estimated_age attribute with age verification under the specified age with fallback to date_of_birth
-func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, constraints ...constraintInterface) *PolicyBuilder {
+// The buffer parameter adds extra years to the estimated age check (e.g., age=21, buffer=5 checks for under 26 in estimated_age, falls back to exact under 21 in date_of_birth)
+func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, buffer int, constraints ...constraintInterface) *PolicyBuilder {
+	var derivation string
+	if buffer > 0 {
+		derivation = fmt.Sprintf("age_under:%d:%d", age, buffer)
+	} else {
+		derivation = fmt.Sprintf(consts.AttrAgeUnder, age)
+	}
+
 	builder := (&WantedAttributeBuilder{}).
 		WithName(consts.AttrEstimatedAge).
 		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
-		WithDerivation(fmt.Sprintf(consts.AttrAgeUnder, age))
+		WithDerivation(derivation)
 
 	for _, constraint := range constraints {
 		builder = builder.WithConstraint(constraint)
@@ -265,6 +281,18 @@ func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, constraints ...constraint
 		b.err = err
 	}
 	return b.WithWantedAttribute(wantedAttribute)
+}
+
+// WithEstimatedAgeOverSimple requests the estimated_age attribute with age verification over the specified age with fallback to date_of_birth (no buffer)
+// This is a convenience method for backward compatibility when no buffer is needed
+func (b *PolicyBuilder) WithEstimatedAgeOverSimple(age int, constraints ...constraintInterface) *PolicyBuilder {
+	return b.WithEstimatedAgeOver(age, 0, constraints...)
+}
+
+// WithEstimatedAgeUnderSimple requests the estimated_age attribute with age verification under the specified age with fallback to date_of_birth (no buffer)
+// This is a convenience method for backward compatibility when no buffer is needed
+func (b *PolicyBuilder) WithEstimatedAgeUnderSimple(age int, constraints ...constraintInterface) *PolicyBuilder {
+	return b.WithEstimatedAgeUnder(age, 0, constraints...)
 }
 
 // Build constructs a dynamic policy object

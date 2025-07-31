@@ -41,7 +41,7 @@ func buildEstimatedAgeOverSessionReq() (sessionSpec *digitalidentity.ShareSessio
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		WithEstimatedAgeOver(18). // Age verification with fallback
+		WithEstimatedAgeOver(18, 0). // Age verification with no buffer (fallback to date_of_birth for exact age)
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build age over policy: %v", err)
@@ -68,7 +68,7 @@ func buildEstimatedAgeUnderSessionReq() (sessionSpec *digitalidentity.ShareSessi
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		WithEstimatedAgeUnder(21). // Age verification with fallback
+		WithEstimatedAgeUnder(21, 0). // Age verification with no buffer (fallback to date_of_birth for exact age)
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build age under policy: %v", err)
@@ -103,7 +103,7 @@ func buildEstimatedAgeWithConstraintsSessionReq() (sessionSpec *digitalidentity.
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		WithEstimatedAgeOver(18, &constraint). // Age verification with constraint and fallback
+		WithEstimatedAgeOver(18, 0, &constraint). // Age verification with constraint, no buffer, and fallback
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build constrained age policy: %v", err)
@@ -116,6 +116,34 @@ func buildEstimatedAgeWithConstraintsSessionReq() (sessionSpec *digitalidentity.
 	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
 		WithPolicy(policy).
 		WithRedirectUri("https://localhost:8080/v2/constrained-age-receipt").
+		WithSubject(subject).
+		Build()
+	if err != nil {
+		return nil, fmt.Errorf("failed to build create session request: %v", err)
+	}
+	return &sessionReq, nil
+}
+
+// buildEstimatedAgeOverWithBufferSessionReq creates a Digital Identity session request that
+// verifies the user is over a specific age using estimated_age with buffer (checking for 23)
+// and falls back to exact age verification using date_of_birth (checking for 18)
+func buildEstimatedAgeOverWithBufferSessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
+	policy, err := (&digitalidentity.PolicyBuilder{}).
+		WithFullName().
+		WithEmail().
+		WithEstimatedAgeOver(18, 5). // Estimated age checks for 23, date_of_birth fallback checks for 18
+		Build()
+	if err != nil {
+		return nil, fmt.Errorf("failed to build age over with buffer policy: %v", err)
+	}
+
+	subject := []byte(`{
+		"subject_id": "unique-user-id-for-age-over-buffer-example"
+	}`)
+
+	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).
+		WithPolicy(policy).
+		WithRedirectUri("https://localhost:8080/v2/age-over-buffer-receipt").
 		WithSubject(subject).
 		Build()
 	if err != nil {

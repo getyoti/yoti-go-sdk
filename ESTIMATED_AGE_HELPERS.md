@@ -1,10 +1,22 @@
 # Estimated Age Helper Methods for Digital ID
 
-This document describes the new helper methods for requesting the `estimated_age` attribute with automatic fallback to the `date_of_birth` attribute from Digital ID app shares.
+This document describes the helper methods for requesting the `estimated_age` attribute with automatic fallback to the `date_of_birth` attribute from Digital ID app shares.
 
 ## Overview
 
-The new helper methods allow Relying Parties to easily request estimated age information from users while providing automatic fallback to date of birth when estimated age is not available. This enhances the user experience by requesting the most specific age information available while still providing age verification capabilities.
+The helper methods allow Relying Parties to request estimated age information from users while providing automatic fallback to date of birth when estimated age is not available. This enhances the user experience by requesting the most specific age information available while providing age verification capabilities.
+
+Age verification supports buffer functionality where the estimated age check uses a higher threshold (age + buffer) while the date of birth fallback uses the exact age.
+
+## Age Derivation Format
+
+Age verification uses the format `age_over:age:buffer`:
+- `estimated_age` verification: Checks if user is over `age + buffer`
+- `date_of_birth` fallback: Checks if user is exactly over `age`
+
+For example, `age_over:18:5` means:
+- Estimated age verification: Check if user is over 23 (18 + 5)
+- Date of birth fallback: Check if user is exactly over 18
 
 ## Features
 
@@ -13,14 +25,18 @@ The new helper methods allow Relying Parties to easily request estimated age inf
 #### Digital Identity Policy Builder (`digitalidentity` package)
 
 - `WithEstimatedAge(options ...interface{})` - Requests estimated_age with date_of_birth fallback
-- `WithEstimatedAgeOver(age int, options ...interface{})` - Age over verification with fallback
-- `WithEstimatedAgeUnder(age int, options ...interface{})` - Age under verification with fallback
+- `WithEstimatedAgeOver(age int, buffer int, options ...interface{})` - Age over verification with buffer support and fallback
+- `WithEstimatedAgeUnder(age int, buffer int, options ...interface{})` - Age under verification with buffer support and fallback
+- `WithEstimatedAgeOverSimple(age int, options ...interface{})` - Age over verification with no buffer (backward compatibility)
+- `WithEstimatedAgeUnderSimple(age int, options ...interface{})` - Age under verification with no buffer (backward compatibility)
 
 #### Dynamic Policy Builder (`dynamic` package)
 
 - `WithEstimatedAge(options ...interface{})` - Requests estimated_age with date_of_birth fallback
-- `WithEstimatedAgeOver(age int, options ...interface{})` - Age over verification with fallback
-- `WithEstimatedAgeUnder(age int, options ...interface{})` - Age under verification with fallback
+- `WithEstimatedAgeOver(age int, buffer int, options ...interface{})` - Age over verification with buffer support and fallback
+- `WithEstimatedAgeUnder(age int, buffer int, options ...interface{})` - Age under verification with buffer support and fallback
+- `WithEstimatedAgeOverSimple(age int, options ...interface{})` - Age over verification with no buffer (backward compatibility)
+- `WithEstimatedAgeUnderSimple(age int, options ...interface{})` - Age under verification with no buffer (backward compatibility)
 
 ### 2. User Profile Helper Methods
 
@@ -53,14 +69,30 @@ policy, err := (&dynamic.PolicyBuilder{}).
 ### Age Verification with Fallback
 
 ```go
-// Request age over 18 verification with fallback
+// Request age over 18 verification with no buffer (backward compatibility)
 policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOver(18).
+    WithEstimatedAgeOverSimple(18).
     Build()
 
-// Request age under 21 verification with fallback
+// Request age under 21 verification with no buffer (backward compatibility)
 policy, err := (&dynamic.PolicyBuilder{}).
-    WithEstimatedAgeUnder(21).
+    WithEstimatedAgeUnderSimple(21).
+    Build()
+```
+
+### Age Verification with Buffer
+
+```go
+// Request age over 18 with 5-year buffer
+// Estimated age checks for 23, falls back to date_of_birth for exact 18
+policy, err := (&digitalidentity.PolicyBuilder{}).
+    WithEstimatedAgeOver(18, 5).
+    Build()
+
+// Request age under 21 with 5-year buffer
+// Estimated age checks for under 26, falls back to date_of_birth for exact under 21
+policy, err := (&dynamic.PolicyBuilder{}).
+    WithEstimatedAgeUnder(21, 5).
     Build()
 ```
 
@@ -71,8 +103,14 @@ constraint, err := (&digitalidentity.SourceConstraintBuilder{}).
     WithPassport("").
     Build()
 
+// With buffer and constraints
 policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOver(18, constraint).
+    WithEstimatedAgeOver(18, 5, constraint).
+    Build()
+
+// Without buffer but with constraints (backward compatibility)
+policy, err := (&digitalidentity.PolicyBuilder{}).
+    WithEstimatedAgeOverSimple(18, constraint).
     Build()
 ```
 

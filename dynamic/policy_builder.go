@@ -205,12 +205,20 @@ func (b *PolicyBuilder) WithEstimatedAge(options ...interface{}) *PolicyBuilder 
 
 // WithEstimatedAgeOver requests the estimated_age attribute with fallback to date_of_birth
 // for age over verification. This is a helper method that implements automatic fallback logic.
+// The buffer parameter adds extra years to the estimated age check (e.g., age=18, buffer=5 checks for 23 in estimated_age, falls back to exact 18 in date_of_birth)
 // "options" allows one or more options to be specified e.g. SourceConstraint
-func (b *PolicyBuilder) WithEstimatedAgeOver(age int, options ...interface{}) *PolicyBuilder {
+func (b *PolicyBuilder) WithEstimatedAgeOver(age int, buffer int, options ...interface{}) *PolicyBuilder {
+	var derivation string
+	if buffer > 0 {
+		derivation = fmt.Sprintf("age_over:%d:%d", age, buffer)
+	} else {
+		derivation = fmt.Sprintf(consts.AttrAgeOver, age)
+	}
+
 	attributeBuilder := (&WantedAttributeBuilder{}).
 		WithName(consts.AttrEstimatedAge).
 		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
-		WithDerivation(fmt.Sprintf(consts.AttrAgeOver, age))
+		WithDerivation(derivation)
 
 	for _, option := range options {
 		switch value := option.(type) {
@@ -232,12 +240,20 @@ func (b *PolicyBuilder) WithEstimatedAgeOver(age int, options ...interface{}) *P
 
 // WithEstimatedAgeUnder requests the estimated_age attribute with fallback to date_of_birth
 // for age under verification. This is a helper method that implements automatic fallback logic.
+// The buffer parameter adds extra years to the estimated age check (e.g., age=21, buffer=5 checks for under 26 in estimated_age, falls back to exact under 21 in date_of_birth)
 // "options" allows one or more options to be specified e.g. SourceConstraint
-func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, options ...interface{}) *PolicyBuilder {
+func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, buffer int, options ...interface{}) *PolicyBuilder {
+	var derivation string
+	if buffer > 0 {
+		derivation = fmt.Sprintf("age_under:%d:%d", age, buffer)
+	} else {
+		derivation = fmt.Sprintf(consts.AttrAgeUnder, age)
+	}
+
 	attributeBuilder := (&WantedAttributeBuilder{}).
 		WithName(consts.AttrEstimatedAge).
 		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
-		WithDerivation(fmt.Sprintf(consts.AttrAgeUnder, age))
+		WithDerivation(derivation)
 
 	for _, option := range options {
 		switch value := option.(type) {
@@ -255,6 +271,20 @@ func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, options ...interface{}) *
 		b.err = yotierror.MultiError{This: err, Next: b.err}
 	}
 	return b.WithWantedAttribute(attribute)
+}
+
+// WithEstimatedAgeOverSimple requests the estimated_age attribute with age verification over the specified age with fallback to date_of_birth (no buffer)
+// This is a convenience method for backward compatibility when no buffer is needed
+// "options" allows one or more options to be specified e.g. SourceConstraint
+func (b *PolicyBuilder) WithEstimatedAgeOverSimple(age int, options ...interface{}) *PolicyBuilder {
+	return b.WithEstimatedAgeOver(age, 0, options...)
+}
+
+// WithEstimatedAgeUnderSimple requests the estimated_age attribute with age verification under the specified age with fallback to date_of_birth (no buffer)
+// This is a convenience method for backward compatibility when no buffer is needed
+// "options" allows one or more options to be specified e.g. SourceConstraint
+func (b *PolicyBuilder) WithEstimatedAgeUnderSimple(age int, options ...interface{}) *PolicyBuilder {
+	return b.WithEstimatedAgeUnder(age, 0, options...)
 }
 
 // WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"

@@ -26,7 +26,7 @@ func ExamplePolicyBuilder_WithEstimatedAge() {
 }
 
 func ExamplePolicyBuilder_WithEstimatedAgeOver() {
-	policy, err := (&PolicyBuilder{}).WithEstimatedAgeOver(18).Build()
+	policy, err := (&PolicyBuilder{}).WithEstimatedAgeOverSimple(18).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -43,7 +43,7 @@ func ExamplePolicyBuilder_WithEstimatedAgeOver() {
 }
 
 func ExamplePolicyBuilder_WithEstimatedAgeUnder() {
-	policy, err := (&PolicyBuilder{}).WithEstimatedAgeUnder(21).Build()
+	policy, err := (&PolicyBuilder{}).WithEstimatedAgeUnderSimple(21).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
@@ -76,7 +76,7 @@ func TestPolicyBuilder_WithEstimatedAge_SetsCorrectAttributes(t *testing.T) {
 
 func TestPolicyBuilder_WithEstimatedAgeOver_SetsCorrectAttributes(t *testing.T) {
 	builder := &PolicyBuilder{}
-	builder.WithEstimatedAgeOver(18)
+	builder.WithEstimatedAgeOverSimple(18)
 
 	policy, err := builder.Build()
 	assert.NilError(t, err)
@@ -91,7 +91,7 @@ func TestPolicyBuilder_WithEstimatedAgeOver_SetsCorrectAttributes(t *testing.T) 
 
 func TestPolicyBuilder_WithEstimatedAgeUnder_SetsCorrectAttributes(t *testing.T) {
 	builder := &PolicyBuilder{}
-	builder.WithEstimatedAgeUnder(21)
+	builder.WithEstimatedAgeUnderSimple(21)
 
 	policy, err := builder.Build()
 	assert.NilError(t, err)
@@ -109,7 +109,7 @@ func TestPolicyBuilder_WithEstimatedAgeOver_WithSourceConstraint(t *testing.T) {
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
 
-	builder.WithEstimatedAgeOver(18, &sourceConstraint)
+	builder.WithEstimatedAgeOverSimple(18, &sourceConstraint)
 
 	policy, err := builder.Build()
 	assert.NilError(t, err)
@@ -136,7 +136,7 @@ func TestPolicyBuilder_WithEstimatedAge_WithSourceConstraint(t *testing.T) {
 func TestPolicyBuilder_CombiningEstimatedAgeWithOtherAttributes(t *testing.T) {
 	builder := &PolicyBuilder{}
 	builder.WithFullName().
-		WithEstimatedAgeOver(18).
+		WithEstimatedAgeOverSimple(18).
 		WithEmail()
 
 	policy, err := builder.Build()
@@ -156,4 +156,30 @@ func TestPolicyBuilder_CombiningEstimatedAgeWithOtherAttributes(t *testing.T) {
 	assert.Equal(t, estimatedAgeAttr.derivation, "age_over:18")
 	assert.Equal(t, len(estimatedAgeAttr.alternativeNames), 1)
 	assert.Equal(t, estimatedAgeAttr.alternativeNames[0], consts.AttrDateOfBirth)
+}
+
+func TestPolicyBuilderWithEstimatedAgeOverWithBuffer(t *testing.T) {
+	builder := &PolicyBuilder{}
+	builder.WithEstimatedAgeOver(18, 5)
+
+	policy, err := builder.Build()
+	assert.NilError(t, err)
+	assert.Equal(t, len(policy.attributes), 1)
+	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
+	assert.Equal(t, policy.attributes[0].derivation, "age_over:18:5")
+	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
+	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
+}
+
+func TestPolicyBuilderWithEstimatedAgeUnderWithBuffer(t *testing.T) {
+	builder := &PolicyBuilder{}
+	builder.WithEstimatedAgeUnder(21, 5)
+
+	policy, err := builder.Build()
+	assert.NilError(t, err)
+	assert.Equal(t, len(policy.attributes), 1)
+	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
+	assert.Equal(t, policy.attributes[0].derivation, "age_under:21:5")
+	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
+	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
 }
