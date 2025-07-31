@@ -94,13 +94,14 @@
         </div>
 
         <div class="example-section">
-            <h2>Age Over Verification</h2>
+            <h2>Age Over Verification with Buffer</h2>
             <div class="description">
-                Verify that the user is 18 years old or older using <code>estimated_age</code> with fallback to <code>date_of_birth</code>.
-                This applies the <code>age_over:18</code> derivation rule to whichever attribute is available.
+                Verify that the user is over 18 years old using buffer functionality.
+                <code>estimated_age</code> checks for 23 (18 + 5 year buffer), with fallback to <code>date_of_birth</code> checking exact 18.
+                This applies the <code>age_over:18:5</code> derivation rule with enhanced accuracy.
             </div>
             <button class="button" onclick="startEstimatedAgeFlow('age-over')">
-                Start Age Over 18 Flow
+                Start Age Over 23/18 Flow
             </button>
             <div id="age-over-target" class="yoti-target"></div>
         </div>
@@ -118,13 +119,14 @@
         </div>
 
         <div class="example-section">
-            <h2>Constrained Age Verification</h2>
+            <h2>Constrained Age Verification with Buffer</h2>
             <div class="description">
-                Verify that the user is 18 years old or older with a source constraint requiring passport verification.
-                This demonstrates how to combine estimated age functionality with document type constraints.
+                Verify that the user is over 18 years old with passport verification and buffer functionality.
+                <code>estimated_age</code> checks for 23 (18 + 5 year buffer), with fallback to <code>date_of_birth</code> checking exact 18.
+                This demonstrates buffer functionality combined with document type constraints.
             </div>
             <button class="button" onclick="startEstimatedAgeFlow('constrained')">
-                Start Constrained Age Flow
+                Start Constrained Age 23/18 Flow
             </button>
             <div id="constrained-target" class="yoti-target"></div>
         </div>
