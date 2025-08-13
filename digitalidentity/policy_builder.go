@@ -214,40 +214,28 @@ func (b *PolicyBuilder) WithAdvancedIdentityProfileRequirements(advancedIdentity
 	return b
 }
 
-// WithEstimatedAge requests the estimated_age attribute with fallback to date_of_birth
-func (b *PolicyBuilder) WithEstimatedAge(constraints ...constraintInterface) *PolicyBuilder {
-	wantedAttributeBuilder := (&WantedAttributeBuilder{}).
-		WithName(consts.AttrEstimatedAge).
-		WithAlternativeNames([]string{consts.AttrDateOfBirth})
-
-	for _, constraint := range constraints {
-		wantedAttributeBuilder.WithConstraint(constraint)
-	}
-
-	wantedAttribute, err := wantedAttributeBuilder.Build()
-	if err != nil {
-		b.err = err
-	}
-	return b.WithWantedAttribute(wantedAttribute)
-}
-
-// WithEstimatedAgeOver requests the estimated_age attribute with age verification over the specified age with fallback to date_of_birth
-// The buffer parameter adds extra years to the estimated age check (e.g., age=18, buffer=5 checks for 23 in estimated_age, falls back to exact 18 in date_of_birth)
-func (b *PolicyBuilder) WithEstimatedAgeOver(age int, buffer int, constraints ...constraintInterface) *PolicyBuilder {
-	var derivation string
-	if buffer > 0 {
-		derivation = fmt.Sprintf("age_over:%d:%d", age, buffer)
-	} else {
-		derivation = fmt.Sprintf(consts.AttrAgeOver, age)
-	}
+// EstimatedAgeOver creates a policy with derivation age_over:<age>:<buffer> and date_of_birth in alternative names
+// This is the single recommended method for age estimation in the App.
+// age: The minimum age to verify (e.g., 18)
+// buffer: Additional years to add to the age check for estimated_age (e.g., 5)
+// options: Optional constraints like SourceConstraint
+func (b *PolicyBuilder) EstimatedAgeOver(age int, buffer int, options ...interface{}) *PolicyBuilder {
+	derivation := fmt.Sprintf("age_over:%d:%d", age, buffer)
 
 	builder := (&WantedAttributeBuilder{}).
 		WithName(consts.AttrEstimatedAge).
 		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
 		WithDerivation(derivation)
 
-	for _, constraint := range constraints {
-		builder = builder.WithConstraint(constraint)
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			builder = builder.WithConstraint(&value)
+		case constraintInterface:
+			builder = builder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("not a valid option type, %v", value))
+		}
 	}
 
 	wantedAttribute, err := builder.Build()
@@ -255,44 +243,6 @@ func (b *PolicyBuilder) WithEstimatedAgeOver(age int, buffer int, constraints ..
 		b.err = err
 	}
 	return b.WithWantedAttribute(wantedAttribute)
-}
-
-// WithEstimatedAgeUnder requests the estimated_age attribute with age verification under the specified age with fallback to date_of_birth
-// The buffer parameter adds extra years to the estimated age check (e.g., age=21, buffer=5 checks for under 26 in estimated_age, falls back to exact under 21 in date_of_birth)
-func (b *PolicyBuilder) WithEstimatedAgeUnder(age int, buffer int, constraints ...constraintInterface) *PolicyBuilder {
-	var derivation string
-	if buffer > 0 {
-		derivation = fmt.Sprintf("age_under:%d:%d", age, buffer)
-	} else {
-		derivation = fmt.Sprintf(consts.AttrAgeUnder, age)
-	}
-
-	builder := (&WantedAttributeBuilder{}).
-		WithName(consts.AttrEstimatedAge).
-		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
-		WithDerivation(derivation)
-
-	for _, constraint := range constraints {
-		builder = builder.WithConstraint(constraint)
-	}
-
-	wantedAttribute, err := builder.Build()
-	if err != nil {
-		b.err = err
-	}
-	return b.WithWantedAttribute(wantedAttribute)
-}
-
-// WithEstimatedAgeOverSimple requests the estimated_age attribute with age verification over the specified age with fallback to date_of_birth (no buffer)
-// This is a convenience method for backward compatibility when no buffer is needed
-func (b *PolicyBuilder) WithEstimatedAgeOverSimple(age int, constraints ...constraintInterface) *PolicyBuilder {
-	return b.WithEstimatedAgeOver(age, 0, constraints...)
-}
-
-// WithEstimatedAgeUnderSimple requests the estimated_age attribute with age verification under the specified age with fallback to date_of_birth (no buffer)
-// This is a convenience method for backward compatibility when no buffer is needed
-func (b *PolicyBuilder) WithEstimatedAgeUnderSimple(age int, constraints ...constraintInterface) *PolicyBuilder {
-	return b.WithEstimatedAgeUnder(age, 0, constraints...)
 }
 
 // Build constructs a dynamic policy object

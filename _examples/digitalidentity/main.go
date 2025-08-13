@@ -75,7 +75,7 @@ func estimatedAgeExamplesPage(w http.ResponseWriter, req *http.Request) {
 }
 
 func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
-	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithEmail().WithPhoneNumber().WithSelfie().WithAgeOver(18).WithNationality().WithGender().WithDocumentDetails().WithDocumentImages().WithWantedRememberMe().Build()
+	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithEmail().WithPhoneNumber().WithSelfie().EstimatedAgeOver(18, 5).WithNationality().WithGender().WithDocumentDetails().WithDocumentImages().WithWantedRememberMe().Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build policy: %v", err)
 	}

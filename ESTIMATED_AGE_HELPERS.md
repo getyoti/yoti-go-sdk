@@ -83,11 +83,88 @@ policy, err := (&dynamic.PolicyBuilder{}).
 ### Age Verification with Buffer
 
 ```go
-// Request age over 18 with 5-year buffer
-// Estimated age checks for 23, falls back to date_of_birth for exact 18
+# Age Estimation Helper Methods
+
+This document describes the age estimation functionality in the Yoti Go SDK.
+
+## EstimatedAgeOver Method
+
+For age estimation in the App, we now expose only one method:
+
+```go
+EstimatedAgeOver(age int, buffer int, options ...interface{})
+```
+
+This method creates a policy with derivation `age_over:<age>:<buffer>` and `date_of_birth` in alternative names.
+
+### Parameters
+
+- `age`: The minimum age to verify (e.g., 18)
+- `buffer`: Additional years to add to the age check for estimated_age (e.g., 5)
+- `options`: Optional constraints like SourceConstraint
+
+### Example Usage
+
+#### Basic Usage (Age 18, Buffer 5)
+
+```go
 policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOver(18, 5).
+    WithFullName().
+    WithEmail().
+    EstimatedAgeOver(18, 5). // Estimated age checks for 23, date_of_birth fallback checks for 18
     Build()
+```
+
+#### With Source Constraints
+
+```go
+constraint, err := (&digitalidentity.SourceConstraintBuilder{}).
+    WithPassport("").
+    Build()
+
+policy, err := (&digitalidentity.PolicyBuilder{}).
+    WithFullName().
+    WithEmail().
+    EstimatedAgeOver(18, 5, &constraint). // Estimated age checks for 23, date_of_birth fallback checks for 18
+    Build()
+```
+
+### How It Works
+
+1. **Estimated Age Check**: First, the system checks if the user's estimated age is over `age + buffer` (e.g., 18 + 5 = 23)
+2. **Fallback to Date of Birth**: If estimated age is not available or fails, it falls back to checking the exact age using date of birth (e.g., exactly 18)
+
+### Dynamic Policy Builder
+
+The same method is available in the dynamic policy builder:
+
+```go
+policy, err := (&dynamic.PolicyBuilder{}).
+    WithFullName().
+    WithEmail().
+    EstimatedAgeOver(18, 5).
+    Build()
+```
+
+### Migration from Old Methods
+
+If you were previously using any of these methods:
+
+- `WithEstimatedAge()`
+- `WithEstimatedAgeOver(age, buffer)`
+- `WithEstimatedAgeUnder(age, buffer)`
+- `WithEstimatedAgeOverSimple(age)`
+- `WithEstimatedAgeUnderSimple(age)`
+
+Please migrate to the new `EstimatedAgeOver(18, 5)` method for consistency and standardization.
+
+### Standard Recommendation
+
+For all examples and implementations, please use:
+- Age: **18**
+- Buffer: **5**
+
+This ensures consistent behavior across all applications using the Yoti SDK.
 
 // Request age under 21 with 5-year buffer
 // Estimated age checks for under 26, falls back to date_of_birth for exact under 21

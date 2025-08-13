@@ -8,60 +8,26 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func ExamplePolicyBuilder_WithEstimatedAge() {
-	policy, err := (&PolicyBuilder{}).WithEstimatedAge().Build()
+func ExamplePolicyBuilder_EstimatedAgeOver() {
+	policy, err := (&PolicyBuilder{}).EstimatedAgeOver(18, 5).Build()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
-	data, err := policy.MarshalJSON()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"estimated_age","alternative_names":["date_of_birth"],"accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
-}
-
-func ExamplePolicyBuilder_WithEstimatedAgeOver() {
-	policy, err := (&PolicyBuilder{}).WithEstimatedAgeOverSimple(18).Build()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	data, err := policy.MarshalJSON()
+	data, err := policy.attributes[0].MarshalJSON()
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return
 	}
 
 	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"estimated_age","alternative_names":["date_of_birth"],"derivation":"age_over:18","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
+	// Output: {"name":"estimated_age","alternative_names":["date_of_birth"],"derivation":"age_over:18:5","accept_self_asserted":false}
 }
 
-func ExamplePolicyBuilder_WithEstimatedAgeUnder() {
-	policy, err := (&PolicyBuilder{}).WithEstimatedAgeUnderSimple(21).Build()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	data, err := policy.MarshalJSON()
-	if err != nil {
-		fmt.Printf("error: %s", err.Error())
-		return
-	}
-
-	fmt.Println(string(data))
-	// Output: {"wanted":[{"name":"estimated_age","alternative_names":["date_of_birth"],"derivation":"age_under:21","accept_self_asserted":false}],"wanted_auth_types":[],"wanted_remember_me":false}
-}
-
-func TestDynamicPolicyBuilder_WithEstimatedAge_SetsCorrectAttributes(t *testing.T) {
+func TestDynamicPolicyBuilderEstimatedAgeSetsCorrectAttributes(t *testing.T) {
 	builder := &PolicyBuilder{}
-	builder.WithEstimatedAge()
+	builder.EstimatedAgeOver(18, 5)
 
 	policy, err := builder.Build()
 	assert.NilError(t, err)
@@ -69,88 +35,30 @@ func TestDynamicPolicyBuilder_WithEstimatedAge_SetsCorrectAttributes(t *testing.
 	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
 	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
 	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
-	assert.Equal(t, policy.attributes[0].derivation, "")
+	assert.Equal(t, policy.attributes[0].derivation, "age_over:18:5")
 	assert.Equal(t, policy.attributes[0].acceptSelfAsserted, false)
 	assert.Equal(t, len(policy.attributes[0].constraints), 0)
 }
 
-func TestDynamicPolicyBuilder_WithEstimatedAgeOver_SetsCorrectAttributes(t *testing.T) {
-	builder := &PolicyBuilder{}
-	builder.WithEstimatedAgeOverSimple(18)
-
-	policy, err := builder.Build()
-	assert.NilError(t, err)
-	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
-	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
-	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
-	assert.Equal(t, policy.attributes[0].derivation, "age_over:18")
-	assert.Equal(t, policy.attributes[0].acceptSelfAsserted, false)
-	assert.Equal(t, len(policy.attributes[0].constraints), 0)
-}
-
-func TestDynamicPolicyBuilder_WithEstimatedAgeUnder_SetsCorrectAttributes(t *testing.T) {
-	builder := &PolicyBuilder{}
-	builder.WithEstimatedAgeUnderSimple(21)
-
-	policy, err := builder.Build()
-	assert.NilError(t, err)
-	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
-	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
-	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
-	assert.Equal(t, policy.attributes[0].derivation, "age_under:21")
-	assert.Equal(t, policy.attributes[0].acceptSelfAsserted, false)
-	assert.Equal(t, len(policy.attributes[0].constraints), 0)
-}
-
-func TestDynamicPolicyBuilder_WithEstimatedAgeOver_WithSourceConstraint(t *testing.T) {
+func TestDynamicPolicyBuilderEstimatedAgeWithSourceConstraint(t *testing.T) {
 	builder := &PolicyBuilder{}
 	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
 	assert.NilError(t, err)
 
-	builder.WithEstimatedAgeOverSimple(18, sourceConstraint)
+	builder.EstimatedAgeOver(18, 5, sourceConstraint)
 
 	policy, err := builder.Build()
 	assert.NilError(t, err)
 	assert.Equal(t, len(policy.attributes), 1)
 	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
-	assert.Equal(t, policy.attributes[0].derivation, "age_over:18")
+	assert.Equal(t, policy.attributes[0].derivation, "age_over:18:5")
 	assert.Equal(t, len(policy.attributes[0].constraints), 1)
 }
 
-func TestDynamicPolicyBuilder_WithEstimatedAge_WithSourceConstraint(t *testing.T) {
-	builder := &PolicyBuilder{}
-	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
-	assert.NilError(t, err)
-
-	builder.WithEstimatedAge(sourceConstraint)
-
-	policy, err := builder.Build()
-	assert.NilError(t, err)
-	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
-	assert.Equal(t, len(policy.attributes[0].constraints), 1)
-}
-
-func TestDynamicPolicyBuilder_WithEstimatedAge_InvalidOptionsShouldPanic(t *testing.T) {
-	builder := &PolicyBuilder{}
-	invalidOption := "invalidOption"
-
-	defer func() {
-		r := recover().(string)
-		assert.Check(t, r != "")
-	}()
-
-	builder.WithEstimatedAge(invalidOption)
-
-	t.Error("Expected Panic")
-}
-
-func TestDynamicPolicyBuilder_CombiningEstimatedAgeWithOtherAttributes(t *testing.T) {
+func TestDynamicPolicyBuilderCombiningEstimatedAgeWithOtherAttributes(t *testing.T) {
 	builder := &PolicyBuilder{}
 	builder.WithFullName().
-		WithEstimatedAgeOverSimple(18).
+		EstimatedAgeOver(18, 5).
 		WithEmail()
 
 	policy, err := builder.Build()
@@ -167,33 +75,7 @@ func TestDynamicPolicyBuilder_CombiningEstimatedAgeWithOtherAttributes(t *testin
 	}
 
 	assert.Equal(t, estimatedAgeAttr.name, consts.AttrEstimatedAge)
-	assert.Equal(t, estimatedAgeAttr.derivation, "age_over:18")
+	assert.Equal(t, estimatedAgeAttr.derivation, "age_over:18:5")
 	assert.Equal(t, len(estimatedAgeAttr.alternativeNames), 1)
 	assert.Equal(t, estimatedAgeAttr.alternativeNames[0], consts.AttrDateOfBirth)
-}
-
-func TestDynamicPolicyBuilderWithEstimatedAgeOverWithBuffer(t *testing.T) {
-	builder := &PolicyBuilder{}
-	builder.WithEstimatedAgeOver(18, 5)
-
-	policy, err := builder.Build()
-	assert.NilError(t, err)
-	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
-	assert.Equal(t, policy.attributes[0].derivation, "age_over:18:5")
-	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
-	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
-}
-
-func TestDynamicPolicyBuilderWithEstimatedAgeUnderWithBuffer(t *testing.T) {
-	builder := &PolicyBuilder{}
-	builder.WithEstimatedAgeUnder(21, 5)
-
-	policy, err := builder.Build()
-	assert.NilError(t, err)
-	assert.Equal(t, len(policy.attributes), 1)
-	assert.Equal(t, policy.attributes[0].name, consts.AttrEstimatedAge)
-	assert.Equal(t, policy.attributes[0].derivation, "age_under:21:5")
-	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
-	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
 }
