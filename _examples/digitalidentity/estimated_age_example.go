@@ -89,3 +89,63 @@ func generateEstimatedAgeOverSession(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, string(output))
 }
+
+// generateEstimatedAgeSession handles requests to create a basic estimated age verification session
+func generateEstimatedAgeSession(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	didClient, err := initialiseDigitalIdentityClient()
+	if err != nil {
+		http.Error(w, `{"error": "Client couldn't be generated"}`, http.StatusInternalServerError)
+		return
+	}
+
+	sessionReq, err := buildEstimatedAgeOverSessionReq()
+	if err != nil {
+		http.Error(w, `{"error": "failed to build session request"}`, http.StatusInternalServerError)
+		return
+	}
+
+	shareSession, err := didClient.CreateShareSession(sessionReq)
+	if err != nil {
+		http.Error(w, `{"error": "failed to create share session"}`, http.StatusInternalServerError)
+		return
+	}
+
+	output, err := json.Marshal(shareSession)
+	if err != nil {
+		http.Error(w, `{"error": "failed to marshall share session"}`, http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, string(output))
+}
+
+// generateEstimatedAgeWithConstraintsSession handles requests to create an age verification session with constraints
+func generateEstimatedAgeWithConstraintsSession(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	didClient, err := initialiseDigitalIdentityClient()
+	if err != nil {
+		http.Error(w, `{"error": "Client couldn't be generated"}`, http.StatusInternalServerError)
+		return
+	}
+
+	sessionReq, err := buildEstimatedAgeWithConstraintsSessionReq()
+	if err != nil {
+		http.Error(w, `{"error": "failed to build session request"}`, http.StatusInternalServerError)
+		return
+	}
+
+	shareSession, err := didClient.CreateShareSession(sessionReq)
+	if err != nil {
+		http.Error(w, `{"error": "failed to create share session"}`, http.StatusInternalServerError)
+		return
+	}
+
+	output, err := json.Marshal(shareSession)
+	if err != nil {
+		http.Error(w, `{"error": "failed to marshall share session"}`, http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, string(output))
+}

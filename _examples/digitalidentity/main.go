@@ -159,11 +159,9 @@ func main() {
 	// Estimated Age Examples
 	http.HandleFunc("/v2/generate-estimated-age-share", generateEstimatedAgeSession)
 	http.HandleFunc("/v2/generate-estimated-age-over-share", generateEstimatedAgeOverSession)
-	http.HandleFunc("/v2/generate-estimated-age-under-share", generateEstimatedAgeUnderSession)
 	http.HandleFunc("/v2/generate-estimated-age-constrained-share", generateEstimatedAgeWithConstraintsSession)
 	http.HandleFunc("/v2/estimated-age-receipt", estimatedAgeReceipt)
 	http.HandleFunc("/v2/age-over-receipt", estimatedAgeReceipt)
-	http.HandleFunc("/v2/age-under-receipt", estimatedAgeReceipt)
 	http.HandleFunc("/v2/constrained-age-receipt", estimatedAgeReceipt)
 
 	rootdir, err := os.Getwd()

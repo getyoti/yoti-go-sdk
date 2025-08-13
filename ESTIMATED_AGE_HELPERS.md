@@ -1,12 +1,16 @@
-# Estimated Age Helper Methods for Digital ID
+# Age Estimation Helper Methods
 
-This document describes the helper methods for requesting the `estimated_age` attribute with automatic fallback to the `date_of_birth` attribute from Digital ID app shares.
+This document describes the age estimation functionality in the Yoti Go SDK.
 
-## Overview
+## EstimatedAgeOver Method
 
-The helper methods allow Relying Parties to request estimated age information from users while providing automatic fallback to date of birth when estimated age is not available. This enhances the user experience by requesting the most specific age information available while providing age verification capabilities.
+For age estimation in the App, we expose only one method:
 
-Age verification supports buffer functionality where the estimated age check uses a higher threshold (age + buffer) while the date of birth fallback uses the exact age.
+```go
+EstimatedAgeOver(age int, buffer int, options ...interface{})
+```
+
+This method creates a policy with derivation `age_over:<age>:<buffer>` and `date_of_birth` in alternative names.
 
 ## Age Derivation Format
 
@@ -20,23 +24,15 @@ For example, `age_over:18:5` means:
 
 ## Features
 
-### 1. Policy Builder Helper Methods
+### 1. Policy Builder Methods
 
 #### Digital Identity Policy Builder (`digitalidentity` package)
 
-- `WithEstimatedAge(options ...interface{})` - Requests estimated_age with date_of_birth fallback
-- `WithEstimatedAgeOver(age int, buffer int, options ...interface{})` - Age over verification with buffer support and fallback
-- `WithEstimatedAgeUnder(age int, buffer int, options ...interface{})` - Age under verification with buffer support and fallback
-- `WithEstimatedAgeOverSimple(age int, options ...interface{})` - Age over verification with no buffer (backward compatibility)
-- `WithEstimatedAgeUnderSimple(age int, options ...interface{})` - Age under verification with no buffer (backward compatibility)
+- `EstimatedAgeOver(age int, buffer int, options ...interface{})` - Age over verification with buffer support and fallback
 
 #### Dynamic Policy Builder (`dynamic` package)
 
-- `WithEstimatedAge(options ...interface{})` - Requests estimated_age with date_of_birth fallback
-- `WithEstimatedAgeOver(age int, buffer int, options ...interface{})` - Age over verification with buffer support and fallback
-- `WithEstimatedAgeUnder(age int, buffer int, options ...interface{})` - Age under verification with buffer support and fallback
-- `WithEstimatedAgeOverSimple(age int, options ...interface{})` - Age over verification with no buffer (backward compatibility)
-- `WithEstimatedAgeUnderSimple(age int, options ...interface{})` - Age under verification with no buffer (backward compatibility)
+- `EstimatedAgeOver(age int, buffer int, options ...interface{})` - Age over verification with buffer support and fallback
 
 ### 2. User Profile Helper Methods
 
@@ -52,124 +48,21 @@ For example, `age_over:18:5` means:
 
 ## Usage Examples
 
-### Basic Estimated Age Request
+### Basic Usage (Age 18, Buffer 5)
 
 ```go
 // Digital Identity
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAge().
-    Build()
-
-// Dynamic
-policy, err := (&dynamic.PolicyBuilder{}).
-    WithEstimatedAge().
-    Build()
-```
-
-### Age Verification with Fallback
-
-```go
-// Request age over 18 verification with no buffer (backward compatibility)
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOverSimple(18).
-    Build()
-
-// Request age under 21 verification with no buffer (backward compatibility)
-policy, err := (&dynamic.PolicyBuilder{}).
-    WithEstimatedAgeUnderSimple(21).
-    Build()
-```
-
-### Age Verification with Buffer
-
-```go
-# Age Estimation Helper Methods
-
-This document describes the age estimation functionality in the Yoti Go SDK.
-
-## EstimatedAgeOver Method
-
-For age estimation in the App, we now expose only one method:
-
-```go
-EstimatedAgeOver(age int, buffer int, options ...interface{})
-```
-
-This method creates a policy with derivation `age_over:<age>:<buffer>` and `date_of_birth` in alternative names.
-
-### Parameters
-
-- `age`: The minimum age to verify (e.g., 18)
-- `buffer`: Additional years to add to the age check for estimated_age (e.g., 5)
-- `options`: Optional constraints like SourceConstraint
-
-### Example Usage
-
-#### Basic Usage (Age 18, Buffer 5)
-
-```go
 policy, err := (&digitalidentity.PolicyBuilder{}).
     WithFullName().
     WithEmail().
     EstimatedAgeOver(18, 5). // Estimated age checks for 23, date_of_birth fallback checks for 18
     Build()
-```
 
-#### With Source Constraints
-
-```go
-constraint, err := (&digitalidentity.SourceConstraintBuilder{}).
-    WithPassport("").
-    Build()
-
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithFullName().
-    WithEmail().
-    EstimatedAgeOver(18, 5, &constraint). // Estimated age checks for 23, date_of_birth fallback checks for 18
-    Build()
-```
-
-### How It Works
-
-1. **Estimated Age Check**: First, the system checks if the user's estimated age is over `age + buffer` (e.g., 18 + 5 = 23)
-2. **Fallback to Date of Birth**: If estimated age is not available or fails, it falls back to checking the exact age using date of birth (e.g., exactly 18)
-
-### Dynamic Policy Builder
-
-The same method is available in the dynamic policy builder:
-
-```go
+// Dynamic
 policy, err := (&dynamic.PolicyBuilder{}).
     WithFullName().
     WithEmail().
     EstimatedAgeOver(18, 5).
-    Build()
-```
-
-### Migration from Old Methods
-
-If you were previously using any of these methods:
-
-- `WithEstimatedAge()`
-- `WithEstimatedAgeOver(age, buffer)`
-- `WithEstimatedAgeUnder(age, buffer)`
-- `WithEstimatedAgeOverSimple(age)`
-- `WithEstimatedAgeUnderSimple(age)`
-
-Please migrate to the new `EstimatedAgeOver(18, 5)` method for consistency and standardization.
-
-### Standard Recommendation
-
-For all examples and implementations, please use:
-- Age: **18**
-- Buffer: **5**
-
-This ensures consistent behavior across all applications using the Yoti SDK.
-
-// Request age under 21 with 5-year buffer
-// Estimated age checks for under 26, falls back to date_of_birth for exact under 21
-policy, err := (&dynamic.PolicyBuilder{}).
-    WithEstimatedAgeUnder(21, 5).
     Build()
 ```
 
@@ -180,14 +73,10 @@ constraint, err := (&digitalidentity.SourceConstraintBuilder{}).
     WithPassport("").
     Build()
 
-// With buffer and constraints
 policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOver(18, 5, constraint).
-    Build()
-
-// Without buffer but with constraints (backward compatibility)
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOverSimple(18, constraint).
+    WithFullName().
+    WithEmail().
+    EstimatedAgeOver(18, 5, &constraint). // Estimated age checks for 23, date_of_birth fallback checks for 18
     Build()
 ```
 
@@ -221,7 +110,7 @@ if result != nil {
 // 1. Create policy requesting estimated age with fallback
 policy, err := (&digitalidentity.PolicyBuilder{}).
     WithFullName().
-    WithEstimatedAgeOver(18).
+    EstimatedAgeOver(18, 5).
     WithEmail().
     Build()
 
@@ -254,23 +143,7 @@ if result != nil {
 
 ## Generated JSON Policy
 
-When using the helper methods, the SDK generates JSON policies with the following structure:
-
-### Basic Estimated Age Request
-
-```json
-{
-  "wanted": [
-    {
-      "name": "estimated_age",
-      "alternative_names": ["date_of_birth"],
-      "accept_self_asserted": false
-    }
-  ],
-  "wanted_auth_types": [],
-  "wanted_remember_me": false
-}
-```
+When using the EstimatedAgeOver method, the SDK generates JSON policies with the following structure:
 
 ### Age Verification with Fallback
 
@@ -280,7 +153,7 @@ When using the helper methods, the SDK generates JSON policies with the followin
     {
       "name": "estimated_age",
       "alternative_names": ["date_of_birth"],
-      "derivation": "age_over:18",
+      "derivation": "age_over:18:5",
       "accept_self_asserted": false
     }
   ],
@@ -297,7 +170,7 @@ When using the helper methods, the SDK generates JSON policies with the followin
     {
       "name": "estimated_age",
       "alternative_names": ["date_of_birth"],
-      "derivation": "age_over:18",
+      "derivation": "age_over:18:5",
       "constraints": [
         {
           "type": "SOURCE",
@@ -352,10 +225,9 @@ The fallback logic is implemented in the user profile methods:
 
 ## Age Derivation Rules
 
-When using age verification methods (`WithEstimatedAgeOver`, `WithEstimatedAgeUnder`), the SDK applies the standard age derivation rules:
+When using the EstimatedAgeOver method, the SDK applies the age derivation rule:
 
-- `age_over:18` - Verifies the user is 18 years old or older
-- `age_under:21` - Verifies the user is under 21 years old
+- `age_over:18:5` - Verifies the user is over 23 in estimated_age, or exactly over 18 in date_of_birth
 
 The derivation is applied to whichever attribute is available (estimated_age or date_of_birth).
 
@@ -363,20 +235,19 @@ The derivation is applied to whichever attribute is available (estimated_age or 
 
 ### Policy Building Errors
 
-All helper methods follow the existing error handling patterns and will propagate errors through the policy builder's error mechanism.
+The EstimatedAgeOver method follows the existing error handling patterns and will propagate errors through the policy builder's error mechanism.
 
 ### Profile Retrieval Errors
 
 The `EstimatedAgeWithFallback()` method handles date parsing errors gracefully - if date_of_birth is present but cannot be parsed, it returns `nil`.
 
-## Backward Compatibility
+## Standard Recommendation
 
-This implementation is fully backward compatible:
+For all examples and implementations, please use:
+- Age: **18**
+- Buffer: **5**
 
-- Existing code continues to work unchanged
-- New methods are additive and don't modify existing behavior
-- JSON structure includes new fields only when using the new helper methods
-- The `alternative_names` field uses `omitempty` to avoid affecting existing requests
+This ensures consistent behavior across all applications using the Yoti SDK.
 
 ## Testing
 
@@ -397,48 +268,6 @@ Comprehensive test coverage includes:
 - Demonstrate real-world usage patterns
 - Show expected JSON output
 - Validate API behavior
-
-## Migration Guide
-
-### From Existing Age Verification
-
-If you're currently using:
-
-```go
-// Old approach
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithDateOfBirth().
-    Build()
-```
-
-You can enhance it with:
-
-```go
-// New approach with fallback
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAge().
-    Build()
-```
-
-### From Age Derivation
-
-If you're currently using:
-
-```go
-// Old approach
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithAgeOver(18).
-    Build()
-```
-
-You can enhance it with:
-
-```go
-// New approach with estimated age preference
-policy, err := (&digitalidentity.PolicyBuilder{}).
-    WithEstimatedAgeOver(18).
-    Build()
-```
 
 ## Best Practices
 
