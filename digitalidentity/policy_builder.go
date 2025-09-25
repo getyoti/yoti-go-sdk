@@ -240,7 +240,7 @@ func (b *PolicyBuilder) EstimatedAgeOver(age int, buffer int, options ...interfa
 
 	wantedAttribute, err := builder.Build()
 	if err != nil {
-		b.err = err
+		b.err = yotierror.MultiError{This: err, Next: b.err}
 	}
 	return b.WithWantedAttribute(wantedAttribute)
 }
