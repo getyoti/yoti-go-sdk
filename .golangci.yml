@@ -1,0 +1,13 @@
+linters-settings:
+  staticcheck:
+    checks: ["all", "-SA1019"]
+
+linters:
+  enable:
+    - staticcheck
+
+issues:
+  exclude-rules:
+    - linters:
+        - staticcheck
+      text: "SA1019"
