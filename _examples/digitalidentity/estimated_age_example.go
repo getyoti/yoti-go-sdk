@@ -14,7 +14,7 @@ func buildEstimatedAgeOverSessionReq() (sessionSpec *digitalidentity.ShareSessio
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		EstimatedAgeOver(18, 5). // Estimated age checks for 23, date_of_birth fallback checks for 18
+		WithEstimatedAgeOver(18, 5). // Estimated age checks for 23, date_of_birth fallback checks for 18
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build age over policy: %v", err)
@@ -44,7 +44,7 @@ func buildEstimatedAgeWithConstraintsSessionReq() (sessionSpec *digitalidentity.
 	policy, err := (&digitalidentity.PolicyBuilder{}).
 		WithFullName().
 		WithEmail().
-		EstimatedAgeOver(18, 5, &constraint). // Estimated age checks for 23, date_of_birth fallback checks for 18
+		WithEstimatedAgeOver(18, 5, &constraint). // Estimated age checks for 23, date_of_birth fallback checks for 18
 		Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build constrained age policy: %v", err)
