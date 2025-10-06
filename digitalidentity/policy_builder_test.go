@@ -416,6 +416,36 @@ func TestDigitalIdentityBuilder_WithAgeDerivedAttribute_InvalidOptionsShouldPani
 
 }
 
+func TestDigitalIdentityBuilder_WithEstimatedAgeOver_WithSourceConstraint(t *testing.T) {
+	builder := &PolicyBuilder{}
+	sourceConstraint, err := (&SourceConstraintBuilder{}).Build()
+	assert.NilError(t, err)
+
+	builder.WithEstimatedAgeOver(18, 5, sourceConstraint)
+
+	policy, err := builder.Build()
+	assert.NilError(t, err)
+	assert.Equal(t, len(policy.attributes), 1)
+	assert.Equal(t, policy.attributes[0].derivation, "age_over:18:5")
+	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
+	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
+	assert.Equal(t, len(policy.attributes[0].constraints), 1)
+}
+
+func TestDigitalIdentityBuilder_WithEstimatedAgeOver_WithoutConstraint(t *testing.T) {
+	builder := &PolicyBuilder{}
+
+	builder.WithEstimatedAgeOver(21, 3)
+
+	policy, err := builder.Build()
+	assert.NilError(t, err)
+	assert.Equal(t, len(policy.attributes), 1)
+	assert.Equal(t, policy.attributes[0].derivation, "age_over:21:3")
+	assert.Equal(t, len(policy.attributes[0].alternativeNames), 1)
+	assert.Equal(t, policy.attributes[0].alternativeNames[0], consts.AttrDateOfBirth)
+	assert.Equal(t, len(policy.attributes[0].constraints), 0)
+}
+
 func TestDigitalIdentityBuilder_WithIdentityProfileRequirements_ShouldFailForInvalidJSON(t *testing.T) {
 	identityProfile := []byte(`{
 		"trust_framework": UK_TFIDA",
