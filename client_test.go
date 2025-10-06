@@ -2,6 +2,7 @@ package yoti
 
 import (
 	"crypto/rsa"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -40,7 +41,7 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 	_, err = NewClient("", key)
 
 	assert.ErrorContains(t, err, "invalid key: not PEM-encoded")
-
+	fmt.Println("")
 	tempError, temporary := err.(interface {
 		Temporary() bool
 	})
