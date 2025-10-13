@@ -702,3 +702,42 @@ func createDocumentImagesAttribute(attributeID string) *yotiprotoattr.Attribute 
 	}
 	return protoAttribute
 }
+
+func TestUserProfile_EstimatedAgeWithFallback_ReturnsEstimatedAge_WhenPresent(t *testing.T) {
+	estimatedAgeValue := "18-25"
+	dateOfBirthValue := "1990-01-01"
+
+	profile := createProfileWithMultipleAttributes(
+		createStringAttribute(consts.AttrEstimatedAge, []byte(estimatedAgeValue), []*yotiprotoattr.Anchor{}, "estimated-age-id"),
+		createStringAttribute(consts.AttrDateOfBirth, []byte(dateOfBirthValue), []*yotiprotoattr.Anchor{}, "dob-id"),
+	)
+
+	result, isEstimatedAge := profile.EstimatedAgeWithFallback()
+
+	assert.Assert(t, result != nil, "Expected result to not be nil")
+	assert.Assert(t, isEstimatedAge, "Expected isEstimatedAge to be true")
+}
+
+func TestUserProfile_EstimatedAgeWithFallback_ReturnsDateOfBirth_WhenEstimatedAgeNotPresent(t *testing.T) {
+	dateOfBirthValue := "1990-01-01"
+
+	profile := createProfileWithMultipleAttributes(
+		createStringAttribute(consts.AttrDateOfBirth, []byte(dateOfBirthValue), []*yotiprotoattr.Anchor{}, "dob-id"),
+	)
+
+	result, isEstimatedAge := profile.EstimatedAgeWithFallback()
+
+	assert.Assert(t, result != nil, "Expected result to not be nil")
+	assert.Assert(t, !isEstimatedAge, "Expected isEstimatedAge to be false")
+}
+
+func TestUserProfile_EstimatedAgeWithFallback_ReturnsNil_WhenNeitherPresent(t *testing.T) {
+	profile := createProfileWithMultipleAttributes(
+		createStringAttribute("full_name", []byte("John Doe"), []*yotiprotoattr.Anchor{}, "name-id"),
+	)
+
+	result, isEstimatedAge := profile.EstimatedAgeWithFallback()
+
+	assert.Assert(t, result == nil, "Expected result to be nil")
+	assert.Assert(t, !isEstimatedAge, "Expected isEstimatedAge to be false")
+}
