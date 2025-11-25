@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="yoti-html" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Estimated Age Receipt - Yoti Digital Identity</title>
+    <link rel="stylesheet" type="text/css" href="/static/index.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet"/>
+    <style>
+        .receipt-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .estimated-age-section {
+            background-color: #e8f4fd;
+            border: 2px solid #00A9E0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .estimated-age-section h3 {
+            color: #00A9E0;
+            margin-top: 0;
+        }
+        .attribute-display {
+            background-color: #f8f9fa;
+            border-left: 4px solid #00A9E0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .attribute-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .attribute-value {
+            color: #666;
+            font-family: monospace;
+            background-color: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .fallback-indicator {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .success-indicator {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .receipt-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .profile-section {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .attribute-list {
+            list-style: none;
+            padding: 0;
+        }
+        .attribute-list-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+        .json-display {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="yoti-body">
+    <div class="receipt-container">
+        <h1>🔗 Estimated Age Receipt</h1>
+
+        <div class="estimated-age-section">
+            <h3>📊 Estimated Age Feature Demonstration</h3>
+            <p>This receipt demonstrates the estimated age feature with automatic fallback to date of birth. The system has successfully:</p>
+            <ul>
+                <li>✅ Requested the <code>estimated_age</code> attribute with <code>date_of_birth</code> as fallback</li>
+                <li>✅ Processed the user's response</li>
+                <li>✅ Applied the appropriate fallback logic</li>
+            </ul>
+        </div>
+
+        <div class="receipt-info">
+            <h2>📋 Receipt Details</h2>
+            <p><strong>Remember Me ID:</strong> {{if .rememberMeID}}{{.rememberMeID}}{{else}}Not available{{end}}</p>
+        </div>
+
+        <div class="estimated-age-section">
+            <h3>🎯 Age Information Result</h3>
+
+            {{if .hasEstimatedAge}}
+                <div class="success-indicator">
+                    <h4>✅ Estimated Age Attribute Found</h4>
+                    <div class="attribute-display">
+                        <div class="attribute-name">estimated_age</div>
+                        <div class="attribute-value">{{.estimatedAge}}</div>
+                    </div>
+                    <p><em>The user shared their estimated age directly - no fallback needed!</em></p>
+                </div>
+            {{else if .hasDateOfBirth}}
+                <div class="fallback-indicator">
+                    <h4>⚠️ Fallback to Date of Birth</h4>
+                    <div class="attribute-display">
+                        <div class="attribute-name">date_of_birth (used as fallback)</div>
+                        <div class="attribute-value">{{.dateOfBirth}}</div>
+                    </div>
+                    <p><em>The estimated_age attribute was not available, so the system used date_of_birth as a fallback.</em></p>
+                </div>
+            {{else}}
+                <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 10px; margin: 10px 0;">
+                    <h4>❌ No Age Information Available</h4>
+                    <p><em>Neither estimated_age nor date_of_birth attributes were shared by the user.</em></p>
+                </div>
+            {{end}}
+        </div>
+
+        {{if .ageVerifications}}
+        <div class="estimated-age-section">
+            <h3>🔍 Age Verification Results</h3>
+            <p><em>Here are the age verification results from your Digital ID app:</em></p>
+            <div style="margin-top: 15px;">
+                {{range $index, $detail := .ageVerificationDetails}}
+                <div class="attribute-display" style="margin-bottom: 20px; padding: 15px; border: 1px solid #dee2e6; border-radius: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div class="attribute-name" style="font-size: 1.1em; font-weight: bold;">
+                            {{$detail.Verification.CheckType}}:{{$detail.Verification.Age}}
+                        </div>
+                        <div class="attribute-value">
+                            {{if $detail.Verification.Result}}
+                                <span style="color: #28a745; font-weight: bold; font-size: 1.2em;">✅ YES</span>
+                            {{else}}
+                                <span style="color: #dc3545; font-weight: bold; font-size: 1.2em;">❌ NO</span>
+                            {{end}}
+                        </div>
+                    </div>
+
+                    {{if $detail.SourceAnchors}}
+                    <div style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 3px;">
+                        <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 5px;">
+                            <strong>Source Type:</strong>
+                            <span style="color: {{if $detail.UsedEstimatedAge}}#17a2b8{{else if $detail.UsedFallback}}#fd7e14{{else}}#6c757d{{end}}; font-weight: bold;">
+                                {{$detail.SourceType}}
+                            </span>
+                            {{if $detail.UsedEstimatedAge}}
+                                <span style="color: #17a2b8;">⚡ (Direct from estimated_age)</span>
+                            {{else if $detail.UsedFallback}}
+                                <span style="color: #fd7e14;">🔄 (Fallback from date_of_birth)</span>
+                            {{end}}
+                        </div>
+                        <div style="font-size: 0.85em; color: #6c757d;">
+                            <strong>Source Anchors:</strong>
+                            {{range $detail.SourceAnchors}}
+                                <span style="display: inline-block; margin: 2px 5px 2px 0; padding: 2px 8px; background-color: #e9ecef; border-radius: 3px;">{{.}}</span>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+
+        {{if .selfieBase64URL}}
+        <div class="profile-section">
+            <h3>📷 Selfie</h3>
+            <img src="data:image/jpeg;base64,{{.selfieBase64URL}}" alt="User Selfie" style="max-width: 200px; border-radius: 8px;"/>
+        </div>
+        {{end}}
+
+        <div class="profile-section">
+            <h3>👤 Complete User Profile</h3>
+            <div class="attribute-list">
+                {{if .profile.FullName}}
+                    <div class="attribute-list-item">
+                        <strong>Full Name:</strong> {{.profile.FullName.Value}}
+                    </div>
+                {{end}}
+                {{if .profile.GivenNames}}
+                    <div class="attribute-list-item">
+                        <strong>Given Names:</strong> {{.profile.GivenNames.Value}}
+                    </div>
+                {{end}}
+                {{if .profile.FamilyName}}
+                    <div class="attribute-list-item">
+                        <strong>Family Name:</strong> {{.profile.FamilyName.Value}}
+                    </div>
+                {{end}}
+                {{if .profile.MobileNumber}}
+                    <div class="attribute-list-item">
+                        <strong>Mobile Number:</strong> {{.profile.MobileNumber.Value}}
+                    </div>
+                {{end}}
+                {{if .profile.EmailAddress}}
+                    <div class="attribute-list-item">
+                        <strong>Email Address:</strong> {{.profile.EmailAddress.Value}}
+                    </div>
+                {{end}}
+                {{if .profile.Nationality}}
+                    <div class="attribute-list-item">
+                        <strong>Nationality:</strong> {{.profile.Nationality.Value}}
+                    </div>
+                {{end}}
+                {{if .profile.Address}}
+                    <div class="attribute-list-item">
+                        <strong>Address:</strong> {{.profile.Address.Value}}
+                    </div>
+                {{end}}
+                {{if .dateOfBirth}}
+                    <div class="attribute-list-item">
+                        <strong>Date of Birth:</strong> {{.dateOfBirth}}
+                    </div>
+                {{end}}
+                {{if not (or .profile.FullName .profile.GivenNames .profile.FamilyName .profile.MobileNumber .profile.EmailAddress .profile.Nationality .profile.Address .dateOfBirth)}}
+                    <p><em>No user profile attributes were shared.</em></p>
+                {{end}}
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h3>� Full Receipt JSON (for debugging)</h3>
+            <p><em>Complete receipt data including all attributes and metadata:</em></p>
+            <details>
+                <summary style="cursor: pointer; font-weight: bold; margin-bottom: 10px;">Click to expand full JSON receipt</summary>
+                <div class="json-display">{{jsonMarshalIndent .fullReceipt}}</div>
+            </details>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/estimated-age-examples" style="background-color: #00A9E0; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+                ← Back to Estimated Age Examples
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -47,8 +47,35 @@ func home(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 }
+
+func estimatedAgeExamplesPage(w http.ResponseWriter, req *http.Request) {
+	templateVars := map[string]interface{}{
+		"yotiClientSdkID": os.Getenv("YOTI_CLIENT_SDK_ID"),
+	}
+
+	t, err := template.ParseFiles("estimated_age_examples.html")
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error parsing the template: %v", err),
+		)))
+		return
+	}
+
+	err = t.Execute(w, templateVars)
+	if err != nil {
+		errorPage(w, req.WithContext(context.WithValue(
+			req.Context(),
+			contextKey("yotiError"),
+			fmt.Sprintf("Error applying the parsed template: %v", err),
+		)))
+		return
+	}
+}
+
 func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSessionRequest, err error) {
-	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithEmail().WithPhoneNumber().WithSelfie().WithAgeOver(18).WithNationality().WithGender().WithDocumentDetails().WithDocumentImages().WithWantedRememberMe().Build()
+	policy, err := (&digitalidentity.PolicyBuilder{}).WithFullName().WithEmail().WithPhoneNumber().WithSelfie().WithEstimatedAgeOver(18, 5).WithNationality().WithGender().WithDocumentDetails().WithDocumentImages().WithWantedRememberMe().Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build policy: %v", err)
 	}
@@ -57,7 +84,7 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 		"subject_id": "unique-user-id-for-examples"
 	}`)
 
-	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithRedirectUri("https://www.yoti.com").WithSubject(subject).Build()
+	sessionReq, err := (&digitalidentity.ShareSessionRequestBuilder{}).WithPolicy(policy).WithRedirectUri("https:/www.yoti.com").WithSubject(subject).Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build create session request: %v", err)
 	}
@@ -67,7 +94,7 @@ func buildDigitalIdentitySessionReq() (sessionSpec *digitalidentity.ShareSession
 func generateSession(w http.ResponseWriter, r *http.Request) {
 	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
-		fmt.Fprintf(w, "Client couldn't be generated: %v", err)
+		fmt.Fprintf(w, "Client could't be generated: %v", err)
 		return
 	}
 
@@ -91,28 +118,6 @@ func generateSession(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(output))
 
-}
-
-func getReceipt(w http.ResponseWriter, r *http.Request) {
-	didClient, err := initialiseDigitalIdentityClient()
-	if err != nil {
-		fmt.Fprintf(w, "Client could't be generated")
-		return
-	}
-	receiptID := r.URL.Query().Get("ReceiptID")
-
-	receiptValue, err := didClient.GetShareReceipt(receiptID)
-	if err != nil {
-		fmt.Fprintf(w, "failed to get share receipt: %v", err)
-		return
-	}
-	output, err := json.Marshal(receiptValue)
-	if err != nil {
-		fmt.Fprintf(w, "failed to marshal receipt: %v", err)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, string(output))
 }
 
 func initialiseDigitalIdentityClient() (*yoti.DigitalIdentityClient, error) {
@@ -146,9 +151,18 @@ func main() {
 	}
 
 	http.HandleFunc("/", home)
+	http.HandleFunc("/estimated-age-examples", estimatedAgeExamplesPage)
 	http.HandleFunc("/v2/generate-share", generateSession)
 	http.HandleFunc("/v2/generate-advanced-identity-share", generateAdvancedIdentitySession)
-	http.HandleFunc("/v2/receipt-info", getReceipt)
+	http.HandleFunc("/v2/receipt-info", receipt)
+
+	// Estimated Age Examples
+	http.HandleFunc("/v2/generate-estimated-age-share", generateEstimatedAgeSession)
+	http.HandleFunc("/v2/generate-estimated-age-over-share", generateEstimatedAgeOverSession)
+	http.HandleFunc("/v2/generate-estimated-age-constrained-share", generateEstimatedAgeWithConstraintsSession)
+	http.HandleFunc("/v2/estimated-age-receipt", estimatedAgeReceipt)
+	http.HandleFunc("/v2/age-over-receipt", estimatedAgeReceipt)
+	http.HandleFunc("/v2/constrained-age-receipt", estimatedAgeReceipt)
 
 	rootdir, err := os.Getwd()
 	if err != nil {

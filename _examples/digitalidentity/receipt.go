@@ -16,7 +16,7 @@ import (
 func receipt(w http.ResponseWriter, r *http.Request) {
 	didClient, err := initialiseDigitalIdentityClient()
 	if err != nil {
-		fmt.Fprintf(w, "Client couldn't be generated")
+		fmt.Fprintf(w, "Client could't be generated")
 		return
 	}
 	receiptID := r.URL.Query().Get("ReceiptID")
@@ -53,14 +53,9 @@ func receipt(w http.ResponseWriter, r *http.Request) {
 	userProfile := receiptValue.UserContent.UserProfile
 
 	selfie := userProfile.Selfie()
-
 	var base64URL string
 	if selfie != nil {
 		base64URL = selfie.Value().Base64URL()
-
-		decodedImage := decodeImage(selfie.Value().Data())
-		file := createImage()
-		saveImage(decodedImage, file)
 	}
 
 	dob, err := userProfile.DateOfBirth()

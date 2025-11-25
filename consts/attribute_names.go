@@ -9,6 +9,7 @@ const (
 	AttrMobileNumber            = "phone_number"
 	AttrEmailAddress            = "email_address"
 	AttrDateOfBirth             = "date_of_birth"
+	AttrEstimatedAge            = "estimated_age"
 	AttrAddress                 = "postal_address"
 	AttrStructuredPostalAddress = "structured_postal_address"
 	AttrGender                  = "gender"

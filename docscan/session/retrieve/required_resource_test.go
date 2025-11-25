@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestResource_Methods(t *testing.T) {
+func TestResource_StringMethods(t *testing.T) {
 	resources := []RequiredResourceResponse{
 		&RequiredIdDocumentResourceResponse{
 			BaseRequiredResource{

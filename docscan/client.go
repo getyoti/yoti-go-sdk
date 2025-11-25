@@ -12,10 +12,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
-
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create"
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/create/facecapture"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/session/retrieve"
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/supported"
 	"github.com/getyoti/yoti-go-sdk/v3/media"

@@ -177,6 +177,44 @@ func (b *PolicyBuilder) WithAgeUnder(age int, options ...interface{}) *PolicyBui
 	return b.WithAgeDerivedAttribute(fmt.Sprintf(consts.AttrAgeUnder, age), options...)
 }
 
+// WithEstimatedAgeOver creates a policy with derivation age_over:<age>:<buffer> and date_of_birth in alternative names
+// This is the single recommended method for age estimation in the App.
+// age: The minimum age to verify (e.g., 18)
+// buffer: Additional years to add to the age check for estimated_age (e.g., 5)
+// options: Optional constraints like SourceConstraint
+func (b *PolicyBuilder) WithEstimatedAgeOver(age int, buffer int, options ...interface{}) *PolicyBuilder {
+	derivation := fmt.Sprintf("age_over:%d:%d", age, buffer)
+
+	attributeBuilder := (&WantedAttributeBuilder{}).
+		WithName(consts.AttrEstimatedAge).
+		WithAlternativeNames([]string{consts.AttrDateOfBirth}).
+		WithDerivation(derivation)
+
+	for _, option := range options {
+		switch value := option.(type) {
+		case SourceConstraint:
+			attributeBuilder.WithConstraint(&value)
+		case constraintInterface:
+			attributeBuilder.WithConstraint(value)
+		default:
+			panic(fmt.Sprintf("not a valid option type, %v", value))
+		}
+	}
+
+	attribute, err := attributeBuilder.Build()
+	if err != nil {
+		b.err = yotierror.MultiError{This: err, Next: b.err}
+	}
+	return b.WithWantedAttribute(attribute)
+}
+
+// EstimatedAgeOver is deprecated. Use WithEstimatedAgeOver instead.
+//
+// Deprecated: Use WithEstimatedAgeOver for consistency with other builder methods.
+func (b *PolicyBuilder) EstimatedAgeOver(age int, buffer int, options ...interface{}) *PolicyBuilder {
+	return b.WithEstimatedAgeOver(age, buffer, options...)
+}
+
 // WithWantedRememberMe sets the Policy as requiring a "Remember Me ID"
 func (b *PolicyBuilder) WithWantedRememberMe() *PolicyBuilder {
 	b.isWantedRememberMe = true
