@@ -40,13 +40,13 @@ type RequiredShareCodeBuilder struct {
 }
 
 // WithIssuer sets the issuer on the required share code
-func (r RequiredShareCodeBuilder) WithIssuer(issuer string) RequiredShareCodeBuilder {
+func (r *RequiredShareCodeBuilder) WithIssuer(issuer string) *RequiredShareCodeBuilder {
 	r.issuer = issuer
 	return r
 }
 
 // WithScheme sets the scheme on the required share code
-func (r RequiredShareCodeBuilder) WithScheme(scheme string) RequiredShareCodeBuilder {
+func (r *RequiredShareCodeBuilder) WithScheme(scheme string) *RequiredShareCodeBuilder {
 	r.scheme = scheme
 	return r
 }
