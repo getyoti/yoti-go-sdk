@@ -10,6 +10,7 @@ import (
 type ResourceContainer struct {
 	IDDocuments             []*IDDocumentResourceResponse            `json:"id_documents"`
 	SupplementaryDocuments  []*SupplementaryDocumentResourceResponse `json:"supplementary_documents"`
+	ShareCodes              []*ShareCodeResourceResponse             `json:"share_codes"`
 	LivenessCapture         []*LivenessResourceResponse
 	RawLivenessCapture      []json.RawMessage `json:"liveness_capture"`
 	zoomLivenessResources   []*ZoomLivenessResourceResponse
