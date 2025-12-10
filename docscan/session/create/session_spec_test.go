@@ -383,3 +383,32 @@ func ExampleSessionSpecificationBuilder_Build_withEphemeralMedia() {
 	fmt.Println(string(data))
 	// Output: {"ephemeral_media":true}
 }
+
+func ExampleSessionSpecificationBuilder_WithRequiredShareCode() {
+	requiredShareCode, err := filter.NewRequiredShareCodeBuilder().
+		WithIssuer("test-issuer").
+		WithScheme("test-scheme").
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithRequiredShareCode(requiredShareCode).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"required_share_codes":[{"type":"SHARE_CODE","issuer":"test-issuer","scheme":"test-scheme"}]}
+}
