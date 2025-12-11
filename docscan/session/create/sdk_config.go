@@ -19,6 +19,7 @@ type SDKConfig struct {
 	PrimaryColourDarkMode string                 `json:"primary_colour_dark_mode,omitempty"`
 	BiometricConsentFlow  string                 `json:"biometric_consent_flow,omitempty"`
 	BrandId               string                 `json:"brand_id,omitempty"`
+	SuppressedScreens     []string               `json:"suppressed_screens,omitempty"`
 }
 
 type AttemptsConfiguration struct {
@@ -47,6 +48,7 @@ type SdkConfigBuilder struct {
 	primaryColourDarkMode                string
 	biometricConsentFlow                 string
 	brandId                              string
+	suppressedScreens                    []string
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -177,24 +179,30 @@ func (b *SdkConfigBuilder) WithBrandId(brandId string) *SdkConfigBuilder {
 	return b
 }
 
+// WithSuppressedScreens sets the list of screens to suppress in the IDV flow
+func (b *SdkConfigBuilder) WithSuppressedScreens(screens []string) *SdkConfigBuilder {
+	b.suppressedScreens = screens
+	return b
+}
+
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 	sdkConf := &SDKConfig{
-		b.allowedCaptureMethods,
-		b.primaryColour,
-		b.secondaryColour,
-		b.fontColour,
-		b.locale,
-		b.presetIssuingCountry,
-		b.successUrl,
-		b.errorUrl,
-		b.privacyPolicyUrl,
-		nil,
-		b.allowHandOff,
-		b.darkMode,
-		b.primaryColourDarkMode,
-		b.biometricConsentFlow,
-		b.brandId,
+		AllowedCaptureMethods: b.allowedCaptureMethods,
+		PrimaryColour:         b.primaryColour,
+		SecondaryColour:       b.secondaryColour,
+		FontColour:            b.fontColour,
+		Locale:                b.locale,
+		PresetIssuingCountry:  b.presetIssuingCountry,
+		SuccessUrl:            b.successUrl,
+		ErrorUrl:              b.errorUrl,
+		PrivacyPolicyUrl:      b.privacyPolicyUrl,
+		AllowHandOff:          b.allowHandOff,
+		DarkMode:              b.darkMode,
+		PrimaryColourDarkMode: b.primaryColourDarkMode,
+		BiometricConsentFlow:  b.biometricConsentFlow,
+		BrandId:               b.brandId,
+		SuppressedScreens:     b.suppressedScreens,
 	}
 
 	if b.idDocumentTextDataExtractionAttempts != nil {
