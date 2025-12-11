@@ -257,3 +257,23 @@ func ExampleSdkConfigBuilder_WithPrimaryColourDarkMode() {
 	fmt.Println(string(data))
 	// Output: {"primary_colour_dark_mode":"SOME_COLOUR"}
 }
+
+func ExampleSdkConfigBuilder_WithSuppressedScreens() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreens([]string{"document_selection", "confirmation"}).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["document_selection","confirmation"]}
+}
