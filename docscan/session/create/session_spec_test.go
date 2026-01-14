@@ -383,3 +383,89 @@ func ExampleSessionSpecificationBuilder_Build_withEphemeralMedia() {
 	fmt.Println(string(data))
 	// Output: {"ephemeral_media":true}
 }
+
+func TestSessionSpecificationBuilder_WithRequiredShareCode(t *testing.T) {
+	shareCode, err := filter.NewRequiredShareCodeBuilder().
+		WithIssuer("test-issuer").
+		WithScheme("test-scheme").
+		Build()
+
+	if err != nil {
+		t.Fatalf("error building share code: %s", err.Error())
+	}
+
+	spec, err := NewSessionSpecificationBuilder().
+		WithRequiredShareCode(*shareCode).
+		Build()
+
+	if err != nil {
+		t.Fatalf("error building session spec: %s", err.Error())
+	}
+
+	if len(spec.RequiredShareCodes) != 1 {
+		t.Errorf("expected 1 required share code, got %d", len(spec.RequiredShareCodes))
+	}
+
+	if spec.RequiredShareCodes[0].Issuer != "test-issuer" {
+		t.Errorf("expected issuer 'test-issuer', got '%s'", spec.RequiredShareCodes[0].Issuer)
+	}
+
+	if spec.RequiredShareCodes[0].Scheme != "test-scheme" {
+		t.Errorf("expected scheme 'test-scheme', got '%s'", spec.RequiredShareCodes[0].Scheme)
+	}
+}
+
+func TestSessionSpecificationBuilder_WithMultipleRequiredShareCodes(t *testing.T) {
+	shareCode1, _ := filter.NewRequiredShareCodeBuilder().
+		WithIssuer("issuer-1").
+		WithScheme("scheme-1").
+		Build()
+
+	shareCode2, _ := filter.NewRequiredShareCodeBuilder().
+		WithIssuer("issuer-2").
+		WithScheme("scheme-2").
+		Build()
+
+	spec, err := NewSessionSpecificationBuilder().
+		WithRequiredShareCode(*shareCode1).
+		WithRequiredShareCode(*shareCode2).
+		Build()
+
+	if err != nil {
+		t.Fatalf("error building session spec: %s", err.Error())
+	}
+
+	if len(spec.RequiredShareCodes) != 2 {
+		t.Errorf("expected 2 required share codes, got %d", len(spec.RequiredShareCodes))
+	}
+}
+
+func ExampleSessionSpecificationBuilder_Build_withRequiredShareCode() {
+	shareCode, err := filter.NewRequiredShareCodeBuilder().
+		WithIssuer("yoti").
+		WithScheme("DBS").
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	sessionSpecification, err := NewSessionSpecificationBuilder().
+		WithRequiredShareCode(*shareCode).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sessionSpecification)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"required_share_codes":[{"issuer":"yoti","scheme":"DBS"}]}
+}
