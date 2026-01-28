@@ -36,6 +36,23 @@ func TestShareCodeResourceResponse_ShouldUnmarshalCorrectly(t *testing.T) {
 	assert.Equal(t, "DONE", response.VerifyShareCodeTasks()[0].State)
 }
 
+func TestShareCodeResourceResponse_ShouldUnmarshalWithObjectSource(t *testing.T) {
+	jsonData := `{
+		"id": "share-code-obj",
+		"source": {"type": "END_USER"},
+		"created_at": "2026-01-14T10:00:00Z",
+		"last_updated": "2026-01-14T11:00:00Z",
+		"tasks": []
+	}`
+
+	var response ShareCodeResourceResponse
+	err := json.Unmarshal([]byte(jsonData), &response)
+
+	assert.NilError(t, err)
+	assert.Equal(t, "share-code-obj", response.ID)
+	assert.Equal(t, "END_USER", response.Source)
+}
+
 func TestShareCodeResourceResponse_WithMultipleTasks(t *testing.T) {
 	jsonData := `{
 		"id": "share-code-456",

@@ -61,8 +61,8 @@ func TestRequiredShareCode_Type(t *testing.T) {
 
 func ExampleNewRequiredShareCodeBuilder() {
 	shareCode, err := NewRequiredShareCodeBuilder().
-		WithIssuer("yoti").
-		WithScheme("DBS").
+		WithIssuer("UK_GOV").
+		WithScheme("RTW").
 		Build()
 
 	if err != nil {
@@ -75,8 +75,8 @@ func ExampleNewRequiredShareCodeBuilder() {
 
 func ExampleRequiredShareCodeBuilder_Build() {
 	shareCode, err := NewRequiredShareCodeBuilder().
-		WithIssuer("yoti").
-		WithScheme("DBS").
+		WithIssuer("UK_GOV").
+		WithScheme("RTW").
 		Build()
 
 	if err != nil {

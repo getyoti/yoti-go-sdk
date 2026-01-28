@@ -1,0 +1,16 @@
+# golangci-lint configuration
+#
+# This repository uses golangci-lint v2+ via pre-commit. v2 removed the
+# legacy CLI exclude flags (e.g. -e/--exclude), so we configure exclusions
+# here instead.
+
+version: "2"
+
+linters:
+  settings:
+    staticcheck:
+      # Enable all staticcheck checks except SA1019 (deprecated symbols), which
+      # is intentionally allowed in this SDK for backward compatibility.
+      checks:
+        - all
+        - -SA1019

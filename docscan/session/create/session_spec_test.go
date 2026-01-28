@@ -442,8 +442,8 @@ func TestSessionSpecificationBuilder_WithMultipleRequiredShareCodes(t *testing.T
 
 func ExampleSessionSpecificationBuilder_Build_withRequiredShareCode() {
 	shareCode, err := filter.NewRequiredShareCodeBuilder().
-		WithIssuer("yoti").
-		WithScheme("DBS").
+		WithIssuer("UK_GOV").
+		WithScheme("RTW").
 		Build()
 
 	if err != nil {
@@ -467,5 +467,5 @@ func ExampleSessionSpecificationBuilder_Build_withRequiredShareCode() {
 	}
 
 	fmt.Println(string(data))
-	// Output: {"required_share_codes":[{"issuer":"yoti","scheme":"DBS"}]}
+	// Output: {"required_share_codes":[{"issuer":"UK_GOV","scheme":"RTW"}]}
 }
