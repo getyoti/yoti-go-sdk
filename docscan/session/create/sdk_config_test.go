@@ -158,6 +158,45 @@ func ExampleSdkConfigBuilder_WithAllowHandOff() {
 	// Output: {"allow_handoff":true}
 }
 
+func ExampleSdkConfigBuilder_WithAllowHandOff_false() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithAllowHandOff(false).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"allow_handoff":false}
+}
+
+func ExampleSdkConfigBuilder_allowHandOff_omittedWhenNotSet() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
+}
+
 func ExampleSdkConfigBuilder_WithDarkMode() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithDarkMode("ON").
