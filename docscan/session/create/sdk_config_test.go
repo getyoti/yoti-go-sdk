@@ -178,7 +178,7 @@ func ExampleSdkConfigBuilder_WithAllowHandOff_false() {
 	// Output: {"allow_handoff":false}
 }
 
-func ExampleSdkConfigBuilder_AllowHandOff_omittedWhenNotSet() {
+func ExampleSdkConfigBuilder_Build_allowHandOff_omittedWhenNotSet() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		Build()
 
