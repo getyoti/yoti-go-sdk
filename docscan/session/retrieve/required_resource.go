@@ -12,6 +12,7 @@ type BaseRequiredResource struct {
 	ID           string `json:"id"`
 	State        string `json:"state"`
 	LivenessType string `json:"liveness_type,omitempty"`
+	CaptureType  string `json:"capture_type,omitempty"`
 }
 
 func (b *BaseRequiredResource) GetType() string {

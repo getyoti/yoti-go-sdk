@@ -34,6 +34,11 @@ func TestStaticLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 3, len(result.LivenessCapture))
 	assert.Equal(t, "STATIC", result.LivenessCapture[0].LivenessType)
+	
+	// Verify capture_type is correctly parsed for static liveness resources
+	assert.Equal(t, 3, len(result.StaticLivenessResources()))
+	assert.Equal(t, "SELFIE", result.StaticLivenessResources()[0].CaptureType)
+	assert.Equal(t, "ID_DOCUMENT", result.StaticLivenessResources()[1].CaptureType)
 }
 
 func TestLivenessResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
