@@ -14,7 +14,8 @@
                 "last_updated": "2023-01-04T13:42:34Z"
             }
         },
-        "liveness_type": "STATIC"
+        "liveness_type": "STATIC",
+        "capture_type": "SELFIE"
     },
     {
         "id": "1fb5120f-7e50-4c48-8753-8311f4a96ed4",
@@ -30,7 +31,8 @@
                 "last_updated": "2023-01-04T13:42:25Z"
             }
         },
-        "liveness_type": "STATIC"
+        "liveness_type": "STATIC",
+        "capture_type": "ID_DOCUMENT"
     },
     {
         "id": "ea28dd83-c273-4d59-a91f-fd2d0df06640",

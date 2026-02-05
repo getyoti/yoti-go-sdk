@@ -14,7 +14,7 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 			{"type": "ID_DOCUMENT", "id": "id1", "state": "pending"},
 			{"type": "SUPPLEMENTARY_DOCUMENT", "id": "id2", "state": "pending"},
 			{"type": "LIVENESS", "id": "id3", "state": "pending", "liveness_type": "ZOOM"},
-			{"type": "LIVENESS", "id": "id4", "state": "pending", "liveness_type": "STATIC"},
+			{"type": "LIVENESS", "id": "id4", "state": "pending", "liveness_type": "STATIC", "capture_type": "SELFIE"},
 			{"type": "FACE_CAPTURE", "id": "id5", "state": "pending"},
 			{"type": "UNKNOWN_TYPE", "id": "id6", "state": "pending"}
 		]
@@ -35,8 +35,9 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 	_, ok = c.RequiredResources[2].(*RequiredZoomLivenessResourceResponse)
 	assert.Assert(t, ok)
 
-	_, ok = c.RequiredResources[3].(*RequiredStaticLivenessResourceResponse)
+	staticLiveness, ok := c.RequiredResources[3].(*RequiredStaticLivenessResourceResponse)
 	assert.Assert(t, ok)
+	assert.Equal(t, "SELFIE", staticLiveness.CaptureType)
 
 	_, ok = c.RequiredResources[4].(*RequiredFaceCaptureResourceResponse)
 	assert.Assert(t, ok)
