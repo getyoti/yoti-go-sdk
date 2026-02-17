@@ -6,16 +6,24 @@ import (
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
+// ShareCodeMediaResponse wraps a MediaResponse inside a share code resource field.
+// The API returns media objects nested under a "media" key, e.g.
+//
+//	{"id_photo": {"media": {"id": "...", "type": "IMAGE", ...}}}
+type ShareCodeMediaResponse struct {
+	Media *MediaResponse `json:"media"`
+}
+
 // ShareCodeResourceResponse represents a share code resource for a given session
 type ShareCodeResourceResponse struct {
 	*ResourceResponse
-	Source               string         `json:"source"`
-	CreatedAt            string         `json:"created_at"`
-	LastUpdated          string         `json:"last_updated"`
-	LookupProfile        *MediaResponse `json:"lookup_profile,omitempty"`
-	ReturnedProfile      *MediaResponse `json:"returned_profile,omitempty"`
-	IDPhoto              *MediaResponse `json:"id_photo,omitempty"`
-	File                 *MediaResponse `json:"file,omitempty"`
+	Source               string                  `json:"source"`
+	CreatedAt            string                  `json:"created_at"`
+	LastUpdated          string                  `json:"last_updated"`
+	LookupProfile        *ShareCodeMediaResponse `json:"lookup_profile,omitempty"`
+	ReturnedProfile      *ShareCodeMediaResponse `json:"returned_profile,omitempty"`
+	IDPhoto              *ShareCodeMediaResponse `json:"id_photo,omitempty"`
+	File                 *ShareCodeMediaResponse `json:"file,omitempty"`
 	verifyShareCodeTasks []*VerifyShareCodeTaskResponse
 }
 
@@ -30,15 +38,15 @@ func (s *ShareCodeResourceResponse) UnmarshalJSON(data []byte) error {
 		Type string `json:"type"`
 	}
 	type wire struct {
-		ID              string          `json:"id"`
-		Source          json.RawMessage `json:"source"`
-		CreatedAt       string          `json:"created_at"`
-		LastUpdated     string          `json:"last_updated"`
-		LookupProfile   *MediaResponse  `json:"lookup_profile,omitempty"`
-		ReturnedProfile *MediaResponse  `json:"returned_profile,omitempty"`
-		IDPhoto         *MediaResponse  `json:"id_photo,omitempty"`
-		File            *MediaResponse  `json:"file,omitempty"`
-		Tasks           []*TaskResponse `json:"tasks"`
+		ID              string                  `json:"id"`
+		Source          json.RawMessage         `json:"source"`
+		CreatedAt       string                  `json:"created_at"`
+		LastUpdated     string                  `json:"last_updated"`
+		LookupProfile   *ShareCodeMediaResponse `json:"lookup_profile,omitempty"`
+		ReturnedProfile *ShareCodeMediaResponse `json:"returned_profile,omitempty"`
+		IDPhoto         *ShareCodeMediaResponse `json:"id_photo,omitempty"`
+		File            *ShareCodeMediaResponse `json:"file,omitempty"`
+		Tasks           []*TaskResponse         `json:"tasks"`
 	}
 
 	var w wire
