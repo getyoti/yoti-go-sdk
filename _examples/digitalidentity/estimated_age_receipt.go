@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
+
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute"
+	"github.com/getyoti/yoti-go-sdk/v3/profile/attribute/anchor"
 )
 
 func estimatedAgeReceipt(w http.ResponseWriter, r *http.Request) {
@@ -101,18 +105,22 @@ func estimatedAgeReceipt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Analyze which source was used for each age verification
+	ageVerificationDetails := analyzeAgeVerificationSources(ageVerifications)
+
 	templateVars := map[string]interface{}{
-		"profile":          userProfile,
-		"selfieBase64URL":  template.URL(base64URL),
-		"rememberMeID":     receiptValue.RememberMeID,
-		"dateOfBirth":      dateOfBirthString,
-		"estimatedAge":     estimatedAgeString,
-		"usedEstimatedAge": usedEstimatedAge,
-		"usedFallback":     usedFallback,
-		"hasEstimatedAge":  estimatedAge != nil,
-		"hasDateOfBirth":   dob != nil,
-		"ageVerifications": ageVerifications,
-		"fullReceipt":      receiptValue, // Add full receipt for JSON display
+		"profile":                userProfile,
+		"selfieBase64URL":        template.URL(base64URL),
+		"rememberMeID":           receiptValue.RememberMeID,
+		"dateOfBirth":            dateOfBirthString,
+		"estimatedAge":           estimatedAgeString,
+		"usedEstimatedAge":       usedEstimatedAge,
+		"usedFallback":           usedFallback,
+		"hasEstimatedAge":        estimatedAge != nil,
+		"hasDateOfBirth":         dob != nil,
+		"ageVerifications":       ageVerifications,
+		"ageVerificationDetails": ageVerificationDetails,
+		"fullReceipt":            receiptValue, // Add full receipt for JSON display
 		"profileAttributes": map[string]interface{}{
 			"fullName":     userProfile.FullName(),
 			"givenNames":   userProfile.GivenNames(),
@@ -173,4 +181,59 @@ func estimatedAgeReceipt(w http.ResponseWriter, r *http.Request) {
 		)))
 		return
 	}
+}
+
+// AgeVerificationDetail contains information about an age verification and its source
+type AgeVerificationDetail struct {
+	Verification     attribute.AgeVerification
+	SourceType       string   // "ESTIMATED_AGE", "DATE_OF_BIRTH", or "UNKNOWN"
+	SourceAnchors    []string // List of source anchor values
+	UsedEstimatedAge bool     // True if derived from estimated_age
+	UsedFallback     bool     // True if derived from date_of_birth fallback
+}
+
+// analyzeAgeVerificationSources examines the anchors of age verifications to determine
+// which source (estimated_age or date_of_birth) was actually used for each check
+func analyzeAgeVerificationSources(verifications []attribute.AgeVerification) []AgeVerificationDetail {
+	details := make([]AgeVerificationDetail, 0, len(verifications))
+
+	for _, verification := range verifications {
+		detail := AgeVerificationDetail{
+			Verification:  verification,
+			SourceType:    "UNKNOWN",
+			SourceAnchors: []string{},
+		}
+
+		// Parse anchors from the protobuf attribute
+		if verification.Attribute != nil && len(verification.Attribute.Anchors) > 0 {
+			anchors := anchor.ParseAnchors(verification.Attribute.Anchors)
+
+			// Get SOURCE anchors only
+			sources := anchor.GetSources(anchors)
+
+			for _, src := range sources {
+				sourceValue := src.Value()
+				detail.SourceAnchors = append(detail.SourceAnchors, sourceValue)
+
+				// Check if the source indicates estimated_age or date_of_birth
+				upperValue := strings.ToUpper(sourceValue)
+				if strings.Contains(upperValue, "ESTIMATED") || strings.Contains(upperValue, "AGE_ESTIMATE") {
+					detail.SourceType = "ESTIMATED_AGE"
+					detail.UsedEstimatedAge = true
+				} else if strings.Contains(upperValue, "DATE_OF_BIRTH") || strings.Contains(upperValue, "DOB") {
+					detail.SourceType = "DATE_OF_BIRTH"
+					detail.UsedFallback = true
+				}
+			}
+		}
+
+		// If we couldn't determine from anchors, mark as unknown
+		if len(detail.SourceAnchors) == 0 {
+			detail.SourceAnchors = []string{"No source anchors found"}
+		}
+
+		details = append(details, detail)
+	}
+
+	return details
 }
