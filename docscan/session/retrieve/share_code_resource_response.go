@@ -1,6 +1,7 @@
 package retrieve
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
@@ -49,6 +50,10 @@ func (s *ShareCodeResourceResponse) UnmarshalJSON(data []byte) error {
 		Tasks           []*TaskResponse         `json:"tasks"`
 	}
 
+	// Reset derived fields to avoid leaking values if unmarshaled more than once.
+	s.verifyShareCodeTasks = nil
+	s.Source = ""
+
 	var w wire
 	if err := json.Unmarshal(data, &w); err != nil {
 		return err
@@ -63,21 +68,22 @@ func (s *ShareCodeResourceResponse) UnmarshalJSON(data []byte) error {
 	s.File = w.File
 
 	// API may return source as either a string (legacy) or an object like {"type":"END_USER"}.
-	if len(w.Source) != 0 && string(w.Source) != "null" {
+	trimmed := bytes.TrimSpace(w.Source)
+	if len(trimmed) != 0 && !bytes.Equal(trimmed, []byte("null")) {
 		var sourceString string
-		if err := json.Unmarshal(w.Source, &sourceString); err == nil {
+		if err := json.Unmarshal(trimmed, &sourceString); err == nil {
 			s.Source = sourceString
 		} else {
 			var sourceObj sourceObject
-			if err := json.Unmarshal(w.Source, &sourceObj); err == nil {
+			if err := json.Unmarshal(trimmed, &sourceObj); err == nil {
 				if sourceObj.Type != "" {
 					s.Source = sourceObj.Type
 				} else {
-					s.Source = string(w.Source)
+					s.Source = string(trimmed)
 				}
 			} else {
 				// Be lenient to avoid breaking when API adds new shapes.
-				s.Source = string(w.Source)
+				s.Source = string(trimmed)
 			}
 		}
 	}

@@ -50,7 +50,13 @@ func (c SDKConfig) MarshalJSON() ([]byte, error) {
 
 	var allowHandOff *bool
 	if c.allowHandOffSet {
+		// Explicitly set via SDK builder: always include, even when false.
 		value := c.AllowHandOff
+		allowHandOff = &value
+	} else if c.AllowHandOff {
+		// Struct constructed directly without using builder:
+		// preserve original omitempty behaviour (only include when true).
+		value := true
 		allowHandOff = &value
 	}
 
@@ -236,22 +242,21 @@ func (b *SdkConfigBuilder) WithBrandId(brandId string) *SdkConfigBuilder {
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 	sdkConf := &SDKConfig{
-		b.allowedCaptureMethods,
-		b.primaryColour,
-		b.secondaryColour,
-		b.fontColour,
-		b.locale,
-		b.presetIssuingCountry,
-		b.successUrl,
-		b.errorUrl,
-		b.privacyPolicyUrl,
-		nil,
-		b.allowHandOff,
-		b.darkMode,
-		b.primaryColourDarkMode,
-		b.biometricConsentFlow,
-		b.brandId,
-		b.allowHandOffSet,
+		AllowedCaptureMethods: b.allowedCaptureMethods,
+		PrimaryColour:         b.primaryColour,
+		SecondaryColour:       b.secondaryColour,
+		FontColour:            b.fontColour,
+		Locale:                b.locale,
+		PresetIssuingCountry:  b.presetIssuingCountry,
+		SuccessUrl:            b.successUrl,
+		ErrorUrl:              b.errorUrl,
+		PrivacyPolicyUrl:      b.privacyPolicyUrl,
+		AllowHandOff:          b.allowHandOff,
+		DarkMode:              b.darkMode,
+		PrimaryColourDarkMode: b.primaryColourDarkMode,
+		BiometricConsentFlow:  b.biometricConsentFlow,
+		BrandId:               b.brandId,
+		allowHandOffSet:       b.allowHandOffSet,
 	}
 
 	if b.idDocumentTextDataExtractionAttempts != nil {
