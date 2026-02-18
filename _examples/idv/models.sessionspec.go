@@ -160,15 +160,6 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		return nil, err
 	}
 
-	// Example: Add required share code
-	shareCode, err := filter.NewRequiredShareCodeBuilder().
-		WithIssuer("UK_GOV").
-		WithScheme("RTW").
-		Build()
-	if err != nil {
-		return nil, err
-	}
-
 	sessionSpec, err = create.NewSessionSpecificationBuilder().
 		WithClientSessionTokenTTL(600).
 		WithResourcesTTL(87000).
@@ -187,7 +178,6 @@ func buildSessionSpec() (sessionSpec *create.SessionSpecification, err error) {
 		//WithRequiredDocument(passportDoc).
 		WithRequiredDocument(idDoc).
 		WithRequiredDocument(supplementaryDoc).
-		WithRequiredShareCode(*shareCode).
 		Build()
 
 	if err != nil {
