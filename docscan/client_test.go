@@ -617,7 +617,7 @@ func TestClient_UsesEnvVariable(t *testing.T) {
 
 	assert.Equal(t, "envBaseUrl", client.apiURL)
 
-	os.Unsetenv("YOTI_DOC_SCAN_API_URL")
+	_ = os.Unsetenv("YOTI_DOC_SCAN_API_URL")
 }
 
 func TestClient_UsesOverrideApiUrlOverEnvVariable(t *testing.T) {
@@ -633,7 +633,7 @@ func TestClient_UsesOverrideApiUrlOverEnvVariable(t *testing.T) {
 
 	assert.Equal(t, "overrideApiURL", client.apiURL)
 
-	os.Unsetenv("YOTI_DOC_SCAN_API_URL")
+	_ = os.Unsetenv("YOTI_DOC_SCAN_API_URL")
 }
 
 type mockJSONMarshaler struct {

@@ -35,6 +35,8 @@ repos:
       - id: go-cyclo
         exclude: _examples
         args: [ "-over", "15", "-ignore", ".pb.go" ]
+      - id: golangci-lint
+        args: ["--new-from-rev=HEAD"]
       - id: go-unit-tests
         args: ["-race", "./..."]
         stages: [ push ] # only run tests on push, not on commit
