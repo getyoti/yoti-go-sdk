@@ -91,17 +91,20 @@
           {
             "sub_check": "doc_number_validation",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "document_in_date",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "fraud_list_check",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "EXPERT_REVIEW"
           }
         ]
       },
