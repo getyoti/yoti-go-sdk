@@ -41,7 +41,8 @@
               "created": "2022-01-14T14:54:30Z",
               "last_updated": "2022-01-14T14:54:30Z"
             },
-            "frames": [{}, {}]
+            "frames": [{}, {}],
+            "extraction_image_ids": ["b1c2d3e4-0000-0000-0000-000000000001", "b1c2d3e4-0000-0000-0000-000000000002"]
           },
           {
             "capture_method": "UPLOAD",
@@ -51,7 +52,8 @@
               "created": "2022-01-14T14:54:31Z",
               "last_updated": "2022-01-14T14:54:31Z"
             },
-            "frames": [{}, {}]
+            "frames": [{}, {}],
+            "extraction_image_ids": []
           }
         ],
         "document_fields": {
