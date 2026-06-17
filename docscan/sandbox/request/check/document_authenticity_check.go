@@ -38,6 +38,13 @@ func (b *DocumentAuthenticityCheckBuilder) WithDocumentFilter(filter *filter.Doc
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check report configuration will be used
+// by the sandbox before moving to the next configured response.
+func (b *DocumentAuthenticityCheckBuilder) WithHandledCheckLimit(handledCheckLimit int) *DocumentAuthenticityCheckBuilder {
+	b.withHandledCheckLimit(handledCheckLimit)
+	return b
+}
+
 // Build creates a new DocumentAuthenticityCheck
 func (b *DocumentAuthenticityCheckBuilder) Build() (*DocumentAuthenticityCheck, error) {
 	return &DocumentAuthenticityCheck{

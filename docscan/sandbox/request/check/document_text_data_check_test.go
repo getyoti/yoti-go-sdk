@@ -96,3 +96,22 @@ func ExampleDocumentTextDataCheckBuilder_minimal() {
 	fmt.Println(string(data))
 	// Output: {"result":{"report":{}}}
 }
+
+func ExampleDocumentTextDataCheckBuilder_WithHandledCheckLimit() {
+	check, err := NewDocumentTextDataCheckBuilder().
+		WithHandledCheckLimit(3).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(check)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"result":{"report":{}},"handled_check_limit":3}
+}

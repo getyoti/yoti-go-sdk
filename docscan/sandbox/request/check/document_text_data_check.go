@@ -61,6 +61,13 @@ func (b *DocumentTextDataCheckBuilder) WithDocumentFields(documentFields map[str
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check report configuration will be used
+// by the sandbox before moving to the next configured response.
+func (b *DocumentTextDataCheckBuilder) WithHandledCheckLimit(handledCheckLimit int) *DocumentTextDataCheckBuilder {
+	b.withHandledCheckLimit(handledCheckLimit)
+	return b
+}
+
 // Build creates a new DocumentTextDataCheck
 func (b *DocumentTextDataCheckBuilder) Build() (*DocumentTextDataCheck, error) {
 	docCheck := b.documentCheckBuilder.build()

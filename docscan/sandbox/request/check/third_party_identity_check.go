@@ -35,3 +35,10 @@ func (b *ThirdPartyIdentityCheckBuilder) WithRecommendation(recommendation *repo
 	b.checkBuilder.withRecommendation(recommendation)
 	return b
 }
+
+// WithHandledCheckLimit sets the number of times this check report configuration will be used
+// by the sandbox before moving to the next configured response.
+func (b *ThirdPartyIdentityCheckBuilder) WithHandledCheckLimit(handledCheckLimit int) *ThirdPartyIdentityCheckBuilder {
+	b.withHandledCheckLimit(handledCheckLimit)
+	return b
+}

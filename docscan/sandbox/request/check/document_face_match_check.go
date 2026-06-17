@@ -38,6 +38,13 @@ func (b *DocumentFaceMatchCheckBuilder) WithDocumentFilter(filter *filter.Docume
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check report configuration will be used
+// by the sandbox before moving to the next configured response.
+func (b *DocumentFaceMatchCheckBuilder) WithHandledCheckLimit(handledCheckLimit int) *DocumentFaceMatchCheckBuilder {
+	b.withHandledCheckLimit(handledCheckLimit)
+	return b
+}
+
 // Build creates a new DocumentFaceMatchCheck
 func (b *DocumentFaceMatchCheckBuilder) Build() (*DocumentFaceMatchCheck, error) {
 	return &DocumentFaceMatchCheck{

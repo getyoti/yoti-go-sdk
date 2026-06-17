@@ -71,3 +71,22 @@ func ExampleIDDocumentComparisonCheckBuilder_minimal() {
 	fmt.Println(string(data))
 	// Output: {"result":{"report":{}}}
 }
+
+func ExampleIDDocumentComparisonCheckBuilder_WithHandledCheckLimit() {
+	idDocumentComparisonCheck, err := NewIDDocumentComparisonCheckBuilder().
+		WithHandledCheckLimit(3).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(idDocumentComparisonCheck)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"result":{"report":{}},"handled_check_limit":3}
+}

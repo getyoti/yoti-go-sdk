@@ -40,6 +40,13 @@ func (b *IDDocumentComparisonCheckBuilder) WithSecondaryDocumentFilter(filter *f
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check report configuration will be used
+// by the sandbox before moving to the next configured response.
+func (b *IDDocumentComparisonCheckBuilder) WithHandledCheckLimit(handledCheckLimit int) *IDDocumentComparisonCheckBuilder {
+	b.withHandledCheckLimit(handledCheckLimit)
+	return b
+}
+
 // Build creates a new IDDocumentComparisonCheck
 func (b *IDDocumentComparisonCheckBuilder) Build() (*IDDocumentComparisonCheck, error) {
 	return &IDDocumentComparisonCheck{
