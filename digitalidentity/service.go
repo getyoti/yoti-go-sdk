@@ -20,12 +20,12 @@ const identitySessionQrCodeCreation = "/v2/sessions/%s/qr-codes"
 const identitySessionQrCodeRetrieval = "/v2/qr-codes/%s"
 const identitySessionReceiptRetrieval = "/v2/receipts/%s"
 const identitySessionReceiptKeyRetrieval = "/v2/wrapped-item-keys/%s"
-const errorFailedToGetSignedRequest = "failed to get signed request: %v"
+const errorFailedToBuildRequest = "failed to build request: %v"
 const errorFailedToExecuteRequest = "failed to execute request: %v"
 const errorFailedToReadBody = "failed to read response body: %v"
 
 // CreateShareSession creates session using the supplied session specification
-func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
+func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *ShareSessionRequest, apiURL string, strategy requests.AuthStrategy) (*ShareSession, error) {
 	endpoint := identitySessionCreationEndpoint
 
 	payload, err := shareSessionRequest.MarshalJSON()
@@ -33,17 +33,9 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 		return nil, err
 	}
 
-	request, err := requests.SignedRequest{
-		Key:        key,
-		HTTPMethod: http.MethodPost,
-		BaseURL:    apiUrl,
-		Endpoint:   endpoint,
-		Headers:    requests.AuthHeader(clientSdkId),
-		Body:       payload,
-		Params:     map[string]string{"sdkID": clientSdkId},
-	}.Request()
+	request, err := requests.BuildAuthRequest(strategy, http.MethodPost, apiURL, endpoint, requests.JSONHeaders(), payload)
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return nil, fmt.Errorf(errorFailedToBuildRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -63,19 +55,12 @@ func CreateShareSession(httpClient requests.HttpClient, shareSessionRequest *Sha
 }
 
 // GetShareSession get session info using the supplied sessionID parameter
-func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*ShareSession, error) {
+func GetShareSession(httpClient requests.HttpClient, sessionID string, apiURL string, strategy requests.AuthStrategy) (*ShareSession, error) {
 	endpoint := fmt.Sprintf(identitySessionRetrieval, sessionID)
 
-	request, err := requests.SignedRequest{
-		Key:        key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    apiUrl,
-		Endpoint:   endpoint,
-		Headers:    requests.AuthHeader(clientSdkId),
-		Params:     map[string]string{"sdkID": clientSdkId},
-	}.Request()
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, apiURL, endpoint, requests.JSONHeaders(), nil)
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return nil, fmt.Errorf(errorFailedToBuildRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -94,20 +79,12 @@ func GetShareSession(httpClient requests.HttpClient, sessionID string, clientSdk
 }
 
 // CreateShareQrCode generates a sharing qr code using the supplied sessionID parameter
-func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (*QrCode, error) {
+func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, apiURL string, strategy requests.AuthStrategy) (*QrCode, error) {
 	endpoint := fmt.Sprintf(identitySessionQrCodeCreation, sessionID)
 
-	request, err := requests.SignedRequest{
-		Key:        key,
-		HTTPMethod: http.MethodPost,
-		BaseURL:    apiUrl,
-		Endpoint:   endpoint,
-		Headers:    requests.AuthHeader(clientSdkId),
-		Body:       nil,
-		Params:     map[string]string{"sdkID": clientSdkId},
-	}.Request()
+	request, err := requests.BuildAuthRequest(strategy, http.MethodPost, apiURL, endpoint, requests.JSONHeaders(), nil)
 	if err != nil {
-		return nil, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return nil, fmt.Errorf(errorFailedToBuildRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -126,18 +103,12 @@ func CreateShareQrCode(httpClient requests.HttpClient, sessionID string, clientS
 }
 
 // GetShareSessionQrCode is used to fetch the qr code by  id.
-func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (fetchedQrCode ShareSessionQrCode, err error) {
-	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, qrCodeId)
-	headers := requests.AuthHeader(clientSdkId)
-	request, err := requests.SignedRequest{
-		Key:        key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    apiUrl,
-		Endpoint:   endpoint,
-		Headers:    headers,
-	}.Request()
+func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeID string, apiURL string, strategy requests.AuthStrategy) (fetchedQrCode ShareSessionQrCode, err error) {
+	endpoint := fmt.Sprintf(identitySessionQrCodeRetrieval, qrCodeID)
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, apiURL, endpoint, requests.JSONHeaders(), nil)
 	if err != nil {
-		return fetchedQrCode, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return fetchedQrCode, fmt.Errorf(errorFailedToBuildRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -156,21 +127,14 @@ func GetShareSessionQrCode(httpClient requests.HttpClient, qrCodeId string, clie
 	return fetchedQrCode, err
 }
 
-// GetReceipt fetches receipt info using a receipt id.
-func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt ReceiptResponse, err error) {
-	receiptUrl := requests.Base64ToBase64URL(receiptId)
-	endpoint := fmt.Sprintf(identitySessionReceiptRetrieval, receiptUrl)
+// getReceipt fetches receipt info using a receipt id.
+func getReceipt(httpClient requests.HttpClient, receiptID string, apiURL string, strategy requests.AuthStrategy) (receipt ReceiptResponse, err error) {
+	receiptURL := requests.Base64ToBase64URL(receiptID)
+	endpoint := fmt.Sprintf(identitySessionReceiptRetrieval, receiptURL)
 
-	headers := requests.AuthHeader(clientSdkId)
-	request, err := requests.SignedRequest{
-		Key:        key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    apiUrl,
-		Endpoint:   endpoint,
-		Headers:    headers,
-	}.Request()
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, apiURL, endpoint, requests.JSONHeaders(), nil)
 	if err != nil {
-		return receipt, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return receipt, fmt.Errorf(errorFailedToBuildRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -189,19 +153,13 @@ func getReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, a
 	return receipt, err
 }
 
-// GetReceiptItemKey retrieves the receipt item key for a receipt item key id.
-func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receiptItemKey ReceiptItemKeyResponse, err error) {
-	endpoint := fmt.Sprintf(identitySessionReceiptKeyRetrieval, receiptItemKeyId)
-	headers := requests.AuthHeader(clientSdkId)
-	request, err := requests.SignedRequest{
-		Key:        key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    apiUrl,
-		Endpoint:   endpoint,
-		Headers:    headers,
-	}.Request()
+// getReceiptItemKey retrieves the receipt item key for a receipt item key id.
+func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyID string, apiURL string, strategy requests.AuthStrategy) (receiptItemKey ReceiptItemKeyResponse, err error) {
+	endpoint := fmt.Sprintf(identitySessionReceiptKeyRetrieval, receiptItemKeyID)
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, apiURL, endpoint, requests.JSONHeaders(), nil)
 	if err != nil {
-		return receiptItemKey, fmt.Errorf(errorFailedToGetSignedRequest, err)
+		return receiptItemKey, fmt.Errorf(errorFailedToBuildRequest, err)
 	}
 
 	response, err := requests.Execute(httpClient, request)
@@ -220,8 +178,8 @@ func getReceiptItemKey(httpClient requests.HttpClient, receiptItemKeyId string, 
 	return receiptItemKey, err
 }
 
-func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdkId, apiUrl string, key *rsa.PrivateKey) (receipt SharedReceiptResponse, err error) {
-	receiptResponse, err := getReceipt(httpClient, receiptId, clientSdkId, apiUrl, key)
+func GetShareReceipt(httpClient requests.HttpClient, receiptID string, apiURL string, strategy requests.AuthStrategy, key *rsa.PrivateKey) (receipt SharedReceiptResponse, err error) {
+	receiptResponse, err := getReceipt(httpClient, receiptID, apiURL, strategy)
 	if err != nil {
 		return receipt, fmt.Errorf("failed to get receipt: %v", err)
 	}
@@ -238,7 +196,7 @@ func GetShareReceipt(httpClient requests.HttpClient, receiptId string, clientSdk
 
 	itemKeyId := receiptResponse.WrappedItemKeyId
 
-	encryptedItemKeyResponse, err := getReceiptItemKey(httpClient, itemKeyId, clientSdkId, apiUrl, key)
+	encryptedItemKeyResponse, err := getReceiptItemKey(httpClient, itemKeyId, apiURL, strategy)
 	if err != nil {
 		return receipt, fmt.Errorf("failed to get receipt item key: %v", err)
 	}
