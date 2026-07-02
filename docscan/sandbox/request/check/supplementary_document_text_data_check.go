@@ -61,6 +61,12 @@ func (b *SupplementaryDocumentTextDataCheckBuilder) WithDocumentFields(documentF
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check response is used before advancing to the next
+func (b *SupplementaryDocumentTextDataCheckBuilder) WithHandledCheckLimit(limit int) *SupplementaryDocumentTextDataCheckBuilder {
+	b.withHandledCheckLimit(limit)
+	return b
+}
+
 // Build creates a new SupplementaryDocumentTextDataCheck
 func (b *SupplementaryDocumentTextDataCheckBuilder) Build() (*SupplementaryDocumentTextDataCheck, error) {
 	docCheck := b.documentCheckBuilder.build()

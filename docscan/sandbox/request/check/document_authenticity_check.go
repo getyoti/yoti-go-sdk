@@ -38,6 +38,12 @@ func (b *DocumentAuthenticityCheckBuilder) WithDocumentFilter(filter *filter.Doc
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check response is used before advancing to the next
+func (b *DocumentAuthenticityCheckBuilder) WithHandledCheckLimit(limit int) *DocumentAuthenticityCheckBuilder {
+	b.withHandledCheckLimit(limit)
+	return b
+}
+
 // Build creates a new DocumentAuthenticityCheck
 func (b *DocumentAuthenticityCheckBuilder) Build() (*DocumentAuthenticityCheck, error) {
 	return &DocumentAuthenticityCheck{

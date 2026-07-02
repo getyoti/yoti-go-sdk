@@ -5,12 +5,14 @@ import (
 )
 
 type check struct {
-	Result checkResult `json:"result"`
+	Result            checkResult `json:"result"`
+	HandledCheckLimit *int        `json:"handled_check_limit,omitempty"`
 }
 
 type checkBuilder struct {
-	recommendation *report.Recommendation
-	breakdowns     []*report.Breakdown
+	recommendation    *report.Recommendation
+	breakdowns        []*report.Breakdown
+	handledCheckLimit *int
 }
 
 type checkResult struct {
@@ -30,6 +32,10 @@ func (b *checkBuilder) withBreakdown(breakdown *report.Breakdown) {
 	b.breakdowns = append(b.breakdowns, breakdown)
 }
 
+func (b *checkBuilder) withHandledCheckLimit(limit int) {
+	b.handledCheckLimit = &limit
+}
+
 func (b *checkBuilder) build() *check {
 	return &check{
 		Result: checkResult{
@@ -38,5 +44,6 @@ func (b *checkBuilder) build() *check {
 				Breakdown:      b.breakdowns,
 			},
 		},
+		HandledCheckLimit: b.handledCheckLimit,
 	}
 }
