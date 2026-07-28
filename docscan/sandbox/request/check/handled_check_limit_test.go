@@ -63,6 +63,17 @@ func TestHandledCheckLimit_IncludedWhenSet(t *testing.T) {
 	}
 
 	assertHandledCheckLimitInJSON(t, c, 5)
+
+	// Zero is a valid limit and must still be serialized (should not be omitted).
+	cZero, err := NewThirdPartyIdentityCheckBuilder().
+		WithRecommendation(recommendation).
+		WithHandledCheckLimit(0).
+		Build()
+	if err != nil {
+		t.Fatalf("unexpected error building check (zero limit): %v", err)
+	}
+
+	assertHandledCheckLimitInJSON(t, cZero, 0)
 }
 
 func TestHandledCheckLimit_OmittedWhenNotSet(t *testing.T) {

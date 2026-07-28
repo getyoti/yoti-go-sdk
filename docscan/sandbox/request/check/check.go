@@ -33,7 +33,8 @@ func (b *checkBuilder) withBreakdown(breakdown *report.Breakdown) {
 }
 
 func (b *checkBuilder) withHandledCheckLimit(limit int) {
-	b.handledCheckLimit = &limit
+	b.handledCheckLimit = new(int)
+	*b.handledCheckLimit = limit
 }
 
 func (b *checkBuilder) build() *check {
