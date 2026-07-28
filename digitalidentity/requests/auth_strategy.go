@@ -4,6 +4,7 @@ package requests
 
 import (
 	"bytes"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -28,6 +29,10 @@ type AuthStrategy interface {
 // BuildAuthRequest constructs an http.Request using the provided AuthStrategy
 // for authentication. It applies the strategy's headers and query params.
 func BuildAuthRequest(strategy AuthStrategy, httpMethod, baseURL, endpoint string, headers map[string][]string, body []byte) (*http.Request, error) {
+	if strategy == nil {
+		return nil, errors.New("auth strategy must not be nil")
+	}
+
 	queryParams, err := strategy.CreateQueryParams()
 	if err != nil {
 		return nil, err

@@ -193,7 +193,9 @@ func (b *Builder) WithHTTPClient(httpClient requests.HttpClient) *Builder {
 
 func defaultJwtIDSupplier() string {
 	buf := make([]byte, 16)
-	_, _ = rand.Read(buf)
+	if _, err := rand.Read(buf); err != nil {
+		return fmt.Sprintf("fallback-%d", time.Now().UnixNano())
+	}
 	return fmt.Sprintf("%x-%x-%x-%x-%x", buf[0:4], buf[4:6], buf[6:8], buf[8:10], buf[10:])
 }
 
