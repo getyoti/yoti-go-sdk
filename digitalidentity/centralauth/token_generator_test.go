@@ -204,9 +204,7 @@ func parseFormValues(body string) (map[string]string, error) {
 	for _, pair := range pairs {
 		parts := strings.SplitN(pair, "=", 2)
 		if len(parts) == 2 {
-			key, _ := strings.CutPrefix(parts[0], "")
-			val, _ := strings.CutPrefix(parts[1], "")
-			result[key] = val
+			result[parts[0]] = parts[1]
 		}
 	}
 	return result, nil
