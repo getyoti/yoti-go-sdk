@@ -161,3 +161,27 @@ func TestResourceContainer_filterForCheck_NilSliceElements(t *testing.T) {
 	assert.Equal(t, 1, len(filtered.LivenessCapture))
 	assert.Equal(t, "liveness-1", filtered.LivenessCapture[0].GetID())
 }
+
+// TestResourceContainer_filterForCheck_MismatchedLivenessLengths guards against the
+// index-parallel invariant between LivenessCapture and RawLivenessCapture being broken
+// in the filtered container when the input container was hand-built (bypassing
+// UnmarshalJSON, which always keeps the two slices the same length) with RawLivenessCapture
+// shorter than LivenessCapture.
+func TestResourceContainer_filterForCheck_MismatchedLivenessLengths(t *testing.T) {
+	result := &ResourceContainer{
+		LivenessCapture: []*LivenessResourceResponse{
+			{ResourceResponse: &ResourceResponse{ID: "liveness-1"}},
+			{ResourceResponse: &ResourceResponse{ID: "liveness-2"}},
+		},
+		RawLivenessCapture: []json.RawMessage{
+			json.RawMessage(`{"id":"liveness-1"}`),
+		},
+	}
+
+	check := &CheckResponse{ResourcesUsed: []string{"liveness-1", "liveness-2"}}
+	filtered := result.filterForCheck(check)
+
+	assert.Equal(t, len(filtered.RawLivenessCapture), len(filtered.LivenessCapture))
+	assert.Equal(t, 1, len(filtered.LivenessCapture))
+	assert.Equal(t, "liveness-1", filtered.LivenessCapture[0].GetID())
+}

@@ -45,19 +45,19 @@ func (r *ResourceContainer) filterForCheck(check *CheckResponse) *ResourceContai
 	filtered.zoomLivenessResources = filterResourcesByIDs(r.zoomLivenessResources, ids)
 	filtered.staticLivenessResources = filterResourcesByIDs(r.staticLivenessResources, ids)
 
-	// LivenessCapture and RawLivenessCapture are index-parallel (see UnmarshalJSON),
-	// so filter them together to keep the returned container internally consistent.
+	// LivenessCapture and RawLivenessCapture are index-parallel (see UnmarshalJSON), so
+	// filter them together: skip an entry entirely (rather than only its raw
+	// counterpart) if the two slices are shorter than expected, to keep the two
+	// slices in the returned container the same length in every case.
 	for i, liveness := range r.LivenessCapture {
-		if liveness == nil {
+		if liveness == nil || i >= len(r.RawLivenessCapture) {
 			continue
 		}
 		if _, ok := ids[liveness.GetID()]; !ok {
 			continue
 		}
 		filtered.LivenessCapture = append(filtered.LivenessCapture, liveness)
-		if i < len(r.RawLivenessCapture) {
-			filtered.RawLivenessCapture = append(filtered.RawLivenessCapture, r.RawLivenessCapture[i])
-		}
+		filtered.RawLivenessCapture = append(filtered.RawLivenessCapture, r.RawLivenessCapture[i])
 	}
 
 	return filtered
