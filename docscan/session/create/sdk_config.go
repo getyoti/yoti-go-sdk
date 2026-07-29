@@ -55,7 +55,13 @@ func (c SDKConfig) MarshalJSON() ([]byte, error) {
 
 	var allowHandOff *bool
 	if c.allowHandOffSet {
+		// Explicitly set via SDK builder: always include, even when false.
 		value := c.AllowHandOff
+		allowHandOff = &value
+	} else if c.AllowHandOff {
+		// Struct constructed directly without using builder:
+		// preserve original omitempty behaviour (only include when true).
+		value := true
 		allowHandOff = &value
 	}
 

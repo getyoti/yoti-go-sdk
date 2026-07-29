@@ -199,6 +199,35 @@ func ExampleSdkConfigBuilder_Build_allowHandOff_omittedWhenNotSet() {
 	// Output: {}
 }
 
+// ExampleSDKConfig_directConstruction_allowHandOff covers constructing SDKConfig directly
+// (bypassing SdkConfigBuilder), preserving the original omitempty behaviour for AllowHandOff:
+// true is still serialized even though allowHandOffSet was never set via the builder.
+func ExampleSDKConfig_directConstruction_allowHandOff() {
+	sdkConfig := SDKConfig{AllowHandOff: true}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"allow_handoff":true}
+}
+
+func ExampleSDKConfig_directConstruction_allowHandOff_falseOmitted() {
+	sdkConfig := SDKConfig{AllowHandOff: false}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
+}
+
 func ExampleSdkConfigBuilder_WithEnforceHandOff() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithEnforceHandOff(true).

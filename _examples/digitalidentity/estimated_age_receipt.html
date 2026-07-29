@@ -151,16 +151,42 @@
             <h3>🔍 Age Verification Results</h3>
             <p><em>Here are the age verification results from your Digital ID app:</em></p>
             <div style="margin-top: 15px;">
-                {{range .ageVerifications}}
-                <div class="attribute-display">
-                    <div class="attribute-name">{{.CheckType}}:{{.Age}}</div>
-                    <div class="attribute-value">
-                        {{if .Result}}
-                            <span style="color: #28a745; font-weight: bold;">✅ YES</span>
-                        {{else}}
-                            <span style="color: #dc3545; font-weight: bold;">❌ NO</span>
-                        {{end}}
+                {{range $index, $detail := .ageVerificationDetails}}
+                <div class="attribute-display" style="margin-bottom: 20px; padding: 15px; border: 1px solid #dee2e6; border-radius: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div class="attribute-name" style="font-size: 1.1em; font-weight: bold;">
+                            {{$detail.Verification.CheckType}}:{{$detail.Verification.Age}}
+                        </div>
+                        <div class="attribute-value">
+                            {{if $detail.Verification.Result}}
+                                <span style="color: #28a745; font-weight: bold; font-size: 1.2em;">✅ YES</span>
+                            {{else}}
+                                <span style="color: #dc3545; font-weight: bold; font-size: 1.2em;">❌ NO</span>
+                            {{end}}
+                        </div>
                     </div>
+
+                    {{if $detail.SourceAnchors}}
+                    <div style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 3px;">
+                        <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 5px;">
+                            <strong>Source Type:</strong>
+                            <span style="color: {{if $detail.UsedEstimatedAge}}#17a2b8{{else if $detail.UsedFallback}}#fd7e14{{else}}#6c757d{{end}}; font-weight: bold;">
+                                {{$detail.SourceType}}
+                            </span>
+                            {{if $detail.UsedEstimatedAge}}
+                                <span style="color: #17a2b8;">⚡ (Direct from estimated_age)</span>
+                            {{else if $detail.UsedFallback}}
+                                <span style="color: #fd7e14;">🔄 (Fallback from date_of_birth)</span>
+                            {{end}}
+                        </div>
+                        <div style="font-size: 0.85em; color: #6c757d;">
+                            <strong>Source Anchors:</strong>
+                            {{range $detail.SourceAnchors}}
+                                <span style="display: inline-block; margin: 2px 5px 2px 0; padding: 2px 8px; background-color: #e9ecef; border-radius: 3px;">{{.}}</span>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
                 </div>
                 {{end}}
             </div>

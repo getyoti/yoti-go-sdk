@@ -32,6 +32,7 @@ type GetSessionResult struct {
 	supplementaryDocumentTextDataChecks []*SupplementaryDocumentTextDataCheckResponse
 	watchlistScreeningChecks            []*WatchlistScreeningCheckResponse
 	watchlistAdvancedCAChecks           []*WatchlistAdvancedCACheckResponse
+	faceComparisonChecks                []*FaceComparisonCheckResponse
 }
 
 // AuthenticityChecks filters the checks, returning only document authenticity checks
@@ -85,6 +86,11 @@ func (g *GetSessionResult) WatchlistAdvancedCAChecks() []*WatchlistAdvancedCAChe
 	return g.watchlistAdvancedCAChecks
 }
 
+// FaceComparisonChecks filters the checks, returning only FaceComparison checks
+func (g *GetSessionResult) FaceComparisonChecks() []*FaceComparisonCheckResponse {
+	return g.faceComparisonChecks
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 	type result GetSessionResult // declared as "type" to prevent recursive unmarshalling
@@ -108,6 +114,9 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 
 		case constants.IDDocumentComparison:
 			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
+
+		case constants.FaceComparison:
+			g.faceComparisonChecks = append(g.faceComparisonChecks, &FaceComparisonCheckResponse{CheckResponse: check})
 
 		case constants.ThirdPartyIdentityCheck:
 			g.thirdPartyIdentityChecks = append(
