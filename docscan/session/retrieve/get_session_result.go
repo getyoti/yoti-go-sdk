@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
@@ -82,6 +83,17 @@ func (g *GetSessionResult) WatchlistScreeningChecks() []*WatchlistScreeningCheck
 // WatchlistAdvancedCAChecks filters the checks, returning only the Watchlist Advanced CA Screening checks
 func (g *GetSessionResult) WatchlistAdvancedCAChecks() []*WatchlistAdvancedCACheckResponse {
 	return g.watchlistAdvancedCAChecks
+}
+
+// ResourcesForCheck returns the resources used by the check with the given ID.
+// An error is returned when no check matches checkID.
+func (g *GetSessionResult) ResourcesForCheck(checkID string) (*ResourceContainer, error) {
+	for _, check := range g.Checks {
+		if check != nil && check.ID == checkID {
+			return g.Resources.filterForCheck(check), nil
+		}
+	}
+	return nil, fmt.Errorf("no check found with id %q", checkID)
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
