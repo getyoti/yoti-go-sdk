@@ -34,6 +34,12 @@ func TestStaticLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
 
 	assert.Equal(t, 3, len(result.LivenessCapture))
 	assert.Equal(t, "STATIC", result.LivenessCapture[0].LivenessType)
+
+	staticResources := result.StaticLivenessResources()
+	assert.Equal(t, 3, len(staticResources))
+	assert.Equal(t, "CAMERA", staticResources[0].CaptureType)
+	assert.Equal(t, "", staticResources[1].CaptureType)
+	assert.Equal(t, "", staticResources[2].CaptureType)
 }
 
 func TestLivenessResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
