@@ -81,22 +81,26 @@
           {
             "sub_check": "adverse_media",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "fitness_probity",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "pep",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "EXPERT_REVIEW"
           },
           {
             "sub_check": "sanction",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "warning",
