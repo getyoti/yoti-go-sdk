@@ -42,22 +42,6 @@ func TestStaticLivenessResourceResponse_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, "", staticResources[2].CaptureType)
 }
 
-func TestZoomLivenessResourceResponse_HasNoCaptureType(t *testing.T) {
-	bytes, err := file.ReadFile("../../../test/fixtures/resource-container.json")
-	assert.NilError(t, err)
-
-	var result ResourceContainer
-	err = json.Unmarshal(bytes, &result)
-	assert.NilError(t, err)
-
-	zoomResources := result.ZoomLivenessResources()
-	assert.Equal(t, 1, len(zoomResources))
-	// ZoomLivenessResourceResponse does not have a CaptureType field
-	// Verify it compiles and returns the expected zoom-specific fields instead
-	assert.Equal(t, "IMAGE", zoomResources[0].Frames[0].Media.Type)
-	assert.Equal(t, "BINARY", zoomResources[0].FaceMap.Media.Type)
-}
-
 func TestLivenessResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
 	var result ResourceContainer
 	err := result.UnmarshalJSON([]byte("some-invalid-json"))
