@@ -14,7 +14,7 @@ type IDDocumentResourceResponse struct {
 	// IssuingCountry is the issuing country of the identity document
 	IssuingCountry string `json:"issuing_country"`
 	// Provider is the digital ID provider the document was sourced from, e.g. "DIGILOCKER". Only present for a digital ID.
-	Provider string `json:"provider"`
+	Provider string `json:"provider,omitempty"`
 	// Pages are the individual pages of the identity document
 	Pages []*PageResponse `json:"pages"`
 	// DocumentFields are the associated document fields of a document

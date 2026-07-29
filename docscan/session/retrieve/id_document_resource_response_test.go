@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -57,4 +58,16 @@ func TestIDDocumentResourceResponse_UnmarshalJSON_ProviderOmittedForNonDigitalID
 	assert.NilError(t, err)
 
 	assert.Equal(t, "", result.Provider)
+}
+
+func TestIDDocumentResourceResponse_MarshalJSON_ProviderOmittedWhenUnset(t *testing.T) {
+	idDocumentResource := &IDDocumentResourceResponse{
+		ResourceResponse: &ResourceResponse{ID: "some-id"},
+		DocumentType:     "PASSPORT",
+	}
+
+	data, err := json.Marshal(idDocumentResource)
+	assert.NilError(t, err)
+
+	assert.Assert(t, !strings.Contains(string(data), "provider"), "expected provider to be omitted, got: %s", data)
 }
