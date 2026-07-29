@@ -133,3 +133,31 @@ func TestResourceContainer_filterForCheck_DocumentsAndShareCodes(t *testing.T) {
 	assert.Equal(t, 1, len(filtered.SupplementaryDocuments))
 	assert.Equal(t, 1, len(filtered.ShareCodes))
 }
+
+// TestResourceContainer_filterForCheck_NilSliceElements guards against a panic when a
+// resource list contains a literal nil element (e.g. encoding/json unmarshals a JSON
+// "null" array entry into a nil pointer) - GetID() must not be reached on that entry.
+func TestResourceContainer_filterForCheck_NilSliceElements(t *testing.T) {
+	result := &ResourceContainer{
+		IDDocuments: []*IDDocumentResourceResponse{
+			nil,
+			{ResourceResponse: &ResourceResponse{ID: "id-doc-1"}},
+		},
+		LivenessCapture: []*LivenessResourceResponse{
+			nil,
+			{ResourceResponse: &ResourceResponse{ID: "liveness-1"}},
+		},
+		RawLivenessCapture: []json.RawMessage{
+			json.RawMessage(`null`),
+			json.RawMessage(`{"id":"liveness-1"}`),
+		},
+	}
+
+	check := &CheckResponse{ResourcesUsed: []string{"id-doc-1", "liveness-1"}}
+	filtered := result.filterForCheck(check)
+
+	assert.Equal(t, 1, len(filtered.IDDocuments))
+	assert.Equal(t, "id-doc-1", filtered.IDDocuments[0].GetID())
+	assert.Equal(t, 1, len(filtered.LivenessCapture))
+	assert.Equal(t, "liveness-1", filtered.LivenessCapture[0].GetID())
+}

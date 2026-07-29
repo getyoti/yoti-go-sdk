@@ -48,6 +48,9 @@ func (r *ResourceContainer) filterForCheck(check *CheckResponse) *ResourceContai
 	// LivenessCapture and RawLivenessCapture are index-parallel (see UnmarshalJSON),
 	// so filter them together to keep the returned container internally consistent.
 	for i, liveness := range r.LivenessCapture {
+		if liveness == nil {
+			continue
+		}
 		if _, ok := ids[liveness.GetID()]; !ok {
 			continue
 		}
@@ -60,9 +63,16 @@ func (r *ResourceContainer) filterForCheck(check *CheckResponse) *ResourceContai
 	return filtered
 }
 
-func filterResourcesByIDs[T interface{ GetID() string }](resources []T, ids map[string]struct{}) []T {
+func filterResourcesByIDs[T interface {
+	comparable
+	GetID() string
+}](resources []T, ids map[string]struct{}) []T {
+	var zero T
 	var filtered []T
 	for _, resource := range resources {
+		if resource == zero {
+			continue
+		}
 		if _, ok := ids[resource.GetID()]; ok {
 			filtered = append(filtered, resource)
 		}
