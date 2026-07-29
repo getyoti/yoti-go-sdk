@@ -305,3 +305,52 @@ func TestGetSessionResult_UnmarshalJSON_AdvancedIdentityProfilePreview(t *testin
 	assert.Equal(t, identityProfilePreview.Media.ID, "3fa85f64-5717-4562-b3fc-2c963f66afa6")
 	assert.Equal(t, identityProfilePreview.Media.Type, "IMAGE")
 }
+
+func TestGetSessionResult_UnmarshalJSON_DigitalIDShares(t *testing.T) {
+	raw := []byte(`{
+		"digital_id_shares": [
+			{
+				"id": "share-1",
+				"document_type": "DIGITAL_AADHAAR",
+				"issuing_country": "IND",
+				"provider": "DIGILOCKER",
+				"created_at": "2023-01-04T13:42:34Z",
+				"last_updated": "2023-01-04T13:42:35Z",
+				"resource_id": "resource-1",
+				"error": null
+			},
+			{
+				"id": "share-2",
+				"document_type": "DIGITAL_AADHAAR",
+				"issuing_country": "IND",
+				"provider": "DIGILOCKER",
+				"created_at": "2023-01-04T13:43:00Z",
+				"last_updated": "2023-01-04T13:43:01Z",
+				"resource_id": "resource-2",
+				"error": {
+					"code": "SHARE_FAILED",
+					"description": "the share was not completed successfully"
+				}
+			}
+		]
+	}`)
+
+	var result retrieve.GetSessionResult
+	err := result.UnmarshalJSON(raw)
+	assert.NilError(t, err)
+
+	assert.Equal(t, 2, len(result.DigitalIDShares))
+
+	first := result.DigitalIDShares[0]
+	assert.Equal(t, "share-1", first.ID)
+	assert.Equal(t, "DIGILOCKER", first.Provider)
+	assert.Equal(t, "resource-1", first.ResourceID)
+	assert.Assert(t, first.CreatedAt != nil)
+	assert.Assert(t, first.LastUpdated != nil)
+	assert.Assert(t, first.Error == nil)
+
+	second := result.DigitalIDShares[1]
+	assert.Assert(t, second.Error != nil)
+	assert.Equal(t, "SHARE_FAILED", second.Error.Code)
+	assert.Equal(t, "the share was not completed successfully", second.Error.Description)
+}

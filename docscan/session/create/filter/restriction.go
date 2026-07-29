@@ -11,3 +11,8 @@ type CountryRestriction struct {
 	Inclusion    string   `json:"inclusion"`
 	CountryCodes []string `json:"country_codes"`
 }
+
+// DigitalIDProvider is a digital identity provider allowed to satisfy a required document
+type DigitalIDProvider struct {
+	Name string `json:"name"`
+}

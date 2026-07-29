@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -41,4 +42,32 @@ func TestIDDocumentResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
 	var result IDDocumentResourceResponse
 	err := result.UnmarshalJSON([]byte("some-invalid-json"))
 	assert.ErrorContains(t, err, "invalid character")
+}
+
+func TestIDDocumentResourceResponse_UnmarshalJSON_Provider(t *testing.T) {
+	var result IDDocumentResourceResponse
+	err := json.Unmarshal([]byte(`{"id":"some-id","document_type":"DIGITAL_AADHAAR","provider":"DIGILOCKER"}`), &result)
+	assert.NilError(t, err)
+
+	assert.Equal(t, "DIGILOCKER", result.Provider)
+}
+
+func TestIDDocumentResourceResponse_UnmarshalJSON_ProviderOmittedForNonDigitalID(t *testing.T) {
+	var result IDDocumentResourceResponse
+	err := json.Unmarshal([]byte(`{"id":"some-id","document_type":"PASSPORT"}`), &result)
+	assert.NilError(t, err)
+
+	assert.Equal(t, "", result.Provider)
+}
+
+func TestIDDocumentResourceResponse_MarshalJSON_ProviderOmittedWhenUnset(t *testing.T) {
+	idDocumentResource := &IDDocumentResourceResponse{
+		ResourceResponse: &ResourceResponse{ID: "some-id"},
+		DocumentType:     "PASSPORT",
+	}
+
+	data, err := json.Marshal(idDocumentResource)
+	assert.NilError(t, err)
+
+	assert.Assert(t, !strings.Contains(string(data), "provider"), "expected provider to be omitted, got: %s", data)
 }
