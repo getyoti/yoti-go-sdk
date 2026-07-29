@@ -2,6 +2,7 @@ package retrieve
 
 type RequiredIdDocumentResourceResponse struct {
 	BaseRequiredResource
+	SupportedCountries []*SupportedCountryResponse `json:"supported_countries"`
 }
 
 func (r *RequiredIdDocumentResourceResponse) String() string {

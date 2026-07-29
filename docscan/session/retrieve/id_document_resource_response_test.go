@@ -42,3 +42,19 @@ func TestIDDocumentResourceResponse_UnmarshalJSON_Invalid(t *testing.T) {
 	err := result.UnmarshalJSON([]byte("some-invalid-json"))
 	assert.ErrorContains(t, err, "invalid character")
 }
+
+func TestIDDocumentResourceResponse_UnmarshalJSON_Provider(t *testing.T) {
+	var result IDDocumentResourceResponse
+	err := json.Unmarshal([]byte(`{"id":"some-id","document_type":"DIGITAL_AADHAAR","provider":"DIGILOCKER"}`), &result)
+	assert.NilError(t, err)
+
+	assert.Equal(t, "DIGILOCKER", result.Provider)
+}
+
+func TestIDDocumentResourceResponse_UnmarshalJSON_ProviderOmittedForNonDigitalID(t *testing.T) {
+	var result IDDocumentResourceResponse
+	err := json.Unmarshal([]byte(`{"id":"some-id","document_type":"PASSPORT"}`), &result)
+	assert.NilError(t, err)
+
+	assert.Equal(t, "", result.Provider)
+}

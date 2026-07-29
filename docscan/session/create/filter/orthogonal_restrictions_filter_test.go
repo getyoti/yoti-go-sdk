@@ -156,3 +156,64 @@ func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withDenyNonLatinDocumen
 	fmt.Println(string(data))
 	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_non_latin_documents":false}
 }
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withAllowDigitalIDs() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithAllowDigitalIDs(true).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allow_digital_ids":true}
+}
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withAllowedProviders() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithAllowedProviders([]*DigitalIDProvider{
+			{Name: "DIGILOCKER"},
+			{Name: "EPHIL_ID_QR"},
+		}).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allowed_providers":[{"name":"DIGILOCKER"},{"name":"EPHIL_ID_QR"}]}
+}
+
+func ExampleRequestedOrthogonalRestrictionsFilterBuilder_withAllowedProvider() {
+	restriction, err := NewRequestedOrthogonalRestrictionsFilterBuilder().
+		WithAllowedProvider(&DigitalIDProvider{Name: "DIGILOCKER"}).
+		WithAllowedProvider(&DigitalIDProvider{Name: "EPHIL_ID_QR"}).
+		Build()
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(restriction)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"type":"ORTHOGONAL_RESTRICTIONS","allowed_providers":[{"name":"DIGILOCKER"},{"name":"EPHIL_ID_QR"}]}
+}
