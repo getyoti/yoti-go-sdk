@@ -3,6 +3,8 @@ package create
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 func ExampleSdkConfigBuilder_Build() {
@@ -375,4 +377,93 @@ func ExampleSdkConfigBuilder_WithPrimaryColourDarkMode() {
 
 	fmt.Println(string(data))
 	// Output: {"primary_colour_dark_mode":"SOME_COLOUR"}
+}
+
+func ExampleSdkConfigBuilder_WithSuppressedScreens() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreens([]string{
+			constants.IDDocumentEducationScreen,
+			constants.IDDocumentRequirementsScreen,
+			constants.SupplementaryDocumentEducationScreen,
+			constants.ZoomLivenessEducationScreen,
+			constants.StaticLivenessEducationScreen,
+			constants.FaceCaptureEducationScreen,
+			constants.FlowCompletionScreen,
+		}).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["ID_DOCUMENT_EDUCATION","ID_DOCUMENT_REQUIREMENTS","SUPPLEMENTARY_DOCUMENT_EDUCATION","ZOOM_LIVENESS_EDUCATION","STATIC_LIVENESS_EDUCATION","FACE_CAPTURE_EDUCATION","FLOW_COMPLETION"]}
+}
+
+func ExampleSdkConfigBuilder_WithSuppressedScreens_replacesPreviousValue() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreens([]string{constants.FlowCompletionScreen}).
+		WithSuppressedScreens([]string{constants.IDDocumentEducationScreen}).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["ID_DOCUMENT_EDUCATION"]}
+}
+
+func ExampleSdkConfigBuilder_WithSuppressedScreen() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreen(constants.FlowCompletionScreen).
+		WithSuppressedScreen(constants.IDDocumentEducationScreen).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["FLOW_COMPLETION","ID_DOCUMENT_EDUCATION"]}
+}
+
+func ExampleSdkConfigBuilder_Build_suppressedScreensOmittedWhenNotSet() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
 }

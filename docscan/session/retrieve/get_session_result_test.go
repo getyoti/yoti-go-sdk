@@ -132,6 +132,12 @@ func TestGetSessionResult_UnmarshalJSON_Watchlist(t *testing.T) {
 	watchlistScreeningCheck := result.WatchlistScreeningChecks()[0]
 	assert.Equal(t, watchlistScreeningCheck.GeneratedProfile.Media.Type, "JSON")
 
+	breakdown := watchlistScreeningCheck.Report.Breakdown
+	assert.Equal(t, 5, len(breakdown))
+	assert.Equal(t, "AUTOMATED", breakdown[0].Process)
+	assert.Equal(t, "EXPERT_REVIEW", breakdown[2].Process)
+	assert.Equal(t, "", breakdown[4].Process)
+
 	watchlistSummary := watchlistScreeningCheck.Report.WatchlistSummary
 
 	assert.Equal(t, 0, watchlistSummary.TotalHits)
