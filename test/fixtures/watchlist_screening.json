@@ -36,7 +36,8 @@
               "created": "2021-07-20T15:15:52Z",
               "last_updated": "2021-07-20T15:15:52Z"
             },
-            "frames": [{}, {}, {}]
+            "frames": [{}, {}, {}],
+            "extraction_image_ids": ["a1b2c3d4-0000-0000-0000-000000000001"]
           }
         ],
         "document_fields": {
