@@ -199,6 +199,86 @@ func ExampleSdkConfigBuilder_Build_allowHandOff_omittedWhenNotSet() {
 	// Output: {}
 }
 
+func ExampleSdkConfigBuilder_WithEnforceHandOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithEnforceHandOff(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"enforce_handoff":true}
+}
+
+func ExampleSdkConfigBuilder_WithEnforceHandOff_false() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithEnforceHandOff(false).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"enforce_handoff":false}
+}
+
+func ExampleSdkConfigBuilder_Build_enforceHandOff_omittedWhenNotSet() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
+}
+
+func ExampleSdkConfigBuilder_WithAllowHandOff_andEnforceHandOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithAllowHandOff(true).
+		WithEnforceHandOff(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"allow_handoff":true,"enforce_handoff":true}
+}
+
 func ExampleSdkConfigBuilder_WithDarkMode() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithDarkMode("ON").
