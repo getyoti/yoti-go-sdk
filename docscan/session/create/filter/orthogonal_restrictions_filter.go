@@ -55,6 +55,8 @@ func NewRequestedOrthogonalRestrictionsFilterBuilder() *RequestedOrthogonalRestr
 		typeRestriction:        nil,
 		allowExpiredDocuments:  nil,
 		allowNonLatinDocuments: nil,
+		allowDigitalIDs:        nil,
+		allowedProviders:       nil,
 	}
 }
 
@@ -114,7 +116,7 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithAllowDigitalIDs(allow
 
 // WithAllowedProviders sets the list of allowed digital ID providers on the filter, replacing any previously set value
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithAllowedProviders(allowedProviders []*DigitalIDProvider) *RequestedOrthogonalRestrictionsFilterBuilder {
-	b.allowedProviders = allowedProviders
+	b.allowedProviders = append([]*DigitalIDProvider(nil), allowedProviders...)
 	return b
 }
 

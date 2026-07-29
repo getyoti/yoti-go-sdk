@@ -93,7 +93,7 @@ func (b *RequestedDocumentRestrictionsFilterBuilder) WithAllowDigitalIDs(allowDi
 
 // WithAllowedProviders sets the list of allowed digital ID providers on the filter, replacing any previously set value
 func (b *RequestedDocumentRestrictionsFilterBuilder) WithAllowedProviders(allowedProviders []*DigitalIDProvider) *RequestedDocumentRestrictionsFilterBuilder {
-	b.allowedProviders = allowedProviders
+	b.allowedProviders = append([]*DigitalIDProvider(nil), allowedProviders...)
 	return b
 }
 

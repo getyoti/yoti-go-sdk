@@ -3,6 +3,9 @@ package filter
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
+
+	"gotest.tools/v3/assert"
 )
 
 func ExampleRequestedDocumentRestrictionsFilterBuilder_ForIncludeList() {
@@ -198,4 +201,30 @@ func ExampleRequestedDocumentRestrictionsFilterBuilder_withAllowedProvider() {
 
 	fmt.Println(string(data))
 	// Output: {"type":"DOCUMENT_RESTRICTIONS","inclusion":"","documents":[],"allowed_providers":[{"name":"DIGILOCKER"},{"name":"EPHIL_ID_QR"}]}
+}
+
+// TestRequestedDocumentRestrictionsFilterBuilder_WithAllowedProviders_DoesNotAliasCallerSlice guards
+// against the built filter changing if the caller mutates (via append) the slice they passed in,
+// which can happen silently when the passed-in slice has spare capacity.
+func TestRequestedDocumentRestrictionsFilterBuilder_WithAllowedProviders_DoesNotAliasCallerSlice(t *testing.T) {
+	callerSlice := make([]*DigitalIDProvider, 2, 4)
+	callerSlice[0] = &DigitalIDProvider{Name: "A"}
+	callerSlice[1] = &DigitalIDProvider{Name: "B"}
+
+	restriction, err := NewRequestedDocumentRestrictionsFilterBuilder().
+		WithAllowedProviders(callerSlice).
+		WithAllowedProvider(&DigitalIDProvider{Name: "C"}).
+		Build()
+	assert.NilError(t, err)
+
+	before, err := json.Marshal(restriction)
+	assert.NilError(t, err)
+
+	// Mutating the caller's own slice must not affect the already-built filter.
+	_ = append(callerSlice, &DigitalIDProvider{Name: "should-not-appear"})
+
+	after, err := json.Marshal(restriction)
+	assert.NilError(t, err)
+
+	assert.Equal(t, string(before), string(after))
 }
