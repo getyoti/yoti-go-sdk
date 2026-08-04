@@ -725,3 +725,90 @@ func TestClient_GetSessionConfiguration(t *testing.T) {
 	assert.NilError(t, err)
 	assert.DeepEqual(t, result, expected)
 }
+
+func TestNewClientWithToken(t *testing.T) {
+	client, err := NewClientWithToken("my-auth-token")
+	assert.NilError(t, err)
+	assert.Equal(t, client.AuthToken, "my-auth-token")
+}
+
+func TestNewClientWithToken_EmptyToken(t *testing.T) {
+	_, err := NewClientWithToken("")
+	assert.ErrorContains(t, err, "authentication token must not be empty")
+}
+
+func TestClient_GetAuthStrategy_BearerToken(t *testing.T) {
+	client := Client{AuthToken: "my-bearer-token"}
+
+	strategy, err := client.GetAuthStrategy()
+	assert.NilError(t, err)
+
+	headers, err := strategy.CreateAuthHeaders(http.MethodGet, "/idverify/v1/sessions", nil)
+	assert.NilError(t, err)
+	assert.Equal(t, headers["Authorization"][0], "Bearer my-bearer-token")
+}
+
+func TestClient_GetAuthStrategy_SignedRequest(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{Key: key, SdkID: "sdk-id"}
+
+	strategy, err := client.GetAuthStrategy()
+	assert.NilError(t, err)
+
+	params, err := strategy.CreateQueryParams()
+	assert.NilError(t, err)
+	assert.Equal(t, params["sdkID"], "sdk-id")
+}
+
+func TestClient_GetAuthStrategy_MutualExclusion(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{AuthToken: "my-token", Key: key, SdkID: "sdk-id"}
+
+	_, err = client.GetAuthStrategy()
+	assert.ErrorContains(t, err, "must not supply both authentication token and SDK credentials")
+}
+
+func TestClient_GetAuthStrategy_MissingKey(t *testing.T) {
+	client := Client{SdkID: "sdk-id"}
+
+	_, err := client.GetAuthStrategy()
+	assert.ErrorContains(t, err, "missing private key")
+}
+
+func TestClient_GetAuthStrategy_MissingSdkID(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{Key: key}
+
+	_, err = client.GetAuthStrategy()
+	assert.ErrorContains(t, err, "missing SDK ID")
+}
+
+func TestClient_WithToken_CreateSession(t *testing.T) {
+	var capturedRequest *http.Request
+
+	client := Client{
+		AuthToken: "my-auth-token",
+		HTTPClient: &mockHTTPClient{
+			do: func(r *http.Request) (*http.Response, error) {
+				capturedRequest = r
+				return &http.Response{
+					StatusCode: http.StatusCreated,
+					Body:       io.NopCloser(strings.NewReader(`{}`)),
+				}, nil
+			},
+		},
+		apiURL: "https://example.com",
+	}
+
+	_, err := client.CreateSession(&create.SessionSpecification{})
+	assert.NilError(t, err)
+
+	assert.Equal(t, capturedRequest.Header.Get("Authorization"), "Bearer my-auth-token")
+	assert.Equal(t, capturedRequest.Header.Get("X-Yoti-Auth-Digest"), "")
+}
