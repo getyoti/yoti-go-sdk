@@ -28,6 +28,10 @@ type Client struct {
 	SdkID string
 	// Private Key associated for your application, can be downloaded from the Yoti Hub.
 	Key *rsa.PrivateKey
+	// AuthToken is the central auth bearer token. When set, the client uses
+	// Bearer token authentication instead of signed requests.
+	// This is mutually exclusive with SdkID/Key.
+	AuthToken string
 	// Mockable HTTP Client Interface
 	HTTPClient requests.HttpClient
 	// API URL to use. This is not required, and a default will be set if not provided.
@@ -57,6 +61,38 @@ func NewClient(sdkID string, key []byte) (*Client, error) {
 	}, err
 }
 
+// NewClientWithToken constructs a Client object using central auth (a Bearer token)
+// instead of signed-request authentication.
+func NewClientWithToken(authToken string) (*Client, error) {
+	if authToken == "" {
+		return nil, errors.New("authentication token must not be empty")
+	}
+
+	return &Client{
+		AuthToken:  authToken,
+		HTTPClient: http.DefaultClient,
+		apiURL:     getAPIURL(),
+	}, nil
+}
+
+// GetAuthStrategy returns the appropriate AuthStrategy based on the client configuration.
+func (c *Client) GetAuthStrategy() (requests.AuthStrategy, error) {
+	if c.AuthToken != "" {
+		if c.Key != nil || c.SdkID != "" {
+			return nil, errors.New("must not supply both authentication token and SDK credentials (SdkID/Key)")
+		}
+		return requests.NewBearerTokenStrategy(c.AuthToken)
+	}
+
+	if c.Key == nil {
+		return nil, errors.New("missing private key for signed-request authentication")
+	}
+	if c.SdkID == "" {
+		return nil, errors.New("missing SDK ID for signed-request authentication")
+	}
+	return requests.NewSignedRequestStrategy(c.Key, c.SdkID)
+}
+
 // OverrideAPIURL overrides the default API URL for this Yoti Client
 func (c *Client) OverrideAPIURL(apiURL string) {
 	c.apiURL = apiURL
@@ -77,16 +113,13 @@ func (c *Client) CreateSession(sessionSpec *create.SessionSpecification) (*creat
 		return nil, err
 	}
 
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
 	var request *http.Request
-	request, err = (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodPost,
-		BaseURL:    c.apiURL,
-		Endpoint:   createSessionPath(),
-		Headers:    requests.JSONHeaders(),
-		Body:       requestBody,
-		Params:     map[string]string{"sdkID": c.SdkID},
-	}).Request()
+	request, err = requests.BuildAuthRequest(strategy, http.MethodPost, c.apiURL, createSessionPath(), requests.JSONHeaders(), requestBody)
 	if err != nil {
 		return nil, err
 	}
@@ -115,13 +148,12 @@ func (c *Client) GetSession(sessionID string) (*retrieve.GetSessionResult, error
 		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    c.apiURL,
-		Endpoint:   getSessionPath(sessionID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, c.apiURL, getSessionPath(sessionID), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -150,13 +182,12 @@ func (c *Client) DeleteSession(sessionID string) error {
 		return fmt.Errorf(mustNotBeEmptyString, "sessionID")
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodDelete,
-		BaseURL:    c.apiURL,
-		Endpoint:   deleteSessionPath(sessionID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodDelete, c.apiURL, deleteSessionPath(sessionID), nil, nil)
 	if err != nil {
 		return err
 	}
@@ -179,13 +210,12 @@ func (c *Client) GetMediaContent(sessionID, mediaID string) (media.Media, error)
 		return nil, fmt.Errorf(mustNotBeEmptyString, "mediaID")
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    c.apiURL,
-		Endpoint:   getMediaContentPath(sessionID, mediaID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, c.apiURL, getMediaContentPath(sessionID, mediaID), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -226,13 +256,12 @@ func (c *Client) DeleteMediaContent(sessionID, mediaID string) error {
 		return fmt.Errorf(mustNotBeEmptyString, "mediaID")
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodDelete,
-		BaseURL:    c.apiURL,
-		Endpoint:   deleteMediaPath(sessionID, mediaID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodDelete, c.apiURL, deleteMediaPath(sessionID, mediaID), nil, nil)
 	if err != nil {
 		return err
 	}
@@ -252,14 +281,13 @@ func (c *Client) GetSupportedDocuments() (*supported.DocumentsResponse, error) {
 
 // GetSupportedDocuments gets a slice of supported documents with bool param includeNonLatin
 func (c *Client) GetSupportedDocumentsWithNonLatin(includeNonLatin bool) (*supported.DocumentsResponse, error) {
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    c.apiURL,
-		Endpoint:   getSupportedDocumentsPath(),
-		Params:     map[string]string{"includeNonLatin": strconv.FormatBool(includeNonLatin)},
-	}).Request()
+	endpoint := getSupportedDocumentsPath() + "?includeNonLatin=" + strconv.FormatBool(includeNonLatin)
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, c.apiURL, endpoint, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -304,15 +332,12 @@ func (c *Client) CreateFaceCaptureResource(sessionID string, payload *facecaptur
 		return nil, err
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodPost,
-		BaseURL:    c.apiURL,
-		Endpoint:   fmt.Sprintf("/sessions/%s/resources/face-capture", sessionID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-		Headers:    requests.JSONHeaders(),
-		Body:       body,
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodPost, c.apiURL, fmt.Sprintf("/sessions/%s/resources/face-capture", sessionID), requests.JSONHeaders(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -339,16 +364,12 @@ func (c *Client) UploadFaceCaptureImage(sessionID, resourceID string, payload *f
 		return fmt.Errorf("failed to prepare multipart payload: %w", err)
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodPut,
-		BaseURL:    c.apiURL,
-		Endpoint:   fmt.Sprintf("/sessions/%s/resources/face-capture/%s/image", sessionID, resourceID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-		Body:       payload.MultipartFormBody().Bytes(),
-		Headers:    payload.Headers(),
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return err
+	}
 
+	request, err := requests.BuildAuthRequest(strategy, http.MethodPut, c.apiURL, fmt.Sprintf("/sessions/%s/resources/face-capture/%s/image", sessionID, resourceID), payload.Headers(), payload.MultipartFormBody().Bytes())
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -362,13 +383,12 @@ func (c *Client) GetSessionConfiguration(sessionID string) (*retrieve.SessionCon
 		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
 	}
 
-	request, err := (&requests.SignedRequest{
-		Key:        c.Key,
-		HTTPMethod: http.MethodGet,
-		BaseURL:    c.apiURL,
-		Endpoint:   fmt.Sprintf("/sessions/%s/configuration", sessionID),
-		Params:     map[string]string{"sdkID": c.SdkID},
-	}).Request()
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, c.apiURL, fmt.Sprintf("/sessions/%s/configuration", sessionID), nil, nil)
 	if err != nil {
 		return nil, err
 	}
