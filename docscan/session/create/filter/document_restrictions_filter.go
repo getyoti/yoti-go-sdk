@@ -8,6 +8,8 @@ type RequestedDocumentRestrictionsFilter struct {
 	documents              []*RequestedDocumentRestriction
 	allowExpiredDocuments  *bool
 	allowNonLatinDocuments *bool
+	allowDigitalIDs        *bool
+	allowedProviders       []*DigitalIDProvider
 }
 
 // Type is the type of the document restriction filter
@@ -23,12 +25,16 @@ func (r *RequestedDocumentRestrictionsFilter) MarshalJSON() ([]byte, error) {
 		Documents              []*RequestedDocumentRestriction `json:"documents"`
 		AllowExpiredDocuments  *bool                           `json:"allow_expired_documents,omitempty"`
 		AllowNonLatinDocuments *bool                           `json:"allow_non_latin_documents,omitempty"`
+		AllowDigitalIDs        *bool                           `json:"allow_digital_ids,omitempty"`
+		AllowedProviders       []*DigitalIDProvider            `json:"allowed_providers,omitempty"`
 	}{
 		Type:                   r.Type(),
 		Inclusion:              r.inclusion,
 		Documents:              r.documents,
 		AllowExpiredDocuments:  r.allowExpiredDocuments,
 		AllowNonLatinDocuments: r.allowNonLatinDocuments,
+		AllowDigitalIDs:        r.allowDigitalIDs,
+		AllowedProviders:       r.allowedProviders,
 	})
 }
 
@@ -38,6 +44,8 @@ type RequestedDocumentRestrictionsFilterBuilder struct {
 	documents              []*RequestedDocumentRestriction
 	allowExpiredDocuments  *bool
 	allowNonLatinDocuments *bool
+	allowDigitalIDs        *bool
+	allowedProviders       []*DigitalIDProvider
 }
 
 // NewRequestedDocumentRestrictionsFilterBuilder creates a new RequestedDocumentRestrictionsFilterBuilder
@@ -77,12 +85,32 @@ func (b *RequestedDocumentRestrictionsFilterBuilder) WithAllowNonLatinDocuments(
 	return b
 }
 
+// WithAllowDigitalIDs sets a bool value to allowDigitalIDs on the filter
+func (b *RequestedDocumentRestrictionsFilterBuilder) WithAllowDigitalIDs(allowDigitalIDs bool) *RequestedDocumentRestrictionsFilterBuilder {
+	b.allowDigitalIDs = &allowDigitalIDs
+	return b
+}
+
+// WithAllowedProviders sets the list of allowed digital ID providers on the filter, replacing any previously set value
+func (b *RequestedDocumentRestrictionsFilterBuilder) WithAllowedProviders(allowedProviders []*DigitalIDProvider) *RequestedDocumentRestrictionsFilterBuilder {
+	b.allowedProviders = append([]*DigitalIDProvider(nil), allowedProviders...)
+	return b
+}
+
+// WithAllowedProvider adds a single allowed digital ID provider to the filter
+func (b *RequestedDocumentRestrictionsFilterBuilder) WithAllowedProvider(allowedProvider *DigitalIDProvider) *RequestedDocumentRestrictionsFilterBuilder {
+	b.allowedProviders = append(b.allowedProviders, allowedProvider)
+	return b
+}
+
 // Build creates a new RequestedDocumentRestrictionsFilter
 func (b *RequestedDocumentRestrictionsFilterBuilder) Build() (*RequestedDocumentRestrictionsFilter, error) {
 	return &RequestedDocumentRestrictionsFilter{
-		b.inclusion,
-		b.documents,
-		b.allowExpiredDocuments,
-		b.allowNonLatinDocuments,
+		inclusion:              b.inclusion,
+		documents:              b.documents,
+		allowExpiredDocuments:  b.allowExpiredDocuments,
+		allowNonLatinDocuments: b.allowNonLatinDocuments,
+		allowDigitalIDs:        b.allowDigitalIDs,
+		allowedProviders:       b.allowedProviders,
 	}, nil
 }

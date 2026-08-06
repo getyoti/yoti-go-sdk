@@ -2,10 +2,12 @@ package yoti
 
 import (
 	"crypto/rsa"
+	"errors"
 	"os"
 
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity"
+	direquests "github.com/getyoti/yoti-go-sdk/v3/digitalidentity/requests"
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 )
 
@@ -22,11 +24,16 @@ type DigitalIdentityClient struct {
 	// https://github.com/getyoti/yoti-go-sdk/blob/master/README.md
 	Key *rsa.PrivateKey
 
+	// AuthToken is the central auth bearer token. When set, the client uses
+	// bearer token authentication instead of signed-request authentication.
+	// This is mutually exclusive with SdkID/Key.
+	AuthToken string `json:"-"`
+
 	apiURL     string
 	HTTPClient requests.HttpClient // Mockable HTTP Client Interface
 }
 
-// NewDigitalIdentityClient constructs a Client object
+// NewDigitalIdentityClient constructs a Client object using signed-request authentication.
 func NewDigitalIdentityClient(sdkID string, key []byte) (*DigitalIdentityClient, error) {
 	decodedKey, err := cryptoutil.ParseRSAKey(key)
 
@@ -38,6 +45,36 @@ func NewDigitalIdentityClient(sdkID string, key []byte) (*DigitalIdentityClient,
 		SdkID: sdkID,
 		Key:   decodedKey,
 	}, err
+}
+
+// NewDigitalIdentityClientWithToken constructs a Client object using central auth
+// bearer token authentication. The token is provided by the relying business and
+// will be sent as an Authorization: Bearer <token> header on all API requests.
+func NewDigitalIdentityClientWithToken(authToken string) (*DigitalIdentityClient, error) {
+	if authToken == "" {
+		return nil, errors.New("authentication token must not be empty")
+	}
+	return &DigitalIdentityClient{
+		AuthToken: authToken,
+	}, nil
+}
+
+// GetAuthStrategy returns the appropriate AuthStrategy based on the client configuration.
+func (client *DigitalIdentityClient) GetAuthStrategy() (direquests.AuthStrategy, error) {
+	if client.AuthToken != "" {
+		if client.Key != nil || client.SdkID != "" {
+			return nil, errors.New("must not supply both authentication token and SDK credentials (SdkID/Key)")
+		}
+		return direquests.NewBearerTokenStrategy(client.AuthToken)
+	}
+
+	if client.Key == nil {
+		return nil, errors.New("missing private key for signed-request authentication")
+	}
+	if client.SdkID == "" {
+		return nil, errors.New("missing SDK ID for signed-request authentication")
+	}
+	return direquests.NewSignedRequestStrategy(client.Key, client.SdkID)
 }
 
 // OverrideAPIURL overrides the default API URL for this Yoti Client
@@ -64,25 +101,49 @@ func (client *DigitalIdentityClient) GetSdkID() string {
 
 // CreateShareSession creates a sharing session to initiate a sharing process based on a policy
 func (client *DigitalIdentityClient) CreateShareSession(shareSessionRequest *digitalidentity.ShareSessionRequest) (shareSession *digitalidentity.ShareSession, err error) {
-	return digitalidentity.CreateShareSession(client.HTTPClient, shareSessionRequest, client.GetSdkID(), client.getAPIURL(), client.Key)
+	strategy, err := client.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+	return digitalidentity.CreateShareSession(client.HTTPClient, shareSessionRequest, client.getAPIURL(), strategy)
 }
 
 // GetShareSession retrieves the sharing session.
 func (client *DigitalIdentityClient) GetShareSession(sessionID string) (*digitalidentity.ShareSession, error) {
-	return digitalidentity.GetShareSession(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
+	strategy, err := client.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+	return digitalidentity.GetShareSession(client.HTTPClient, sessionID, client.getAPIURL(), strategy)
 }
 
 // CreateShareQrCode generates a sharing session QR code to initiate a sharing process based on session ID
 func (client *DigitalIdentityClient) CreateShareQrCode(sessionID string) (share *digitalidentity.QrCode, err error) {
-	return digitalidentity.CreateShareQrCode(client.HTTPClient, sessionID, client.GetSdkID(), client.getAPIURL(), client.Key)
+	strategy, err := client.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+	return digitalidentity.CreateShareQrCode(client.HTTPClient, sessionID, client.getAPIURL(), strategy)
 }
 
 // Get session QR code based on generated Qr ID
 func (client *DigitalIdentityClient) GetQrCode(qrCodeId string) (share digitalidentity.ShareSessionQrCode, err error) {
-	return digitalidentity.GetShareSessionQrCode(client.HTTPClient, qrCodeId, client.GetSdkID(), client.getAPIURL(), client.Key)
+	strategy, err := client.GetAuthStrategy()
+	if err != nil {
+		return share, err
+	}
+	return digitalidentity.GetShareSessionQrCode(client.HTTPClient, qrCodeId, client.getAPIURL(), strategy)
 }
 
 // GetShareReceipt fetches the receipt of the share given a receipt id.
+// Requires a private key for receipt decryption; not available with bearer token authentication.
 func (client *DigitalIdentityClient) GetShareReceipt(receiptId string) (share digitalidentity.SharedReceiptResponse, err error) {
-	return digitalidentity.GetShareReceipt(client.HTTPClient, receiptId, client.GetSdkID(), client.getAPIURL(), client.Key)
+	if client.Key == nil {
+		return share, errors.New("GetShareReceipt requires a private key for receipt decryption and cannot be used with bearer token authentication")
+	}
+	strategy, err := client.GetAuthStrategy()
+	if err != nil {
+		return share, err
+	}
+	return digitalidentity.GetShareReceipt(client.HTTPClient, receiptId, client.getAPIURL(), strategy, client.Key)
 }

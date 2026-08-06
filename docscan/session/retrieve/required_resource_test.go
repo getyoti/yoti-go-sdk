@@ -8,7 +8,7 @@ import (
 func TestResource_StringMethods(t *testing.T) {
 	resources := []RequiredResourceResponse{
 		&RequiredIdDocumentResourceResponse{
-			BaseRequiredResource{
+			BaseRequiredResource: BaseRequiredResource{
 				Type:  "ID_DOCUMENT",
 				ID:    "id1",
 				State: "state1",

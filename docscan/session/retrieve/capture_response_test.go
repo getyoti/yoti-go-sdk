@@ -45,10 +45,63 @@ func TestCaptureResponse_UnmarshalJSON(t *testing.T) {
 	assert.Assert(t, ok)
 }
 
+func TestCaptureResponse_UnmarshalJSON_SupportedCountries(t *testing.T) {
+	jsonData := []byte(`{
+		"biometric_consent": "given",
+		"required_resources": [
+			{
+				"type": "ID_DOCUMENT",
+				"id": "id1",
+				"state": "pending",
+				"supported_countries": [
+					{
+						"code": "IND",
+						"supported_documents": [
+							{"type": "AADHAAR", "providers": ["DIGILOCKER"]}
+						]
+					}
+				]
+			}
+		]
+	}`)
+
+	var c CaptureResponse
+	err := json.Unmarshal(jsonData, &c)
+	assert.NilError(t, err)
+	assert.Equal(t, 1, len(c.RequiredResources))
+
+	idDocument, ok := c.RequiredResources[0].(*RequiredIdDocumentResourceResponse)
+	assert.Assert(t, ok)
+
+	assert.Equal(t, 1, len(idDocument.SupportedCountries))
+	assert.Equal(t, "IND", idDocument.SupportedCountries[0].Code)
+	assert.Equal(t, 1, len(idDocument.SupportedCountries[0].SupportedDocuments))
+	assert.Equal(t, "AADHAAR", idDocument.SupportedCountries[0].SupportedDocuments[0].Type)
+	assert.Equal(t, 1, len(idDocument.SupportedCountries[0].SupportedDocuments[0].Providers))
+	assert.Equal(t, "DIGILOCKER", idDocument.SupportedCountries[0].SupportedDocuments[0].Providers[0])
+}
+
+func TestCaptureResponse_UnmarshalJSON_SupportedCountriesOmitted(t *testing.T) {
+	jsonData := []byte(`{
+		"biometric_consent": "given",
+		"required_resources": [
+			{"type": "ID_DOCUMENT", "id": "id1", "state": "pending"}
+		]
+	}`)
+
+	var c CaptureResponse
+	err := json.Unmarshal(jsonData, &c)
+	assert.NilError(t, err)
+
+	idDocument, ok := c.RequiredResources[0].(*RequiredIdDocumentResourceResponse)
+	assert.Assert(t, ok)
+	assert.Equal(t, 0, len(idDocument.SupportedCountries))
+}
+
 func TestCaptureResponse_Getters(t *testing.T) {
 	c := CaptureResponse{
 		RequiredResources: []RequiredResourceResponse{
-			&RequiredIdDocumentResourceResponse{BaseRequiredResource{Type: "ID_DOCUMENT", ID: "id1"}},
+			&RequiredIdDocumentResourceResponse{BaseRequiredResource: BaseRequiredResource{Type: "ID_DOCUMENT", ID: "id1"}},
 			&RequiredSupplementaryDocumentResourceResponse{BaseRequiredResource{Type: "SUPPLEMENTARY_DOCUMENT", ID: "id2"}},
 			&RequiredZoomLivenessResourceResponse{BaseRequiredResource{Type: "LIVENESS", ID: "id3", LivenessType: "ZOOM"}},
 			&RequiredStaticLivenessResourceResponse{BaseRequiredResource{Type: "LIVENESS", ID: "id4", LivenessType: "STATIC"}},

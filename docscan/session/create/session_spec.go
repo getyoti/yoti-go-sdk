@@ -34,6 +34,9 @@ type SessionSpecification struct {
 	// RequiredDocuments is a slice of documents that are required from the user to satisfy a sessions requirements.
 	RequiredDocuments []filter.RequiredDocument `json:"required_documents,omitempty"`
 
+	// RequiredShareCodes is a slice of share codes that are required from the user
+	RequiredShareCodes []filter.RequiredShareCode `json:"required_share_codes,omitempty"`
+
 	// BlockBiometricConsent sets whether or not to block the collection of biometric consent
 	BlockBiometricConsent *bool `json:"block_biometric_consent,omitempty"`
 
@@ -69,6 +72,7 @@ type SessionSpecificationBuilder struct {
 	requestedTasks                      []task.RequestedTask
 	sdkConfig                           *SDKConfig
 	requiredDocuments                   []filter.RequiredDocument
+	requiredShareCodes                  []filter.RequiredShareCode
 	blockBiometricConsent               *bool
 	identityProfileRequirements         *json.RawMessage
 	advancedIdentityProfileRequirements *json.RawMessage
@@ -131,6 +135,12 @@ func (b *SessionSpecificationBuilder) WithRequiredDocument(document filter.Requi
 	return b
 }
 
+// WithRequiredShareCode adds a required share code to the session specification
+func (b *SessionSpecificationBuilder) WithRequiredShareCode(shareCode filter.RequiredShareCode) *SessionSpecificationBuilder {
+	b.requiredShareCodes = append(b.requiredShareCodes, shareCode)
+	return b
+}
+
 // WithBlockBiometricConsent sets whether or not to block the collection of biometric consent
 func (b *SessionSpecificationBuilder) WithBlockBiometricConsent(blockBiometricConsent bool) *SessionSpecificationBuilder {
 	b.blockBiometricConsent = &blockBiometricConsent
@@ -176,20 +186,21 @@ func (b *SessionSpecificationBuilder) WithEphemeralMedia(ephemeralMedia bool) *S
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
-		b.clientSessionTokenTTL,
-		b.resourcesTTL,
-		b.userTrackingID,
-		b.notifications,
-		b.requestedChecks,
-		b.requestedTasks,
-		b.sdkConfig,
-		b.requiredDocuments,
-		b.blockBiometricConsent,
-		b.identityProfileRequirements,
-		b.advancedIdentityProfileRequirements,
-		b.createIdentityProfilePreview,
-		b.subject,
-		b.importToken,
-		b.ephemeralMedia,
+		ClientSessionTokenTTL:               b.clientSessionTokenTTL,
+		ResourcesTTL:                        b.resourcesTTL,
+		UserTrackingID:                      b.userTrackingID,
+		Notifications:                       b.notifications,
+		RequestedChecks:                     b.requestedChecks,
+		RequestedTasks:                      b.requestedTasks,
+		SdkConfig:                           b.sdkConfig,
+		RequiredDocuments:                   b.requiredDocuments,
+		RequiredShareCodes:                  b.requiredShareCodes,
+		BlockBiometricConsent:               b.blockBiometricConsent,
+		IdentityProfileRequirements:         b.identityProfileRequirements,
+		AdvancedIdentityProfileRequirements: b.advancedIdentityProfileRequirements,
+		CreateIdentityProfilePreview:        b.createIdentityProfilePreview,
+		Subject:                             b.subject,
+		ImportToken:                         b.importToken,
+		EphemeralMedia:                      b.ephemeralMedia,
 	}, nil
 }

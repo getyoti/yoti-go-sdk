@@ -3,6 +3,8 @@ package create
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
 func ExampleSdkConfigBuilder_Build() {
@@ -197,6 +199,115 @@ func ExampleSdkConfigBuilder_Build_allowHandOff_omittedWhenNotSet() {
 	// Output: {}
 }
 
+// ExampleSDKConfig_directConstruction_allowHandOff covers constructing SDKConfig directly
+// (bypassing SdkConfigBuilder), preserving the original omitempty behaviour for AllowHandOff:
+// true is still serialized even though allowHandOffSet was never set via the builder.
+func ExampleSDKConfig_directConstruction_allowHandOff() {
+	sdkConfig := SDKConfig{AllowHandOff: true}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"allow_handoff":true}
+}
+
+func ExampleSDKConfig_directConstruction_allowHandOff_falseOmitted() {
+	sdkConfig := SDKConfig{AllowHandOff: false}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
+}
+
+func ExampleSdkConfigBuilder_WithEnforceHandOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithEnforceHandOff(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"enforce_handoff":true}
+}
+
+func ExampleSdkConfigBuilder_WithEnforceHandOff_false() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithEnforceHandOff(false).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"enforce_handoff":false}
+}
+
+func ExampleSdkConfigBuilder_Build_enforceHandOff_omittedWhenNotSet() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
+}
+
+func ExampleSdkConfigBuilder_WithAllowHandOff_andEnforceHandOff() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithAllowHandOff(true).
+		WithEnforceHandOff(true).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"allow_handoff":true,"enforce_handoff":true}
+}
+
 func ExampleSdkConfigBuilder_WithDarkMode() {
 	sdkConfig, err := NewSdkConfigBuilder().
 		WithDarkMode("ON").
@@ -295,4 +406,93 @@ func ExampleSdkConfigBuilder_WithPrimaryColourDarkMode() {
 
 	fmt.Println(string(data))
 	// Output: {"primary_colour_dark_mode":"SOME_COLOUR"}
+}
+
+func ExampleSdkConfigBuilder_WithSuppressedScreens() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreens([]string{
+			constants.IDDocumentEducationScreen,
+			constants.IDDocumentRequirementsScreen,
+			constants.SupplementaryDocumentEducationScreen,
+			constants.ZoomLivenessEducationScreen,
+			constants.StaticLivenessEducationScreen,
+			constants.FaceCaptureEducationScreen,
+			constants.FlowCompletionScreen,
+		}).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["ID_DOCUMENT_EDUCATION","ID_DOCUMENT_REQUIREMENTS","SUPPLEMENTARY_DOCUMENT_EDUCATION","ZOOM_LIVENESS_EDUCATION","STATIC_LIVENESS_EDUCATION","FACE_CAPTURE_EDUCATION","FLOW_COMPLETION"]}
+}
+
+func ExampleSdkConfigBuilder_WithSuppressedScreens_replacesPreviousValue() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreens([]string{constants.FlowCompletionScreen}).
+		WithSuppressedScreens([]string{constants.IDDocumentEducationScreen}).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["ID_DOCUMENT_EDUCATION"]}
+}
+
+func ExampleSdkConfigBuilder_WithSuppressedScreen() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		WithSuppressedScreen(constants.FlowCompletionScreen).
+		WithSuppressedScreen(constants.IDDocumentEducationScreen).
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {"suppressed_screens":["FLOW_COMPLETION","ID_DOCUMENT_EDUCATION"]}
+}
+
+func ExampleSdkConfigBuilder_Build_suppressedScreensOmittedWhenNotSet() {
+	sdkConfig, err := NewSdkConfigBuilder().
+		Build()
+
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	data, err := json.Marshal(sdkConfig)
+	if err != nil {
+		fmt.Printf("error: %s", err.Error())
+		return
+	}
+
+	fmt.Println(string(data))
+	// Output: {}
 }
