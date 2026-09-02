@@ -6,7 +6,6 @@ import (
 
 	"github.com/getyoti/yoti-go-sdk/v3/requests"
 
-	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	"github.com/getyoti/yoti-go-sdk/v3/cryptoutil"
 	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
 	"github.com/getyoti/yoti-go-sdk/v3/profile"
@@ -73,12 +72,6 @@ func (client *Client) GetSdkID() string {
 // the error will implement interface{ Temporary() bool }.
 func (client *Client) GetActivityDetails(token string) (activity profile.ActivityDetails, err error) {
 	return profile.GetActivityDetails(client.HTTPClient, token, client.GetSdkID(), client.getAPIURL(), client.Key)
-}
-
-// PerformAmlCheck performs an Anti Money Laundering Check (AML) for a particular user.
-// Returns three boolean values: 'OnPEPList', 'OnWatchList' and 'OnFraudList'.
-func (client *Client) PerformAmlCheck(profile aml.Profile) (result aml.Result, err error) {
-	return aml.PerformCheck(client.HTTPClient, profile, client.GetSdkID(), client.getAPIURL(), client.Key)
 }
 
 // CreateShareURL creates a QR code for a specified dynamic scenario
