@@ -946,5 +946,67 @@
         </div>
     </div>
 {{ end }}
+
+{{ if .trackedDevices }}
+<div class="row pt-4">
+    <div class="col">
+        <h2>Tracked Devices</h2>
+    </div>
+</div>
+{{ range $deviceIndex, $trackedDevice := .trackedDevices }}
+<div class="row pt-4">
+    <div class="col">
+        <table class="table table-striped table-light">
+            <tbody>
+                <tr>
+                    <td>Event</td>
+                    <td>{{ $trackedDevice.Event }}</td>
+                </tr>
+                <tr>
+                    <td>Created</td>
+                    <td>{{ $trackedDevice.Created }}</td>
+                </tr>
+                {{ if $trackedDevice.ResourceID }}
+                <tr>
+                    <td>Resource ID</td>
+                    <td>{{ derefString $trackedDevice.ResourceID }}</td>
+                </tr>
+                {{ end }}
+                {{ if $trackedDevice.Device }}
+                <tr>
+                    <td>IP Address</td>
+                    <td>{{ derefString $trackedDevice.Device.IPAddress }}</td>
+                </tr>
+                <tr>
+                    <td>IP Country Code</td>
+                    <td>{{ derefString $trackedDevice.Device.IPISOCountryCode }}</td>
+                </tr>
+                <tr>
+                    <td>Manufacturer / Model</td>
+                    <td>{{ derefString $trackedDevice.Device.ManufactureName }} {{ derefString $trackedDevice.Device.ModelName }}</td>
+                </tr>
+                <tr>
+                    <td>OS</td>
+                    <td>{{ derefString $trackedDevice.Device.OSName }} {{ derefString $trackedDevice.Device.OSVersion }}</td>
+                </tr>
+                <tr>
+                    <td>Browser</td>
+                    <td>{{ derefString $trackedDevice.Device.BrowserName }} {{ derefString $trackedDevice.Device.BrowserVersion }}</td>
+                </tr>
+                <tr>
+                    <td>Locale</td>
+                    <td>{{ derefString $trackedDevice.Device.Locale }}</td>
+                </tr>
+                <tr>
+                    <td>Client Version</td>
+                    <td>{{ derefString $trackedDevice.Device.ClientVersion }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end }}
+{{ end }}
 </div>
 {{ template "footer.html" .}}

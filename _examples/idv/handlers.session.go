@@ -145,11 +145,14 @@ func showSuccessPage(c *gin.Context) {
 		return
 	}
 
+	trackedDevices, _ := client.GetTrackedDevices(sessionId)
+
 	render(
 		c,
 		gin.H{
 			"title":            "Success",
 			"getSessionResult": getSessionResult,
+			"trackedDevices":   trackedDevices,
 			"add": func(a int, b int) int {
 				return a + b
 			},
