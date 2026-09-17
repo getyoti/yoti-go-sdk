@@ -306,6 +306,57 @@ func TestGetSessionResult_UnmarshalJSON_AdvancedIdentityProfilePreview(t *testin
 	assert.Equal(t, identityProfilePreview.Media.Type, "IMAGE")
 }
 
+func TestGetSessionResult_ResourcesForCheck(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/watchlist_screening.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	resources, err := result.ResourcesForCheck("8f4a89a1-4614-47ab-9506-2c82352b66d2")
+	assert.NilError(t, err)
+	assert.Assert(t, resources != nil)
+
+	assert.Equal(t, 1, len(resources.IDDocuments))
+	assert.Equal(t, "20deead7-4cb6-4921-a56c-ea10fa0a5595", resources.IDDocuments[0].GetID())
+	assert.Equal(t, "PASSPORT", resources.IDDocuments[0].DocumentType)
+	assert.Equal(t, 0, len(resources.SupplementaryDocuments))
+	assert.Equal(t, 0, len(resources.LivenessCapture))
+}
+
+func TestGetSessionResult_ResourcesForCheck_NotFound(t *testing.T) {
+	bytes, err := file.ReadFile("../../../test/fixtures/watchlist_screening.json")
+	assert.NilError(t, err)
+
+	var result retrieve.GetSessionResult
+	err = result.UnmarshalJSON(bytes)
+	assert.NilError(t, err)
+
+	resources, err := result.ResourcesForCheck("unknown-check-id")
+	assert.ErrorContains(t, err, "no check found with id")
+	assert.Assert(t, resources == nil)
+}
+
+func TestGetSessionResult_ResourcesForCheck_NilResources(t *testing.T) {
+	result := retrieve.GetSessionResult{
+		Checks: []*retrieve.CheckResponse{{ID: "a"}},
+	}
+
+	resources, err := result.ResourcesForCheck("a")
+	assert.NilError(t, err)
+	assert.Assert(t, resources != nil)
+	assert.Equal(t, 0, len(resources.IDDocuments))
+}
+
+func TestGetSessionResult_ResourcesForCheck_EmptyResult(t *testing.T) {
+	var result retrieve.GetSessionResult
+
+	resources, err := result.ResourcesForCheck("a")
+	assert.ErrorContains(t, err, "no check found with id")
+	assert.Assert(t, resources == nil)
+}
+
 func TestGetSessionResult_UnmarshalJSON_DigitalIDShares(t *testing.T) {
 	raw := []byte(`{
 		"digital_id_shares": [
