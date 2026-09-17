@@ -4,15 +4,24 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
-	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"io"
 	"net/http"
 	"strings"
 	"testing"
 
+	"github.com/getyoti/yoti-go-sdk/v3/digitalidentity/requests"
 	"github.com/getyoti/yoti-go-sdk/v3/test"
+	"github.com/getyoti/yoti-go-sdk/v3/yotiprotoattr"
 	"gotest.tools/v3/assert"
 )
+
+func mustSignedStrategy(key *rsa.PrivateKey, sdkID string) requests.AuthStrategy {
+	s, err := requests.NewSignedRequestStrategy(key, sdkID)
+	if err != nil {
+		panic(err)
+	}
+	return s
+}
 
 type mockHTTPClient struct {
 	do func(*http.Request) (*http.Response, error)
@@ -49,7 +58,7 @@ func ExampleCreateShareSession() {
 		return
 	}
 
-	result, err := CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
+	result, err := CreateShareSession(client, &session, "https://apiurl", mustSignedStrategy(key, "sdkId"))
 
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
@@ -92,7 +101,7 @@ func createShareSessionWithErrorResponse(statusCode int, responseBody string) (*
 		return nil, err
 	}
 
-	return CreateShareSession(client, &session, "sdkId", "https://apiurl", key)
+	return CreateShareSession(client, &session, "https://apiurl", mustSignedStrategy(key, "sdkId"))
 }
 
 func TestGetShareSession(t *testing.T) {
@@ -109,7 +118,7 @@ func TestGetShareSession(t *testing.T) {
 		},
 	}
 
-	_, err := GetShareSession(client, mockSessionID, mockClientSdkId, mockApiUrl, key)
+	_, err := GetShareSession(client, mockSessionID, mockApiUrl, mustSignedStrategy(key, mockClientSdkId))
 	assert.NilError(t, err)
 
 }
@@ -127,7 +136,7 @@ func TestCreateShareQrCode(t *testing.T) {
 		},
 	}
 
-	_, err := CreateShareQrCode(client, mockSessionID, "sdkId", "https://apiurl", key)
+	_, err := CreateShareQrCode(client, mockSessionID, "https://apiurl", mustSignedStrategy(key, "sdkId"))
 	assert.NilError(t, err)
 }
 
@@ -145,7 +154,7 @@ func TestGetQrCode(t *testing.T) {
 		},
 	}
 
-	_, err := GetShareSessionQrCode(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	_, err := GetShareSessionQrCode(client, mockQrId, mockApiUrl, mustSignedStrategy(key, mockClientSdkId))
 	assert.NilError(t, err)
 
 }
@@ -173,7 +182,7 @@ func TestGetShareReceipt_GetReceiptError(t *testing.T) {
 		},
 	}
 
-	_, err := GetShareReceipt(client, "receiptId", "sdkId", "https://apiurl", key)
+	_, err := GetShareReceipt(client, "receiptId", "https://apiurl", mustSignedStrategy(key, "sdkId"), key)
 	assert.ErrorContains(t, err, "failed to get receipt")
 }
 
@@ -199,7 +208,7 @@ func TestGetShareReceipt_GetReceiptItemKeyError(t *testing.T) {
 		},
 	}
 
-	_, err := GetShareReceipt(client, "receiptId", "sdkId", "https://apiurl", key)
+	_, err := GetShareReceipt(client, "receiptId", "https://apiurl", mustSignedStrategy(key, "sdkId"), key)
 	assert.ErrorContains(t, err, "failed to get receipt")
 }
 
@@ -217,7 +226,7 @@ func TestGetFailureReceipt(t *testing.T) {
 		},
 	}
 
-	r, err := GetShareReceipt(client, mockQrId, mockClientSdkId, mockApiUrl, key)
+	r, err := GetShareReceipt(client, mockQrId, mockApiUrl, mustSignedStrategy(key, mockClientSdkId), key)
 	assert.Equal(t, len(r.ErrorReason.RequirementsNotMetDetails), 1)
 	assert.NilError(t, err)
 

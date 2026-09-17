@@ -27,6 +27,12 @@ func (b *ZoomLivenessCheckBuilder) WithBreakdown(breakdown *report.Breakdown) *Z
 	return b
 }
 
+// WithHandledCheckLimit sets the number of times this check response is used before advancing to the next
+func (b *ZoomLivenessCheckBuilder) WithHandledCheckLimit(limit int) *ZoomLivenessCheckBuilder {
+	b.withHandledCheckLimit(limit)
+	return b
+}
+
 // Build creates a new LivenessCheck
 func (b *ZoomLivenessCheckBuilder) Build() (*LivenessCheck, error) {
 	livenessCheck := b.livenessCheckBuilder.

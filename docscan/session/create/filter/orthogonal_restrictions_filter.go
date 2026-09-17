@@ -8,6 +8,8 @@ type RequestedOrthogonalRestrictionsFilter struct {
 	typeRestriction        *TypeRestriction
 	allowExpiredDocuments  *bool
 	allowNonLatinDocuments *bool
+	allowDigitalIDs        *bool
+	allowedProviders       []*DigitalIDProvider
 }
 
 // Type returns the type of the RequestedOrthogonalRestrictionsFilter
@@ -18,17 +20,21 @@ func (r RequestedOrthogonalRestrictionsFilter) Type() string {
 // MarshalJSON returns the JSON encoding
 func (r RequestedOrthogonalRestrictionsFilter) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Type                   string              `json:"type"`
-		CountryRestriction     *CountryRestriction `json:"country_restriction,omitempty"`
-		TypeRestriction        *TypeRestriction    `json:"type_restriction,omitempty"`
-		AllowExpiredDocuments  *bool               `json:"allow_expired_documents,omitempty"`
-		AllowNonLatinDocuments *bool               `json:"allow_non_latin_documents,omitempty"`
+		Type                   string               `json:"type"`
+		CountryRestriction     *CountryRestriction  `json:"country_restriction,omitempty"`
+		TypeRestriction        *TypeRestriction     `json:"type_restriction,omitempty"`
+		AllowExpiredDocuments  *bool                `json:"allow_expired_documents,omitempty"`
+		AllowNonLatinDocuments *bool                `json:"allow_non_latin_documents,omitempty"`
+		AllowDigitalIDs        *bool                `json:"allow_digital_ids,omitempty"`
+		AllowedProviders       []*DigitalIDProvider `json:"allowed_providers,omitempty"`
 	}{
 		CountryRestriction:     r.countryRestriction,
 		TypeRestriction:        r.typeRestriction,
 		Type:                   r.Type(),
 		AllowExpiredDocuments:  r.allowExpiredDocuments,
 		AllowNonLatinDocuments: r.allowNonLatinDocuments,
+		AllowDigitalIDs:        r.allowDigitalIDs,
+		AllowedProviders:       r.allowedProviders,
 	})
 }
 
@@ -38,6 +44,8 @@ type RequestedOrthogonalRestrictionsFilterBuilder struct {
 	typeRestriction        *TypeRestriction
 	allowExpiredDocuments  *bool
 	allowNonLatinDocuments *bool
+	allowDigitalIDs        *bool
+	allowedProviders       []*DigitalIDProvider
 }
 
 // NewRequestedOrthogonalRestrictionsFilterBuilder creates a new RequestedOrthogonalRestrictionsFilterBuilder
@@ -47,6 +55,8 @@ func NewRequestedOrthogonalRestrictionsFilterBuilder() *RequestedOrthogonalRestr
 		typeRestriction:        nil,
 		allowExpiredDocuments:  nil,
 		allowNonLatinDocuments: nil,
+		allowDigitalIDs:        nil,
+		allowedProviders:       nil,
 	}
 }
 
@@ -98,12 +108,32 @@ func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithExpiredDocuments(allo
 	return b
 }
 
+// WithAllowDigitalIDs sets a bool value to allowDigitalIDs on the filter
+func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithAllowDigitalIDs(allowDigitalIDs bool) *RequestedOrthogonalRestrictionsFilterBuilder {
+	b.allowDigitalIDs = &allowDigitalIDs
+	return b
+}
+
+// WithAllowedProviders sets the list of allowed digital ID providers on the filter, replacing any previously set value
+func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithAllowedProviders(allowedProviders []*DigitalIDProvider) *RequestedOrthogonalRestrictionsFilterBuilder {
+	b.allowedProviders = append([]*DigitalIDProvider(nil), allowedProviders...)
+	return b
+}
+
+// WithAllowedProvider adds a single allowed digital ID provider to the filter
+func (b *RequestedOrthogonalRestrictionsFilterBuilder) WithAllowedProvider(allowedProvider *DigitalIDProvider) *RequestedOrthogonalRestrictionsFilterBuilder {
+	b.allowedProviders = append(b.allowedProviders, allowedProvider)
+	return b
+}
+
 // Build creates a new RequestedOrthogonalRestrictionsFilter
 func (b *RequestedOrthogonalRestrictionsFilterBuilder) Build() (*RequestedOrthogonalRestrictionsFilter, error) {
 	return &RequestedOrthogonalRestrictionsFilter{
-		b.countryRestriction,
-		b.typeRestriction,
-		b.allowExpiredDocuments,
-		b.allowNonLatinDocuments,
+		countryRestriction:     b.countryRestriction,
+		typeRestriction:        b.typeRestriction,
+		allowExpiredDocuments:  b.allowExpiredDocuments,
+		allowNonLatinDocuments: b.allowNonLatinDocuments,
+		allowDigitalIDs:        b.allowDigitalIDs,
+		allowedProviders:       b.allowedProviders,
 	}, nil
 }

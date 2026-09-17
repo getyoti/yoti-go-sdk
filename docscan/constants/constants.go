@@ -43,4 +43,12 @@ const (
 	Early          string = "EARLY"
 	JustInTime     string = "JUST_IN_TIME"
 	FaceComparison string = "FACE_COMPARISON"
+
+	IDDocumentEducationScreen            string = "ID_DOCUMENT_EDUCATION"
+	IDDocumentRequirementsScreen         string = "ID_DOCUMENT_REQUIREMENTS"
+	SupplementaryDocumentEducationScreen string = "SUPPLEMENTARY_DOCUMENT_EDUCATION"
+	ZoomLivenessEducationScreen          string = "ZOOM_LIVENESS_EDUCATION"
+	StaticLivenessEducationScreen        string = "STATIC_LIVENESS_EDUCATION"
+	FaceCaptureEducationScreen           string = "FACE_CAPTURE_EDUCATION"
+	FlowCompletionScreen                 string = "FLOW_COMPLETION"
 )

@@ -35,3 +35,9 @@ func (b *ThirdPartyIdentityCheckBuilder) WithRecommendation(recommendation *repo
 	b.checkBuilder.withRecommendation(recommendation)
 	return b
 }
+
+// WithHandledCheckLimit sets the number of times this check response is used before advancing to the next
+func (b *ThirdPartyIdentityCheckBuilder) WithHandledCheckLimit(limit int) *ThirdPartyIdentityCheckBuilder {
+	b.withHandledCheckLimit(limit)
+	return b
+}

@@ -14,7 +14,8 @@
                 "last_updated": "2023-01-04T13:42:34Z"
             }
         },
-        "liveness_type": "STATIC"
+        "liveness_type": "STATIC",
+        "capture_type": "CAMERA"
     },
     {
         "id": "1fb5120f-7e50-4c48-8753-8311f4a96ed4",

@@ -36,7 +36,8 @@
               "created": "2021-07-20T15:15:52Z",
               "last_updated": "2021-07-20T15:15:52Z"
             },
-            "frames": [{}, {}, {}]
+            "frames": [{}, {}, {}],
+            "extraction_image_ids": ["a1b2c3d4-0000-0000-0000-000000000001"]
           }
         ],
         "document_fields": {
@@ -81,22 +82,26 @@
           {
             "sub_check": "adverse_media",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "fitness_probity",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "pep",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "EXPERT_REVIEW"
           },
           {
             "sub_check": "sanction",
             "result": "PASS",
-            "details": []
+            "details": [],
+            "process": "AUTOMATED"
           },
           {
             "sub_check": "warning",

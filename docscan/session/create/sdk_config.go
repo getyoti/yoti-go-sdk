@@ -19,17 +19,20 @@ type SDKConfig struct {
 	PrivacyPolicyUrl      string                 `json:"privacy_policy_url,omitempty"`
 	AttemptsConfiguration *AttemptsConfiguration `json:"attempts_configuration,omitempty"`
 	AllowHandOff          bool                   `json:"allow_handoff,omitempty"`
+	EnforceHandOff        bool                   `json:"enforce_handoff,omitempty"`
 	DarkMode              string                 `json:"dark_mode,omitempty"`
 	PrimaryColourDarkMode string                 `json:"primary_colour_dark_mode,omitempty"`
 	BiometricConsentFlow  string                 `json:"biometric_consent_flow,omitempty"`
 	BrandId               string                 `json:"brand_id,omitempty"`
+	SuppressedScreens     []string               `json:"suppressed_screens,omitempty"`
 
-	allowHandOffSet bool `json:"-"`
+	allowHandOffSet   bool `json:"-"`
+	enforceHandOffSet bool `json:"-"`
 }
 
 func (c SDKConfig) MarshalJSON() ([]byte, error) {
 	// Marshal using a dedicated struct to preserve stable field ordering while
-	// also allowing allow_handoff=false to be included when explicitly set.
+	// also allowing allow_handoff=false / enforce_handoff=false to be included when explicitly set.
 	type sdkConfigJSON struct {
 		AllowedCaptureMethods string                 `json:"allowed_capture_methods,omitempty"`
 		PrimaryColour         string                 `json:"primary_colour,omitempty"`
@@ -42,16 +45,24 @@ func (c SDKConfig) MarshalJSON() ([]byte, error) {
 		PrivacyPolicyUrl      string                 `json:"privacy_policy_url,omitempty"`
 		AttemptsConfiguration *AttemptsConfiguration `json:"attempts_configuration,omitempty"`
 		AllowHandOff          *bool                  `json:"allow_handoff,omitempty"`
+		EnforceHandOff        *bool                  `json:"enforce_handoff,omitempty"`
 		DarkMode              string                 `json:"dark_mode,omitempty"`
 		PrimaryColourDarkMode string                 `json:"primary_colour_dark_mode,omitempty"`
 		BiometricConsentFlow  string                 `json:"biometric_consent_flow,omitempty"`
 		BrandId               string                 `json:"brand_id,omitempty"`
+		SuppressedScreens     []string               `json:"suppressed_screens,omitempty"`
 	}
 
 	var allowHandOff *bool
 	if c.allowHandOffSet {
 		value := c.AllowHandOff
 		allowHandOff = &value
+	}
+
+	var enforceHandOff *bool
+	if c.enforceHandOffSet {
+		value := c.EnforceHandOff
+		enforceHandOff = &value
 	}
 
 	payload := sdkConfigJSON{
@@ -66,10 +77,12 @@ func (c SDKConfig) MarshalJSON() ([]byte, error) {
 		PrivacyPolicyUrl:      c.PrivacyPolicyUrl,
 		AttemptsConfiguration: c.AttemptsConfiguration,
 		AllowHandOff:          allowHandOff,
+		EnforceHandOff:        enforceHandOff,
 		DarkMode:              c.DarkMode,
 		PrimaryColourDarkMode: c.PrimaryColourDarkMode,
 		BiometricConsentFlow:  c.BiometricConsentFlow,
 		BrandId:               c.BrandId,
+		SuppressedScreens:     c.SuppressedScreens,
 	}
 
 	return json.Marshal(payload)
@@ -98,10 +111,13 @@ type SdkConfigBuilder struct {
 	idDocumentTextDataExtractionAttempts map[string]int
 	allowHandOff                         bool
 	allowHandOffSet                      bool
+	enforceHandOff                       bool
+	enforceHandOffSet                    bool
 	darkMode                             string
 	primaryColourDarkMode                string
 	biometricConsentFlow                 string
 	brandId                              string
+	suppressedScreens                    []string
 }
 
 // WithAllowedCaptureMethods sets the allowed capture methods on the builder
@@ -190,6 +206,12 @@ func (b *SdkConfigBuilder) WithAllowHandOff(allowHandOff bool) *SdkConfigBuilder
 	return b
 }
 
+func (b *SdkConfigBuilder) WithEnforceHandOff(enforceHandOff bool) *SdkConfigBuilder {
+	b.enforceHandOff = enforceHandOff
+	b.enforceHandOffSet = true
+	return b
+}
+
 func (b *SdkConfigBuilder) WithDarkMode(darkMode string) *SdkConfigBuilder {
 	b.darkMode = darkMode
 	return b
@@ -233,25 +255,39 @@ func (b *SdkConfigBuilder) WithBrandId(brandId string) *SdkConfigBuilder {
 	return b
 }
 
+// WithSuppressedScreens sets the screens to omit from the IDV flow, replacing any previously set value
+func (b *SdkConfigBuilder) WithSuppressedScreens(suppressedScreens []string) *SdkConfigBuilder {
+	b.suppressedScreens = suppressedScreens
+	return b
+}
+
+// WithSuppressedScreen adds a single screen to omit from the IDV flow
+func (b *SdkConfigBuilder) WithSuppressedScreen(suppressedScreen string) *SdkConfigBuilder {
+	b.suppressedScreens = append(b.suppressedScreens, suppressedScreen)
+	return b
+}
+
 // Build builds the SDKConfig struct using the supplied values
 func (b *SdkConfigBuilder) Build() (*SDKConfig, error) {
 	sdkConf := &SDKConfig{
-		b.allowedCaptureMethods,
-		b.primaryColour,
-		b.secondaryColour,
-		b.fontColour,
-		b.locale,
-		b.presetIssuingCountry,
-		b.successUrl,
-		b.errorUrl,
-		b.privacyPolicyUrl,
-		nil,
-		b.allowHandOff,
-		b.darkMode,
-		b.primaryColourDarkMode,
-		b.biometricConsentFlow,
-		b.brandId,
-		b.allowHandOffSet,
+		AllowedCaptureMethods: b.allowedCaptureMethods,
+		PrimaryColour:         b.primaryColour,
+		SecondaryColour:       b.secondaryColour,
+		FontColour:            b.fontColour,
+		Locale:                b.locale,
+		PresetIssuingCountry:  b.presetIssuingCountry,
+		SuccessUrl:            b.successUrl,
+		ErrorUrl:              b.errorUrl,
+		PrivacyPolicyUrl:      b.privacyPolicyUrl,
+		AllowHandOff:          b.allowHandOff,
+		EnforceHandOff:        b.enforceHandOff,
+		DarkMode:              b.darkMode,
+		PrimaryColourDarkMode: b.primaryColourDarkMode,
+		BiometricConsentFlow:  b.biometricConsentFlow,
+		BrandId:               b.brandId,
+		SuppressedScreens:     b.suppressedScreens,
+		allowHandOffSet:       b.allowHandOffSet,
+		enforceHandOffSet:     b.enforceHandOffSet,
 	}
 
 	if b.idDocumentTextDataExtractionAttempts != nil {
