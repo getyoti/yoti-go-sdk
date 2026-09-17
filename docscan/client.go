@@ -304,6 +304,7 @@ func (c *Client) GetTrackedDevices(sessionID string) ([]*retrieve.TrackedDeviceR
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = response.Body.Close() }()
 
 	var responseBytes []byte
 	responseBytes, err = io.ReadAll(response.Body)
@@ -334,9 +335,12 @@ func (c *Client) DeleteTrackedDevices(sessionID string) error {
 		return err
 	}
 
-	_, err = requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	response, err := requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
 	if err != nil {
 		return err
+	}
+	if response.Body != nil {
+		defer func() { _ = response.Body.Close() }()
 	}
 
 	return nil

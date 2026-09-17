@@ -947,6 +947,17 @@
     </div>
 {{ end }}
 
+{{ if .trackedDevicesError }}
+<div class="row pt-4">
+    <div class="col">
+        <h2>Tracked Devices</h2>
+        <div class="alert alert-danger" role="alert">
+            Failed to retrieve tracked devices: {{ .trackedDevicesError }}
+        </div>
+    </div>
+</div>
+{{ end }}
+
 {{ if .trackedDevices }}
 <div class="row pt-4">
     <div class="col">
