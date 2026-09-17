@@ -432,6 +432,39 @@
         </div>
     {{ end }}
 
+    {{ if .getSessionResult.Checks }}
+    <div class="row pt-4">
+        <div class="col">
+            <h2>Resources For Check</h2>
+            <table class="table table-striped table-light">
+                <thead>
+                    <tr>
+                        <th>Check ID</th>
+                        <th>ID Documents</th>
+                        <th>Supplementary Documents</th>
+                        <th>Share Codes</th>
+                        <th>Zoom Liveness</th>
+                        <th>Static Liveness</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range $check := .getSessionResult.Checks }}
+                    {{ $resourcesForCheck := $.getSessionResult.ResourcesForCheck $check.ID }}
+                    <tr>
+                        <td>{{ $check.ID }}</td>
+                        <td>{{ len $resourcesForCheck.IDDocuments }}</td>
+                        <td>{{ len $resourcesForCheck.SupplementaryDocuments }}</td>
+                        <td>{{ len $resourcesForCheck.ShareCodes }}</td>
+                        <td>{{ len $resourcesForCheck.ZoomLivenessResources }}</td>
+                        <td>{{ len $resourcesForCheck.StaticLivenessResources }}</td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ end }}
+
     {{ if .getSessionResult.Resources.IDDocuments }}
         <div class="row pt-4">
             <div class="col">
