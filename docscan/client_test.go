@@ -789,6 +789,14 @@ func TestClient_GetAuthStrategy_MissingSdkID(t *testing.T) {
 	assert.ErrorContains(t, err, "missing SDK ID")
 }
 
+func TestClient_AuthToken_NotJSONSerialized(t *testing.T) {
+	client := Client{AuthToken: "my-secret-token", SdkID: "sdk-id"}
+
+	jsonBytes, err := json.Marshal(client)
+	assert.NilError(t, err)
+	assert.Assert(t, !strings.Contains(string(jsonBytes), "my-secret-token"))
+}
+
 func TestClient_WithToken_CreateSession(t *testing.T) {
 	var capturedRequest *http.Request
 

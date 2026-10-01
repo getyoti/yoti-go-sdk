@@ -31,7 +31,7 @@ type Client struct {
 	// AuthToken is the central auth bearer token. When set, the client uses
 	// Bearer token authentication instead of signed requests.
 	// This is mutually exclusive with SdkID/Key.
-	AuthToken string
+	AuthToken string `json:"-"`
 	// Mockable HTTP Client Interface
 	HTTPClient requests.HttpClient
 	// API URL to use. This is not required, and a default will be set if not provided.
