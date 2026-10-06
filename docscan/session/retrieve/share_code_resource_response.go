@@ -1,21 +1,30 @@
 package retrieve
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
 )
 
+// ShareCodeMediaResponse wraps a MediaResponse inside a share code resource field.
+// The API returns media objects nested under a "media" key, e.g.
+//
+//	{"id_photo": {"media": {"id": "...", "type": "IMAGE", ...}}}
+type ShareCodeMediaResponse struct {
+	Media *MediaResponse `json:"media"`
+}
+
 // ShareCodeResourceResponse represents a share code resource for a given session
 type ShareCodeResourceResponse struct {
 	*ResourceResponse
-	Source               string         `json:"source"`
-	CreatedAt            string         `json:"created_at"`
-	LastUpdated          string         `json:"last_updated"`
-	LookupProfile        *MediaResponse `json:"lookup_profile,omitempty"`
-	ReturnedProfile      *MediaResponse `json:"returned_profile,omitempty"`
-	IDPhoto              *MediaResponse `json:"id_photo,omitempty"`
-	File                 *MediaResponse `json:"file,omitempty"`
+	Source               string                  `json:"source"`
+	CreatedAt            string                  `json:"created_at"`
+	LastUpdated          string                  `json:"last_updated"`
+	LookupProfile        *ShareCodeMediaResponse `json:"lookup_profile,omitempty"`
+	ReturnedProfile      *ShareCodeMediaResponse `json:"returned_profile,omitempty"`
+	IDPhoto              *ShareCodeMediaResponse `json:"id_photo,omitempty"`
+	File                 *ShareCodeMediaResponse `json:"file,omitempty"`
 	verifyShareCodeTasks []*VerifyShareCodeTaskResponse
 }
 
@@ -30,16 +39,20 @@ func (s *ShareCodeResourceResponse) UnmarshalJSON(data []byte) error {
 		Type string `json:"type"`
 	}
 	type wire struct {
-		ID              string          `json:"id"`
-		Source          json.RawMessage `json:"source"`
-		CreatedAt       string          `json:"created_at"`
-		LastUpdated     string          `json:"last_updated"`
-		LookupProfile   *MediaResponse  `json:"lookup_profile,omitempty"`
-		ReturnedProfile *MediaResponse  `json:"returned_profile,omitempty"`
-		IDPhoto         *MediaResponse  `json:"id_photo,omitempty"`
-		File            *MediaResponse  `json:"file,omitempty"`
-		Tasks           []*TaskResponse `json:"tasks"`
+		ID              string                  `json:"id"`
+		Source          json.RawMessage         `json:"source"`
+		CreatedAt       string                  `json:"created_at"`
+		LastUpdated     string                  `json:"last_updated"`
+		LookupProfile   *ShareCodeMediaResponse `json:"lookup_profile,omitempty"`
+		ReturnedProfile *ShareCodeMediaResponse `json:"returned_profile,omitempty"`
+		IDPhoto         *ShareCodeMediaResponse `json:"id_photo,omitempty"`
+		File            *ShareCodeMediaResponse `json:"file,omitempty"`
+		Tasks           []*TaskResponse         `json:"tasks"`
 	}
+
+	// Reset derived fields to avoid leaking values if unmarshaled more than once.
+	s.verifyShareCodeTasks = nil
+	s.Source = ""
 
 	var w wire
 	if err := json.Unmarshal(data, &w); err != nil {
@@ -55,21 +68,22 @@ func (s *ShareCodeResourceResponse) UnmarshalJSON(data []byte) error {
 	s.File = w.File
 
 	// API may return source as either a string (legacy) or an object like {"type":"END_USER"}.
-	if len(w.Source) != 0 && string(w.Source) != "null" {
+	trimmed := bytes.TrimSpace(w.Source)
+	if len(trimmed) != 0 && !bytes.Equal(trimmed, []byte("null")) {
 		var sourceString string
-		if err := json.Unmarshal(w.Source, &sourceString); err == nil {
+		if err := json.Unmarshal(trimmed, &sourceString); err == nil {
 			s.Source = sourceString
 		} else {
 			var sourceObj sourceObject
-			if err := json.Unmarshal(w.Source, &sourceObj); err == nil {
+			if err := json.Unmarshal(trimmed, &sourceObj); err == nil {
 				if sourceObj.Type != "" {
 					s.Source = sourceObj.Type
 				} else {
-					s.Source = string(w.Source)
+					s.Source = string(trimmed)
 				}
 			} else {
 				// Be lenient to avoid breaking when API adds new shapes.
-				s.Source = string(w.Source)
+				s.Source = string(trimmed)
 			}
 		}
 	}

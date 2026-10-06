@@ -49,7 +49,7 @@ func NewDigitalIdentityClient(sdkID string, key []byte) (*DigitalIdentityClient,
 
 // NewDigitalIdentityClientWithToken constructs a Client object using central auth
 // bearer token authentication. The token is provided by the relying business and
-// will be sent as an Authorization: Bearer header on all API requests.
+// will be sent as an Authorization: Bearer <token> header on all API requests.
 func NewDigitalIdentityClientWithToken(authToken string) (*DigitalIdentityClient, error) {
 	if authToken == "" {
 		return nil, errors.New("authentication token must not be empty")

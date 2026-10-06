@@ -446,6 +446,18 @@ func TestDigitalIdentityBuilder_WithEstimatedAgeOver_WithoutConstraint(t *testin
 	assert.Equal(t, len(policy.attributes[0].constraints), 0)
 }
 
+func TestDigitalIdentityBuilder_WithEstimatedAgeOver_WithInvalidOption_ShouldPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic for invalid option type")
+		}
+	}()
+
+	builder := &PolicyBuilder{}
+	// Pass an invalid option type (string instead of SourceConstraint)
+	builder.WithEstimatedAgeOver(18, 5, "invalid-option")
+}
+
 func TestDigitalIdentityBuilder_WithIdentityProfileRequirements_ShouldFailForInvalidJSON(t *testing.T) {
 	identityProfile := []byte(`{
 		"trust_framework": UK_TFIDA",

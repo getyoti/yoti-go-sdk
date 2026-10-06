@@ -53,8 +53,21 @@ func TestResource_StringMethods(t *testing.T) {
 		},
 	}
 
-	for _, r := range resources {
+	expectedTypes := []string{
+		"ID_DOCUMENT",
+		"SUPPLEMENTARY_DOCUMENT",
+		"LIVENESS",
+		"LIVENESS",
+		"FACE_CAPTURE",
+		"UNKNOWN",
+	}
+
+	for i, r := range resources {
+		// Test String() method
 		str := r.String()
-		assert.Assert(t, str != "", "String method should return non-empty string")
+		assert.Assert(t, str != "", "String method should return a non-empty string for type %s", expectedTypes[i])
+
+		// Test GetType() method
+		assert.Equal(t, expectedTypes[i], r.GetType())
 	}
 }

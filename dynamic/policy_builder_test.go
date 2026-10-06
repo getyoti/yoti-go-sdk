@@ -446,6 +446,18 @@ func TestDynamicPolicyBuilder_WithEstimatedAgeOver_WithoutConstraint(t *testing.
 	assert.Equal(t, len(policy.attributes[0].constraints), 0)
 }
 
+func TestDynamicPolicyBuilder_WithEstimatedAgeOver_WithInvalidOption_ShouldPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic for invalid option type")
+		}
+	}()
+
+	builder := &PolicyBuilder{}
+	// Pass an invalid option type (string instead of SourceConstraint)
+	builder.WithEstimatedAgeOver(18, 5, "invalid-option")
+}
+
 func ExamplePolicyBuilder_WithIdentityProfileRequirements() {
 	identityProfile := []byte(`{
 		"trust_framework": "UK_TFIDA",

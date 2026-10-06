@@ -282,6 +282,26 @@
                             </div>
                         </div>
                     {{ end }}
+                     {{ if .getSessionResult.FaceComparisonChecks }}
+                        <div class="card">
+                            <div class="card-header" id="text-data-checks">
+                                <h3 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapse-text-data-checks" aria-expanded="true"
+                                            aria-controls="collapse-text-data-checks">
+                                        FaceComparisonChecks Checks
+                                    </button>
+                                </h3>
+                            </div>
+                            <div id="collapse-text-data-checks" class="collapse" aria-labelledby="text-data-checks">
+                                <div class="card-body">
+                                    {{ range $check :=  .getSessionResult.FaceComparisonChecks }}
+                                        {{ template "check.html" $check }}
+                                    {{ end }}
+                                </div>
+                            </div>
+                        </div>
+                    {{ end }}
                     {{ if .getSessionResult.FaceMatchChecks }}
                         <div class="card">
                             <div class="card-header" id="face-match-checks">

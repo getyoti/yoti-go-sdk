@@ -35,6 +35,7 @@ type GetSessionResult struct {
 	supplementaryDocumentTextDataChecks []*SupplementaryDocumentTextDataCheckResponse
 	watchlistScreeningChecks            []*WatchlistScreeningCheckResponse
 	watchlistAdvancedCAChecks           []*WatchlistAdvancedCACheckResponse
+	faceComparisonChecks                []*FaceComparisonCheckResponse
 }
 
 // AuthenticityChecks filters the checks, returning only document authenticity checks
@@ -98,6 +99,11 @@ func (g *GetSessionResult) GetOrganisationName() string {
 	return g.OrganisationName
 }
 
+// FaceComparisonChecks filters the checks, returning only FaceComparison checks
+func (g *GetSessionResult) FaceComparisonChecks() []*FaceComparisonCheckResponse {
+	return g.faceComparisonChecks
+}
+
 // ResourcesForCheck returns the resources used by the check with the given ID.
 // An error is returned when no check matches checkID.
 func (g *GetSessionResult) ResourcesForCheck(checkID string) (*ResourceContainer, error) {
@@ -132,6 +138,9 @@ func (g *GetSessionResult) UnmarshalJSON(data []byte) error {
 
 		case constants.IDDocumentComparison:
 			g.idDocumentComparisonChecks = append(g.idDocumentComparisonChecks, &IDDocumentComparisonCheckResponse{CheckResponse: check})
+
+		case constants.FaceComparison:
+			g.faceComparisonChecks = append(g.faceComparisonChecks, &FaceComparisonCheckResponse{CheckResponse: check})
 
 		case constants.ThirdPartyIdentityCheck:
 			g.thirdPartyIdentityChecks = append(
