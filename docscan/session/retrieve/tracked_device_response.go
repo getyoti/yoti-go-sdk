@@ -19,7 +19,7 @@ type TrackedDeviceResponse struct {
 type TrackedDeviceDeviceResponse struct {
 	IPAddress        *string `json:"ip_address,omitempty"`
 	IPISOCountryCode *string `json:"ip_iso_country_code,omitempty"`
-	ManufactureName  *string `json:"manufacture_name,omitempty"`
+	ManufacturerName *string `json:"manufacture_name,omitempty"`
 	ModelName        *string `json:"model_name,omitempty"`
 	OSName           *string `json:"os_name,omitempty"`
 	OSVersion        *string `json:"os_version,omitempty"`
