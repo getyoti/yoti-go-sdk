@@ -27,6 +27,12 @@ func main() {
 				fmt.Println(err)
 			}
 			return string(json)
+		},
+		"derefString": func(s *string) string {
+			if s == nil {
+				return ""
+			}
+			return *s
 		}})
 	// Process the templates at the start so that they don't have to be loaded
 	// from the disk again. This makes serving HTML pages very fast.
