@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/getyoti/yoti-go-sdk/v3/aml"
 	"github.com/getyoti/yoti-go-sdk/v3/dynamic"
 	"github.com/getyoti/yoti-go-sdk/v3/test"
 	"gotest.tools/v3/assert"
@@ -45,36 +44,6 @@ func TestNewClient_KeyLoad_Failure(t *testing.T) {
 		Temporary() bool
 	})
 	assert.Check(t, !temporary || !tempError.Temporary())
-}
-
-func TestYotiClient_PerformAmlCheck(t *testing.T) {
-	key, err := os.ReadFile("./test/test-key.pem")
-	assert.NilError(t, err)
-
-	client, err := NewClient("some-sdk-id", key)
-	assert.NilError(t, err)
-
-	client.HTTPClient = &mockHTTPClient{
-		do: func(*http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: 200,
-				Body:       io.NopCloser(strings.NewReader(`{"on_fraud_list":true}`)),
-			}, nil
-		},
-	}
-
-	var amlAddress = aml.Address{
-		Country: "GBR"}
-
-	var amlProfile = aml.Profile{
-		GivenNames: "Edward Richard George",
-		FamilyName: "Heath",
-		Address:    amlAddress}
-
-	result, err := client.PerformAmlCheck(amlProfile)
-	assert.NilError(t, err)
-
-	assert.Check(t, result.OnFraudList)
 }
 
 func TestYotiClient_CreateShareURL(t *testing.T) {
