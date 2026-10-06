@@ -60,6 +60,9 @@ type SessionSpecification struct {
 
 	//Ephemeral Media to set ephemeral or not
 	EphemeralMedia *bool `json:"ephemeral_media,omitempty"`
+
+	// CompanyProfile contains company profile information for the session
+	CompanyProfile *CompanyProfile `json:"company_profile,omitempty"`
 }
 
 // SessionSpecificationBuilder builds the SessionSpecification struct
@@ -80,6 +83,7 @@ type SessionSpecificationBuilder struct {
 	subject                             *json.RawMessage
 	importToken                         *ImportToken
 	ephemeralMedia                      *bool
+	companyProfile                      *CompanyProfile
 }
 
 // NewSessionSpecificationBuilder creates a new SessionSpecificationBuilder
@@ -183,6 +187,12 @@ func (b *SessionSpecificationBuilder) WithEphemeralMedia(ephemeralMedia bool) *S
 	return b
 }
 
+// WithCompanyProfile sets the company profile for the session
+func (b *SessionSpecificationBuilder) WithCompanyProfile(companyProfile *CompanyProfile) *SessionSpecificationBuilder {
+	b.companyProfile = companyProfile
+	return b
+}
+
 // Build builds the SessionSpecification struct
 func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 	return &SessionSpecification{
@@ -202,5 +212,6 @@ func (b *SessionSpecificationBuilder) Build() (*SessionSpecification, error) {
 		b.subject,
 		b.importToken,
 		b.ephemeralMedia,
+		b.companyProfile,
 	}, nil
 }
