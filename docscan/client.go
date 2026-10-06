@@ -310,6 +310,68 @@ func (c *Client) GetSupportedDocumentsWithNonLatin(includeNonLatin bool) (*suppo
 	return &result, err
 }
 
+// GetTrackedDevices retrieves the list of tracked-device events for a Yoti Doc Scan (IDV) session
+func (c *Client) GetTrackedDevices(sessionID string) ([]*retrieve.TrackedDeviceResponse, error) {
+	if sessionID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodGet, c.apiURL, getTrackedDevicesPath(sessionID), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var response *http.Response
+	response, err = requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = response.Body.Close() }()
+
+	var responseBytes []byte
+	responseBytes, err = io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []*retrieve.TrackedDeviceResponse
+	err = json.Unmarshal(responseBytes, &result)
+
+	return result, err
+}
+
+// DeleteTrackedDevices deletes all tracked-device events for a Yoti Doc Scan (IDV) session
+func (c *Client) DeleteTrackedDevices(sessionID string) error {
+	if sessionID == "" {
+		return fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodDelete, c.apiURL, deleteTrackedDevicesPath(sessionID), nil, nil)
+	if err != nil {
+		return err
+	}
+
+	response, err := requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return err
+	}
+	if response.Body != nil {
+		defer func() { _ = response.Body.Close() }()
+	}
+
+	return nil
+}
+
 // jsonMarshaler is a mockable JSON marshaler
 type jsonMarshaler interface {
 	Marshal(v interface{}) ([]byte, error)

@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
@@ -23,6 +24,8 @@ type GetSessionResult struct {
 	AdvancedIdentityProfilePreview      *AdvancedIdentityProfilePreview  `json:"advanced_identity_profile_preview"`
 	ImportTokenResponse                 *ImportTokenResponse             `json:"import_token"`
 	DigitalIDShares                     []*DigitalIDShareResponse        `json:"digital_id_shares"`
+	CompanyProfile                      *CompanyProfileResponse          `json:"company_profile"`
+	OrganisationName                    string                           `json:"organisation_name"`
 	authenticityChecks                  []*AuthenticityCheckResponse
 	faceMatchChecks                     []*FaceMatchCheckResponse
 	textDataChecks                      []*TextDataCheckResponse
@@ -83,6 +86,27 @@ func (g *GetSessionResult) WatchlistScreeningChecks() []*WatchlistScreeningCheck
 // WatchlistAdvancedCAChecks filters the checks, returning only the Watchlist Advanced CA Screening checks
 func (g *GetSessionResult) WatchlistAdvancedCAChecks() []*WatchlistAdvancedCACheckResponse {
 	return g.watchlistAdvancedCAChecks
+}
+
+// GetCompanyProfile returns the company profile associated with the session, or nil if not set
+func (g *GetSessionResult) GetCompanyProfile() *CompanyProfileResponse {
+	return g.CompanyProfile
+}
+
+// GetOrganisationName returns the organisation name associated with the session
+func (g *GetSessionResult) GetOrganisationName() string {
+	return g.OrganisationName
+}
+
+// ResourcesForCheck returns the resources used by the check with the given ID.
+// An error is returned when no check matches checkID.
+func (g *GetSessionResult) ResourcesForCheck(checkID string) (*ResourceContainer, error) {
+	for _, check := range g.Checks {
+		if check != nil && check.ID == checkID {
+			return g.Resources.filterForCheck(check), nil
+		}
+	}
+	return nil, fmt.Errorf("no check found with id %q", checkID)
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
