@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/getyoti/yoti-go-sdk/v3/docscan/constants"
@@ -95,6 +96,17 @@ func (g *GetSessionResult) GetCompanyProfile() *CompanyProfileResponse {
 // GetOrganisationName returns the organisation name associated with the session
 func (g *GetSessionResult) GetOrganisationName() string {
 	return g.OrganisationName
+}
+
+// ResourcesForCheck returns the resources used by the check with the given ID.
+// An error is returned when no check matches checkID.
+func (g *GetSessionResult) ResourcesForCheck(checkID string) (*ResourceContainer, error) {
+	for _, check := range g.Checks {
+		if check != nil && check.ID == checkID {
+			return g.Resources.filterForCheck(check), nil
+		}
+	}
+	return nil, fmt.Errorf("no check found with id %q", checkID)
 }
 
 // UnmarshalJSON handles the custom JSON unmarshalling
