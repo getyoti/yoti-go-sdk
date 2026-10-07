@@ -1021,7 +1021,7 @@ func TestClient_GetTrackedDevices(t *testing.T) {
 	assert.Assert(t, firstEvent.Device != nil)
 	assert.Equal(t, "1.2.3.4", *firstEvent.Device.IPAddress)
 	assert.Equal(t, "GBR", *firstEvent.Device.IPISOCountryCode)
-	assert.Equal(t, "Apple", *firstEvent.Device.ManufacturerName)
+	assert.Equal(t, "Apple", *firstEvent.Device.ManufactureName)
 	assert.Equal(t, "iPhone 14", *firstEvent.Device.ModelName)
 	assert.Equal(t, "iOS", *firstEvent.Device.OSName)
 	assert.Equal(t, "16.0", *firstEvent.Device.OSVersion)
