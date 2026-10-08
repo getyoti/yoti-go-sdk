@@ -18,7 +18,6 @@ type TrackedDeviceResponse struct {
 // TrackedDeviceDeviceResponse contains metadata about the device associated with a tracked-device event.
 type TrackedDeviceDeviceResponse struct {
 	IPAddress        *string `json:"ip_address,omitempty"`
-	IPISOCountryCode *string `json:"ip_iso_country_code,omitempty"`
 	ManufacturerName *string `json:"manufacture_name,omitempty"`
 	ModelName        *string `json:"model_name,omitempty"`
 	OSName           *string `json:"os_name,omitempty"`

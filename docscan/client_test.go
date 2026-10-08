@@ -832,7 +832,6 @@ func TestClient_GetTrackedDevices(t *testing.T) {
 			"created": "2024-01-15T10:30:00Z",
 			"device": {
 				"ip_address": "1.2.3.4",
-				"ip_iso_country_code": "GBR",
 				"manufacture_name": "Apple",
 				"model_name": "iPhone 14",
 				"os_name": "iOS",
@@ -879,7 +878,6 @@ func TestClient_GetTrackedDevices(t *testing.T) {
 	assert.Equal(t, "2024-01-15T10:30:00Z", firstEvent.Created.UTC().Format("2006-01-02T15:04:05Z"))
 	assert.Assert(t, firstEvent.Device != nil)
 	assert.Equal(t, "1.2.3.4", *firstEvent.Device.IPAddress)
-	assert.Equal(t, "GBR", *firstEvent.Device.IPISOCountryCode)
 	assert.Equal(t, "Apple", *firstEvent.Device.ManufacturerName)
 	assert.Equal(t, "iPhone 14", *firstEvent.Device.ModelName)
 	assert.Equal(t, "iOS", *firstEvent.Device.OSName)
