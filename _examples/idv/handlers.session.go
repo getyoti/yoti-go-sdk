@@ -145,11 +145,18 @@ func showSuccessPage(c *gin.Context) {
 		return
 	}
 
+	trackedDevices, trackedDevicesErr := client.GetTrackedDevices(sessionId)
+	if trackedDevicesErr != nil {
+		fmt.Println("failed to get tracked devices:", trackedDevicesErr.Error())
+	}
+
 	render(
 		c,
 		gin.H{
-			"title":            "Success",
-			"getSessionResult": getSessionResult,
+			"title":               "Success",
+			"getSessionResult":    getSessionResult,
+			"trackedDevices":      trackedDevices,
+			"trackedDevicesError": trackedDevicesErr,
 			"add": func(a int, b int) int {
 				return a + b
 			},
