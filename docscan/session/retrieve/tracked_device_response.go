@@ -17,16 +17,13 @@ type TrackedDeviceResponse struct {
 
 // TrackedDeviceDeviceResponse contains metadata about the device associated with a tracked-device event.
 type TrackedDeviceDeviceResponse struct {
-	IPAddress *string `json:"ip_address,omitempty"`
-	// Deprecated: the country code property is being retired by the API, under either name
-	// (ip_iso_country_code or ip_country_iso_code), and may not be returned. Do not rely on it.
-	IPISOCountryCode *string `json:"ip_iso_country_code,omitempty"`
-	ManufactureName  *string `json:"manufacture_name,omitempty"`
-	ModelName        *string `json:"model_name,omitempty"`
-	OSName           *string `json:"os_name,omitempty"`
-	OSVersion        *string `json:"os_version,omitempty"`
-	BrowserName      *string `json:"browser_name,omitempty"`
-	BrowserVersion   *string `json:"browser_version,omitempty"`
-	Locale           *string `json:"locale,omitempty"`
-	ClientVersion    *string `json:"client_version,omitempty"`
+	IPAddress       *string `json:"ip_address,omitempty"`
+	ManufactureName *string `json:"manufacture_name,omitempty"`
+	ModelName       *string `json:"model_name,omitempty"`
+	OSName          *string `json:"os_name,omitempty"`
+	OSVersion       *string `json:"os_version,omitempty"`
+	BrowserName     *string `json:"browser_name,omitempty"`
+	BrowserVersion  *string `json:"browser_version,omitempty"`
+	Locale          *string `json:"locale,omitempty"`
+	ClientVersion   *string `json:"client_version,omitempty"`
 }
