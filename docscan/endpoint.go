@@ -33,3 +33,7 @@ func getTrackedDevicesPath(sessionID string) string {
 func deleteTrackedDevicesPath(sessionID string) string {
 	return getTrackedDevicesPath(sessionID)
 }
+
+func getSessionOverviewPdfPath(sessionID string) string {
+	return fmt.Sprintf("/sessions/%s/pdf", sessionID)
+}
