@@ -225,6 +225,54 @@ func getMedia(c *gin.Context) {
 	return
 }
 
+func getSessionOverviewPdf(c *gin.Context) {
+	err := ensureDocScanClientInitialised()
+	if err != nil {
+		c.HTML(
+			http.StatusUnprocessableEntity,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "error setting the Doc Scan (IDV) Client",
+				"ErrorMessage": err.Error()})
+		return
+	}
+
+	sessionId, err := c.Cookie("session_id")
+	if err != nil || sessionId == "" {
+		errorMessage := "session_id cookie is missing or empty"
+		if err != nil {
+			errorMessage = err.Error()
+		}
+		c.HTML(
+			http.StatusInternalServerError,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "Failed to get session ID",
+				"ErrorMessage": errorMessage})
+		return
+	}
+
+	payload := create.NewSessionOverviewPdfPayload().
+		WithIncludeImages(true).
+		WithIncludeExtractedText(true).
+		WithIncludeDeviceTracking(true)
+
+	pdf, err := client.CreateSessionOverviewPdf(sessionId, payload)
+	if err != nil {
+		c.HTML(
+			http.StatusBadRequest,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "Failed to create session overview PDF",
+				"ErrorMessage": err.Error()})
+		return
+	}
+
+	c.Header("Content-Disposition", `attachment; filename="session-overview.pdf"`)
+	c.Data(http.StatusOK, pdf.MIME(), pdf.Data())
+	return
+}
+
 func showPrivacyPolicyPage(c *gin.Context) {
 	render(c, gin.H{}, "privacy.html")
 	return
