@@ -226,14 +226,29 @@ func getMedia(c *gin.Context) {
 }
 
 func getSessionOverviewPdf(c *gin.Context) {
+	err := ensureDocScanClientInitialised()
+	if err != nil {
+		c.HTML(
+			http.StatusUnprocessableEntity,
+			"error.html",
+			gin.H{
+				"ErrorTitle":   "error setting the Doc Scan (IDV) Client",
+				"ErrorMessage": err.Error()})
+		return
+	}
+
 	sessionId, err := c.Cookie("session_id")
 	if err != nil || sessionId == "" {
+		errorMessage := "session_id cookie is missing or empty"
+		if err != nil {
+			errorMessage = err.Error()
+		}
 		c.HTML(
 			http.StatusInternalServerError,
 			"error.html",
 			gin.H{
 				"ErrorTitle":   "Failed to get session ID",
-				"ErrorMessage": err.Error()})
+				"ErrorMessage": errorMessage})
 		return
 	}
 
