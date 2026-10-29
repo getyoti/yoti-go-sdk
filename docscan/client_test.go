@@ -705,6 +705,142 @@ func TestClient_UploadFaceCaptureImage(t *testing.T) {
 	assert.NilError(t, err)
 }
 
+func TestClient_CreateSessionOverviewPdf(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	pdfBytes := []byte("pdf-body")
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusCreated,
+				Body:       io.NopCloser(bytes.NewReader(pdfBytes)),
+				Header:     map[string][]string{"Content-Type": {"application/pdf"}},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	payload := create.NewSessionOverviewPdfPayload().WithIncludeImages(true)
+	result, err := client.CreateSessionOverviewPdf("some-session-id", payload)
+	assert.NilError(t, err)
+
+	assert.DeepEqual(t, pdfBytes, result.Data())
+	assert.Equal(t, "application/pdf", result.MIME())
+}
+
+func TestClient_CreateSessionOverviewPdf_EmptySessionID(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{
+		SdkID:  "sdkId",
+		Key:    key,
+		apiURL: "https://apiurl.com",
+	}
+
+	_, err = client.CreateSessionOverviewPdf("", create.NewSessionOverviewPdfPayload())
+	assert.ErrorContains(t, err, "sessionID cannot be an empty string")
+}
+
+func TestClient_CreateSessionOverviewPdf_ShouldReturnResponseError(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusBadRequest,
+				Body:       io.NopCloser(strings.NewReader(`{}`)),
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	_, err = client.CreateSessionOverviewPdf("some-session-id", nil)
+	assert.Assert(t, err != nil)
+}
+
+// TestClient_CreateSessionOverviewPdf_SendsOptionsWrappedBody captures the
+// actual outgoing request body to guard against the exact regression found
+// when this endpoint was first implemented: the backend expects the payload
+// nested under an "options" key, not sent flat.
+func TestClient_CreateSessionOverviewPdf_SendsOptionsWrappedBody(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	var capturedBody []byte
+	HTTPClient := &mockHTTPClient{
+		do: func(r *http.Request) (*http.Response, error) {
+			capturedBody, _ = io.ReadAll(r.Body)
+			return &http.Response{
+				StatusCode: http.StatusCreated,
+				Body:       io.NopCloser(bytes.NewReader([]byte("pdf-body"))),
+				Header:     map[string][]string{"Content-Type": {"application/pdf"}},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	payload := create.NewSessionOverviewPdfPayload().
+		WithIncludeImages(false).
+		WithIncludeExtractedText(false).
+		WithIncludeDeviceTracking(false)
+
+	_, err = client.CreateSessionOverviewPdf("some-session-id", payload)
+	assert.NilError(t, err)
+
+	expected := `{"options":{"include_images":false,"include_extracted_text":false,"include_device_tracking":false}}`
+	assert.Equal(t, expected, string(capturedBody))
+}
+
+func TestClient_CreateSessionOverviewPdf_NilPayloadSendsEmptyOptions(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	var capturedBody []byte
+	HTTPClient := &mockHTTPClient{
+		do: func(r *http.Request) (*http.Response, error) {
+			capturedBody, _ = io.ReadAll(r.Body)
+			return &http.Response{
+				StatusCode: http.StatusCreated,
+				Body:       io.NopCloser(bytes.NewReader([]byte("pdf-body"))),
+				Header:     map[string][]string{"Content-Type": {"application/pdf"}},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	_, err = client.CreateSessionOverviewPdf("some-session-id", nil)
+	assert.NilError(t, err)
+
+	assert.Equal(t, `{"options":{}}`, string(capturedBody))
+}
+
 func TestClient_GetSessionConfiguration(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 
@@ -865,4 +1001,304 @@ func TestClient_AddFaceCaptureResourceToSession_InvalidBase64(t *testing.T) {
 
 	err := client.AddFaceCaptureResourceToSession("session-id", "this is not base64")
 	assert.ErrorContains(t, err, "illegal base64 data")
+}
+
+func TestNewClientWithToken(t *testing.T) {
+	client, err := NewClientWithToken("my-auth-token")
+	assert.NilError(t, err)
+	assert.Equal(t, client.AuthToken, "my-auth-token")
+}
+
+func TestNewClientWithToken_EmptyToken(t *testing.T) {
+	_, err := NewClientWithToken("")
+	assert.ErrorContains(t, err, "authentication token must not be empty")
+}
+
+func TestClient_GetAuthStrategy_BearerToken(t *testing.T) {
+	client := Client{AuthToken: "my-bearer-token"}
+
+	strategy, err := client.GetAuthStrategy()
+	assert.NilError(t, err)
+
+	headers, err := strategy.CreateAuthHeaders(http.MethodGet, "/idverify/v1/sessions", nil)
+	assert.NilError(t, err)
+	assert.Equal(t, headers["Authorization"][0], "Bearer my-bearer-token")
+}
+
+func TestClient_GetAuthStrategy_SignedRequest(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{Key: key, SdkID: "sdk-id"}
+
+	strategy, err := client.GetAuthStrategy()
+	assert.NilError(t, err)
+
+	params, err := strategy.CreateQueryParams()
+	assert.NilError(t, err)
+	assert.Equal(t, params["sdkID"], "sdk-id")
+}
+
+func TestClient_GetAuthStrategy_MutualExclusion(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{AuthToken: "my-token", Key: key, SdkID: "sdk-id"}
+
+	_, err = client.GetAuthStrategy()
+	assert.ErrorContains(t, err, "must not supply both authentication token and SDK credentials")
+}
+
+func TestClient_GetAuthStrategy_MissingKey(t *testing.T) {
+	client := Client{SdkID: "sdk-id"}
+
+	_, err := client.GetAuthStrategy()
+	assert.ErrorContains(t, err, "missing private key")
+}
+
+func TestClient_GetAuthStrategy_MissingSdkID(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{Key: key}
+
+	_, err = client.GetAuthStrategy()
+	assert.ErrorContains(t, err, "missing SDK ID")
+}
+
+func TestClient_AuthToken_NotJSONSerialized(t *testing.T) {
+	client := Client{AuthToken: "my-secret-token", SdkID: "sdk-id"}
+
+	jsonBytes, err := json.Marshal(client)
+	assert.NilError(t, err)
+	assert.Assert(t, !strings.Contains(string(jsonBytes), "my-secret-token"))
+}
+
+func TestClient_WithToken_CreateSession(t *testing.T) {
+	var capturedRequest *http.Request
+
+	client := Client{
+		AuthToken: "my-auth-token",
+		HTTPClient: &mockHTTPClient{
+			do: func(r *http.Request) (*http.Response, error) {
+				capturedRequest = r
+				return &http.Response{
+					StatusCode: http.StatusCreated,
+					Body:       io.NopCloser(strings.NewReader(`{}`)),
+				}, nil
+			},
+		},
+		apiURL: "https://example.com",
+	}
+
+	_, err := client.CreateSession(&create.SessionSpecification{})
+	assert.NilError(t, err)
+
+	assert.Equal(t, capturedRequest.Header.Get("Authorization"), "Bearer my-auth-token")
+	assert.Equal(t, capturedRequest.Header.Get("X-Yoti-Auth-Digest"), "")
+}
+
+func TestClient_GetTrackedDevices(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	resourceID := "some-resource-id"
+	jsonResponse := `[
+		{
+			"event": "SESSION_CREATED",
+			"created": "2024-01-15T10:30:00Z",
+			"device": {
+				"ip_address": "1.2.3.4",
+				"manufacture_name": "Apple",
+				"model_name": "iPhone 14",
+				"os_name": "iOS",
+				"os_version": "16.0",
+				"browser_name": "Safari",
+				"browser_version": "16.0",
+				"locale": "en-GB",
+				"client_version": "1.0.0"
+			}
+		},
+		{
+			"event": "RESOURCE_CREATED",
+			"resource_id": "some-resource-id",
+			"created": "2024-01-15T10:31:00Z",
+			"device": {
+				"ip_address": "1.2.3.4"
+			}
+		}
+	]`
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(strings.NewReader(jsonResponse)),
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	result, err := client.GetTrackedDevices("some-session-id")
+	assert.NilError(t, err)
+	assert.Equal(t, 2, len(result))
+
+	firstEvent := result[0]
+	assert.Equal(t, "SESSION_CREATED", firstEvent.Event)
+	assert.Assert(t, firstEvent.ResourceID == nil)
+	assert.Equal(t, "2024-01-15T10:30:00Z", firstEvent.Created.UTC().Format("2006-01-02T15:04:05Z"))
+	assert.Assert(t, firstEvent.Device != nil)
+	assert.Equal(t, "1.2.3.4", *firstEvent.Device.IPAddress)
+	assert.Equal(t, "Apple", *firstEvent.Device.ManufactureName)
+	assert.Equal(t, "iPhone 14", *firstEvent.Device.ModelName)
+	assert.Equal(t, "iOS", *firstEvent.Device.OSName)
+	assert.Equal(t, "16.0", *firstEvent.Device.OSVersion)
+	assert.Equal(t, "Safari", *firstEvent.Device.BrowserName)
+	assert.Equal(t, "16.0", *firstEvent.Device.BrowserVersion)
+	assert.Equal(t, "en-GB", *firstEvent.Device.Locale)
+	assert.Equal(t, "1.0.0", *firstEvent.Device.ClientVersion)
+
+	secondEvent := result[1]
+	assert.Equal(t, "RESOURCE_CREATED", secondEvent.Event)
+	assert.Assert(t, secondEvent.ResourceID != nil)
+	assert.Equal(t, resourceID, *secondEvent.ResourceID)
+}
+
+func TestClient_GetTrackedDevices_EmptySessionID(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{
+		SdkID:  "sdkId",
+		Key:    key,
+		apiURL: "https://apiurl.com",
+	}
+
+	_, err = client.GetTrackedDevices("")
+	assert.ErrorContains(t, err, "sessionID cannot be an empty string")
+}
+
+func TestClient_GetTrackedDevices_ShouldReturnMissingKeyError(t *testing.T) {
+	client := Client{}
+	_, err := client.GetTrackedDevices("some-id")
+	assert.ErrorContains(t, err, "missing private key")
+}
+
+func TestClient_GetTrackedDevices_ShouldReturnResponseError(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	_, err = client.GetTrackedDevices("some-id")
+	assert.ErrorContains(t, err, "400: unknown HTTP error")
+}
+
+func TestClient_GetTrackedDevices_ShouldReturnJsonError(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(strings.NewReader("invalid-json")),
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	_, err = client.GetTrackedDevices("some-id")
+	assert.ErrorContains(t, err, "invalid character")
+}
+
+func TestClient_DeleteTrackedDevices(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusNoContent,
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	err = client.DeleteTrackedDevices("some-session-id")
+	assert.NilError(t, err)
+}
+
+func TestClient_DeleteTrackedDevices_EmptySessionID(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{
+		SdkID:  "sdkId",
+		Key:    key,
+		apiURL: "https://apiurl.com",
+	}
+
+	err = client.DeleteTrackedDevices("")
+	assert.ErrorContains(t, err, "sessionID cannot be an empty string")
+}
+
+func TestClient_DeleteTrackedDevices_ShouldReturnMissingKeyError(t *testing.T) {
+	client := Client{}
+	err := client.DeleteTrackedDevices("some-id")
+	assert.ErrorContains(t, err, "missing private key")
+}
+
+func TestClient_DeleteTrackedDevices_ShouldReturnResponseError(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	err = client.DeleteTrackedDevices("some-id")
+	assert.ErrorContains(t, err, "400: unknown HTTP error")
 }
