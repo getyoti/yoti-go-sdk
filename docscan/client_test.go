@@ -705,6 +705,142 @@ func TestClient_UploadFaceCaptureImage(t *testing.T) {
 	assert.NilError(t, err)
 }
 
+func TestClient_CreateSessionOverviewPdf(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	pdfBytes := []byte("pdf-body")
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusCreated,
+				Body:       io.NopCloser(bytes.NewReader(pdfBytes)),
+				Header:     map[string][]string{"Content-Type": {"application/pdf"}},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	payload := create.NewSessionOverviewPdfPayload().WithIncludeImages(true)
+	result, err := client.CreateSessionOverviewPdf("some-session-id", payload)
+	assert.NilError(t, err)
+
+	assert.DeepEqual(t, pdfBytes, result.Data())
+	assert.Equal(t, "application/pdf", result.MIME())
+}
+
+func TestClient_CreateSessionOverviewPdf_EmptySessionID(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	client := Client{
+		SdkID:  "sdkId",
+		Key:    key,
+		apiURL: "https://apiurl.com",
+	}
+
+	_, err = client.CreateSessionOverviewPdf("", create.NewSessionOverviewPdfPayload())
+	assert.ErrorContains(t, err, "sessionID cannot be an empty string")
+}
+
+func TestClient_CreateSessionOverviewPdf_ShouldReturnResponseError(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	HTTPClient := &mockHTTPClient{
+		do: func(*http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusBadRequest,
+				Body:       io.NopCloser(strings.NewReader(`{}`)),
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	_, err = client.CreateSessionOverviewPdf("some-session-id", nil)
+	assert.Assert(t, err != nil)
+}
+
+// TestClient_CreateSessionOverviewPdf_SendsOptionsWrappedBody captures the
+// actual outgoing request body to guard against the exact regression found
+// when this endpoint was first implemented: the backend expects the payload
+// nested under an "options" key, not sent flat.
+func TestClient_CreateSessionOverviewPdf_SendsOptionsWrappedBody(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	var capturedBody []byte
+	HTTPClient := &mockHTTPClient{
+		do: func(r *http.Request) (*http.Response, error) {
+			capturedBody, _ = io.ReadAll(r.Body)
+			return &http.Response{
+				StatusCode: http.StatusCreated,
+				Body:       io.NopCloser(bytes.NewReader([]byte("pdf-body"))),
+				Header:     map[string][]string{"Content-Type": {"application/pdf"}},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	payload := create.NewSessionOverviewPdfPayload().
+		WithIncludeImages(false).
+		WithIncludeExtractedText(false).
+		WithIncludeDeviceTracking(false)
+
+	_, err = client.CreateSessionOverviewPdf("some-session-id", payload)
+	assert.NilError(t, err)
+
+	expected := `{"options":{"include_images":false,"include_extracted_text":false,"include_device_tracking":false}}`
+	assert.Equal(t, expected, string(capturedBody))
+}
+
+func TestClient_CreateSessionOverviewPdf_NilPayloadSendsEmptyOptions(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	assert.NilError(t, err)
+
+	var capturedBody []byte
+	HTTPClient := &mockHTTPClient{
+		do: func(r *http.Request) (*http.Response, error) {
+			capturedBody, _ = io.ReadAll(r.Body)
+			return &http.Response{
+				StatusCode: http.StatusCreated,
+				Body:       io.NopCloser(bytes.NewReader([]byte("pdf-body"))),
+				Header:     map[string][]string{"Content-Type": {"application/pdf"}},
+			}, nil
+		},
+	}
+
+	client := Client{
+		SdkID:      "sdkId",
+		Key:        key,
+		HTTPClient: HTTPClient,
+		apiURL:     "https://apiurl.com",
+	}
+
+	_, err = client.CreateSessionOverviewPdf("some-session-id", nil)
+	assert.NilError(t, err)
+
+	assert.Equal(t, `{"options":{}}`, string(capturedBody))
+}
+
 func TestClient_GetSessionConfiguration(t *testing.T) {
 	key, _ := rsa.GenerateKey(rand.Reader, 1024)
 
