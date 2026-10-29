@@ -377,6 +377,58 @@ type jsonMarshaler interface {
 	Marshal(v interface{}) ([]byte, error)
 }
 
+// sessionOverviewPdfRequest wraps a SessionOverviewPdfPayload in the "options"
+// envelope expected by the session overview PDF endpoint. Internal wire-format
+// detail only; callers interact with create.SessionOverviewPdfPayload directly.
+type sessionOverviewPdfRequest struct {
+	Options *create.SessionOverviewPdfPayload `json:"options"`
+}
+
+// CreateSessionOverviewPdf creates a PDF overview of the given Yoti Doc Scan (IDV) session.
+// A nil payload results in an empty "options" object, leaving defaults to the backend.
+func (c *Client) CreateSessionOverviewPdf(sessionID string, payload *create.SessionOverviewPdfPayload) (media.Media, error) {
+	if sessionID == "" {
+		return nil, fmt.Errorf(mustNotBeEmptyString, "sessionID")
+	}
+
+	if payload == nil {
+		payload = create.NewSessionOverviewPdfPayload()
+	}
+
+	body, err := marshalJSON(c.jsonMarshaler, sessionOverviewPdfRequest{Options: payload})
+	if err != nil {
+		return nil, err
+	}
+
+	strategy, err := c.GetAuthStrategy()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := requests.BuildAuthRequest(strategy, http.MethodPost, c.apiURL, getSessionOverviewPdfPath(sessionID), requests.JSONHeaders(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := requests.Execute(c.HTTPClient, request, yotierror.DefaultHTTPErrorMessages)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = response.Body.Close() }()
+
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	contentTypes := strings.Split(response.Header.Get("Content-type"), ";")
+	if len(contentTypes[0]) < 1 {
+		return nil, errors.New("unable to parse content type from response")
+	}
+
+	return media.NewMedia(contentTypes[0], responseBytes), nil
+}
+
 func marshalJSON(jsonMarshaler jsonMarshaler, v interface{}) ([]byte, error) {
 	if jsonMarshaler != nil {
 		return jsonMarshaler.Marshal(v)
