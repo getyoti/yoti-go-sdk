@@ -27,6 +27,59 @@ func (r *ResourceContainer) StaticLivenessResources() []*StaticLivenessResourceR
 	return r.staticLivenessResources
 }
 
+// filterForCheck returns a new ResourceContainer holding only the resources used by the given check.
+func (r *ResourceContainer) filterForCheck(check *CheckResponse) *ResourceContainer {
+	filtered := &ResourceContainer{}
+	if r == nil || check == nil {
+		return filtered
+	}
+
+	ids := make(map[string]struct{}, len(check.ResourcesUsed))
+	for _, id := range check.ResourcesUsed {
+		ids[id] = struct{}{}
+	}
+
+	filtered.IDDocuments = filterResourcesByIDs(r.IDDocuments, ids)
+	filtered.SupplementaryDocuments = filterResourcesByIDs(r.SupplementaryDocuments, ids)
+	filtered.ShareCodes = filterResourcesByIDs(r.ShareCodes, ids)
+	filtered.zoomLivenessResources = filterResourcesByIDs(r.zoomLivenessResources, ids)
+	filtered.staticLivenessResources = filterResourcesByIDs(r.staticLivenessResources, ids)
+
+	// LivenessCapture and RawLivenessCapture are index-parallel (see UnmarshalJSON), so
+	// filter them together: skip an entry entirely (rather than only its raw
+	// counterpart) if the two slices are shorter than expected, to keep the two
+	// slices in the returned container the same length in every case.
+	for i, liveness := range r.LivenessCapture {
+		if liveness == nil || i >= len(r.RawLivenessCapture) {
+			continue
+		}
+		if _, ok := ids[liveness.GetID()]; !ok {
+			continue
+		}
+		filtered.LivenessCapture = append(filtered.LivenessCapture, liveness)
+		filtered.RawLivenessCapture = append(filtered.RawLivenessCapture, r.RawLivenessCapture[i])
+	}
+
+	return filtered
+}
+
+func filterResourcesByIDs[T interface {
+	comparable
+	GetID() string
+}](resources []T, ids map[string]struct{}) []T {
+	var zero T
+	var filtered []T
+	for _, resource := range resources {
+		if resource == zero {
+			continue
+		}
+		if _, ok := ids[resource.GetID()]; ok {
+			filtered = append(filtered, resource)
+		}
+	}
+	return filtered
+}
+
 // UnmarshalJSON handles the custom JSON unmarshalling
 func (r *ResourceContainer) UnmarshalJSON(data []byte) error {
 	type resourceContainer ResourceContainer

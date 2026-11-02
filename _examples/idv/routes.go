@@ -12,6 +12,7 @@ func initializeRoutes() {
 	router.GET("/advanced", showAdvancedIdentityProfilePage)
 	router.GET("/success", showSuccessPage)
 	router.GET("/media", getMedia)
+	router.GET("/session-overview-pdf", getSessionOverviewPdf)
 	router.GET("/privacy-policy", showPrivacyPolicyPage)
 	router.GET("/error", showErrorPage)
 	router.GET("/face-capture", showSimpleFaceCapturePage)

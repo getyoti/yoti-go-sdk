@@ -25,3 +25,15 @@ func deleteMediaPath(sessionID string, mediaID string) string {
 func getSupportedDocumentsPath() string {
 	return "/supported-documents"
 }
+
+func getTrackedDevicesPath(sessionID string) string {
+	return fmt.Sprintf("/sessions/%s/tracked-devices", sessionID)
+}
+
+func deleteTrackedDevicesPath(sessionID string) string {
+	return getTrackedDevicesPath(sessionID)
+}
+
+func getSessionOverviewPdfPath(sessionID string) string {
+	return fmt.Sprintf("/sessions/%s/pdf", sessionID)
+}
